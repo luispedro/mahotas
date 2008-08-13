@@ -17,7 +17,7 @@ struct numpy_position {
     numpy_position()
         :nd(0) {
         }
-    numpy_position(npy_intp* pos, int nd)
+    numpy_position(const npy_intp* pos, int nd)
         :nd(nd)
         { for (int i = 0; i != nd; ++i) position[i]=pos[i]; }
     int nd;
@@ -33,6 +33,12 @@ numpy_position operator + (const numpy_position& a, const numpy_position& b) {
     return res;
 }
 
+numpy_position operator - (const numpy_position& a, const numpy_position& b) {
+    assert(a.nd == b.nd);
+    numpy_position res = a;
+    for (int i = 0; i != a.nd; ++i) res.position[i] -= b.position[i];
+    return res;
+}
 
 template <typename BaseType>
 struct numpy_iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
@@ -123,6 +129,8 @@ class numpy_array_base {
             assert(i < this->ndims());
             return PyArray_DIM(array_,i);
         }
+
+        const npy_intp* raw_dims() const { return array_->dimensions; }
 
         bool validposition(const numpy_position& pos) {
             if (ndims() != pos.nd) return false;
