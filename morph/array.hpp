@@ -48,6 +48,7 @@ struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
         // Also, I divide by sizeof(BaseType)
         int steps_[NPY_MAXDIMS];
         int dimensions_[NPY_MAXDIMS];
+        // This is not actually the position we are at, but the reverse of the position!
         ::numpy::position position_;
 
     public:
@@ -60,7 +61,8 @@ struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
             for (int i = 0; i != position_.nd_; ++i) {
                 dimensions_[i] = array->dimensions[nd-i-1];
                 steps_[i] = array->strides[nd-i-1]/sizeof(BaseType)-cummul;
-                cummul += array->strides[nd-i-1]*array->dimensions[nd-i-1]/sizeof(BaseType);
+                cummul *= array->dimensions[nd-i-1];
+                cummul += steps_[i]*array->dimensions[nd-i-1];
             }
         }
 
@@ -79,7 +81,11 @@ struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
         bool operator == (const iterator_base& other) { return this->position_ == other.position_; }
         bool operator != (const iterator_base& other) { return !(*this == other); }
 
-        ::numpy::position position() const { return position_; }
+        ::numpy::position position() const {
+            ::numpy::position res = position_;
+            std::reverse(res.position_,res.position_+res.nd_);
+            return res;
+        }
 };
 
 template <typename BaseType>
@@ -135,7 +141,7 @@ class array_base {
         void* raw_data() const { return PyArray_DATA(array_); }
         const npy_intp* raw_dims() const { return array_->dimensions; }
 
-        bool validposition(const position& pos) {
+        bool validposition(const position& pos) const {
             if (ndims() != pos.nd_) return false;
             for (int i=0; i != pos.nd_; ++i) {
                 if (pos.position_[i] < 0 || pos.position_[i] >= this->dim(i)) return false;
