@@ -7,6 +7,10 @@ extern "C" {
 }
 #include <cstdio>
 
+const char TypeErrorMsg[] = 
+    "Type not understood. "
+    "This is caused by either a direct call to _morph (which is dangerous: types are not checked!) or a bug in morph.py.\n";
+
 
 template <typename T>
 numpy::position central_position(const numpy::array_base<T>& array) {
@@ -19,16 +23,22 @@ template<typename T>
 void erode(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_array<T> Bc) {
     const unsigned N = res.size();
     const unsigned N2 = Bc.size();
-
+    const numpy::position centre = central_position(Bc);
     typename numpy::array<T>::iterator pos = array.begin();
+
     for (int i = 0; i != N; ++i, ++pos) {
+        bool on = true;
         typename numpy::aligned_array<T>::iterator startc = Bc.begin();
         for (int j = 0; j != N2; ++j, ++startc) {
-            numpy::position npos = pos.position() + startc.position();
-            if (res.validposition(npos)) {
-                res.at(npos) = *pos+*startc;
+            if (*startc) {
+                numpy::position npos = pos.position() + startc.position() - centre;
+                if (!array.at(npos)) {
+                    on = false;
+                    break;
+                }
             }
         }
+        res.at(pos.position()) = on;
     }
 }
 
@@ -53,7 +63,7 @@ PyObject* py_erode(PyObject* self, PyObject* args, PyObject* kwds) {
         HANDLE_INTEGER_TYPES();
 #undef HANDLE
         default:
-        PyErr_SetString(PyExc_RuntimeError,"Type not understood. This is caused by either a direct call to _morph (which is dangerous: types are not checked!) or a bug in morph.py.\n");
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
     return PyArray_Return(res_a);
@@ -63,7 +73,7 @@ template<typename T>
 void dilate(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_array<T> Bc) {
     const unsigned N = res.size();
     const unsigned N2 = Bc.size();
-    numpy::position centre = central_position(Bc);
+    const numpy::position centre = central_position(Bc);
 
     typename numpy::array<T>::iterator pos = array.begin();
     for (int i = 0; i != N; ++i, ++pos) {
@@ -77,9 +87,9 @@ void dilate(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_a
                     }
                 }
             }
-        } else {
         }
     }
+
 }
 
 PyObject* py_dilate(PyObject* self, PyObject* args, PyObject* kwds) {
@@ -102,7 +112,8 @@ PyObject* py_dilate(PyObject* self, PyObject* args, PyObject* kwds) {
         HANDLE_INTEGER_TYPES();
 #undef HANDLE
         default:
-        PyErr_SetString(PyExc_RuntimeError,"Type not understood.\n");
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
     }
     return PyArray_Return(res_a);
 }
@@ -111,6 +122,7 @@ namespace{
 
 PyMethodDef methods[] = {
   {"dilate",(PyCFunction)py_dilate, (METH_VARARGS|METH_KEYWORDS), NULL},
+  {"erode",(PyCFunction)py_erode, (METH_VARARGS|METH_KEYWORDS), NULL},
   {NULL, NULL,0,NULL},
 };
 
