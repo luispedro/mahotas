@@ -85,6 +85,8 @@ def erode(A,Bc=None):
 def cwatershed(A,M,Bc=None):
     _verify_is_integer_type(A,'cwatershed')
     _verify_is_integer_type(M,'cwatershed')
+    if A.shape != M.shape:
+        raise ValueError('morph.cwatershed: Markers array should have the same shape as value array.')
     if M.dtype != A.dtype:
         M=M.astype(A.dtype)
     Bc=get_structuring_elem(A,Bc)
