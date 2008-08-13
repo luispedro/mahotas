@@ -1,5 +1,12 @@
 #include "array.hpp"
 #include "dispatch.hpp"
+
+extern "C" {
+    #include <Python.h>
+    #include <numpy/ndarrayobject.h>
+}
+#include <cstdio>
+
 using namespace numpy_utils;
 
 template<typename T>
@@ -9,18 +16,18 @@ void dilate(numpy_aligned_array<T> res, numpy_array<T> array, numpy_aligned_arra
 
     typename numpy_array<T>::iterator pos = array.begin();
     for (int i = 0; i != N; ++i, ++pos) {
-        typename numpy_aligned_array<T>::iterator startc = Bc.begin();
-        bool on = true;
-        for (int j = 0; j != N2; ++j, ++startc) {
-            if (*startc) {
-                numpy_position npos = pos.position() + startc.position();
-                if (array.validposition(npos) && !array.at(npos)) {
-                    on = false;
-                    break;
+        if (*pos) {
+            typename numpy_aligned_array<T>::iterator startc = Bc.begin();
+            for (int j = 0; j != N2; ++j, ++startc) {
+                if (*startc) {
+                    numpy_position npos = pos.position() + startc.position();
+                    if (res.validposition(npos)) {
+                        res.at(npos) = *pos+*startc;
+                    }
                 }
             }
+        } else {
         }
-        res.at(pos.position()) = on;
     }
 }
 
@@ -31,15 +38,42 @@ void dilate_dispatch(PyArrayObject* res, PyArrayObject* array, PyArrayObject* Bc
 
         HANDLE_INTEGER_TYPES();
 #undef HANDLE
+        default:
+        PyErr_SetString(PyExc_RuntimeError,"Type not understood.\n");
     }
 }
 
 
-PyArrayObject* dilate(PyArrayObject* array, PyArrayObject* Bc) {
+PyObject* py_dilate(PyObject* self, PyObject* args, PyObject* kwds) {
+
+    PyArrayObject* array;
+    PyArrayObject* Bc;
+    static char * kwlist[] = { "array", "Bc", NULL };
+    if (!PyArg_ParseTupleAndKeywords(args,kwds,"OO",kwlist,
+                    &array,
+                    &Bc)) {
+        return NULL;
+    }
     PyArrayObject* res_a = (PyArrayObject*)PyArray_FromDims(array->nd,array->dimensions,PyArray_TYPE(array));
     if (!res_a) { 
         return NULL;
     }
     dilate_dispatch(res_a,array,Bc); 
-    return res_a;
+    return PyArray_Return(res_a);
 }
+
+namespace{
+
+PyMethodDef methods[] = {
+  {"dilate",(PyCFunction)py_dilate, (METH_VARARGS|METH_KEYWORDS), NULL},
+  {NULL, NULL,0,NULL},
+};
+
+} // namespace
+extern "C"
+void initnumpypp()
+  {
+    import_array();
+    (void)Py_InitModule("numpypp", methods);
+  }
+
