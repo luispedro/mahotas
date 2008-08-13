@@ -66,8 +66,9 @@ def get_structuring_elem(A,Bc):
         if len(A.shape) != len(Bc.shape):
             raise ValueError('morph.get_structuring_elem: Bc does not have the correct number of dimensions.')
         Bc=numpy.asanyarray(Bc,A.dtype)
-        if not Bc.flags['C_CONTIGOUS']:
+        if not Bc.flags['C_CONTIGUOUS']:
             return Bc.copy()
+        return Bc
 
 def dilate(A,Bc=None):
     _verify_is_bool(A,'dilate')
@@ -81,3 +82,10 @@ def erode(A,Bc=None):
     Bc=get_structuring_elem(A,Bc)
     return _morph.erode(A,Bc)
     
+def cwatershed(A,M,Bc=None):
+    _verify_is_integer_type(A,'cwatershed')
+    _verify_is_integer_type(M,'cwatershed')
+    if M.dtype != A.dtype:
+        M=M.astype(A.dtype)
+    Bc=get_structuring_elem(A,Bc)
+    return _morph.cwatershed(A,M,Bc)

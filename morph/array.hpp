@@ -131,6 +131,8 @@ class array_base {
             return PyArray_DIM(array_,i);
         }
 
+        PyArrayObject* raw_array() const { return array_; }
+        void* raw_data() const { return PyArray_DATA(array_); }
         const npy_intp* raw_dims() const { return array_->dimensions; }
 
         bool validposition(const position& pos) {
@@ -216,6 +218,12 @@ struct aligned_array : public array_base<BaseType> {
             return *data(pos);
         }
 };
+
+template <typename BaseType>
+aligned_array<BaseType> array_like(const array_base<BaseType>& orig) {
+    PyArrayObject* array = orig.raw_array();
+    return aligned_array<BaseType>((PyArrayObject*)PyArray_FromDims(array->nd,array->dimensions,PyArray_TYPE(array)));
+}
 
 } // namespace numpy
 
