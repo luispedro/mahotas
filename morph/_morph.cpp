@@ -24,21 +24,21 @@ void erode(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_ar
     const unsigned N = res.size();
     const unsigned N2 = Bc.size();
     const numpy::position centre = central_position(Bc);
-    typename numpy::array<T>::iterator pos = array.begin();
+    typename numpy::aligned_array<T>::iterator rpos = res.begin();
 
-    for (int i = 0; i != N; ++i, ++pos) {
+    for (int i = 0; i != N; ++i, ++rpos) {
         bool on = true;
         typename numpy::aligned_array<T>::iterator startc = Bc.begin();
         for (int j = 0; j != N2; ++j, ++startc) {
             if (*startc) {
-                numpy::position npos = pos.position() + startc.position() - centre;
-                if (!array.at(npos)) {
+                numpy::position npos = rpos.position() + startc.position() - centre;
+                if (array.validposition(npos) && !array.at(npos)) {
                     on = false;
                     break;
                 }
             }
         }
-        res.at(pos.position()) = on;
+        *rpos = on;
     }
 }
 
