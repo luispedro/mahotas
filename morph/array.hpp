@@ -13,40 +13,39 @@ extern "C" {
 
 namespace numpy_utils {
 
-struct numpy_position_type {
-    numpy_position_type()
+struct numpy_position {
+    numpy_position()
         :nd(0) {
         }
-    numpy_position_type(npy_intp* pos, int nd)
+    numpy_position(npy_intp* pos, int nd)
         :nd(nd)
         { for (int i = 0; i != nd; ++i) position[i]=pos[i]; }
     int nd;
     npy_intp position[NPY_MAXDIMS];
-    bool operator == (const numpy_position_type& other) { return !std::memcmp(this->position,other.position,sizeof(int)*this->nd); }
-    bool operator != (const numpy_position_type& other) { return !(*this == other); }
+    bool operator == (const numpy_position& other) { return !std::memcmp(this->position,other.position,sizeof(int)*this->nd); }
+    bool operator != (const numpy_position& other) { return !(*this == other); }
 };
-typedef numpy_position_type numpy_position;
 
-numpy_position_type operator + (const numpy_position_type& a, const numpy_position_type& b) {
+numpy_position operator + (const numpy_position& a, const numpy_position& b) {
     assert(a.nd == b.nd);
-    numpy_position_type res = a;
+    numpy_position res = a;
     for (int i = 0; i != a.nd; ++i) res.position[i] += b.position[i];
     return res;
 }
 
 
 template <typename BaseType>
-struct numpy_iterator_type_base : std::iterator<std::forward_iterator_tag, BaseType>{
+struct numpy_iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
     protected:
         BaseType* data_;
         // steps is similar to strides, but more useful for iteration, see implementation of operator ++
         // Also, I divide by sizeof(BaseType)
         int steps[NPY_MAXDIMS];
         int dimensions[NPY_MAXDIMS];
-        numpy_position_type position_;
+        numpy_position position_;
 
     public:
-        numpy_iterator_type_base(PyArrayObject* array) {
+        numpy_iterator_base(PyArrayObject* array) {
             position_.nd=array->nd;
             data_=reinterpret_cast<BaseType*>(array->data);
             for (int i = 0; i != position_.nd; ++i) position_.position[i]=0;
@@ -58,7 +57,7 @@ struct numpy_iterator_type_base : std::iterator<std::forward_iterator_tag, BaseT
             }
         }
 
-        numpy_iterator_type_base& operator ++ () {
+        numpy_iterator_base& operator ++ () {
             for (int i = 0; i != position_.nd; ++i) {
                 data_ += steps[i];
                 ++position_.position[i];
@@ -70,17 +69,17 @@ struct numpy_iterator_type_base : std::iterator<std::forward_iterator_tag, BaseT
             return *this;
         }
 
-        bool operator == (const numpy_iterator_type_base& other) { return this->position_ == other.position_; }
-        bool operator != (const numpy_iterator_type_base& other) { return !(*this == other); }
+        bool operator == (const numpy_iterator_base& other) { return this->position_ == other.position_; }
+        bool operator != (const numpy_iterator_base& other) { return !(*this == other); }
 
-        numpy_position_type position() const { return position_; }
+        numpy_position position() const { return position_; }
 };
 
 template <typename BaseType>
-class numpy_iterator_type : public numpy_iterator_type_base<BaseType> {
+class numpy_iterator_type : public numpy_iterator_base<BaseType> {
     public:
         numpy_iterator_type(PyArrayObject* array)
-            :numpy_iterator_type_base<BaseType>(array) {
+            :numpy_iterator_base<BaseType>(array) {
             }
         BaseType operator * () {
             BaseType res;
@@ -90,10 +89,10 @@ class numpy_iterator_type : public numpy_iterator_type_base<BaseType> {
 };
 
 template <typename BaseType>
-class numpy_aligned_iterator_type : public numpy_iterator_type_base<BaseType> {
+class numpy_aligned_iterator_type : public numpy_iterator_base<BaseType> {
     public:
         numpy_aligned_iterator_type(PyArrayObject* array)
-            :numpy_iterator_type_base<BaseType>(array) {
+            :numpy_iterator_base<BaseType>(array) {
                 assert(PyArray_ISALIGNED(array));
             }
         BaseType& operator * () {
@@ -103,18 +102,18 @@ class numpy_aligned_iterator_type : public numpy_iterator_type_base<BaseType> {
 
 
 template <typename BaseType>
-class numpy_array_type_base {
+class numpy_array_base {
     protected:
         PyArrayObject* array_;
 
     public:
-        numpy_array_type_base(PyArrayObject* array)
+        numpy_array_base(PyArrayObject* array)
             :array_(array)
             {
                 Py_INCREF(array_);
             }
 
-        ~numpy_array_type_base() {
+        ~numpy_array_base() {
             Py_XDECREF(array_);
         }
         
@@ -125,7 +124,7 @@ class numpy_array_type_base {
             return PyArray_DIM(array_,i);
         }
 
-        bool validposition(const numpy_position_type& pos) {
+        bool validposition(const numpy_position& pos) {
             if (ndims() != pos.nd) return false;
             for (int i=0; i != pos.nd; ++i) {
                 if (pos.position[i] < 0 || pos.position[i] >= this->dim(i)) return false;
@@ -136,7 +135,7 @@ class numpy_array_type_base {
             return PyArray_ISALIGNED(array_);
         }
 
-        BaseType at(const numpy_position_type& pos) const {
+        BaseType at(const numpy_position& pos) const {
             assert(this->validposition(pos));
             BaseType val;
             void* datap=PyArray_GetPtr(array_,const_cast<npy_intp*>(pos.position));
@@ -146,10 +145,10 @@ class numpy_array_type_base {
 };
 
 template<typename BaseType>
-struct numpy_array : public numpy_array_type_base<BaseType> {
+struct numpy_array : public numpy_array_base<BaseType> {
     public:
         numpy_array(PyArrayObject* array)
-            :numpy_array_type_base<BaseType>(array) {
+            :numpy_array_base<BaseType>(array) {
             }
         typedef numpy_iterator_type<BaseType> iterator;
         typedef numpy_iterator_type<const BaseType> const_iterator;
@@ -167,10 +166,10 @@ struct numpy_array : public numpy_array_type_base<BaseType> {
 };
 
 template <typename BaseType>
-struct numpy_aligned_array : public numpy_array_type_base<BaseType> {
+struct numpy_aligned_array : public numpy_array_base<BaseType> {
     public:
         numpy_aligned_array(PyArrayObject* array)
-            :numpy_array_type_base<BaseType>(array) {
+            :numpy_array_base<BaseType>(array) {
                 assert(PyArray_ISALIGNED(array));
             }
         typedef numpy_aligned_iterator_type<BaseType> iterator;
@@ -193,18 +192,18 @@ struct numpy_aligned_array : public numpy_array_type_base<BaseType> {
         BaseType* data() {
             return reinterpret_cast<BaseType*>PyArray_DATA(this->array_);
         }
-        const BaseType* data(const numpy_position_type& pos) const {
+        const BaseType* data(const numpy_position& pos) const {
             return reinterpret_cast<const BaseType*>(PyArray_GetPtr(this->array_,const_cast<npy_intp*>(pos.position)));
         }
 
-        BaseType* data(const numpy_position_type& pos) {
+        BaseType* data(const numpy_position& pos) {
             return reinterpret_cast<BaseType*>(PyArray_GetPtr(this->array_,const_cast<npy_intp*>(pos.position)));
         }
 
-        BaseType& at(const numpy_position_type& pos) {
+        BaseType& at(const numpy_position& pos) {
             return *data(pos);
         }
-        BaseType at(const numpy_position_type& pos) const {
+        BaseType at(const numpy_position& pos) const {
             return *data(pos);
         }
 };
