@@ -1,11 +1,11 @@
 from numpy.distutils.core import setup, Extension
 
-numpypp_src = map(lambda F: 'numpypp/'+F,['dilate.cpp'])
+morph_src = map(lambda F: 'morph/'+F,['_morph.cpp'])
 
-numpypp = Extension('numpypp.numpypp', sources = numpypp_src, extra_compile_args=['-Wno-sign-compare'])
+morph = Extension('morph._morph', sources = morph_src, extra_compile_args=['-Wno-sign-compare'])
 
-setup (name = 'Numpy++',
+setup (name = 'PyMorph',
        version = '0.1',
-       description = 'Numpy++',
-       ext_modules = [numpypp],
+       description = 'C++ implementation of morphological operations',
+       ext_modules = [morph],
        )
