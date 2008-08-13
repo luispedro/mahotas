@@ -65,7 +65,9 @@ def get_structuring_elem(A,Bc):
     else:
         if len(A.shape) != len(Bc.shape):
             raise ValueError('morph.get_structuring_elem: Bc does not have the correct number of dimensions.')
-        return numpy.asanyarray(Bc,A.dtype)
+        Bc=numpy.asanyarray(Bc,A.dtype)
+        if not Bc.flags['C_CONTIGOUS']:
+            return Bc.copy()
 
 def dilate(A,Bc=None):
     _verify_is_bool(A,'dilate')
