@@ -48,19 +48,12 @@ void erode(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_ar
 }
 
 
-PyObject* py_erode(PyObject* self, PyObject* args, PyObject* kwds) {
+PyObject* py_erode(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* Bc;
-    static char * kwlist[] = { "array", "Bc", NULL };
-    if (!PyArg_ParseTupleAndKeywords(args,kwds,"OO",kwlist,
-                    &array,
-                    &Bc)) {
-        return NULL;
-    }
+    if (!PyArg_ParseTuple(args,"OO", &array, &Bc)) return NULL;
     PyArrayObject* res_a = (PyArrayObject*)PyArray_FromDims(array->nd,array->dimensions,PyArray_TYPE(array));
-    if (!res_a) { 
-        return NULL;
-    }
+    if (!res_a) return NULL;
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
     erode<type>(numpy::aligned_array<type>(res_a),numpy::array<type>(array),numpy::aligned_array<type>(Bc));\
@@ -97,19 +90,12 @@ void dilate(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_a
 
 }
 
-PyObject* py_dilate(PyObject* self, PyObject* args, PyObject* kwds) {
+PyObject* py_dilate(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* Bc;
-    static char * kwlist[] = { "array", "Bc", NULL };
-    if (!PyArg_ParseTupleAndKeywords(args,kwds,"OO",kwlist,
-                    &array,
-                    &Bc)) {
-        return NULL;
-    }
+    if (!PyArg_ParseTuple(args,"OO", &array, &Bc)) return NULL;
     PyArrayObject* res_a = (PyArrayObject*)PyArray_FromDims(array->nd,array->dimensions,PyArray_TYPE(array));
-    if (!res_a) { 
-        return NULL;
-    }
+    if (!res_a) return NULL;
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
     dilate<type>(numpy::aligned_array<type>(res_a),numpy::array<type>(array),numpy::aligned_array<type>(Bc));\
@@ -183,15 +169,11 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::array<BaseType> array
     }
 }
 
-PyObject* py_cwatershed(PyObject* self, PyObject* args, PyObject* kwds) {
+PyObject* py_cwatershed(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* markers;
     PyArrayObject* Bc;
-    static char * kwlist[] = { "array", "markers", "Bc", NULL };
-    if (!PyArg_ParseTupleAndKeywords(args,kwds,"OOO",kwlist,
-                    &array,
-                    &markers,
-                    &Bc)) {
+    if (!PyArg_ParseTuple(args,"OOO", &array, &markers, &Bc)) {
         return NULL;
     }
     PyArrayObject* res_a = (PyArrayObject*)PyArray_FromDims(array->nd,array->dimensions,PyArray_TYPE(array));
@@ -213,9 +195,9 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args, PyObject* kwds) {
 
 
 PyMethodDef methods[] = {
-  {"dilate",(PyCFunction)py_dilate, (METH_VARARGS|METH_KEYWORDS), NULL},
-  {"erode",(PyCFunction)py_erode, (METH_VARARGS|METH_KEYWORDS), NULL},
-  {"cwatershed",(PyCFunction)py_cwatershed, (METH_VARARGS|METH_KEYWORDS), NULL},
+  {"dilate",(PyCFunction)py_dilate, METH_VARARGS, NULL},
+  {"erode",(PyCFunction)py_erode, METH_VARARGS, NULL},
+  {"cwatershed",(PyCFunction)py_cwatershed, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 
