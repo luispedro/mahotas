@@ -31,6 +31,8 @@ def _verify_is_integer_type(A,function):
     
 def _verify_is_bool(A,function):
     _verify_types(A,[numpy.bool],function)
+
+__all__ = ['get_structuring_elem','dilate','erode','cwatershed']
     
 def get_structuring_elem(A,Bc):
     '''Bc_out = get_structuring_elem(A,Bc_in)
@@ -90,7 +92,7 @@ def erode(A,Bc=None):
     Bc=get_structuring_elem(A,Bc)
     return _morph.erode(A,Bc)
     
-def cwatershed(A,M,Bc=None):
+def cwatershed(A,M,Bc=None,return_lines=False):
     _verify_is_integer_type(A,'cwatershed')
     _verify_is_integer_type(M,'cwatershed')
     if A.shape != M.shape:
@@ -98,4 +100,4 @@ def cwatershed(A,M,Bc=None):
     if M.dtype != A.dtype:
         M=M.astype(A.dtype)
     Bc=get_structuring_elem(A,Bc)
-    return _morph.cwatershed(A,M,Bc)
+    return _morph.cwatershed(A,M,Bc,bool(return_lines))
