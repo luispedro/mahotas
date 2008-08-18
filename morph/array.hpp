@@ -119,6 +119,10 @@ class array_base {
     protected:
         PyArrayObject* array_;
 
+        void* raw_data(const position& pos) {
+            assert(this->validposition(pos));
+            return PyArray_GetPtr(array_,const_cast<npy_intp*>(pos.position_));
+        }
     public:
         array_base(PyArrayObject* array)
             :array_(array)
@@ -153,9 +157,8 @@ class array_base {
         }
 
         BaseType at(const position& pos) const {
-            assert(this->validposition(pos));
             BaseType val;
-            void* datap=PyArray_GetPtr(array_,const_cast<npy_intp*>(pos.position_));
+            void* datap=raw_data(pos);
             memcpy(&val,datap,sizeof(BaseType));
             return val;
         }
@@ -210,11 +213,11 @@ struct aligned_array : public array_base<BaseType> {
             return reinterpret_cast<BaseType*>PyArray_DATA(this->array_);
         }
         const BaseType* data(const position& pos) const {
-            return reinterpret_cast<const BaseType*>(PyArray_GetPtr(this->array_,const_cast<npy_intp*>(pos.position_)));
+            return reinterpret_cast<const BaseType*>(raw_data(pos));
         }
 
         BaseType* data(const position& pos) {
-            return reinterpret_cast<BaseType*>(PyArray_GetPtr(this->array_,const_cast<npy_intp*>(pos.position_)));
+            return reinterpret_cast<BaseType*>(raw_data(pos));
         }
 
         BaseType& at(const position& pos) {
