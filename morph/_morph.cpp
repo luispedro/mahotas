@@ -142,7 +142,7 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
     for (int i =0; i != N; ++i, ++mpos) {
         if (*mpos) {
             assert(markers.validposition(mpos.position()));
-            hqueue.push(MarkerInfo(*mpos,idx++,mpos.position()));
+            hqueue.push(MarkerInfo(array.at(mpos.position()),idx++,mpos.position()));
             res.at(mpos.position()) = *mpos;
             cost.at(mpos.position()) = array.at(mpos.position());
         }
