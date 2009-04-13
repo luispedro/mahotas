@@ -92,12 +92,26 @@ def erode(A,Bc=None):
     Bc=get_structuring_elem(A,Bc)
     return _morph.erode(A,Bc)
     
-def cwatershed(A,M,Bc=None,return_lines=False):
-    _verify_is_integer_type(A,'cwatershed')
-    _verify_is_integer_type(M,'cwatershed')
-    if A.shape != M.shape:
+def cwatershed(surface, markers, Bc=None, return_lines=False):
+    '''
+    W = cwatershed(surface, markers, Bc=None, return_lines=False)
+    W,WL = cwatershed(surface, markers, Bc=None, return_lines=True)
+
+    Seeded Watershed
+    
+    Parameters
+    ----------
+        * surface: image
+        * markers: initial markers (must be a labeled image)
+        * Bc: structuring element (default: 3x3 cross)
+        * return_lines: whether to return separating lines
+            (in addition to regions)
+    '''
+    _verify_is_integer_type(surface, 'cwatershed')
+    _verify_is_integer_type(markers, 'cwatershed')
+    if surface.shape != markers.shape:
         raise ValueError('morph.cwatershed: Markers array should have the same shape as value array.')
-    if M.dtype != A.dtype:
-        M=M.astype(A.dtype)
-    Bc=get_structuring_elem(A,Bc)
-    return _morph.cwatershed(A,M,Bc,bool(return_lines))
+    if markers.dtype != surface.dtype:
+        markers = markers.astype(surface.dtype)
+    Bc = get_structuring_elem(surface, Bc)
+    return _morph.cwatershed(surface, markers, Bc, bool(return_lines))
