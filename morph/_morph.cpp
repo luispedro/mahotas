@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <queue>
 #include <cstdio>
+#include <limits>
 
 #include "array.hpp"
 #include "dispatch.hpp"
