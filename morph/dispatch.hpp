@@ -9,4 +9,6 @@ typedef unsigned short ushort;
     case NPY_SHORT: HANDLE(short); break; \
     case NPY_USHORT: HANDLE(unsigned short); break; \
     case NPY_INT: HANDLE(int); break; \
-    case NPY_UINT: HANDLE(unsigned int); break;
+    case NPY_UINT: HANDLE(unsigned int); break; \
+    case NPY_LONG: HANDLE(npy_long); break; \
+    case NPY_ULONG: HANDLE(npy_ulong); break;
