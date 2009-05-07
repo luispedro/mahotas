@@ -53,7 +53,7 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* Bc;
     if (!PyArg_ParseTuple(args,"OO", &array, &Bc)) return NULL;
-    PyArrayObject* res_a = (PyArrayObject*)PyArray_FromDims(array->nd,array->dimensions,PyArray_TYPE(array));
+    PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
     if (!res_a) return NULL;
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
@@ -95,7 +95,7 @@ PyObject* py_dilate(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* Bc;
     if (!PyArg_ParseTuple(args,"OO", &array, &Bc)) return NULL;
-    PyArrayObject* res_a = (PyArrayObject*)PyArray_FromDims(array->nd,array->dimensions,PyArray_TYPE(array));
+    PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
     if (!res_a) return NULL;
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
@@ -135,7 +135,7 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
 
     numpy::aligned_array<BaseType> cost = array_like(array);
     std::fill_n(cost.data(),cost.size(),std::numeric_limits<BaseType>::max());
-    numpy::aligned_array<bool> status((PyArrayObject*)PyArray_FromDims(array.ndims(),const_cast<npy_intp*>(array.raw_dims()),NPY_BOOL));
+    numpy::aligned_array<bool> status((PyArrayObject*)PyArray_SimpleNew(array.ndims(),const_cast<npy_intp*>(array.raw_dims()),NPY_BOOL));
     std::fill_n(status.data(),status.size(),false);
     std::priority_queue<MarkerInfo> hqueue;
      
@@ -182,12 +182,12 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args,"OOOi", &array, &markers, &Bc,&return_lines)) {
         return NULL;
     }
-    PyArrayObject* res_a = (PyArrayObject*)PyArray_FromDims(array->nd,array->dimensions,PyArray_TYPE(array));
+    PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
     if (!res_a) return NULL;
     PyArrayObject* lines =  0;
     numpy::aligned_array<bool>* lines_a = 0;
     if (return_lines) {
-        lines = (PyArrayObject*)PyArray_FromDims(array->nd,array->dimensions,PyArray_TYPE(array));
+        lines = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
         if (!lines) return NULL;
         lines_a = new numpy::aligned_array<bool>(lines);
     }

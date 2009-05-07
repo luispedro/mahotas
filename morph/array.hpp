@@ -232,7 +232,7 @@ struct aligned_array : public array_base<BaseType> {
 template <typename BaseType>
 aligned_array<BaseType> array_like(const array_base<BaseType>& orig) {
     PyArrayObject* array = orig.raw_array();
-    return aligned_array<BaseType>((PyArrayObject*)PyArray_FromDims(array->nd,array->dimensions,PyArray_TYPE(array)));
+    return aligned_array<BaseType>((PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array)));
 }
 
 } // namespace numpy
