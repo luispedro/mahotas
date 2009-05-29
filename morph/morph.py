@@ -2,11 +2,12 @@
 PyMorph++ 
 
 This is a companion package to pymorph which includes a C++ implementation
-of some of the base algorithms for speed.
+of some of the algorithms for speed.
 
 The license on this package is GPL (as opposed to pymorph which is BSD).
 '''
 import numpy
+import numpy as np
 try:
     import _morph
 except:
@@ -32,7 +33,13 @@ def _verify_is_integer_type(A,function):
 def _verify_is_bool(A,function):
     _verify_types(A,[numpy.bool],function)
 
-__all__ = ['get_structuring_elem','dilate','erode','cwatershed']
+__all__ = [
+        'get_structuring_elem',
+        'dilate',
+        'erode',
+        'cwatershed',
+        'close_holes',
+        ]
     
 def get_structuring_elem(A,Bc):
     '''Bc_out = get_structuring_elem(A,Bc_in)
@@ -115,3 +122,23 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
         markers = markers.astype(surface.dtype)
     Bc = get_structuring_elem(surface, Bc)
     return _morph.cwatershed(surface, markers, Bc, bool(return_lines))
+
+def close_holes(ref, Bc=None):
+    '''
+    closed = close_holes(ref, Bc=None):
+
+    Close Holes
+
+    Parameters
+    ----------
+        * ref: Reference image.
+        * Bc: structuring element (default: 3x3 cross)
+    '''
+    if ref.dtype != np.bool:
+        if ((ref== 0)|(ref==1)).sum() != ref.size:
+            raise ValueError,'morph.close_holes: passed array is not boolean.'
+        ref = ref.astype(bool)
+    if not ref.flags['C_CONTIGUOUS']:
+        ref = ref.copy()
+    Bc = get_structuring_elem(ref, Bc)
+    return _morph.close_holes(ref, Bc)

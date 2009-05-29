@@ -110,6 +110,79 @@ PyObject* py_dilate(PyObject* self, PyObject* args) {
     return PyArray_Return(res_a);
 }
 
+void close_holes(numpy::aligned_array<bool> ref, numpy::aligned_array<bool> f, numpy::aligned_array<bool> Bc) {
+    std::fill_n(f.data(),f. size(), false);
+
+    std::queue<numpy::position> queue;
+    const unsigned N = ref.size();
+    const unsigned N2 = Bc.size();
+    const numpy::position centre = central_position(Bc);
+    for (int d = 0; d != ref.ndims(); ++d) {
+        if (ref.dim(d) == 0) continue;
+        numpy::position pos;
+        pos.nd_ = ref.ndims();
+        for (int di = 0; di != ref.ndims(); ++di) pos.position_[di] = 0;
+
+        for (int i = 0; i != N/ref.dim(d); ++i) {
+            // This pushes back corners/edges multiple times.
+            // Oh well.
+            pos.position_[d] = 0;
+            if (!ref.at(pos)) {
+                f.at(pos) = true;
+                queue.push(pos);
+            }
+            pos.position_[d] = ref.dim(d) - 1;
+            if (!ref.at(pos)) {
+                f.at(pos) = true;
+                queue.push(pos);
+            }
+
+            for (int j = 0; j != ref.ndims() - 1; ++j) {
+                if (j == d) ++j;
+                if (pos.position_[j] < ref.dim(j)) {
+                    ++pos.position_[j];
+                    break;
+                }
+                pos.position_[j] = 0;
+            }
+        }
+    }
+    while (!queue.empty()) {
+        numpy::position pos = queue.front();
+        queue.pop();
+        numpy::aligned_array<bool>::iterator startc = Bc.begin();
+        for (int j = 0; j != N2; ++j, ++startc) {
+            if (*startc) {
+                numpy::position npos;
+                npos = pos + startc.position() - centre;
+                if (ref.validposition(npos) && !ref.at(npos) && !f.at(npos)) {
+                    f.at(npos) = true;
+                    queue.push(npos);
+                }
+            }
+        }
+    }
+    for (bool* start = f.data(), *past = f.data() + f.size(); start != past; ++ start) {
+        *start = !*start;
+    }
+}
+
+PyObject* py_close_holes(PyObject* self, PyObject* args) {
+    PyArrayObject* ref;
+    PyArrayObject* Bc;
+    if (!PyArg_ParseTuple(args,"OO", &ref, &Bc)) {
+        return NULL;
+    }
+    PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(ref->nd,ref->dimensions,PyArray_TYPE(ref));
+    if (!res_a) return NULL;
+    if (PyArray_TYPE(ref) != NPY_BOOL || PyArray_TYPE(Bc) != NPY_BOOL) {
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
+    }
+    close_holes(numpy::aligned_array<bool>(ref), numpy::aligned_array<bool>(res_a), numpy::aligned_array<bool>(Bc));
+    return PyArray_Return(res_a);
+}
+
 struct MarkerInfo { 
     int cost;
     int idx;
@@ -215,6 +288,7 @@ PyMethodDef methods[] = {
   {"dilate",(PyCFunction)py_dilate, METH_VARARGS, NULL},
   {"erode",(PyCFunction)py_erode, METH_VARARGS, NULL},
   {"cwatershed",(PyCFunction)py_cwatershed, METH_VARARGS, NULL},
+  {"close_holes",(PyCFunction)py_close_holes, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 
