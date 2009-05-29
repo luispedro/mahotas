@@ -41,6 +41,27 @@ position operator - (const position& a, const position& b) {
     return res;
 }
 
+bool operator == (const position& a, const position& b) {
+    if (a.nd_ != b.nd_) return false;
+    for (int i = 0; i != a.nd_; ++i) if (a.position_[i] != b.position_[i]) return false;
+    return true;
+}
+
+bool operator != (const position& a, const position b) {
+    return !(a == b);
+}
+
+template <typename T>
+T& operator << (T& out, const numpy::position& p) {
+    out << "[";
+    for (int d = 0; d != p.nd_; ++d) {
+        out << p.position_[d] << ":";
+    }
+    out << "]";
+    return out;
+}
+
+
 template <typename BaseType>
 struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
     protected:

@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdio>
 #include <limits>
+#include <iostream>
 
 #include "array.hpp"
 #include "dispatch.hpp"
@@ -23,6 +24,21 @@ template <typename T>
 numpy::position central_position(const numpy::array_base<T>& array) {
     numpy::position res(array.raw_dims(), array.ndims());
     for (int i = 0, nd = array.ndims(); i != nd; ++i) res.position_[i] /= 2;
+    return res;
+}
+
+template <typename T>
+std::vector<numpy::position> neighbours(const numpy::aligned_array<T>& Bc, bool include_centre = false) {
+    numpy::position centre = central_position(Bc);
+    const unsigned N = Bc.size();
+    typename numpy::aligned_array<T>::const_iterator startc = Bc.begin();
+    std::vector<numpy::position> res;
+    for (unsigned i = 0; i != N; ++i, ++startc) {
+        if (!*startc) continue;
+        if (startc.position() != centre || include_centre) {
+            res.push_back(startc.position() - centre);
+        }
+    }
     return res;
 }
 
@@ -116,8 +132,8 @@ void close_holes(numpy::aligned_array<bool> ref, numpy::aligned_array<bool> f, n
 
     std::vector<numpy::position> stack;
     const unsigned N = ref.size();
-    const unsigned N2 = Bc.size();
-    const numpy::position centre = central_position(Bc);
+    const std::vector<numpy::position> Bc_neighbours = neighbours(Bc);
+    const unsigned N2 = Bc_neighbours.size();
     for (int d = 0; d != ref.ndims(); ++d) {
         if (ref.dim(d) == 0) continue;
         numpy::position pos;
@@ -149,15 +165,12 @@ void close_holes(numpy::aligned_array<bool> ref, numpy::aligned_array<bool> f, n
     while (!stack.empty()) {
         numpy::position pos = stack.back();
         stack.pop_back();
-        numpy::aligned_array<bool>::iterator startc = Bc.begin();
+        std::vector<numpy::position>::const_iterator startc = Bc_neighbours.begin();
         for (int j = 0; j != N2; ++j, ++startc) {
-            if (*startc) {
-                numpy::position npos;
-                npos = pos + startc.position() - centre;
-                if (ref.validposition(npos) && !ref.at(npos) && !f.at(npos)) {
-                    f.at(npos) = true;
-                    stack.push_back(npos);
-                }
+            numpy::position npos = pos + *startc;
+            if (ref.validposition(npos) && !ref.at(npos) && !f.at(npos)) {
+                f.at(npos) = true;
+                stack.push_back(npos);
             }
         }
     }
