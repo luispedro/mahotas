@@ -219,8 +219,10 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
     int idx = 0;
 
     numpy::aligned_array<BaseType> cost = array_like(array);
+    Py_XDECREF(cost.raw_array());
     std::fill_n(cost.data(),cost.size(),std::numeric_limits<BaseType>::max());
     numpy::aligned_array<bool> status((PyArrayObject*)PyArray_SimpleNew(array.ndims(),const_cast<npy_intp*>(array.raw_dims()),NPY_BOOL));
+    Py_XDECREF(status.raw_array());
     std::fill_n(status.data(),status.size(),false);
     std::priority_queue<MarkerInfo> hqueue;
      
