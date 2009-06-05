@@ -1,5 +1,6 @@
 import morph.morph
 import numpy as np 
+import sys
 
 def test_watershed():
     S = np.array([
@@ -24,6 +25,7 @@ def test_watershed():
         M = M.astype(dtype)
         S = S.astype(dtype)
         W = morph.morph.cwatershed(2-S,M)
+        assert sys.getrefcount(W) == 2
         assert np.all(W == np.array([[1, 1, 1, 1],
                [1, 1, 1, 1],
                [1, 1, 1, 1],

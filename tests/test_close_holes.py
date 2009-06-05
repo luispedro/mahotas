@@ -1,5 +1,6 @@
 import numpy as np
 import morph.morph
+import sys
 
 def test_close_holes_simple():
     img = np.zeros((64,64),bool)
@@ -9,3 +10,4 @@ def test_close_holes_simple():
     holed[12,12] = True
     img[12,12] = True
     assert np.all( morph.close_holes(holed) == img)
+    assert sys.getrefcount(holed) == 2
