@@ -58,7 +58,7 @@ def fullhistogram(img):
         Only handles unsigned integer arrays.
     """
     img = np.ascontiguousarray(img)
-    if img.dtype is np.bool:
+    if img.dtype == np.bool:
         ones = img.sum()
         zeros = img.size - ones
         return np.array([zeros, ones], np.uintc)

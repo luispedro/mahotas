@@ -31,3 +31,10 @@ def test_fullhistogram_random():
     assert hist.sum() == A.size
     assert len(hist.shape) == 1
 
+def test_fullhistogram_boolean():
+    np.random.seed(123)
+    A = (np.random.rand(128,128) > .5)
+    H = fullhistogram(A)
+    assert H[0] == (~A).sum()
+    assert H[1] == A.sum()
+
