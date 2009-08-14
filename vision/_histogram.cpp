@@ -82,6 +82,6 @@ extern "C"
 void init_histogram()
   {
     import_array();
-    (void)Py_InitModule("_histogram", methods);
+    (void)Py_InitModule3("_histogram", methods, "INTERNAL MODULE. DO NOT CALL DIRECTLY!");
   }
 
