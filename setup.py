@@ -31,15 +31,15 @@ On linux, the package is often called python-setuptools'''
     exit(1)
 import numpy.distutils.core as numpyutils
 
-histogram = numpyutils.Extension('vision/_histogram', sources = ['vision/_histogram.cpp'])
+histogram = numpyutils.Extension('pit/_histogram', sources = ['pit/_histogram.cpp'])
 ext_modules = [histogram]
 
 packages = setuptools.find_packages()
 if 'tests' in packages: packages.remove('tests')
 
-numpyutils.setup(name = 'vision',
+numpyutils.setup(name = 'pit',
       version = '0.1',
-      description = 'Vision',
+      description = 'Python Image Processing Toolkit',
       author = 'Luís Pedro Coelho',
       author_email = 'lpc@mcu.edu',
       url = 'http://luispedro.org/pyvision',

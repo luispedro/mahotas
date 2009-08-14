@@ -1,5 +1,5 @@
 import numpy as np
-from vision.histogram import fullhistogram
+from pit.histogram import fullhistogram
 
 def test_fullhistogram():
     A100 = np.arange(100).reshape((10,10)).astype(np.uint32)

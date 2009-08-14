@@ -1,6 +1,6 @@
 import numpy as np
-import vision
-from vision.thresholding import otsu
+import pit
+from pit.thresholding import otsu
 
 def test_otsu():
     np.random.seed(123)
