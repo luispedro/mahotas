@@ -19,6 +19,12 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+'''
+Histogram
+
+    * fullhistogram(): Compute the full histogram for an image.
+'''
+
 from __future__ import division
 import numpy as np
 from . import _histogram
@@ -52,6 +58,11 @@ def fullhistogram(img):
         Only handles unsigned integer arrays.
     """
     img = np.ascontiguousarray(img)
+    if img.dtype is np.bool:
+        ones = img.sum()
+        zeros = img.size - ones
+        return np.array([zeros, ones], np.uintc)
+
     if img.dtype not in (np.uint8, np.uint16, np.uint32):
         raise ValueError, 'vision.fullhistogram: not an unsigned integer type.'
     histogram = np.zeros(img.max() + 1, np.uintc)
