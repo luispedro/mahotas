@@ -20,32 +20,43 @@
 #  THE SOFTWARE.
 
 from __future__ import division
-try:
-    import setuptools
-except:
-    print '''
-setuptools not found.
+import numpy as np
+from . import _histogram
 
-On linux, the package is often called python-setuptools'''
-    from sys import exit
-    exit(1)
-import numpy.distutils.core as numpyutils
+__all__ = ['fullhistogram']
 
-histogram = numpyutils.Extension('vision/_histogram', sources = ['vision/_histogram.cpp'])
-ext_modules = [histogram]
+def fullhistogram(img):
+    """
+    hist = fullhistogram(img)
 
-packages = setuptools.find_packages()
-if 'tests' in packages: packages.remove('tests')
+    Return a histogram with bins
+        0, 1, ..., img.max()
 
-numpyutils.setup(name = 'vision',
-      version = '0.1',
-      description = 'Vision',
-      author = 'Luís Pedro Coelho',
-      author_email = 'lpc@mcu.edu',
-      url = 'http://luispedro.org/pyvision',
-      packages = packages,
-      ext_modules = ext_modules,
-      )
+    After calling this function, it will be true that
+
+        hist[i] == (img == i).sum()
+
+    for all i.
+
+    Inputs
+    ------
+        * img: an array of an unsigned type
+            (or something that can be converted to an array)
+
+    Outputs
+    -------
+        * hist: an array (of type numpy.uint32)
+
+    Limitations
+    -----------
+        Only handles unsigned integer arrays.
+    """
+    img = np.ascontiguousarray(img)
+    if img.dtype not in (np.uint8, np.uint16, np.uint32):
+        raise ValueError, 'vision.fullhistogram: not an unsigned integer type.'
+    histogram = np.zeros(img.max() + 1, np.uintc)
+    _histogram.histogram(img, histogram)
+    return histogram
 
 
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
