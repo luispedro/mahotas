@@ -1,0 +1,79 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2008-2009, Luís Pedro Coelho <lpc@cmu.edu>
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+#  all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#  THE SOFTWARE.
+
+'''
+Thresholding Module
+===================
+
+Thresholding functions:
+    * otsu(): Otsu method
+'''
+
+from __future__ import division
+import numpy as np
+from .histogram import fullhistogram
+__all__ = [
+        'otsu',
+    ]
+
+
+def otsu(img, ignore_zeros=False):
+    """
+    T = otsu(img, ignore_zeros=False)
+
+    Calculate a threshold according to the Otsu method.
+
+    Inputs
+    ------
+        * img: an image as a numpy array. This should be of an unsigned
+            integer type.
+        * ignore_zeros: whether to ignore any zero-valued pixels
+            (default: False)
+    Outputs
+    -------
+        T: the threshold as an integer
+    """
+# Calculated according to CVonline:
+# http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/MORSE/threshold.pdf
+    hist = fullhistogram(img)
+    hist = hist.astype(np.double)
+    if ignore_zeros:
+        hist[0] = 0
+    Ng = len(hist)
+    nB = np.cumsum(hist)
+    nO = nB[-1]-nB
+    mu_B = 0
+    mu_O = (np.arange(1, Ng)*hist[1:]).sum()/hist[1:].sum()
+    best = nB[0]*nO[0]*(mu_B-mu_O)*(mu_B-mu_O)
+    bestT = 0
+
+    for T in xrange(1, Ng):
+        if nB[T] == 0: continue
+        if nO[T] == 0: break
+        mu_B = (mu_B*nB[T-1] + T*hist[T]) / nB[T]
+        mu_O = (mu_O*nO[T-1] - T*hist[T]) / nO[T]
+        sigma_between = nB[T]*nO[T]*(mu_B-mu_O)*(mu_B-mu_O)
+        if sigma_between > best:
+            best = sigma_between
+            bestT = T
+    return bestT
+
+# vim: set ts=4 sts=4 sw=4 expandtab smartindent:
