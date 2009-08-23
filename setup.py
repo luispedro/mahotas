@@ -38,7 +38,7 @@ packages = setuptools.find_packages()
 if 'tests' in packages: packages.remove('tests')
 
 numpyutils.setup(name = 'pit',
-      version = '0.1',
+      version = '0.0.1',
       description = 'Python Image Processing Toolkit',
       author = 'Luís Pedro Coelho',
       author_email = 'lpc@mcu.edu',
