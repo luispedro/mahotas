@@ -1,0 +1,9 @@
+MANIFEST.in
+setup.py
+morph/__init__.py
+morph/_morph.cpp
+morph/morph.py
+pymorph_.egg-info/PKG-INFO
+pymorph_.egg-info/SOURCES.txt
+pymorph_.egg-info/dependency_links.txt
+pymorph_.egg-info/top_level.txt
