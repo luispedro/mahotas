@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2009, Luís Pedro Coelho <lpc@cmu.edu>
+# vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -32,20 +33,21 @@ On linux, the package is often called python-setuptools'''
 import numpy.distutils.core as numpyutils
 
 histogram = numpyutils.Extension('pit/_histogram', sources = ['pit/_histogram.cpp'])
+morph_src = map(lambda F: 'morph/'+F,['_morph.cpp'])
+morph = numpyutils.Extension('morph._morph', sources = morph_src, extra_compile_args=['-Wno-sign-compare'])
+
 ext_modules = [histogram]
 
 packages = setuptools.find_packages()
 if 'tests' in packages: packages.remove('tests')
 
-numpyutils.setup(name = 'pit',
+numpyutils.setup(name = 'mahotas',
       version = '0.0.1',
-      description = 'Python Image Processing Toolkit',
+      description = 'Mahotas: Python Image Processing Library',
       author = 'Luís Pedro Coelho',
-      author_email = 'lpc@mcu.edu',
-      url = 'http://luispedro.org/pyvision',
+      author_email = 'lpc@cmu.edu',
+      url = 'http://luispedro.org/software/mahotas',
       packages = packages,
       ext_modules = ext_modules,
       )
 
-
-# vim: set ts=4 sts=4 sw=4 expandtab smartindent:
