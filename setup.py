@@ -33,9 +33,10 @@ On linux, the package is often called python-setuptools'''
 import numpy.distutils.core as numpyutils
 
 histogram = numpyutils.Extension('mahotas/_histogram', sources = ['mahotas/_histogram.cpp'])
-morph_src = ['mahotas/_morph.cpp']
-morph = numpyutils.Extension('mahotas._morph', sources = morph_src, extra_compile_args=['-Wno-sign-compare'])
-ext_modules = [histogram, morph]
+morph = numpyutils.Extension('mahotas._morph', sources = ['mahotas/_morph.cpp'], extra_compile_args=['-Wno-sign-compare'])
+bbox = numpyutils.Extension('mahotas/_bbox', sources = ['mahotas/_bbox.cpp'])
+
+ext_modules = [histogram, morph, bbox]
 
 packages = setuptools.find_packages()
 if 'tests' in packages: packages.remove('tests')
