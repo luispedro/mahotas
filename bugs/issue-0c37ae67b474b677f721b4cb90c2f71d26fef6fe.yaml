@@ -1,0 +1,27 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Try common-case-fast-exceptions-later optimisation for dilate/erode
+desc: |-
+  Most of the complexity in dilate()/erode() is in handling the boundaries.
+  
+  Perhaps a good optimisation would be:
+  
+  for pixel not near borders:
+      really fast loop with no ifs
+  
+  for borders:
+     complicated loop with a bunch of weird corner cases.
+type: :task
+component: mahotas
+release: 
+reporter: Luis Pedro Coelho <lpc@cmu.edu>
+status: :unstarted
+disposition: 
+creation_time: 2010-01-05 17:23:28.852077 Z
+references: []
+
+id: 0c37ae67b474b677f721b4cb90c2f71d26fef6fe
+log_events: 
+- - 2010-01-05 17:23:30.340368 Z
+  - Luis Pedro Coelho <lpc@cmu.edu>
+  - created
+  - ""

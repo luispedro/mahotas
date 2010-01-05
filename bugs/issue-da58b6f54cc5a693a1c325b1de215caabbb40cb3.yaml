@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Have a single _mahotas module
+desc: |-
+  Have a single _mahotas module instead of a bunch of small files.
+  
+  This should make loading faster if you use more than one function (without any
+  real cost to those that don't, I believe).
+  
+  Probably just a matter of fiddling with setup.py too.
+type: :feature
+component: mahotas
+release: 
+reporter: Luis Pedro Coelho <lpc@cmu.edu>
+status: :unstarted
+disposition: 
+creation_time: 2010-01-05 17:29:34.476084 Z
+references: []
+
+id: da58b6f54cc5a693a1c325b1de215caabbb40cb3
+log_events: 
+- - 2010-01-05 17:29:35.444024 Z
+  - Luis Pedro Coelho <lpc@cmu.edu>
+  - created
+  - ""
