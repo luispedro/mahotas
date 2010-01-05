@@ -5,8 +5,8 @@
 #include <limits>
 #include <iostream>
 
-#include "array.hpp"
-#include "dispatch.hpp"
+#include "numpypp/array.hpp"
+#include "numpypp/dispatch.hpp"
 
 extern "C" {
     #include <Python.h>
