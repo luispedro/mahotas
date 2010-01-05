@@ -17,7 +17,9 @@ namespace{
 
 const char TypeErrorMsg[] = 
     "Type not understood. "
-    "This is caused by either a direct call to _morph (which is dangerous: types are not checked!) or a bug in morph.py.\n";
+    "This is caused by either a direct call to _bbox (which is dangerous: types are not checked!) or a bug in bbox.py.\n"
+    "If you suspect the latter, please report it to the mahotas developpers.";
+
 
 template<typename T>
 void bbox(numpy::aligned_array<T> array, numpy::index_type* extrema) {
@@ -36,7 +38,7 @@ void bbox(numpy::aligned_array<T> array, numpy::index_type* extrema) {
 
 
 template<typename T>
-void fast_bbox2(const T* array, unsigned N0, unsigned N1, numpy::index_type* extrema) {
+void carray_bbox(const T* array, unsigned N0, unsigned N1, numpy::index_type* extrema) {
     for (unsigned y = 0; y != N0; ++y) {
         for (unsigned x = 0; x != N1; ++x, ++array)
             if (*array) {
@@ -52,10 +54,10 @@ void fast_bbox2(const T* array, unsigned N0, unsigned N1, numpy::index_type* ext
 PyObject* py_bbox(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     if (!PyArg_ParseTuple(args,"O", &array)) return NULL;
-    //if (!PyArray_CHECK(array)) { 
-    //    PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
-    //    return 0;
-    //}
+    if (!PyArray_Check(array)) { 
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return 0;
+    }
     npy_intp dims[1];
     dims[0] = 2 *array->nd;
     PyArrayObject* extrema = (PyArrayObject*)PyArray_SimpleNew(1, dims, numpy::index_type_number);
@@ -69,12 +71,12 @@ PyObject* py_bbox(PyObject* self, PyObject* args) {
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
         if (PyArray_ISCARRAY_RO(array) && array->nd == 2) { \
-            fast_bbox2<type>(static_cast<const type*>(PyArray_DATA(array)), PyArray_DIM(array,0), PyArray_DIM(array, 1), extrema_v); \
+            carray_bbox<type>(static_cast<const type*>(PyArray_DATA(array)), PyArray_DIM(array,0), PyArray_DIM(array, 1), extrema_v); \
         } else { \
             bbox<type>(numpy::aligned_array<type>(array), extrema_v); \
         }
 
-        HANDLE_UTYPES();
+        HANDLE_INTEGER_TYPES();
 #undef HANDLE
         default:
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);

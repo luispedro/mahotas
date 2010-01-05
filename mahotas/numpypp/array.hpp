@@ -1,6 +1,6 @@
-/* Copyright 2008 (C)
+/* Copyright 2008-2010 (C)
  * Luís Pedro Coelho <lpc@cmu.edu>
- * License GPL Version 2.
+ * License GPL Version 2, or later.
  */
 
 #include <iterator>
@@ -13,6 +13,8 @@ extern "C" {
 #include <stdio.h>
 
 namespace numpy {
+typedef npy_intp index_type;
+const unsigned index_type_number = NPY_INTP;
 
 struct position {
     position()
@@ -21,6 +23,7 @@ struct position {
     position(const npy_intp* pos, int nd)
         :nd_(nd)
         { for (int i = 0; i != nd_; ++i) position_[i]=pos[i]; }
+    npy_intp operator [] (unsigned pos) const { return this->position_[pos]; }
     int nd_;
     npy_intp position_[NPY_MAXDIMS];
     bool operator == (const position& other) { return !std::memcmp(this->position_,other.position_,sizeof(this->position_[0])*this->nd_); }
