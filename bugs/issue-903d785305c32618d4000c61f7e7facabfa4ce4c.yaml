@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Finish merge
+desc: |-
+  Finish merge.
+  
+  Paths in tests are wrong.
+  
+  There are two licenses (GPL and BSD). Settle on one.
+type: :bugfix
+component: mahotas
+release: 
+reporter: Luis Pedro Coelho <lpc@cmu.edu>
+status: :unstarted
+disposition: 
+creation_time: 2010-01-05 16:36:16.568383 Z
+references: []
+
+id: 903d785305c32618d4000c61f7e7facabfa4ce4c
+log_events: 
+- - 2010-01-05 16:36:17.756012 Z
+  - Luis Pedro Coelho <lpc@cmu.edu>
+  - created
+  - ""
