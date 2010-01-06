@@ -1,0 +1,4 @@
+include mahotas/numpypp/*.hpp
+include mahotas/*cpp
+include mahotas/*py
+
