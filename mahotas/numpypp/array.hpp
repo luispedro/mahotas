@@ -103,6 +103,9 @@ struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
             return *this;
         }
 
+        int index(unsigned i) const { return index_rev(position_.nd_ - i - 1); }
+        int index_rev(unsigned i) const { return position_.position_[i]; }
+
         bool operator == (const iterator_base& other) { return this->position_ == other.position_; }
         bool operator != (const iterator_base& other) { return !(*this == other); }
 
@@ -236,6 +239,9 @@ struct aligned_array : public array_base<BaseType> {
 
         BaseType* data() {
             return reinterpret_cast<BaseType*>PyArray_DATA(this->array_);
+        }
+        const BaseType* data() const {
+            return reinterpret_cast<const BaseType*>PyArray_DATA(this->array_);
         }
         const BaseType* data(const position& pos) const {
             return reinterpret_cast<const BaseType*>(this->raw_data(pos));
