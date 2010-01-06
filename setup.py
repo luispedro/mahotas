@@ -45,7 +45,7 @@ if 'tests' in packages: packages.remove('tests')
 numpyutils.setup(name = 'mahotas',
       version = '0.0.1',
       description = 'Mahotas: Python Image Processing Library',
-      author = 'Luís Pedro Coelho',
+      author = 'Luis Pedro Coelho',
       author_email = 'lpc@cmu.edu',
       url = 'http://luispedro.org/software/mahotas',
       packages = packages,
