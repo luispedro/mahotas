@@ -1,3 +1,5 @@
+dist/
 build/
+mahotas.egg-info/
 *.pyc
 *.so
