@@ -10,8 +10,8 @@ type: :bugfix
 component: mahotas
 release: 
 reporter: Luis Pedro Coelho <lpc@cmu.edu>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2010-01-05 16:36:16.568383 Z
 references: []
 
@@ -21,3 +21,7 @@ log_events:
   - Luis Pedro Coelho <lpc@cmu.edu>
   - created
   - ""
+- - 2010-02-01 19:39:04.769577 Z
+  - Luis Pedro Coelho <lpc@cmu.edu>
+  - closed with disposition fixed
+  - All tests are clear now
