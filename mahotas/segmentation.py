@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008  Murphy Lab
+# Copyright (C) 2008-2010 Murphy Lab
 # Carnegie Mellon University
 # 
-# Written by Luís Pedro Coelho <lpc@cmu.edu>
+# Written by Luis Pedro Coelho <lpc@cmu.edu>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published

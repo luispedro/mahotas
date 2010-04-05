@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2009, Luís Pedro Coelho <lpc@cmu.edu>
+# Copyright (C) 2008-2010, Luis Pedro Coelho <lpc@cmu.edu>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
