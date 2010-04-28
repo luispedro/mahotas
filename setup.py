@@ -31,6 +31,7 @@ On linux, the package is often called python-setuptools'''
     from sys import exit
     exit(1)
 import numpy.distutils.core as numpyutils
+execfile('mahotas/mahotas_version.py')
 
 histogram = numpyutils.Extension('mahotas/_histogram', sources = ['mahotas/_histogram.cpp'])
 morph = numpyutils.Extension('mahotas._morph', sources = ['mahotas/_morph.cpp'], extra_compile_args=['-Wno-sign-compare'])
@@ -43,7 +44,7 @@ packages = setuptools.find_packages()
 if 'tests' in packages: packages.remove('tests')
 
 numpyutils.setup(name = 'mahotas',
-      version = '0.0.1',
+      version = __version__,
       description = 'Mahotas: Python Image Processing Library',
       author = 'Luis Pedro Coelho',
       author_email = 'lpc@cmu.edu',
