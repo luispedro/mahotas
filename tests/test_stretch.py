@@ -1,4 +1,4 @@
-from mahotas.pit import stretch
+from mahotas.stretch import stretch
 import numpy as np
 def test_stretch():
     np.random.seed(2323)
