@@ -243,9 +243,6 @@ struct aligned_array : public array_base<BaseType> {
         const BaseType* data() const {
             return reinterpret_cast<const BaseType*>PyArray_DATA(this->array_);
         }
-        const BaseType* data() const {
-            return reinterpret_cast<const BaseType*>PyArray_DATA(this->array_);
-        }
         const BaseType* data(const position& pos) const {
             return reinterpret_cast<const BaseType*>(this->raw_data(pos));
         }
