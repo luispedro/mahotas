@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2008-2010, Luis Pedro Coelho <lpc@cmu.edu>
+# vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -76,4 +77,42 @@ def otsu(img, ignore_zeros=False):
             bestT = T
     return bestT
 
-# vim: set ts=4 sts=4 sw=4 expandtab smartindent:
+
+def rc(img, ignore_zeros=False):
+    """
+    T = rc(img, ignore_zeros=False)
+    
+    Calculate a threshold according to the Riddler-Calvard method.
+    
+    Parameters
+    ----------
+      img : Image of any type
+      ignore_zeros : Whether to ignore zero valued pixels (default: False)
+    Returns
+    -------
+      T : threshold
+    """
+    hist = fullhistogram(img)
+    if ignore_zeros:
+        if hist[0] == img.size:
+            return 0
+        hist[0] = 0
+    N = hist.size
+
+    # Precompute most of what we need:
+    sum1 = np.cumsum(np.arange(N) * hist)
+    sum2 = np.cumsum(hist)
+    sum3 = np.flipud(np.cumsum(np.flipud(np.arange(N) * hist)))
+    sum4 = np.flipud(np.cumsum(np.flipud(hist)))
+
+    maxt = N-1
+    while hist[maxt] == 0:
+        maxt -= 1
+
+    res = maxt
+    t = 0
+    while t < min(maxt, res):
+        res = (sum1[t]/sum2[t] + sum3[t+1]/sum4[t+1])/2
+        t += 1
+    return res
+
