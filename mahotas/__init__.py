@@ -9,7 +9,6 @@ from .histogram import fullhistogram
 from .thresholding import otsu
 from .stretch import stretch
 import morph
-from .morph import *
+from .morph import close_holes, get_structuring_elem, dilate, erode, cwatershed
 from mahotas_version import __version__
 
-__doc__=morph.__doc__
