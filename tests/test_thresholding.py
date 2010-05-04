@@ -1,6 +1,5 @@
 import numpy as np
-import pit
-from pit.thresholding import otsu
+from mahotas.thresholding import otsu
 
 def test_otsu():
     np.random.seed(123)
