@@ -52,3 +52,10 @@ def test_cooccurence():
     assert np.all(mahotas.texture.cooccurence(f, 2) == brute_force(f, 1, 0))
     assert np.all(mahotas.texture.cooccurence(f, 3) == brute_force(f, 1, -1))
 
+def test_haralick():
+    np.random.seed(123)
+    f = np.random.rand(1024, 1024)
+    f = (f * 255).astype(np.int32)
+    feats = mahotas.texture.haralick(f)
+    assert not np.any(np.isnan(feats))
+

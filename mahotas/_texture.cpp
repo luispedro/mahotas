@@ -69,10 +69,33 @@ PyObject* py_cooccurent(PyObject* self, PyObject* args) {
     }
     Py_RETURN_NONE;
 }
+PyObject* py_compute_plus_minus(PyObject* self, PyObject* args) {
+    PyArrayObject* p_;
+    PyArrayObject* px_plus_y_;
+    PyArrayObject* px_minus_y_;
+    if (!PyArg_ParseTuple(args,"OOO", &p_, &px_plus_y_, &px_minus_y_)) return NULL;
+    numpy::aligned_array<double> p(p_);
+    numpy::aligned_array<double> px_plus_y(px_plus_y_);
+    numpy::aligned_array<double> px_minus_y(px_minus_y_);
+    const int N = p.size(0);
+    if (p.size(1) != unsigned(N)) {
+        PyErr_SetString(PyExc_RuntimeError, "compute_plus_minus: p is not square.");
+        return NULL;
+    }
+    for (int i = 0; i != N; ++i) {
+        for (int j = 0; j != N; ++j) {
+            px_plus_y.at(i+j) += p.at(i,j);
+            px_minus_y.at(std::abs(i-j)) += p.at(i,j);
+        }
+    }
+
+    Py_RETURN_NONE;
+}
 
 
 PyMethodDef methods[] = {
   {"cooccurence",(PyCFunction)py_cooccurent, METH_VARARGS, NULL},
+  {"compute_plus_minus",(PyCFunction)py_compute_plus_minus, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 
