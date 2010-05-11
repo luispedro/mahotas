@@ -28,6 +28,28 @@ struct position {
     npy_intp position_[NPY_MAXDIMS];
     bool operator == (const position& other) { return !std::memcmp(this->position_,other.position_,sizeof(this->position_[0])*this->nd_); }
     bool operator != (const position& other) { return !(*this == other); }
+
+    static position from1(npy_intp p0) {
+        position res;
+        res.nd_ = 1;
+        res.position_[0] = p0;
+        return res;
+    }
+    static position from2(npy_intp p0, npy_intp p1) {
+        position res;
+        res.nd_ = 2;
+        res.position_[0] = p0;
+        res.position_[1] = p1;
+        return res;
+    }
+    static position from3(npy_intp p0, npy_intp p1, npy_intp p2) {
+        position res;
+        res.nd_ = 3;
+        res.position_[0] = p0;
+        res.position_[1] = p1;
+        res.position_[2] = p2;
+        return res;
+    }
 };
 
 position operator + (const position& a, const position& b) {
@@ -163,11 +185,15 @@ class array_base {
         }
         
         unsigned size() const { return PyArray_SIZE(array_); }
+        unsigned size(unsigned i) const {
+            return this->dim(i);
+        }
         unsigned ndims() const { return PyArray_NDIM(array_); }
         unsigned dim(unsigned i) const {
             assert(i < this->ndims());
             return PyArray_DIM(array_,i);
         }
+
 
         PyArrayObject* raw_array() const { return array_; }
         void* raw_data() const { return PyArray_DATA(array_); }
@@ -190,6 +216,10 @@ class array_base {
             memcpy(&val,datap,sizeof(BaseType));
             return val;
         }
+        npy_intp raw_stride(npy_intp i) const {
+            return PyArray_STRIDE(this->array_, i);
+        }
+
 };
 
 template<typename BaseType>
@@ -211,6 +241,7 @@ struct array : public array_base<BaseType> {
             }
             return res;
         }
+
 };
 
 template <typename BaseType>
@@ -237,6 +268,10 @@ struct aligned_array : public array_base<BaseType> {
             return res;
         }
 
+        npy_intp stride(npy_intp i) const {
+            return this->raw_stride(i)/sizeof(BaseType);
+        }
+
         BaseType* data() {
             return reinterpret_cast<BaseType*>PyArray_DATA(this->array_);
         }
@@ -256,6 +291,25 @@ struct aligned_array : public array_base<BaseType> {
         }
         BaseType at(const position& pos) const {
             return *data(pos);
+        }
+
+        BaseType at(int p0) const {
+            return *static_cast<BaseType*>(PyArray_GETPTR1(this->array_, p0));
+        }
+        BaseType& at(int p0) {
+            return *static_cast<BaseType*>(PyArray_GETPTR1(this->array_, p0));
+        }
+        BaseType at(int p0, int p1) const {
+            return *static_cast<BaseType*>(PyArray_GETPTR2(this->array_, p0, p1));
+        }
+        BaseType& at(int p0, int p1) {
+            return *static_cast<BaseType*>(PyArray_GETPTR2(this->array_, p0, p1));
+        }
+        BaseType at(int p0, int p1, int p2) const {
+            return *static_cast<BaseType*>(PyArray_GETPTR3(this->array_, p0, p1, p2));
+        }
+        BaseType& at(int p0, int p1, int p2) {
+            return *static_cast<BaseType*>(PyArray_GETPTR3(this->array_, p0, p1, p2));
         }
 };
 
