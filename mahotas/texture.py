@@ -41,6 +41,9 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     only reason why you'd want the buggy behaviour is if you want to match
     another implementation.
 
+    This implementation does not compute the 14-th feature described by
+    Haralick (a patch for it would be welcome).
+
     Parameters
     ----------
       f : A 2-D integer image.
