@@ -56,7 +56,8 @@ PyObject* py_cooccurent(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* result;
     int diagonal;
-    if (!PyArg_ParseTuple(args,"OOi", &array, &result, &diagonal)) return NULL;
+    int symmetric;
+    if (!PyArg_ParseTuple(args,"OOii", &array, &result, &diagonal, &symmetric)) return NULL;
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
     cooccurence<type>(numpy::aligned_array<long>(result), numpy::aligned_array<type>(array), diagonal);\
@@ -66,6 +67,23 @@ PyObject* py_cooccurent(PyObject* self, PyObject* args) {
         default:
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
+    }
+    if (symmetric) {
+        numpy::aligned_array<long> cmatrix(result);
+        const int s0 = cmatrix.size(0);
+        const int s1 = cmatrix.size(0);
+
+        if (s0 != s1) {
+            PyErr_SetString(PyExc_RuntimeError, "mahotas._texture.cooccurence: Results matrix not square.");
+            return NULL;
+        }
+        for (int y = 0; y != s0; ++y) {
+            for (int x = y; x < s1; ++x) {
+                long total = cmatrix.at(y,x) + cmatrix.at(x,y);
+                cmatrix.at(y,x) = total;
+                cmatrix.at(x,y) = total;
+            }
+        }
     }
     Py_RETURN_NONE;
 }

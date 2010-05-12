@@ -53,22 +53,22 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     '''
 
     feats = np.zeros((4, 13), np.double)
-    fm = f.max()
-    cmat = np.empty((fm+1, fm+1), np.long)
-    k = np.arange(fm+1)
+    fm1 = f.max() + 1
+    cmat = np.empty((fm1, fm1), np.long)
+    k = np.arange(fm1)
     k2 = k**2
-    tk = np.arange(2*(fm+1))
+    tk = np.arange(2*fm1)
     tk2 = tk**2
-    i,j = np.mgrid[:(fm+1),:(fm+1)]
+    i,j = np.mgrid[:fm1,:fm1]
     ij = i*j
     i_j2_p1 = (i-j)**2
     i_j2_p1 += 1
     i_j2_p1 = 1./i_j2_p1
     i_j2_p1 = i_j2_p1.ravel()
-    px_plus_y = np.empty(2*(fm+1), np.double)
-    px_minus_y = np.empty(fm+1, np.double)
+    px_plus_y = np.empty(2*fm1, np.double)
+    px_minus_y = np.empty(fm1, np.double)
     for dir in xrange(4):
-        cooccurence(f, dir, cmat)
+        cooccurence(f, dir, cmat, symmetric=True)
         if ignore_zeros:
             cmat[1] = 0
             cmat[:,1] = 0
@@ -128,7 +128,7 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     return feats
 
 
-def cooccurence(f, direction, output=None):
+def cooccurence(f, direction, output=None, symmetric=True):
     '''
     cooccurence_matrix = cooccurence(f, direction, output={new matrix})
 
@@ -140,6 +140,7 @@ def cooccurence(f, direction, output=None):
       direction : Direction as index into (horizontal [default], diagonal
                   [nw-se], vertical, diagonal [ne-sw])
       output : A np.long 2-D array for the result.
+      symmetric : Whether return a symmetric matrix (default: False)
     Returns
     -------
       cooccurence_matrix : cooccurence matrix
@@ -158,6 +159,6 @@ def cooccurence(f, direction, output=None):
     elif direction == 3:
         f = f[:, ::-1]
     diagonal = (direction in (1,3))
-    _texture.cooccurence(f, output, diagonal)
+    _texture.cooccurence(f, output, diagonal, symmetric)
     return output
 
