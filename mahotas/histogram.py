@@ -65,7 +65,7 @@ def fullhistogram(img):
         return np.array([zeros, ones], np.uintc)
 
     if img.dtype not in (np.uint8, np.uint16, np.uint32):
-        raise ValueError, 'vision.fullhistogram: not an unsigned integer type.'
+        raise ValueError, 'mahotas.fullhistogram: not an unsigned integer type.'
     histogram = np.zeros(img.max() + 1, np.uintc)
     _histogram.histogram(img, histogram)
     return histogram
