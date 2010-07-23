@@ -12,3 +12,4 @@ import morph
 from .morph import close_holes, get_structuring_elem, dilate, erode, cwatershed
 from mahotas_version import __version__
 
+import segmentation
