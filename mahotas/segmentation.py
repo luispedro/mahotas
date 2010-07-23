@@ -24,7 +24,6 @@
 
 from __future__ import division
 from scipy import ndimage
-import nucleidetection
 
 __all__ = [
     'gvoronoi',
