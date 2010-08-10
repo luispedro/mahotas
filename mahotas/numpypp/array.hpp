@@ -202,7 +202,7 @@ class array_base {
         bool validposition(const position& pos) const {
             if (ndims() != pos.nd_) return false;
             for (int i=0; i != pos.nd_; ++i) {
-                if (pos.position_[i] < 0 || pos.position_[i] >= this->dim(i)) return false;
+                if (pos[i] < 0 || pos[i] >= this->dim(i)) return false;
             }
             return true;
         }
@@ -293,6 +293,40 @@ struct aligned_array : public array_base<BaseType> {
             return *data(pos);
         }
 
+        BaseType& at_flat(npy_intp p) {
+            if (PyArray_ISCARRAY(this->array_)) return data()[p];
+
+            BaseType* base = this->data();
+            for (int d = this->ndims() - 1; d >= 0; --d) {
+                int c = (p % this->dim(d));
+                p /= this->dim(d-1);
+                base += c * this->stride(d);
+            }
+            return *base;
+        }
+        BaseType at_flat(npy_intp p) const {
+            return const_cast< aligned_array<BaseType>* >(this)->at_flat(p);
+        }
+
+        int pos_to_flat(const position& pos) const {
+            npy_intp res = 0;
+            int cummul = 1;
+            for (int d = this->ndims() -1; d >= 0; --d) {
+                res += pos.position_[d] * cummul;
+                cummul *= this->dim(d);
+            }
+            return res;
+        }
+        numpy::position flat_to_pos(int p) const {
+            numpy::position res;
+            res.nd_ = this->ndims();
+            for (int d = this->ndims() - 1; d >= 0; --d) {
+                 res.position_[d] = (p % this->dim(d));
+                 p /= this->dim(d);
+            }
+            if (p) res.position_[0] += p * this->dim(0);
+            return res;
+        }
         BaseType at(int p0) const {
             return *static_cast<BaseType*>(PyArray_GETPTR1(this->array_, p0));
         }

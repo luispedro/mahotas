@@ -15,7 +15,7 @@ extern "C" {
 
 namespace{
 
-const char TypeErrorMsg[] = 
+const char TypeErrorMsg[] =
     "Type not understood. "
     "This is caused by either a direct call to _morph (which is dangerous: types are not checked!) or a bug in morph.py.\n";
 
@@ -195,14 +195,16 @@ PyObject* py_close_holes(PyObject* self, PyObject* args) {
     return PyArray_Return(res_a);
 }
 
-struct MarkerInfo { 
+struct MarkerInfo {
     int cost;
     int idx;
-    numpy::position pos;
-    MarkerInfo(int cost, int idx, numpy::position pos)
-        :cost(cost),
-        idx(idx),
-        pos(pos) {
+    int position;
+    int margin;
+    MarkerInfo(int cost, int idx, int position, int margin)
+        :cost(cost)
+        ,idx(idx)
+        ,position(position)
+        ,margin(margin) {
         }
     bool operator < (const MarkerInfo& other) const {
         // We want the smaller argument to compare higher, so we reverse the order here:
@@ -211,50 +213,94 @@ struct MarkerInfo {
     }
 };
 
+struct NeighbourElem {
+    NeighbourElem(int delta, int margin, const numpy::position& delta_position)
+        :delta(delta)
+        ,margin(margin)
+        ,delta_position(delta_position)
+        { }
+    int delta;
+    int margin;
+    numpy::position delta_position;
+};
+
 template<typename BaseType>
-void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* lines, numpy::array<BaseType> array, numpy::array<BaseType> markers, numpy::aligned_array<BaseType> Bc) {
+void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* lines, numpy::aligned_array<BaseType> array, numpy::aligned_array<BaseType> markers, numpy::aligned_array<BaseType> Bc) {
     const unsigned N = res.size();
     const unsigned N2 = Bc.size();
+    std::vector<NeighbourElem> neighbours;
     const numpy::position centre = central_position(Bc);
+    typename numpy::aligned_array<BaseType>::iterator Bi = Bc.begin();
+    for (int j = 0; j != N2; ++j, ++Bi) {
+        if (*Bi) {
+            numpy::position npos = Bi.position() - centre;
+            int margin = 0;
+            for (int d = 0; d != Bc.ndims(); ++d) {
+                margin = std::max<int>(std::abs(npos[d]), margin);
+            }
+            int delta = markers.pos_to_flat(npos);
+            if (!delta) continue;
+            neighbours.push_back(NeighbourElem(delta, margin, npos));
+        }
+    }
     int idx = 0;
 
-    numpy::aligned_array<BaseType> cost = array_like(array);
-    Py_XDECREF(cost.raw_array());
-    std::fill_n(cost.data(),cost.size(),std::numeric_limits<BaseType>::max());
-    numpy::aligned_array<bool> status((PyArrayObject*)PyArray_SimpleNew(array.ndims(),const_cast<npy_intp*>(array.raw_dims()),NPY_BOOL));
-    Py_XDECREF(status.raw_array());
-    std::fill_n(status.data(),status.size(),false);
+    std::vector<BaseType> cost(array.size());
+    std::fill(cost.begin(), cost.end(), std::numeric_limits<BaseType>::max());
+
+    std::vector<bool> status(array.size());
+    std::fill(status.begin(), status.end(),false);
+
     std::priority_queue<MarkerInfo> hqueue;
-     
-    typename numpy::array<BaseType>::iterator mpos = markers.begin();
+
+    typename numpy::aligned_array<BaseType>::iterator mpos = markers.begin();
     for (int i =0; i != N; ++i, ++mpos) {
         if (*mpos) {
             assert(markers.validposition(mpos.position()));
-            hqueue.push(MarkerInfo(array.at(mpos.position()),idx++,mpos.position()));
+            int margin = markers.size();
+            for (int d = 0; d != markers.ndims(); ++d) {
+                if (mpos.index(d) < margin) margin = mpos.index(d);
+                int rmargin = markers.dim(d) - mpos.index(d) - 1;
+                if (rmargin < margin) margin = rmargin;
+            }
+            hqueue.push(MarkerInfo(array.at(mpos.position()), idx++, markers.pos_to_flat(mpos.position()), margin));
             res.at(mpos.position()) = *mpos;
-            cost.at(mpos.position()) = array.at(mpos.position());
+            cost[markers.pos_to_flat(mpos.position())] = array.at(mpos.position());
         }
     }
 
     while (!hqueue.empty()) {
-        const numpy::position pos = hqueue.top().pos;
+        MarkerInfo next = hqueue.top();
         hqueue.pop();
-        status.at(pos) = true;
-        typename numpy::aligned_array<BaseType>::iterator Bi = Bc.begin();
-        for (int j = 0; j != N2; ++j, ++Bi) {
-            if (*Bi) {
-                numpy::position npos = pos + Bi.position() - centre;
-                if (status.validposition(npos)) {
-                    if (!status.at(npos)) {
-                        BaseType ncost = array.at(npos);
-                        if (ncost < cost.at(npos)) {
-                            cost.at(npos) = ncost;
-                            res.at(npos) = res.at(pos);
-                            hqueue.push(MarkerInfo(ncost,idx++,npos));
-                        }
-                    } else if (lines && res.at(pos) != res.at(npos) && !lines->at(npos)) {
-                        lines->at(pos) = true;
-                    }
+        if (status[next.position]) continue;
+        status[next.position] = true;
+        for (std::vector<NeighbourElem>::const_iterator neighbour = neighbours.begin(), past = neighbours.end(); neighbour != past; ++neighbour) {
+            numpy::index_type npos = next.position + neighbour->delta;
+            int nmargin = next.margin - neighbour->margin;
+            if (nmargin < 0) {
+                numpy::position pos = markers.flat_to_pos(next.position);
+                assert(markers.validposition(pos));
+                numpy::position npos = pos + neighbour->delta_position;
+                if (!markers.validposition(npos)) continue;
+
+
+                // we are good, but the margin might have been wrong. Recompute
+                nmargin = markers.size();
+                for (int d = 0; d != markers.ndims(); ++d) {
+                    if (npos[d] < nmargin) nmargin = npos[d];
+                    int rmargin = markers.dim(d) - npos[d] - 1;
+                    if (rmargin < nmargin) nmargin = rmargin;
+               }
+            }
+            assert(npos < cost.size());
+            if (!status[npos]) {
+                BaseType ncost = array.at_flat(npos);
+                if (ncost < cost[npos]) {
+                    cost[npos] = ncost;
+                    res.at_flat(npos) = res.at_flat(next.position);
+                    hqueue.push(MarkerInfo(ncost, idx++, npos, nmargin));
+                } else if (lines && res.at_flat(next.position) != res.at_flat(npos) && !lines->at_flat(npos)) {
+                    lines->at_flat(npos) = true;
                 }
             }
         }
@@ -280,7 +326,7 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
     }
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
-    cwatershed<type>(numpy::aligned_array<type>(res_a),lines_a,numpy::array<type>(array),numpy::array<type>(markers),numpy::aligned_array<type>(Bc));
+    cwatershed<type>(numpy::aligned_array<type>(res_a),lines_a,numpy::aligned_array<type>(array),numpy::aligned_array<type>(markers),numpy::aligned_array<type>(Bc));
         HANDLE_INTEGER_TYPES();
 #undef HANDLE
         default:
