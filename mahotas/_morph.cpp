@@ -350,6 +350,14 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
     return PyArray_Return(res_a);
 }
 
+struct HitMissNeighbour {
+    HitMissNeighbour(int delta, int value)
+        :delta(delta)
+        ,value(value)
+        { }
+    int delta;
+    int value;
+};
 
 template <typename T>
 void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, const numpy::aligned_array<T> Bc) {
@@ -358,14 +366,33 @@ void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, 
     const numpy::index_type N = input.size();
     const numpy::index_type N2 = Bc.size();
     const numpy::position centre = central_position(Bc);
+    int Bc_margin = 0;
+    for (int d = 0; d != Bc.ndims(); ++d) {
+        int cmargin = Bc.dim(d)/2;
+        if (cmargin > Bc_margin) Bc_margin = cmargin;
+    }
+
+    std::vector<HitMissNeighbour> neighbours;
+    const_iterator Bi = Bc.begin();
+    for (int j = 0; j != N2; ++j, ++Bi) {
+        if (*Bi != 2) {
+            numpy::position npos = Bi.position() - centre;
+            int delta = input.pos_to_flat(npos);
+            neighbours.push_back(HitMissNeighbour(delta, *Bi));
+        }
+    }
+
     const_iterator iter = input.begin();
     for (int i = 0; i != N; ++i, ++iter) {
+        if (margin_of(iter.position(), input) < Bc_margin) {
+            res.at_flat(i) = 0;
+            continue;
+        }
         T value = 1;
-        const_iterator iter2 = Bc.begin();
-        for (int j = 0; j != N2; ++j, ++iter2) {
-            if (*iter2 == 2) continue;
-            numpy::position npos = iter.position() + iter2.position() - centre;
-            if (!input.validposition(npos) || input.at(npos) != *iter2) {
+        for (std::vector<HitMissNeighbour>::const_iterator neighbour = neighbours.begin(), past = neighbours.end();
+            neighbour != past;
+            ++neighbour) {
+            if (input.at_flat(i + neighbour->delta) != neighbour->value) {
                 value = 0;
                 break;
             }
