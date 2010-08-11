@@ -344,11 +344,55 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
 }
 
 
+template <typename T>
+void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, const numpy::aligned_array<T> Bc) {
+    typedef typename numpy::aligned_array<T>::iterator iterator;
+    typedef typename numpy::aligned_array<T>::const_iterator const_iterator;
+    const numpy::index_type N = input.size();
+    const numpy::index_type N2 = Bc.size();
+    const numpy::position centre = central_position(Bc);
+    const_iterator iter = input.begin();
+    for (int i = 0; i != N; ++i, ++iter) {
+        T value = 1;
+        const_iterator iter2 = Bc.begin();
+        for (int j = 0; j != N2; ++j, ++iter2) {
+            if (*iter2 == 2) continue;
+            numpy::position npos = iter.position() + iter2.position() - centre;
+            if (!input.validposition(npos) || input.at(npos) != *iter2) {
+                value = 0;
+                break;
+            }
+        }
+        res.at_flat(i) = value;
+    }
+}
+
+PyObject* py_hitmiss(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* Bc;
+    if (!PyArg_ParseTuple(args,"OO", &array, &Bc)) {
+        return NULL;
+    }
+    PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
+    if (!res_a) return NULL;
+    switch(PyArray_TYPE(array)) {
+#define HANDLE(type) \
+    hitmiss<type>(numpy::aligned_array<type>(res_a), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));
+        HANDLE_INTEGER_TYPES();
+#undef HANDLE
+        default:
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
+    }
+    return PyArray_Return(res_a);
+}
+
 PyMethodDef methods[] = {
   {"dilate",(PyCFunction)py_dilate, METH_VARARGS, NULL},
   {"erode",(PyCFunction)py_erode, METH_VARARGS, NULL},
-  {"cwatershed",(PyCFunction)py_cwatershed, METH_VARARGS, NULL},
   {"close_holes",(PyCFunction)py_close_holes, METH_VARARGS, NULL},
+  {"cwatershed",(PyCFunction)py_cwatershed, METH_VARARGS, NULL},
+  {"hitmiss",(PyCFunction)py_hitmiss, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 

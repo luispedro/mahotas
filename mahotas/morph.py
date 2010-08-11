@@ -39,6 +39,7 @@ __all__ = [
         'erode',
         'cwatershed',
         'close_holes',
+        'hitmiss',
         ]
     
 def get_structuring_elem(A,Bc):
@@ -122,6 +123,22 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
         markers = markers.astype(surface.dtype)
     Bc = get_structuring_elem(surface, Bc)
     return _morph.cwatershed(surface, markers, Bc, bool(return_lines))
+
+def hitmiss(input, Bc):
+    '''
+    output = hitmiss(input, Bc)
+
+    Hit & Miss Transform
+    '''
+    _verify_is_integer_type(input, 'hitmiss')
+    _verify_is_integer_type(Bc, 'hitmiss')
+    if input.dtype != Bc.dtype:
+        if input.dtype == np.bool_:
+            input = input.astype(np.uint8)
+            Bc = Bc.astype(np.uint8)
+        else:
+            Bc = Bc.astype(np.dtype)
+    return _morph.hitmiss(input, Bc)
 
 def close_holes(ref, Bc=None):
     '''
