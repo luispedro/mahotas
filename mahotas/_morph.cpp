@@ -382,12 +382,26 @@ void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, 
         }
     }
 
-    const_iterator iter = input.begin();
-    for (int i = 0; i != N; ++i, ++iter) {
-        if (margin_of(iter.position(), input) < Bc_margin) {
-            res.at_flat(i) = 0;
-            continue;
+    int slack = 0;
+    for (int i = 0; i != N; ++i) {
+        while (!slack) {
+            numpy::position cur = input.flat_to_pos(i);
+            bool moved = false;
+            for (int d = 0; d != input.ndims(); ++d) {
+                int margin = std::min<int>(cur[d], input.dim(d) - cur[d] - 1);
+                if (margin < Bc.dim(d)/2) {
+                    int size = 1;
+                    for (int dd = d+1; dd < input.ndims(); ++dd) size *= input.dim(dd);
+                    for (int j = 0; j != size; ++j) {
+                        res.at_flat(i++) = 0;
+                        if (i == N) return;
+                    }
+                    moved = true;
+                }
+            }
+            if (!moved) slack = input.dim(input.ndims() - 1) - Bc.dim(input.ndims() - 1) + 1;
         }
+        --slack;
         T value = 1;
         for (std::vector<HitMissNeighbour>::const_iterator neighbour = neighbours.begin(), past = neighbours.end();
             neighbour != past;
