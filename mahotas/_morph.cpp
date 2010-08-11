@@ -43,6 +43,18 @@ std::vector<numpy::position> neighbours(const numpy::aligned_array<T>& Bc, bool 
 }
 
 template<typename T>
+numpy::index_type margin_of(const numpy::position& position, const numpy::array_base<T>& ref) {
+    numpy::index_type margin = std::numeric_limits<numpy::index_type>::max();
+    for (int d = 0; d != ref.ndims(); ++d) {
+        if (position[d] < margin) margin = position[d];
+        int rmargin = ref.dim(d) - position[d] - 1;
+        if (rmargin < margin) margin = rmargin;
+   }
+   return margin;
+}
+
+
+template<typename T>
 void erode(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_array<T> Bc) {
     const unsigned N = res.size();
     const unsigned N2 = Bc.size();
@@ -285,12 +297,7 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
 
 
                 // we are good, but the margin might have been wrong. Recompute
-                nmargin = markers.size();
-                for (int d = 0; d != markers.ndims(); ++d) {
-                    if (npos[d] < nmargin) nmargin = npos[d];
-                    int rmargin = markers.dim(d) - npos[d] - 1;
-                    if (rmargin < nmargin) nmargin = rmargin;
-               }
+                nmargin = margin_of(npos, markers);
             }
             assert(npos < cost.size());
             if (!status[npos]) {
