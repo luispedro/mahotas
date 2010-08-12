@@ -81,14 +81,14 @@ def thin(binimg):
 
     image_exp = np.zeros((r+2, c+2), np.uint8)
     imagebuf = np.zeros((r+2,c+2), np.uint8)
+    prev = np.zeros((r+2,c+2), np.uint8)
     image_exp[1:r+1, 1:c+1] = binimg[min0:max0,min1:max1]
     while True:
-        changed = False
+        prev[:] = image_exp[:]
         for elem in _struct_elems:
             newimg = hitmiss(image_exp, elem, imagebuf)
             image_exp -= newimg
-            changed |= newimg.any()
-        if not changed:
+        if np.all(prev == image_exp):
             break
     res[min0:max0,min1:max1] = image_exp[1:r+1, 1:c+1]
     return res
