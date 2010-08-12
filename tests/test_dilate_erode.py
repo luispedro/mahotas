@@ -1,18 +1,18 @@
-import numpy
-import morph.morph
+import numpy as np
+import mahotas
 
 def test_dilate_erode():
-    A=numpy.zeros((100,100))
-    Bc=numpy.zeros((3,3))
-    Bc[2,1]=1
-    Bc[1]=1
-    Bc[0,1]=1
-    A[30,30]=1
-    A=(A!=0)
-    orig=A.copy()
-    Bc=(Bc!=0)
+    A = np.zeros((100,100))
+    Bc = np.array([
+        [0, 1, 0],
+        [1, 1, 1],
+        [0, 1, 0]], bool)
+    A[30,30] = 1
+    A = (A!=0)
+    orig = A.copy()
     for i in xrange(12):
-        A=morph.morph.dilate(A!=0,Bc != 0)
+        A = mahotas.dilate(A, Bc)
     for i in xrange(12):
-        A=morph.morph.erode(A!=0,Bc != 0)
+        A = mahotas.erode(A, Bc)
+    assert np.all(A == orig)
 
