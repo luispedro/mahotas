@@ -28,19 +28,17 @@ _hsobel_filter = np.array([
 
 _vsobel_filter = np.array([
     [-1, -2, -1],
-    [ 0, 0, 0],
-    [ 1, 2, 1]])/8.
+    [ 0,  0,  0],
+    [ 1,  2,  1]])/8.
 
 def sobel(img):
     '''
     edges = sobel(img)
 
-
     Compute edges using Sobel's algorithm
 
     `edges` is a binary image of edges computed according to Matlab's
     implementation of Sobel's algorithm.
-
 
     Parameters
     ----------
@@ -52,7 +50,8 @@ def sobel(img):
     # This is based on Octave's implementation,
     # but with some reverse engineering to match Matlab exactly
     img = img.astype(np.float)
-    img = (img-img.min())/img.ptp()
+    img -= img.min()
+    img /= img.ptp()
     vfiltered = ndimage.correlate(img, _vsobel_filter, mode='nearest') # This emulates Matlab's implementation
     hfiltered = ndimage.correlate(img, _hsobel_filter, mode='nearest')
     filtered = vfiltered**2 + hfiltered**2
