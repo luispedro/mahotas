@@ -124,21 +124,43 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
     Bc = get_structuring_elem(surface, Bc)
     return _morph.cwatershed(surface, markers, Bc, bool(return_lines))
 
-def hitmiss(input, Bc):
+def hitmiss(input, Bc, output=None):
     '''
-    output = hitmiss(input, Bc)
+    output = hitmiss(input, Bc, output=np.zeros_like(input))
 
     Hit & Miss Transform
+
+    Parameters
+    ----------
+      input : input ndarray
+      Bc : hit & miss template (with 0, 1, 2)
+      output : output array
+    Returns
+    -------
+      output
     '''
     _verify_is_integer_type(input, 'hitmiss')
     _verify_is_integer_type(Bc, 'hitmiss')
     if input.dtype != Bc.dtype:
         if input.dtype == np.bool_:
-            input = input.astype(np.uint8)
-            Bc = Bc.astype(np.uint8)
+            input = input.view(np.uint8)
+            if Bc.dtype == np.bool_:
+                Bc = Bc.view(np.uint8)
+            else:
+                Bc = Bc.astype(np.uint8)
         else:
             Bc = Bc.astype(np.dtype)
-    return _morph.hitmiss(input, Bc)
+    if output is None:
+        output = np.empty_like(input)
+    else:
+        if output.shape != input.shape:
+            raise ValueError('mahotas.hitmiss: output must be of same shape as output')
+        if output.dtype != input.dtype:
+            if output.dtype == np.bool_ and input.dtype == np.uint8:
+                output = output.view(np.uint8)
+            else:
+                raise TypeError('mahotas.hitmiss: output must be of same type as input')
+    return _morph.hitmiss(input, Bc, output)
 
 def close_holes(ref, Bc=None):
     '''

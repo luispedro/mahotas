@@ -360,7 +360,7 @@ struct HitMissNeighbour {
 };
 
 template <typename T>
-void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, const numpy::aligned_array<T> Bc) {
+void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, const numpy::aligned_array<T>& Bc) {
     typedef typename numpy::aligned_array<T>::iterator iterator;
     typedef typename numpy::aligned_array<T>::const_iterator const_iterator;
     const numpy::index_type N = input.size();
@@ -418,11 +418,12 @@ void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, 
 PyObject* py_hitmiss(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* Bc;
-    if (!PyArg_ParseTuple(args,"OO", &array, &Bc)) {
+    PyArrayObject* res_a;
+    if (!PyArg_ParseTuple(args, "OOO", &array, &Bc, &res_a)) {
         return NULL;
     }
-    PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
-    if (!res_a) return NULL;
+    Py_INCREF(res_a);
+
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
     hitmiss<type>(numpy::aligned_array<type>(res_a), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));
