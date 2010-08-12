@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2010  Murphy Lab
+# Copyright (C) 2006-2010  Luis Pedro Coelho <lpc@cmu.edu>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
-# Carnegie Mellon University
-#
-# Written by Luis Pedro Coelho <lpc@cmu.edu>, based on the 
-# Matlab implementation by the Murphy Lab
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
@@ -20,9 +16,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301, USA.
-#
-# For additional information visit http://murphylab.web.cmu.edu or
-# send email to murphy@cmu.edu
 
 from __future__ import division
 import numpy as np
