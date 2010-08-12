@@ -26,6 +26,7 @@ Thresholding Module
 
 Thresholding functions:
     * otsu(): Otsu method
+    * rc(): Riddler-Calvard's method
 '''
 
 from __future__ import division
@@ -33,6 +34,7 @@ import numpy as np
 from .histogram import fullhistogram
 __all__ = [
         'otsu',
+        'rc',
     ]
 
 
