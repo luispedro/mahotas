@@ -18,23 +18,21 @@
 
 from __future__ import division
 import numpy as np
-
-def _mean_out(img, axis):
-    if len(img.shape) == 2: return img.mean(1-axis)
-    if axis == 0:
-        return _mean_out(img.mean(1), 0)
-    return _mean_out(img.mean(0), axis - 1)
+import _center_of_mass
 
 def center_of_mass(img):
     '''
+    coords = center_of_mass(img)
     x0,x1,... = center_of_mass(img)
 
     Returns the center of mass of img.
+
+    Parameters
+    ----------
+      img : Any ndarray
+    Returns
+    -------
+      coords : A 1-ndarray of coordinates (size = len(img.shape))
     '''
-    xs = []
-    for axis,si in enumerate(img.shape):
-        xs.append(np.mean(_mean_out(img, axis) * np.arange(si)))
-    xs = np.array(xs)
-    xs /= img.mean()
-    return xs
+    return _center_of_mass.center_of_mass(img)
 

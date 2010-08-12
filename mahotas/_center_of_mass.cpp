@@ -24,15 +24,15 @@ const char TypeErrorMsg[] =
 template<typename T>
 double center_of_mass(const numpy::aligned_array<T> array, npy_double* centers) {
     const unsigned N = array.size();
+    const int nd = array.ndims();
     double total_sum = 0.;
     typename numpy::aligned_array<T>::const_iterator pos = array.begin();
     for (unsigned i = 0; i != N; ++i, ++pos) {
         double val = *pos;
         total_sum += val;
- //       for (int j = 0; j != nd; ++j) {
-            centers[0] += val * pos.index_rev(0);
-            centers[1] += val * pos.index_rev(1);
-   //     }
+        for (int j = 0; j != nd; ++j) {
+            centers[j] += val * pos.index_rev(j);
+        }
     }
     return total_sum;
 }
