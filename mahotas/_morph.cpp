@@ -83,6 +83,7 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
     PyArrayObject* Bc;
     if (!PyArg_ParseTuple(args,"OO", &array, &Bc)) return NULL;
     PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
+    PyArray_FILLWBYTE(res_a, 0);
     if (!res_a) return NULL;
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
@@ -125,6 +126,7 @@ PyObject* py_dilate(PyObject* self, PyObject* args) {
     PyArrayObject* Bc;
     if (!PyArg_ParseTuple(args,"OO", &array, &Bc)) return NULL;
     PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
+    PyArray_FILLWBYTE(res_a, 0);
     if (!res_a) return NULL;
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
