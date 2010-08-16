@@ -12,6 +12,8 @@ in numpy arrays.
 Notable algorithms:
  - watershed
  - thresholding
+ - convex points calculations
+ - hit & miss. thinning.
 
 
 *Website*: `http://luispedro.org/software/mahotas
