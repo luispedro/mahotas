@@ -399,6 +399,7 @@ void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, 
                         if (i == N) return;
                     }
                     moved = true;
+                    break;
                 }
             }
             if (!moved) slack = input.dim(input.ndims() - 1) - Bc.dim(input.ndims() - 1) + 1;
