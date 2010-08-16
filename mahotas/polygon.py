@@ -1,3 +1,6 @@
+import numpy as np
+import _convex
+
 def fill_polygon(polygon, canvas, color=1):
     '''
     fill_polygon([(y0,x0), (y1,x1),...], canvas, color=1)
@@ -25,4 +28,29 @@ def fill_polygon(polygon, canvas, color=1):
         nodes.sort()
         for n,nn in zip(nodes[::2],nodes[1::2]):
             canvas[y,n:nn] = color
+
+def convexhull(bwimg):
+    '''
+    hull = convexhull(bwimg)
+
+    Compute the convex hull as a polygon
+    '''
+    Y,X = np.where(bwimg)
+    P = list(zip(Y,X))
+    if len(P) <= 3:
+        return []
+    return _convex.convexhull(P)
+
+def fill_convexhull(bwimg):
+    '''
+    hull = fill_convexhull(bwimg)
+
+    Compute the convex hull and return it as a binary mask
+    '''
+
+    points = convexhull(bwimg)
+    canvas = np.zeros_like(bwimg)
+    black = (1 if bwimg.dtype == np.bool_ else 255)
+    fill_polygon(points, canvas, black)
+    return canvas
 

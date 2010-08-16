@@ -38,8 +38,9 @@ morph = numpyutils.Extension('mahotas._morph', sources = ['mahotas/_morph.cpp'],
 bbox = numpyutils.Extension('mahotas/_bbox', sources = ['mahotas/_bbox.cpp'])
 center_of_mass = numpyutils.Extension('mahotas/_center_of_mass', sources = ['mahotas/_center_of_mass.cpp'])
 texture = numpyutils.Extension('mahotas/_texture', sources = ['mahotas/_texture.cpp'])
+convex = numpyutils.Extension('mahotas/_convex', sources = ['mahotas/_convex.cpp'])
 
-ext_modules = [histogram, morph, bbox, center_of_mass, texture]
+ext_modules = [histogram, morph, bbox, center_of_mass, texture, convex]
 
 packages = setuptools.find_packages()
 if 'tests' in packages: packages.remove('tests')
