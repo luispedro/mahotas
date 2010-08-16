@@ -23,9 +23,7 @@
 
 import numpy as np
 from scipy import ndimage
-
-from scipy import weave
-from scipy.weave import converters
+from histogram import fullhistogram
 
 def _roll_left(v, points):
     return (v >> 1) | ( (1 << (points-1)) * (v & 1) )
@@ -56,13 +54,13 @@ def lbp(image, radius, points):
 
     Parameters
     ----------
-        * image: input image (2-D numpy ndarray)
-        * radius: radius (in pixels)
-        * points: nr of points to consider
+      image : input image (2-D numpy ndarray)
+      radius : radius (in pixels)
+      points : nr of points to consider
 
     Output
     ------
-        * features: histogram of features (1-D numpy ndarray)
+      features : histogram of features (1-D numpy ndarray)
     
 
     Reference
@@ -84,7 +82,7 @@ def lbp(image, radius, points):
                 cur = _roll_left(cur, points)
                 if cur < bestval: bestval = cur
                 res.append(bestval)
-            return np.array(res)
+            return np.array(res, np.int32)
 
     h,w = image.shape
     w2r = w - 2*radius
@@ -102,14 +100,8 @@ def lbp(image, radius, points):
         rs = ndimage.interpolation.map_coordinates(image, coordinates, order=1)
         codes = (2**np.arange(points) * (center > rs.T).T).sum(1)
         codes = mapping(codes)
-        N = len(codes)
-        code = '''
-        for (int i = 0; i != N; ++i) {
-            ++final(codes(i));
-        }
-        '''
-        weave.inline(code,
-                ['codes','N','final'],
-                type_converters=converters.blitz)
+        assert codes.min() >= 0
+        cur = fullhistogram(codes.view(np.uint32))
+        final[:len(cur)] += cur
     return final
 
