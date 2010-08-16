@@ -16,17 +16,19 @@ Please check your installation.'''
 
 def _verify_types(A,allowed_types,function):
     if A.dtype not in allowed_types:
-        raise RuntimeException('%s: Type %s not allowed for this function.' % (function,A.dtype))
+        raise TypeError('%s: Type %s not allowed for this function.' % (function,A.dtype))
 
 def _verify_is_integer_type(A,function):
     int_types=[
-                numpy.bool,
-                numpy.uint8,
-                numpy.int8,
-                numpy.uint16,
-                numpy.int16,
-                numpy.uint32,
-                numpy.int32
+                np.bool,
+                np.uint8,
+                np.int8,
+                np.uint16,
+                np.int16,
+                np.uint32,
+                np.int32,
+                np.int64,
+                np.uint64,
                 ]
     _verify_types(A,int_types,function)
     
