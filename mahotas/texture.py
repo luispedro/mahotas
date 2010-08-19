@@ -73,8 +73,8 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     for dir in xrange(4):
         cooccurence(f, dir, cmat, symmetric=True)
         if ignore_zeros:
-            cmat[1] = 0
-            cmat[:,1] = 0
+            cmat[0] = 0
+            cmat[:,0] = 0
         T = cmat.sum()
         if not T:
             continue
