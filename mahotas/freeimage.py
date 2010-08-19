@@ -428,13 +428,40 @@ def _array_to_bitmap(array):
       raise
 
 
-def imread(filename, as_grey=False, dtype=None):
-    """Warning: currenly as_grey and dtype is simply ignored.
-
+def imread(filename, as_grey=False):
     """
-    return read(filename)
+    img = imread(filename, as_grey=False)
 
-def imsave(filename, arr):
-    if arr.ndim == 3:
-        arr = np.rollaxis(arr, 2, 0)
-    write(arr, filename)
+    Reads an image from file `filename`
+
+    Parameters
+    ----------
+      filename : file name
+      as_grey : Whether to convert to grey scale image (default: no)
+    Returns
+    -------
+      img : ndarray
+    """
+    img = read(filename)
+    if as_grey and len(img) == 3:
+        # these are the values that wikipedia says are typical
+        transform = np.array([ 0.30,  0.59,  0.11])
+        return np.dot(img, transform)
+    return img
+
+def imsave(filename, img):
+    '''
+    imsave(filename, img)
+
+    Save image to disk
+
+    Image type is inferred from filename
+
+    Parameters
+    ----------
+      filename : file name
+      img : image to be saved as nd array
+    '''
+    if img.ndim == 3:
+        img = np.rollaxis(img, 2, 0)
+    write(img, filename)
