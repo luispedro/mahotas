@@ -286,7 +286,6 @@ def _wrap_bitmap_bits_in_array(bitmap, shape, dtype):
     """
     pitch = _FI.FreeImage_GetPitch(bitmap)
     height = shape[-1]
-    byte_size = height * pitch
     itemsize = dtype.itemsize
 
     if len(shape) == 3:
@@ -301,6 +300,7 @@ def _wrap_bitmap_bits_in_array(bitmap, shape, dtype):
             'strides': strides,
             'typestr': dtype.str,
             'shape': tuple(shape),
+            'version' : 3,
             }
 
     # Still segfaulting on 64-bit machine because of illegal memory access
@@ -337,7 +337,7 @@ def string_tag(bitmap, key, model=METADATA_MODELS.FIMD_EXIF_MAIN):
     return char_ptr.from_address(_FI.FreeImage_GetTagValue(tag)).raw()
 
 def write(array, filename, flags=0):
-    """Write a (width, height) or (nchannels, width, height) array to
+    """Write a (width, height) or (width, height, nchannels) array to
     a greyscale, RGB, or RGBA image, with file type deduced from the
     filename.
 
@@ -393,34 +393,40 @@ def _array_to_bitmap(array):
     """
     shape = array.shape
     dtype = array.dtype
+    r,c = shape[:2]
     if len(shape) == 2:
         n_channels = 1
+        w_shape = (c,r)
+    elif len(shape) == 3:
+        n_channels = shape[2]
+        w_shape = (n_channels,c,r)
     else:
-        n_channels = shape[0]
+        raise ValueError('mahotas.freeimage: cannot handle image of 4 dimensions')
     try:
         fi_type = FI_TYPES.fi_types[(dtype.type, n_channels)]
     except KeyError:
         raise ValueError('mahotas.freeimage: cannot write arrays of given type and shape.')
-    width, height = shape[-2:]
 
     itemsize = array.dtype.itemsize
     bpp = 8 * itemsize * n_channels
-    bitmap = _FI.FreeImage_AllocateT(fi_type, width, height, bpp, 0, 0, 0)
+    bitmap = _FI.FreeImage_AllocateT(fi_type, c, r, bpp, 0, 0, 0)
     if not bitmap:
         raise RuntimeError('mahotas.freeimage: could not allocate image for storage')
     try:
-        wrapped_array = _wrap_bitmap_bits_in_array(bitmap, shape, dtype)
+        def n(arr):
+            return arr.T[:,::-1]
+        wrapped_array = _wrap_bitmap_bits_in_array(bitmap, w_shape, dtype)
         # swizzle the color components and flip the scanlines to go to
         # FreeImage's BGR[A] and upside-down internal memory format
         if len(shape) == 3 and _FI.FreeImage_IsLittleEndian() and \
                dtype.type == np.uint8:
-            wrapped_array[0] = array[2,:,::-1]
-            wrapped_array[1] = array[1,:,::-1]
-            wrapped_array[2] = array[0,:,::-1]
-            if shape[0] == 4:
-                wrapped_array[3] = array[3,:,::-1]
+            wrapped_array[0] = n(array[:,:,2])
+            wrapped_array[1] = n(array[:,:,1])
+            wrapped_array[2] = n(array[:,:,0])
+            if shape[2] == 4:
+                wrapped_array[3] = n(array[:,:,3])
         else:
-            wrapped_array[:] = array[...,::-1]
+            wrapped_array[:] = n(array)
 
         return bitmap, fi_type
     except:
@@ -462,6 +468,4 @@ def imsave(filename, img):
       filename : file name
       img : image to be saved as nd array
     '''
-    if img.ndim == 3:
-        img = np.rollaxis(img, 2, 0)
     write(img, filename)
