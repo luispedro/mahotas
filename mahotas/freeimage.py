@@ -305,7 +305,7 @@ def _wrap_bitmap_bits_in_array(bitmap, shape, dtype):
 
     # Still segfaulting on 64-bit machine because of illegal memory access
 
-    return np.array(DummyArray())
+    return np.array(DummyArray(), copy=False)
 
 def _array_from_bitmap(bitmap):
     """Convert a FreeImage bitmap pointer to a numpy array
@@ -360,7 +360,7 @@ def write(array, filename, flags=0):
         if not res:
             raise RuntimeError('mahotas.freeimage: could not save image properly.')
     finally:
-      _FI.FreeImage_Unload(bitmap)
+        _FI.FreeImage_Unload(bitmap)
 
 def write_multipage(arrays, filename, flags=0):
     """Write a list of (width, height) or (nchannels, width, height)
