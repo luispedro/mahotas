@@ -14,6 +14,8 @@ def fill_polygon(polygon, canvas, color=1):
       color : which colour to use (default: 1)
     '''
 # algorithm adapted from: http://www.alienryderflex.com/polygon_fill/
+    if not polygon:
+        return
     min_y = min(y for y,x in polygon)
     max_y = max(y for y,x in polygon)
     polygon = [(float(y),float(x)) for y,x in polygon]
@@ -22,11 +24,16 @@ def fill_polygon(polygon, canvas, color=1):
         j = -1
         for i,p in enumerate(polygon):
             pj = polygon[j]
-            if p[0] < y and pj[0] >= y or pj[0] < y and p[0] >= y:
-                nodes.append( (p[1] + (y-p[0])/(pj[0]-p[0])*(pj[1]-p[1])) )
+            if p[0] <= y and pj[0] >= y or pj[0] <= y and p[0] >= y:
+                dy = pj[0] - p[0]
+                if dy:
+                    nodes.append( (p[1] + (y-p[0])/(pj[0]-p[0])*(pj[1]-p[1])) )
+                elif p[0] == y:
+                    nodes.append(p[1])
             j = i
         nodes.sort()
         for n,nn in zip(nodes[::2],nodes[1::2]):
+            nn += 1
             canvas[y,n:nn] = color
 
 def convexhull(bwimg):
@@ -38,7 +45,7 @@ def convexhull(bwimg):
     Y,X = np.where(bwimg)
     P = list(zip(Y,X))
     if len(P) <= 3:
-        return []
+        return P
     return _convex.convexhull(P)
 
 def fill_convexhull(bwimg):
