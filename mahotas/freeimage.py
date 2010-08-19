@@ -308,24 +308,23 @@ def _wrap_bitmap_bits_in_array(bitmap, shape, dtype):
     return np.array(DummyArray())
 
 def _array_from_bitmap(bitmap):
-  """Convert a FreeImage bitmap pointer to a numpy array
+    """Convert a FreeImage bitmap pointer to a numpy array
 
-  """
-  dtype, shape = FI_TYPES.get_type_and_shape(bitmap)
-  array = _wrap_bitmap_bits_in_array(bitmap, shape, dtype)
-  # swizzle the color components and flip the scanlines to go from
-  # FreeImage's BGR[A] and upside-down internal memory format to something
-  # more normal
-  if len(shape) == 3 and _FI.FreeImage_IsLittleEndian() and \
-     dtype.type == np.uint8:
-      b = array[0].copy()
-      array[0] = array[2]
-      array[2] = b
-
-  array = array[..., ::-1]
-  array = array.T
-
-  return array.copy()
+    """
+    dtype, shape = FI_TYPES.get_type_and_shape(bitmap)
+    array = _wrap_bitmap_bits_in_array(bitmap, shape, dtype)
+    # swizzle the color components and flip the scanlines to go from
+    # FreeImage's BGR[A] and upside-down internal memory format to something
+    # more normal
+    def n(arr):
+        return arr[..., ::-1].T
+    if len(shape) == 3 and _FI.FreeImage_IsLittleEndian() and \
+       dtype.type == np.uint8:
+        b = array[0]
+        g = array[1]
+        r = array[2]
+        return np.dstack( (n(r), n(g), n(b)) )
+    return n(array)
 
 def string_tag(bitmap, key, model=METADATA_MODELS.FIMD_EXIF_MAIN):
     """Retrieve the value of a metadata tag with the given string key as a
