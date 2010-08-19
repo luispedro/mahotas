@@ -3,10 +3,10 @@ import mahotas.polygon
 from mahotas.polygon import fill_polygon, fill_convexhull
 
 def test_polygon():
-    polygon = [(10,10), (10,20), (20,20)]
+    polygon = [(10,10), (10,19), (19,19)]
     canvas = np.zeros((40,40), np.bool)
     fill_polygon(polygon, canvas)
-    assert canvas.sum() == (10*10-10)/2
+    assert canvas.sum() == (10*10+10)/2
 
 
 def test_convex():
@@ -30,4 +30,5 @@ def test_fill3():
     canvas = np.zeros((4,4), bool)
     # This polygon also has a horizontal and a vertical edge
     polygon = [(1, 1), (1, 2), (2, 1)]
-    assert mahotas.polygon.fill_polygon(polygon, canvas).sum()
+    mahotas.polygon.fill_polygon(polygon, canvas)
+    assert canvas.sum()
