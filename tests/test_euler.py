@@ -25,8 +25,10 @@ def test_euler():
     f = np.zeros((16,16), np.bool)
     f[4:8,4:8] = 1
     assert euler(f) == 1
+    assert euler(f, 4) == 1
 
     f[6:7,5:7] = 0
 
     assert euler(f) == 0
+    assert euler(f, 4) == 0
 
