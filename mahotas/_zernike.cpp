@@ -29,6 +29,11 @@ PyObject* py_znl(PyObject* self, PyObject* args) {
     double n;
     double l;
     if (!PyArg_ParseTuple(args,"OOOdd", &Xa, &Ya, &Pa, &n, &l)) return NULL;
+    if (!PyArray_Check(Xa) || !PyArray_Check(Ya) || !PyArray_Check(Pa) ||
+        PyArray_TYPE(Xa) != NPY_DOUBLE || PyArray_TYPE(Ya) != NPY_DOUBLE || PyArray_TYPE(Pa) != NPY_DOUBLE) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
     double* X = static_cast<double*>(PyArray_DATA(Xa));
     double* Y = static_cast<double*>(PyArray_DATA(Ya));
     double* P = static_cast<double*>(PyArray_DATA(Pa));
