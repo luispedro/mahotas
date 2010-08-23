@@ -24,14 +24,14 @@ def _slow_znl(X,Y,P,n,l):
     v *= (n+1)/pi
     return v 
 
-def _slow_zernike(img, D, radius, scale):
+def _slow_zernike(img, D, radius):
     zvalues = []
 
     X,Y = np.where(img > 0)
     P = img[X,Y].ravel()
     cofx,cofy = center_of_mass(img)
-    Xn = ( (X -cofx)/radius*scale).ravel()
-    Yn = ( (Y -cofx)/radius*scale).ravel()
+    Xn = ( (X -cofx)/radius).ravel()
+    Yn = ( (Y -cofx)/radius).ravel()
     k = (np.sqrt(Xn**2 + Yn**2) <= 1.)
     frac_center = np.array(P[k], np.double)/img.sum()
     Yn = Yn[k]
@@ -47,7 +47,7 @@ def _slow_zernike(img, D, radius, scale):
 
 def test_zernike():
     A = (np.arange(1024) % 14).reshape((32, 32))
-    slow = zernike.zernike(A, 12, 2., 16)
-    fast = zernike.zernike(A, 12, 2., 16)
+    slow = zernike.zernike(A, 12, 8.)
+    fast = zernike.zernike(A, 12, 8.)
     delta = np.array(slow) - fast
     assert np.abs(delta).max() < 0.001

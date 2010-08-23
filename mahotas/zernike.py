@@ -34,9 +34,9 @@ import _zernike
 
 __all__ = ['zernike']
 
-def zernike(img, D, radius, scale):
+def zernike(img, D, radius):
     """
-    zvalues = zernike(img, D, radius, scale)
+    zvalues = zernike(img, D, radius)
 
     Zernike moments through degree D
 
@@ -45,29 +45,24 @@ def zernike(img, D, radius, scale):
 
     Parameters
     ----------
-       * radius is used as the maximum radius for the Zernike polynomials.
-       * scale is the scale of the image.
+       * radius is used as the maximum radius for the Zernike polynomials, in pixels
 
     Reference: Teague, MR. (1980). Image Analysis via the General
       Theory of Moments.  J. Opt. Soc. Am. 70(8):920-930.
     """
     zvalues = []
+    c0,c1 = center_of_mass(img)
 
-    X,Y = np.where(img > 0)
-    P = img[X,Y].ravel()
-
-# Normalize the coordinates to the center of mass and normalize
-#  pixel distances using the maximum radius argument (radius)
-    cofx,cofy = center_of_mass(img)
+    Y,X = np.where(img > 0)
+    P = img[Y,X].ravel()
     def rescale(C, centre):
         Cn = C.astype(np.double)
         Cn -= centre
-        Cn /= (radius/scale)
+        Cn /= radius
         return Cn.ravel()
-    Xn = rescale(X, cofx)
-    Yn = rescale(Y, cofy)
+    Yn = rescale(Y, c1)
+    Xn = rescale(X, c0)
 
-# Find all pixels of distance <= 1.0 to center
     Dn = np.sqrt(Xn**2+Yn**2)
     k = (Dn <= 1.)
 
@@ -76,7 +71,7 @@ def zernike(img, D, radius, scale):
     Yn = Yn[k]
     Xn = Xn[k]
     Dn = Dn[k]
-    An = np.arctan2(Xn, Yn)
+    An = np.arctan2(Yn, Xn)
 
     for n in xrange(D+1):
         for l in xrange(n+1):
