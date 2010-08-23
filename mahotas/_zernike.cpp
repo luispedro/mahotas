@@ -25,34 +25,34 @@ PyObject* py_znl(PyObject* self, PyObject* args) {
 
     const double pi = atan(1.0)*4;
 
-    PyArrayObject* Xa;
-    PyArrayObject* Ya;
+    PyArrayObject* Da;
+    PyArrayObject* Aa;
     PyArrayObject* Pa;
     double n;
     double l;
-    if (!PyArg_ParseTuple(args,"OOOdd", &Xa, &Ya, &Pa, &n, &l)) return NULL;
-    if (!PyArray_Check(Xa) || !PyArray_Check(Ya) || !PyArray_Check(Pa) ||
-        PyArray_TYPE(Xa) != NPY_DOUBLE || PyArray_TYPE(Ya) != NPY_DOUBLE || PyArray_TYPE(Pa) != NPY_DOUBLE) {
+    if (!PyArg_ParseTuple(args,"OOOdd", &Da, &Aa, &Pa, &n, &l)) return NULL;
+    if (!PyArray_Check(Da) || !PyArray_Check(Aa) || !PyArray_Check(Pa) ||
+        PyArray_TYPE(Da) != NPY_DOUBLE || PyArray_TYPE(Aa) != NPY_DOUBLE || PyArray_TYPE(Pa) != NPY_DOUBLE) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
-    double* X = static_cast<double*>(PyArray_DATA(Xa));
-    double* Y = static_cast<double*>(PyArray_DATA(Ya));
+    double* D = static_cast<double*>(PyArray_DATA(Da));
+    double* A = static_cast<double*>(PyArray_DATA(Aa));
     double* P = static_cast<double*>(PyArray_DATA(Pa));
-    int Nelems = PyArray_SIZE(Xa);
+    int Nelems = PyArray_SIZE(Da);
     complex<double> Vnl = 0.0;
     complex<double> v = 0.;
     for (int i = 0; i != Nelems; ++i) {
-        double x=X[i];
-        double y=Y[i];
+        double d=D[i];
+        double a=A[i];
         double p=P[i];
         Vnl = 0.;
         for(int m = 0; m <= (n-l)/2; m++) {
             double f = (m & 1) ? -1 : 1;
             Vnl += f * _factorialtable[int(n-m)] /
                    ( _factorialtable[m] * _factorialtable[int((n - 2*m + l) / 2)] * _factorialtable[int((n - 2*m - l) / 2)] ) *
-                   ( pow( sqrt(x*x + y*y), (double)(n - 2*m)) ) *
-                   polar(1.0, l*atan2(y,x)) ;
+                   ( pow(d, (double)(n - 2*m)) ) *
+                   polar(1.0, l*a);
         }
         v += p * conj(Vnl);
     }

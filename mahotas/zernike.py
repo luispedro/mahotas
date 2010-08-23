@@ -68,16 +68,20 @@ def zernike(img, D, radius, scale):
     Yn = rescale(Y, cofy)
 
 # Find all pixels of distance <= 1.0 to center
-    k = (np.sqrt(Xn**2 + Yn**2) <= 1.)
+    Dn = np.sqrt(Xn**2+Yn**2)
+    k = (Dn <= 1.)
+
     frac_center = np.array(P[k], np.double)/img.sum()
+    frac_center = frac_center.ravel()
     Yn = Yn[k]
     Xn = Xn[k]
-    frac_center = frac_center.ravel()
+    Dn = Dn[k]
+    An = np.arctan2(Xn, Yn)
 
     for n in xrange(D+1):
         for l in xrange(n+1):
             if (n-l)%2 == 0:
-                z = _zernike.znl(Xn, Yn, frac_center, float(n), float(l))
+                z = _zernike.znl(Dn, An, frac_center, float(n), float(l))
                 zvalues.append(abs(z))
     return zvalues
 
