@@ -33,11 +33,6 @@ from scipy.weave import converters
 
 __all__ = ['zernike']
 
-def _polar(r,theta):
-    x = r * cos(theta)
-    y = r * sin(theta)
-    return 1*x+1j*y
-
 _factorialtable = np.array([1,1,2,6,24,120,720,5040,40320,362880,3628800,39916800,479001600])
 def Znl(n,l,X,Y,P):
     Nelems = len(X)
