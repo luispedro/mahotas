@@ -1,6 +1,6 @@
 import numpy as np
-import zernike
-from center_of_mass import center_of_mass
+from mahotas import zernike
+from mahotas.center_of_mass import center_of_mass
 from math import atan2
 from numpy import cos, sin, conjugate, pi, sqrt
 
