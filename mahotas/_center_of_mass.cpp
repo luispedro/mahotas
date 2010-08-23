@@ -15,47 +15,77 @@ extern "C" {
 
 namespace{
 
-const char TypeErrorMsg[] = 
+const char TypeErrorMsg[] =
     "Type not understood. "
     "This is caused by either a direct call to _center_of_mass (which is dangerous: types are not checked!) or a bug in center_of_mass.py.\n"
     "If you suspect the latter, please report it to the mahotas developpers.";
 
 
 template<typename T>
-double center_of_mass(const numpy::aligned_array<T> array, npy_double* centers) {
+void center_of_mass(const numpy::aligned_array<T> array, npy_double* centers, const int* labels, double* totals) {
     const unsigned N = array.size();
     const int nd = array.ndims();
-    double total_sum = 0.;
     typename numpy::aligned_array<T>::const_iterator pos = array.begin();
     for (unsigned i = 0; i != N; ++i, ++pos) {
         double val = *pos;
-        total_sum += val;
+        int label = 0;
+        if (labels) label = labels[i];
+        totals[label] += val;
         for (int j = 0; j != nd; ++j) {
-            centers[j] += val * pos.index_rev(j);
+            int idx = label*nd + j;
+            centers[idx] += val * pos.index_rev(j);
         }
     }
-    return total_sum;
 }
 
 PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
     PyArrayObject* array;
-    if (!PyArg_ParseTuple(args,"O", &array)) return NULL;
-    if (!PyArray_Check(array)) { 
+    PyObject* labels_obj;
+    const int* labels = 0;
+    double total_sum = 0.0;
+    double * totals = &total_sum;
+    int max_label = 0;
+    if (!PyArg_ParseTuple(args,"OO", &array, &labels_obj)) return NULL;
+    if (!PyArray_Check(array)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
-        return 0;
+        return NULL;
+    }
+    if (labels_obj != Py_None) {
+        if (!PyArray_Check(labels_obj) ||
+            !PyArray_ISCARRAY_RO(labels_obj) ||
+            PyArray_TYPE(labels_obj) != NPY_INT) {
+            PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+            return NULL;
+        }
+        labels = static_cast<const int*>(PyArray_DATA(labels_obj));
+    }
+    if (labels) {
+        const int N = PyArray_SIZE(array);
+        for (int i = 0; i != N; ++i) {
+            if (labels[i] < 0) {
+                PyErr_SetString(PyExc_RuntimeError, "Labels array cannot be negative.");
+                return NULL;
+            }
+            if (labels[i] > max_label) max_label = labels[i];
+        }
+        totals = new(std::nothrow) double[max_label+1];
+        if (!totals) {
+            PyErr_NoMemory();
+            return NULL;
+        }
+        for (int label = 0; label != max_label+1; ++label) totals[label] = 0.0;
     }
     npy_intp dims[1];
-    dims[0] = array->nd;
+    dims[0] = array->nd * (max_label+1);
     PyArrayObject* centers = (PyArrayObject*)PyArray_SimpleNew(1, dims, NPY_DOUBLE);
-    if (!centers) return NULL;
+    if (!centers) return 0;
     npy_double* centers_v = static_cast<npy_double*>(PyArray_DATA(centers));
-    for (int j = 0; j != array->nd; ++j) {
+    for (int j = 0; j != dims[0]; ++j) {
         centers_v[j] = 0;
     }
-    double total_sum;
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
-        total_sum = center_of_mass<type>(numpy::aligned_array<type>(array), centers_v); \
+        center_of_mass<type>(numpy::aligned_array<type>(array), centers_v, labels, totals); \
 
         HANDLE_INTEGER_TYPES();
 #undef HANDLE
@@ -64,12 +94,15 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
         return NULL;
     }
     int nd = array->nd;
-    for (int j = 0; j != nd; ++j) {
-        centers_v[j] /= total_sum;
+    for (int label = 0; label != (max_label+1); ++label) {
+        for (int j = 0; j != nd; ++j) {
+            centers_v[label*nd+j] /= totals[label];
+        }
+        for (int j = 0; j != nd/2; ++j) {
+            std::swap(centers_v[label*nd + j], centers_v[(label+1) * nd - j - 1]);
+        }
     }
-    for (int j = 0; j != nd/2; ++j) {
-        std::swap(centers_v[j], centers_v[nd - j - 1]);
-    }
+    if (labels) delete [] totals;
     return PyArray_Return(centers);
 }
 

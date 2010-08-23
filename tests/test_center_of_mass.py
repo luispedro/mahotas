@@ -46,3 +46,13 @@ def test_simple():
     assert 0 < m0 < 128
     assert 0 < m1 < 256
 
+
+def test_labels():
+    R = (255*np.random.rand(128,256)).astype(np.uint16)
+    labels = np.zeros(R.shape, np.intc)
+    labels[100:,:] += 1
+    labels[100:,100:] += 1
+    centres =  mahotas.center_of_mass(R, labels)
+    for label,cm in enumerate(centres):
+        assert np.all(cm == mahotas.center_of_mass(R * (labels == label)))
+

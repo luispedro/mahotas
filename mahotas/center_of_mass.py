@@ -20,10 +20,10 @@ from __future__ import division
 import numpy as np
 import _center_of_mass
 
-def center_of_mass(img):
+def center_of_mass(img, labels=None):
     '''
-    coords = center_of_mass(img)
-    x0,x1,... = center_of_mass(img)
+    coords = center_of_mass(img, labels=None)
+    x0,x1,... = center_of_mass(img, labels=None)
 
     Returns the center of mass of img.
 
@@ -34,5 +34,11 @@ def center_of_mass(img):
     -------
       coords : A 1-ndarray of coordinates (size = len(img.shape))
     '''
-    return _center_of_mass.center_of_mass(img)
+    if labels is not None:
+        if labels.dtype is not np.intc or not labels.flags['CONTIGUOUS']:
+            labels = labels.astype(np.intc)
+    cm = _center_of_mass.center_of_mass(img, labels)
+    if labels is not None:
+        return cm.reshape((-1, img.ndim))
+    return cm
 
