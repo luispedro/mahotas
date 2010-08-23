@@ -24,12 +24,8 @@
 # or (at your option) any later version.
 
 from __future__ import division
-import math
 import numpy as np
 from center_of_mass import center_of_mass
-from scipy import ndimage
-from scipy import weave
-from scipy.weave import converters
 import _zernike
 
 __all__ = ['zernike']
@@ -45,10 +41,16 @@ def zernike(img, D, radius):
 
     Parameters
     ----------
-       * radius is used as the maximum radius for the Zernike polynomials, in pixels
-
-    Reference: Teague, MR. (1980). Image Analysis via the General
-      Theory of Moments.  J. Opt. Soc. Am. 70(8):920-930.
+      img : 2-d ndarray
+      D : Maximum degree to use
+      radius : the maximum radius for the Zernike polynomials, in pixels
+    Returns
+    -------
+      zvalues : 1-D array of Zernike moments
+    Reference
+    ---------
+        Teague, MR. (1980). Image Analysis via the General Theory of Moments.  J.
+        Opt. Soc. Am. 70(8):920-930.
     """
     zvalues = []
     c0,c1 = center_of_mass(img)
@@ -78,5 +80,5 @@ def zernike(img, D, radius):
             if (n-l)%2 == 0:
                 z = _zernike.znl(Dn, An, frac_center, float(n), float(l))
                 zvalues.append(abs(z))
-    return zvalues
+    return np.array(zvalues)
 
