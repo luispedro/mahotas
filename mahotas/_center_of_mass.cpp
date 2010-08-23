@@ -26,16 +26,24 @@ void center_of_mass(const numpy::aligned_array<T> array, npy_double* centers, co
     const unsigned N = array.size();
     const int nd = array.ndims();
     typename numpy::aligned_array<T>::const_iterator pos = array.begin();
+    double total = 0;
     for (unsigned i = 0; i != N; ++i, ++pos) {
         double val = *pos;
-        int label = 0;
-        if (labels) label = labels[i];
-        totals[label] += val;
-        for (int j = 0; j != nd; ++j) {
-            int idx = label*nd + j;
-            centers[idx] += val * pos.index_rev(j);
+        if (labels) {
+                int label = labels[i];
+                totals[label] += val;
+                for (int j = 0; j != nd; ++j) {
+                    int idx = label*nd + j;
+                    centers[idx] += val * pos.index_rev(j);
+                }
+        } else {
+            total += val;
+            for (int j = 0; j != nd; ++j) {
+                centers[j] += val * pos.index_rev(j);
+            }
         }
     }
+    if (!labels) *totals = total;
 }
 
 PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
