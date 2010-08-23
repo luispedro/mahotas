@@ -17,11 +17,13 @@ double _factorialtable[] = {
 
 PyObject* py_znl(PyObject* self, PyObject* args) {
     using std::pow;
+    using std::atan;
     using std::atan2;
     using std::polar;
     using std::conj;
     using std::complex;
 
+    const double pi = atan(1.0)*4;
 
     PyArrayObject* Xa;
     PyArrayObject* Ya;
@@ -54,6 +56,7 @@ PyObject* py_znl(PyObject* self, PyObject* args) {
         }
         v += p * conj(Vnl);
     }
+    v *= (n+1)/pi;
     return PyComplex_FromDoubles(v.real(), v.imag());
 
 }
