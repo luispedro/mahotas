@@ -324,7 +324,10 @@ def _array_from_bitmap(bitmap):
         g = array[1]
         r = array[2]
         return np.dstack( (n(r), n(g), n(b)) )
-    return n(array)
+
+    # We need to copy because array does *not* own its memory
+    # after bitmap is freed.
+    return n(array).copy()
 
 def string_tag(bitmap, key, model=METADATA_MODELS.FIMD_EXIF_MAIN):
     """Retrieve the value of a metadata tag with the given string key as a
@@ -413,7 +416,7 @@ def _array_to_bitmap(array):
     if not bitmap:
         raise RuntimeError('mahotas.freeimage: could not allocate image for storage')
     try:
-        def n(arr):
+        def n(arr): # normalise to freeimage's in-memory format
             return arr.T[:,::-1]
         wrapped_array = _wrap_bitmap_bits_in_array(bitmap, w_shape, dtype)
         # swizzle the color components and flip the scanlines to go to
