@@ -38,9 +38,9 @@ def _polar(r,theta):
     y = r * sin(theta)
     return 1*x+1j*y
 
+_factorialtable = np.array([1,1,2,6,24,120,720,5040,40320,362880,3628800,39916800,479001600])
 def Znl(n,l,X,Y,P):
     v = 0.+0.j
-    factorialtable = np.array([1,1,2,6,24,120,720,5040,40320,362880,3628800,39916800,479001600])
     try:
         Nelems = len(X)
         v = np.array([v]) # This is necessary for the C++ code to see and update v correctly
@@ -60,8 +60,8 @@ def Znl(n,l,X,Y,P):
             Vnl = 0.;
             for(int m = 0; m <= (n-l)/2; m++) {
                 double f = (m & 1) ? -1 : 1;
-                Vnl += f * factorialtable(int(n-m)) /
-                       ( factorialtable(m) * factorialtable((n - 2*m + l) / 2) * factorialtable((n - 2*m - l) / 2) ) *
+                Vnl += f * _factorialtable(int(n-m)) /
+                       ( _factorialtable(m) * _factorialtable((n - 2*m + l) / 2) * _factorialtable((n - 2*m - l) / 2) ) *
                        ( pow( sqrt(x*x + y*y), (double)(n - 2*m)) ) *
                        polar(1.0, l*atan2(y,x)) ;
             }
@@ -69,17 +69,18 @@ def Znl(n,l,X,Y,P):
         }
         '''
         weave.inline(code,
-            ['factorialtable','X','Y','P','v','n','l','Nelems'],
+            ['_factorialtable','X','Y','P','v','n','l','Nelems'],
             type_converters=converters.blitz,
             compiler = 'gcc',
             headers=['<complex>'])
         v = v[0]
-    except:
+    except e:
+        print 'Error:', e
         for x,y,p in zip(X,Y,P):
             Vnl = 0.
             for m in xrange( (n-l)//2 + 1 ):
-                  Vnl += (-1.)**m * factorialtable[n-m] /  \
-                ( factorialtable[m] * factorialtable[(n - 2*m + l) // 2] * factorialtable[(n - 2*m - l) // 2] ) * \
+                  Vnl += (-1.)**m * _factorialtable[n-m] /  \
+                ( _factorialtable[m] * _factorialtable[(n - 2*m + l) // 2] * _factorialtable[(n - 2*m - l) // 2] ) * \
                 ( np.sqrt(x*x + y*y)**(n - 2*m) * _polar(1.0, l*atan2(y,x)) )
             v += p * math.conjugate(Vnl)
     v *= (n+1)/np.pi
@@ -112,20 +113,25 @@ def zernike(img, D, radius, scale):
 # Normalize the coordinates to the center of mass and normalize
 #  pixel distances using the maximum radius argument (radius)
     cofx,cofy = center_of_mass(img)
-    Xn = np.double(X-cofx)/radius*scale
-    Yn = np.double(Y-cofy)/radius*scale
-    Xn = Xn.ravel()
-    Yn = Yn.ravel()
-
+    def rescale(C, centre):
+        Cn = C.astype(np.double)
+        Cn -= centre
+        Cn /= (radius/scale)
+        return Cn.ravel()
+    Xn = rescale(X, cofx)
+    Yn = rescale(Y, cofy)
 
 # Find all pixels of distance <= 1.0 to center
     k = (np.sqrt(Xn**2 + Yn**2) <= 1.)
     frac_center = np.array(P[k], np.double)/img.sum()
+    Yn = Yn[k]
+    Xn = Xn[k]
+    frac_center = frac_center.ravel()
 
     for n in xrange(D+1):
         for l in xrange(n+1):
             if (n-l)%2 == 0:
-                z = Znl(n,l, Xn[k], Yn[k], frac_center.ravel())
+                z = Znl(n,l, Xn, Yn, frac_center)
                 zvalues.append(abs(z))
     return zvalues
 
