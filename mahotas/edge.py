@@ -51,7 +51,10 @@ def sobel(img):
     # but with some reverse engineering to match Matlab exactly
     img = img.astype(np.float)
     img -= img.min()
-    img /= img.ptp()
+    ptp = img.ptp()
+    if ptp == 0:
+        return img
+    img /= ptp
     vfiltered = ndimage.correlate(img, _vsobel_filter, mode='nearest') # This emulates Matlab's implementation
     hfiltered = ndimage.correlate(img, _hsobel_filter, mode='nearest')
     filtered = vfiltered**2 + hfiltered**2
