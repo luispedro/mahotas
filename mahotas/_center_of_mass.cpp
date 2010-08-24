@@ -95,7 +95,7 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
 #define HANDLE(type) \
         center_of_mass<type>(numpy::aligned_array<type>(array), centers_v, labels, totals); \
 
-        HANDLE_INTEGER_TYPES();
+        HANDLE_TYPES();
 #undef HANDLE
         default:
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
