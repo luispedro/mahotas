@@ -183,3 +183,36 @@ def close_holes(ref, Bc=None):
         ref = ref.copy()
     Bc = get_structuring_elem(ref, Bc)
     return _morph.close_holes(ref, Bc)
+
+
+def majority_filter(img, N=3, output=None):
+    '''
+    filtered = majority_filter(img, N=3, output={np.empty(img.shape, np.bool)})
+
+    Majority filter
+
+    filtered[y,x] is positive if the majority of pixels in the squared of size
+    `N` centred on (y,x) are positive.
+
+    Parameters
+    ----------
+      img : input img (currently only 2-D images accepted)
+      N : size of filter (must be odd integer)
+      output : used for output. Must be Boolean ndarray of same size as `img`
+    Returns
+    -------
+      filtered : boolean image of same size as img.
+                 output if passed
+    '''
+    if img.dtype != np.bool_:
+        img = img.astype(bool)
+    if output is None or output.dtype != np.bool_ or output.shape != img.shape:
+        output = np.empty(img.shape, np.bool_)
+    if N <= 1:
+        raise ValueError('mahotas.majority_filter: filter size must be positive')
+    if not N&1:
+        import warnings
+        warnings.warn('mahotas.majority_filter: size argument must be odd.')
+        N += 1
+    return _morph.majority_filter(img, N, output)
+

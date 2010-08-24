@@ -423,6 +423,7 @@ PyObject* py_hitmiss(PyObject* self, PyObject* args) {
     PyArrayObject* Bc;
     PyArrayObject* res_a;
     if (!PyArg_ParseTuple(args, "OOO", &array, &Bc, &res_a)) {
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
     Py_INCREF(res_a);
@@ -439,12 +440,46 @@ PyObject* py_hitmiss(PyObject* self, PyObject* args) {
     return PyArray_Return(res_a);
 }
 
+PyObject* py_majority_filter(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* res_a;
+    int N;
+    if (!PyArg_ParseTuple(args, "OiO", &array, &N, &res_a) ||
+        !PyArray_Check(array) || !PyArray_Check(res_a) ||
+        PyArray_TYPE(array) != NPY_BOOL || PyArray_TYPE(res_a) != NPY_BOOL) {
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
+    }
+    Py_INCREF(res_a);
+    PyArray_FILLWBYTE(res_a, 0);
+    numpy::aligned_array<bool> input(array);
+    numpy::aligned_array<bool> output(res_a);
+    const int rows = input.dim(0);
+    const int cols = input.dim(1);
+    const int T = N*N/2;
+    for (int y = 0; y != rows-N; ++y) {
+        for (int x = 0; x != cols-N; ++x) {
+            int count = 0;
+            for (int dy = 0; dy != N; ++dy) {
+                for (int dx = 0; dx != N; ++dx) {
+                    if (input.at(y+dy,x+dx)) ++count;
+                }
+            }
+            if (count >= T) {
+                output.at(y+int(N/2),x+int(N/2)) = true;
+            }
+        }
+    }
+    return PyArray_Return(res_a);
+}
+
 PyMethodDef methods[] = {
   {"dilate",(PyCFunction)py_dilate, METH_VARARGS, NULL},
   {"erode",(PyCFunction)py_erode, METH_VARARGS, NULL},
   {"close_holes",(PyCFunction)py_close_holes, METH_VARARGS, NULL},
   {"cwatershed",(PyCFunction)py_cwatershed, METH_VARARGS, NULL},
   {"hitmiss",(PyCFunction)py_hitmiss, METH_VARARGS, NULL},
+  {"majority_filter",(PyCFunction)py_majority_filter, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 
