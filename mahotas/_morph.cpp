@@ -446,7 +446,8 @@ PyObject* py_majority_filter(PyObject* self, PyObject* args) {
     int N;
     if (!PyArg_ParseTuple(args, "OiO", &array, &N, &res_a) ||
         !PyArray_Check(array) || !PyArray_Check(res_a) ||
-        PyArray_TYPE(array) != NPY_BOOL || PyArray_TYPE(res_a) != NPY_BOOL) {
+        PyArray_TYPE(array) != NPY_BOOL || PyArray_TYPE(res_a) != NPY_BOOL ||
+        !PyArray_ISCARRAY(res_a)) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
@@ -458,6 +459,7 @@ PyObject* py_majority_filter(PyObject* self, PyObject* args) {
     const int cols = input.dim(1);
     const int T = N*N/2;
     for (int y = 0; y != rows-N; ++y) {
+        bool* output_iter = output.data() + (y+int(N/2)) * output.dim(0) + int(N/2);
         for (int x = 0; x != cols-N; ++x) {
             int count = 0;
             for (int dy = 0; dy != N; ++dy) {
@@ -466,8 +468,9 @@ PyObject* py_majority_filter(PyObject* self, PyObject* args) {
                 }
             }
             if (count >= T) {
-                output.at(y+int(N/2),x+int(N/2)) = true;
+                *output_iter = true;
             }
+            ++output_iter;
         }
     }
     return PyArray_Return(res_a);
