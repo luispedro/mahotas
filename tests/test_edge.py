@@ -16,3 +16,7 @@ def test_sobel():
         if y < (r-1): N.append(I[y+1,x])
         if x < (c-1): N.append(I[y,x+1])
         assert len(set(N)) > 1
+
+def test_zero_images():
+    assert np.isnan(sobel(np.zeros((16,16)))).sum() == 0
+
