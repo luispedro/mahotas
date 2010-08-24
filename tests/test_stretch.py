@@ -10,4 +10,6 @@ def test_stretch():
     assert A.max() <= 20
     A = stretch(A, 10, 20)
     assert A.min() >= 10
+    A = stretch(A * 0, 10, 20)
+    assert A.min() >= 10
 

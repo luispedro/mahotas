@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2009-2010, Luis Pedro Coelho <lpc@cmu.edu>
+# vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -30,20 +31,19 @@ def stretch(img, arg0, arg1=None, dtype=np.uint8):
     Contrast stretch the image to the range [0, max] (first form) or
         [min, max] (second form).
 
-    Inputs
-    ------
-        * img: an np.ndarray. It is *not modified* by this function
-        * min: minimum value for output [default: 0]
-        * max: maximum value for output
-        * dtype: dtype of output [default: np.uint8]
-    
-    Output
-    ------
-        * img': resulting image. ndarray of same shape as img and type dtype.
+    Parameters
+    ----------
+      img : an np.ndarray. It is *not modified* by this function
+      min : minimum value for output [default: 0]
+      max : maximum value for output
+      dtype : dtype of output [default: np.uint8]
+    Returns
+    -------
+      img': resulting image. ndarray of same shape as img and type dtype.
 
     Bugs
     ----
-        * If max > 255, then it truncates the values if dtype is not specified.
+        If max > 255, then it truncates the values if dtype is not specified.
     '''
     if arg1 is None:
         min = 0
@@ -51,13 +51,15 @@ def stretch(img, arg0, arg1=None, dtype=np.uint8):
     else:
         min = arg0
         max = arg1
-    if img.dtype == np.double:
-        img = img.copy()
     img = img.astype(np.double)
     img -= img.min()
-    img /= img.ptp()
-    img *= (max - min)
-    img += min
+    ptp = img.ptp()
+    if not ptp:
+        img = np.zeros(img.shape, dtype)
+        if min:
+            img += min
+        return img
+    img *= float(max - min)/ptp
+    if min: img += min
     return img.astype(dtype)
 
-# vim: set ts=4 sts=4 sw=4 expandtab smartindent:
