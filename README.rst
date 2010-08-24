@@ -10,10 +10,13 @@ It includes a couple of algorithms implemented in C++ for speed while operating
 in numpy arrays.
 
 Notable algorithms:
- - watershed
- - thresholding
- - convex points calculations
+ - watershed.
+ - thresholding.
+ - convex points calculations.
  - hit & miss. thinning.
+ - Zernike & Haralick features.
+ - freeimage based numpy image loading (requires freeimage libraries to be
+ installed).
 
 
 *Website*: `http://luispedro.org/software/mahotas
