@@ -56,3 +56,12 @@ def test_labels():
     for label,cm in enumerate(centres):
         assert np.all(cm == mahotas.center_of_mass(R * (labels == label)))
 
+
+
+def test_labels_not_intc():
+    img = np.arange(256).reshape((16,-1))
+    labels = img.copy()
+    labels %= 3
+    cm = mahotas.center_of_mass(img, labels)
+    assert cm.shape == (3,2)
+

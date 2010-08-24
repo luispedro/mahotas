@@ -35,8 +35,13 @@ def center_of_mass(img, labels=None):
       coords : A 1-ndarray of coordinates (size = len(img.shape))
     '''
     if labels is not None:
-        if labels.dtype is not np.intc or not labels.flags['CONTIGUOUS']:
-            labels = labels.astype(np.intc)
+        if labels.dtype != np.int32 or \
+            not labels.flags['C_CONTIGUOUS']:
+            labels = labels.astype(np.int32)
+        else:
+            # This is necessary because it might be of a type that equals
+            # NPY_INT32, but is not NPY_INT32
+            labels = labels.view(np.int32)
     cm = _center_of_mass.center_of_mass(img, labels)
     if labels is not None:
         return cm.reshape((-1, img.ndim))

@@ -22,7 +22,7 @@ const char TypeErrorMsg[] =
 
 
 template<typename T>
-void center_of_mass(const numpy::aligned_array<T> array, npy_double* centers, const int* labels, double* totals) {
+void center_of_mass(const numpy::aligned_array<T> array, npy_double* centers, const npy_int32* labels, double* totals) {
     const unsigned N = array.size();
     const int nd = array.ndims();
     typename numpy::aligned_array<T>::const_iterator pos = array.begin();
@@ -49,7 +49,7 @@ void center_of_mass(const numpy::aligned_array<T> array, npy_double* centers, co
 PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyObject* labels_obj;
-    const int* labels = 0;
+    const npy_int32* labels = 0;
     double total_sum = 0.0;
     double * totals = &total_sum;
     int max_label = 0;
@@ -61,11 +61,11 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
     if (labels_obj != Py_None) {
         if (!PyArray_Check(labels_obj) ||
             !PyArray_ISCARRAY_RO(labels_obj) ||
-            PyArray_TYPE(labels_obj) != NPY_INT) {
+            PyArray_TYPE(labels_obj) != NPY_INT32) {
             PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
             return NULL;
         }
-        labels = static_cast<const int*>(PyArray_DATA(labels_obj));
+        labels = static_cast<const npy_int32*>(PyArray_DATA(labels_obj));
     }
     if (labels) {
         const int N = PyArray_SIZE(array);
