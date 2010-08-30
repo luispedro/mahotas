@@ -195,6 +195,9 @@ class array_base {
         }
 
 
+        unsigned stride(unsigned i) const {
+            return PyArray_STRIDE(array_, i)/sizeof(BaseType);
+        }
         PyArrayObject* raw_array() const { return array_; }
         void* raw_data() const { return PyArray_DATA(array_); }
         const npy_intp* raw_dims() const { return array_->dimensions; }
