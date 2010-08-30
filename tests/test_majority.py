@@ -20,6 +20,9 @@ def test_majority():
     R = np.random.rand(64, 64) > .88
     assert np.all(mahotas.morph.majority_filter(R, 3) == slow_majority(R, 3))
 
+    R = np.random.rand(32, 64) > .88
+    assert np.all(mahotas.morph.majority_filter(R, 3) == slow_majority(R, 3))
+
     R = np.random.rand(64, 64) > .88
     assert np.all(mahotas.morph.majority_filter(R[:32,:], 3) == slow_majority(R, 3))
 
