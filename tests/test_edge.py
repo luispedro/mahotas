@@ -1,5 +1,14 @@
 from mahotas.edge import sobel
 import numpy as np
+def test_sobel_shape():
+    A = np.zeros((100,100))
+    assert sobel(A).shape == A.shape
+
+def test_sobel_zeros():
+    A = np.zeros((15,100))
+    assert sobel(A).shape == A.shape
+    assert sobel(A).sum() == 0
+
 def test_sobel():
     I = np.array([
             [0,0,0,1,0,0],
