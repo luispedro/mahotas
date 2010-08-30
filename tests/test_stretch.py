@@ -13,3 +13,10 @@ def test_stretch():
     A = stretch(A * 0, 10, 20)
     assert A.min() >= 10
 
+def test_neg_numbers():
+    A = np.arange(-10,10)
+    scaled = stretch(A, 255)
+    assert scaled.shape == A.shape
+    assert scaled.min() <= 1
+    assert scaled.max() >= 254
+
