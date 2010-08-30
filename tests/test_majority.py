@@ -16,16 +16,19 @@ def slow_majority(img, N):
     return output
 
 def test_majority():
+    def compare_w_slow(R):
+        assert np.all(mahotas.morph.majority_filter(R, 3) == slow_majority(R, 3))
+
     np.random.seed(22)
     R = np.random.rand(64, 64) > .88
-    assert np.all(mahotas.morph.majority_filter(R, 3) == slow_majority(R, 3))
+    yield compare_w_slow, R
 
     R = np.random.rand(32, 64) > .88
-    assert np.all(mahotas.morph.majority_filter(R, 3) == slow_majority(R, 3))
+    yield compare_w_slow, R
 
     R = np.random.rand(64, 64) > .88
-    assert np.all(mahotas.morph.majority_filter(R[:32,:], 3) == slow_majority(R[:32,:], 3))
+    yield compare_w_slow, R[:32,:]
 
     R = np.random.rand(64, 64) > .88
-    assert np.all(mahotas.morph.majority_filter(R[:23,:], 3) == slow_majority(R[:23,:], 3))
+    yield compare_w_slow, R[:23,:]
 
