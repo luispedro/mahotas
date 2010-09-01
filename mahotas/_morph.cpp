@@ -384,6 +384,10 @@ void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, 
         }
     }
 
+    // This is a micro-optimisation for templates with structure
+    // It makes it more likely that matching will fail earlier
+    // in uniform regions than otherwise would be the case.
+    std::random_shuffle(neighbours.begin(), neighbours.end());
     int slack = 0;
     for (int i = 0; i != N; ++i) {
         while (!slack) {
