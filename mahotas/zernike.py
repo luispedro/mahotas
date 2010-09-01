@@ -55,30 +55,40 @@ def zernike(img, D, radius):
     zvalues = []
     c0,c1 = center_of_mass(img)
 
-    Y,X = np.where(img > 0)
-    P = img[Y,X].ravel()
+    Y,X = np.mgrid[:img.shape[0],:img.shape[1]]
+    P = img.ravel()
+
     def rescale(C, centre):
         Cn = C.astype(np.double)
         Cn -= centre
         Cn /= radius
         return Cn.ravel()
-    Yn = rescale(Y, c1)
-    Xn = rescale(X, c0)
+    Yn = rescale(Y, c0)
+    Xn = rescale(X, c1)
 
-    Dn = np.sqrt(Xn**2+Yn**2)
+    Dn = Xn**2
+    Dn += Yn**2
+    np.sqrt(Dn, Dn)
     k = (Dn <= 1.)
+    k &= (P > 0)
 
-    frac_center = np.array(P[k], np.double)/img.sum()
+    frac_center = np.array(P[k], np.double)
     frac_center = frac_center.ravel()
+    frac_center /= frac_center.sum()
     Yn = Yn[k]
     Xn = Xn[k]
     Dn = Dn[k]
-    An = np.arctan2(Yn, Xn)
+    An = np.empty(Yn.shape, np.complex)
+    An.real = (Xn/Dn)
+    An.imag = (Yn/Dn)
 
+    Ans = [An**p for p in xrange(2,D+2)]
+    Ans.insert(0, An) # An**1
+    Ans.insert(0, np.ones_like(An)) # An**0
     for n in xrange(D+1):
         for l in xrange(n+1):
             if (n-l)%2 == 0:
-                z = _zernike.znl(Dn, An, frac_center, float(n), float(l))
+                z = _zernike.znl(Dn, Ans[l], frac_center, n, l)
                 zvalues.append(abs(z))
     return np.array(zvalues)
 

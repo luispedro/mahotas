@@ -20,7 +20,7 @@ double _factorialtable[] = {
 inline
 double fact(int n) {
     if (unsigned(n) < sizeof(_factorialtable)/sizeof(double)) return _factorialtable[n];
-    return n * fact(n - 1);
+    return double(n) * fact(n - 1);
 }
 
 PyObject* py_znl(PyObject* self, PyObject* args) {
@@ -36,16 +36,16 @@ PyObject* py_znl(PyObject* self, PyObject* args) {
     PyArrayObject* Da;
     PyArrayObject* Aa;
     PyArrayObject* Pa;
-    double n;
-    double l;
-    if (!PyArg_ParseTuple(args,"OOOdd", &Da, &Aa, &Pa, &n, &l)) return NULL;
+    int n;
+    int l;
+    if (!PyArg_ParseTuple(args,"OOOii", &Da, &Aa, &Pa, &n, &l)) return NULL;
     if (!PyArray_Check(Da) || !PyArray_Check(Aa) || !PyArray_Check(Pa) ||
-        PyArray_TYPE(Da) != NPY_DOUBLE || PyArray_TYPE(Aa) != NPY_DOUBLE || PyArray_TYPE(Pa) != NPY_DOUBLE) {
+        PyArray_TYPE(Da) != NPY_DOUBLE || PyArray_TYPE(Aa) != NPY_CDOUBLE || PyArray_TYPE(Pa) != NPY_DOUBLE) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
     double* D = static_cast<double*>(PyArray_DATA(Da));
-    double* A = static_cast<double*>(PyArray_DATA(Aa));
+    complex<double>* A = static_cast<complex<double>*>(PyArray_DATA(Aa));
     double* P = static_cast<double*>(PyArray_DATA(Pa));
     int Nelems = PyArray_SIZE(Da);
     complex<double> Vnl = 0.0;
@@ -63,11 +63,11 @@ PyObject* py_znl(PyObject* self, PyObject* args) {
 
     for (int i = 0; i != Nelems; ++i) {
         double d=D[i];
-        double a=A[i];
+        complex<double> a=A[i];
         double p=P[i];
         Vnl = 0.;
         for(int m = 0; m <= (n-l)/2; m++) {
-            Vnl += g_m[m] * pow(d, (double)(n - 2*m)) * polar(1.0, l*a);
+            Vnl += g_m[m] * pow(d, double(n - 2*m)) * a;
         }
         v += p * conj(Vnl);
     }
