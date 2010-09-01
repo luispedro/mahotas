@@ -249,9 +249,13 @@ struct array : public array_base<BaseType> {
 
 template <typename BaseType>
 struct aligned_array : public array_base<BaseType> {
+    private:
+        const bool is_carray_;
     public:
         aligned_array(PyArrayObject* array)
-            :array_base<BaseType>(array) {
+            :array_base<BaseType>(array)
+            ,is_carray_(PyArray_ISCARRAY(array))
+            {
                 assert(PyArray_ISALIGNED(array));
             }
         typedef aligned_iterator_type<BaseType> iterator;
@@ -297,7 +301,7 @@ struct aligned_array : public array_base<BaseType> {
         }
 
         BaseType& at_flat(npy_intp p) {
-            if (PyArray_ISCARRAY(this->array_)) return data()[p];
+            if (is_carray_) return data()[p];
 
             BaseType* base = this->data();
             for (int d = this->ndims() - 1; d >= 0; --d) {
