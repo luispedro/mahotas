@@ -1,5 +1,6 @@
 from mahotas import bwperim
 import numpy as np
+from nose.tools import raises
 
 def _neighbours(bwimg, y, x, n):
     s0 = max(0, y-1)
@@ -31,3 +32,9 @@ def test_bwperim():
     assert img[3:7,3:7].sum() == img.sum()
     img[2,2:4] = 1
     _compare_slow(img)
+
+@raises(ValueError)
+def test_n5():
+    img = np.zeros((8,8), np.bool)
+    img[3:7,3:7] = 1
+    bwperim(img, 5)
