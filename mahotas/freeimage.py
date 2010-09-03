@@ -137,6 +137,9 @@ class FI_TYPES(object):
             bpp = _FI.FreeImage_GetBPP(bitmap)
             if bpp == 8:
                 extra_dims = []
+            elif bpp == 16:
+                extra_dims = []
+                dtype = np.uint16
             elif bpp == 24:
                 extra_dims = [3]
             elif bpp == 32:
