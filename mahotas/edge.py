@@ -31,6 +31,8 @@ _vsobel_filter = np.array([
     [ 0,  0,  0],
     [ 1,  2,  1]])/8.
 
+__all__ = ['sobel']
+
 def sobel(img):
     '''
     edges = sobel(img)

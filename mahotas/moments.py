@@ -19,6 +19,7 @@
 from __future__ import division
 import numpy as np
 
+__all__ = ['moments']
 def moments(img, p0, p1, cm=None, convert_to_float=True):
     '''
     m = moments(img, p0, p1, cm=(0, 0), convert_to_float=True)
@@ -49,6 +50,9 @@ def moments(img, p0, p1, cm=None, convert_to_float=True):
     Returns
     -------
       moment: floating point number
+    Bugs
+    ----
+      It only works for 2-D images
     '''
     if not np.issubdtype(img.dtype, float) and convert_to_float:
         img = img.astype(np.float64)

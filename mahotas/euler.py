@@ -21,6 +21,8 @@ _powers = np.array([
     [4, 8]
     ])
 
+__all__ = ['euler']
+
 def euler(f, n=8):
     '''
     euler_nr = euler(f, n=8)

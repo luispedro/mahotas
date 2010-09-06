@@ -21,6 +21,8 @@ import numpy as np
 from . import _texture
 import math
 
+__all__ = ['haralick']
+
 def _entropy(p):
     p = p.ravel()
     return -np.dot(np.log(p+(p==0)),p)/math.log(2.0)

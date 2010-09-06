@@ -23,6 +23,8 @@
 from __future__ import division
 import numpy as np
 
+__all__ = ['stretch']
+
 def stretch(img, arg0, arg1=None, dtype=np.uint8):
     '''
     img' = stretch(img, max, [dtype=np.uint8])
