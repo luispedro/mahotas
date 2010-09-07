@@ -3,12 +3,15 @@ import numpy as np
 import sys
 import os
 
-lib_dirs = (os.path.dirname(__file__),
-            '/lib',
-            '/usr/lib',
-            '/usr/local/lib',
-            '/opt/local/lib',
-            )
+_lib_dirs = os.environ.get('LD_LIBRARY_PATH','').split(':')
+_lib_dirs = filter(None, _lib_dirs)
+_lib_dirs.extend([
+    os.path.dirname(__file__),
+    '/lib',
+    '/usr/lib',
+    '/usr/local/lib',
+    '/opt/local/lib',
+    ])
 
 API = {
     'FreeImage_Load': (ctypes.c_voidp,
@@ -35,7 +38,7 @@ def register_api(lib,api):
         func.argtypes = argtypes
 
 _FI = None
-for d in lib_dirs:
+for d in _lib_dirs:
     for libname in ('libfreeimage', 'libFreeImage'):
         try:
             _FI = np.ctypeslib.load_library(libname, d)
@@ -49,7 +52,7 @@ for d in lib_dirs:
 
 if not _FI:
     raise OSError('mahotas.freeimage: could not find libFreeImage in any of the following '
-                  'directories: \'%s\'' % '\', \''.join(lib_dirs))
+                  'directories: \'%s\'' % '\', \''.join(_lib_dirs))
 
 register_api(_FI, API)
 
