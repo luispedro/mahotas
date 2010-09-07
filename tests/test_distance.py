@@ -3,8 +3,7 @@ import numpy as np
 def _slow_dist(bw, metric):
     sd = np.empty(bw.shape, np.double)
     sd.fill(np.inf)
-    s0,s1 = bw.shape
-    Y,X = np.mgrid[:s0,:s1]
+    Y,X = np.indices(bw.shape)
     for y,x in zip(*np.where(~bw)):     
         sd = np.minimum(sd, (Y-y)**2 + (X-x)**2)
     if metric == 'euclidean':
