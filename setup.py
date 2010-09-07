@@ -40,8 +40,9 @@ center_of_mass = numpyutils.Extension('mahotas/_center_of_mass', sources = ['mah
 texture = numpyutils.Extension('mahotas/_texture', sources = ['mahotas/_texture.cpp'])
 convex = numpyutils.Extension('mahotas/_convex', sources = ['mahotas/_convex.cpp'])
 zernike = numpyutils.Extension('mahotas/_zernike', sources = ['mahotas/_zernike.cpp'])
+distance = numpyutils.Extension('mahotas/_distance', sources = ['mahotas/_distance.cpp'])
 
-ext_modules = [histogram, morph, bbox, center_of_mass, texture, convex, zernike]
+ext_modules = [histogram, morph, bbox, center_of_mass, texture, convex, zernike, distance]
 
 packages = setuptools.find_packages()
 if 'tests' in packages: packages.remove('tests')

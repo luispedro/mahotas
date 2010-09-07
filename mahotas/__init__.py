@@ -17,7 +17,7 @@ from .bbox import bbox, croptobbox
 from .edge import sobel
 from .euler import euler
 from .moments import moments
-from .stretch import stretch
+from .distance import distance
 from mahotas_version import __version__
 
 import segmentation
