@@ -462,6 +462,9 @@ PyObject* py_majority_filter(PyObject* self, PyObject* args) {
     const int rows = input.dim(0);
     const int cols = input.dim(1);
     const int T = N*N/2;
+    if (rows < N || cols < N) {
+        return PyArray_Return(res_a);
+    }
     for (int y = 0; y != rows-N; ++y) {
         bool* output_iter = output.data() + (y+int(N/2)) * output.stride(0) + int(N/2);
         for (int x = 0; x != cols-N; ++x) {
