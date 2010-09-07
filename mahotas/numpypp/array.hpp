@@ -4,7 +4,9 @@
  */
 
 #include <iterator>
+#include <algorithm>
 #include <cstring>
+
 extern "C" {
     #include <Python.h>
     #include <numpy/ndarrayobject.h>
