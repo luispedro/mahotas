@@ -1,5 +1,6 @@
 import numpy as np
 from mahotas.histogram import fullhistogram
+from nose.tools import raises
 
 def test_fullhistogram():
     A100 = np.arange(100).reshape((10,10)).astype(np.uint32)
@@ -38,3 +39,6 @@ def test_fullhistogram_boolean():
     assert H[0] == (~A).sum()
     assert H[1] == A.sum()
 
+@raises(TypeError)
+def test_float():
+    fullhistogram(np.arange(16.*4., dtype=float).reshape((16,4)))
