@@ -78,9 +78,10 @@ def lbp(image, radius, points):
         def mapping(codes):
             res = []
             for c in codes:
-                bestval = cur
-                cur = _roll_left(cur, points)
-                if cur < bestval: bestval = cur
+                bestval = c
+                for r in xrange(points):
+                    c = _roll_left(c, points)
+                    if c < bestval: bestval = c
                 res.append(bestval)
             return np.array(res, np.int32)
 
