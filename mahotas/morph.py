@@ -81,7 +81,7 @@ def get_structuring_elem(A,Bc):
         elif Bc == 8:
             return numpy.ones((3,3),A.dtype)
         else:
-            raise RuntimeError('morph.get_structuring_elem: Forbidden argument %s' % Bc)
+            raise ValueError('morph.get_structuring_elem: Forbidden argument %s' % Bc)
     else:
         if len(A.shape) != len(Bc.shape):
             raise ValueError('morph.get_structuring_elem: Bc does not have the correct number of dimensions.')
