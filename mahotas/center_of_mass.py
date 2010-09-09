@@ -32,12 +32,13 @@ def center_of_mass(img, labels=None):
       img : Any ndarray
     Returns
     -------
-      coords : A 1-ndarray of coordinates (size = len(img.shape))
+      coords : if not labels, a 1-ndarray of coordinates (size = len(img.shape)),
+                if labels, a 2-ndarray of coordinates (shape = (labels.max()+1) x len(img.shape))
     '''
     if labels is not None:
         if labels.dtype != np.int32 or \
             not labels.flags['C_CONTIGUOUS']:
-            labels = labels.astype(np.int32)
+            labels = np.ascontiguousarray(labels, np.int32)
         else:
             # This is necessary because it might be of a type that equals
             # NPY_INT32, but is not NPY_INT32

@@ -59,9 +59,18 @@ def test_labels():
 
 
 def test_labels_not_intc():
-    img = np.arange(256).reshape((16,-1))
+    img = np.arange(256).reshape((16,16))
     labels = img.copy()
     labels %= 3
+    cm = mahotas.center_of_mass(img, labels)
+    assert cm.shape == (3,2)
+
+    labels = labels.T.copy()
+    cm = mahotas.center_of_mass(img, labels.T)
+    assert cm.shape == (3,2)
+
+    labels = labels.T.copy()
+    labels = labels.astype(np.uint16)
     cm = mahotas.center_of_mass(img, labels)
     assert cm.shape == (3,2)
 
