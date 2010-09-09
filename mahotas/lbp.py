@@ -33,15 +33,11 @@ def _precompute_mapping(points):
     res -= 1
     for i in xrange(2**points):
         if res[i] == -1:
-            bestval = i
             cur = i
             for j in xrange(points):
-                cur = _roll_left(cur, points)
-                if cur < bestval:
-                    bestval = cur
-            cur = i
-            for j in xrange(points):
-                res[cur] = bestval
+                # if cur < i, then res[i] should not have been -1!
+                assert cur >= i
+                res[cur] = i
                 cur = _roll_left(cur, points)
     return res
 
