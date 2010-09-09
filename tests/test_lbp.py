@@ -30,7 +30,7 @@ def test_roll_left():
 
 
 def test_histogram_large():
-    A = np.arange(64*64).reshape((64,64))
+    A = np.arange(32*32).reshape((32,32))
     w,h = A.shape
     for r in (2,3,4,5):
         assert lbp(A,r,24).sum() == (w-2*r)*(h-2*r)
