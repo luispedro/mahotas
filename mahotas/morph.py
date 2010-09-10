@@ -45,27 +45,31 @@ __all__ = [
         ]
     
 def get_structuring_elem(A,Bc):
-    '''Bc_out = get_structuring_elem(A,Bc_in)
+    '''
+    Bc_out = get_structuring_elem(A, Bc)
 
-    Bc_in can be either:
-        * None: Then Bc_in is taken to be 1
+    Retrieve appropriate structuring element
 
-        * an integer: There are two associated semantics:
+    Parameters
+    ----------
+    A : array which will be operated on
+    Bc : can be either:
+        - None: Then Bc is taken to be 1
+        - an integer: There are two associated semantics:
             - connectivity:
-                Bc[y,x] = [[ is |y - 1| + |x - 1| <= Bc_i ]]
-
+              ``Bc[y,x] = [[ is |y - 1| + |x - 1| <= Bc_i ]]``
             - count:
-                Bc.sum() == Bc_i
-            This is the more traditional meaning (when one writes that "4-connected", this is what
-            one has in mind).
-
+              ``Bc.sum() == Bc_i``
+              This is the more traditional meaning (when one writes that "4-connected", this is what
+              one has in mind).
           Fortunately, the value itself allows one to distinguish between the two semantics and, if
           used correctly, no ambiguity should ever occur.
-
-        * An array. This should be of the same nr. of dimensions as A and will be passed through if of the
+        - An array. This should be of the same nr. of dimensions as A and will be passed through if of the
             right type. Otherwise, it will be cast.
 
-    Bc_out will be of the same type as A
+    Returns
+    -------
+    Bc_out : will be of the same type as A
     '''
     if len(A.shape) != 2:
         raise NotImplementedError('morph.get_structuring_elem: Sorry, only 2D morphology for now.')
@@ -111,11 +115,16 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
     
     Parameters
     ----------
-        * surface: image
-        * markers: initial markers (must be a labeled image)
-        * Bc: structuring element (default: 3x3 cross)
-        * return_lines: whether to return separating lines
-            (in addition to regions)
+    surface : image
+    markers : initial markers (must be a labeled image)
+    Bc : structuring element (default: 3x3 cross)
+    return_lines : whether to return separating lines
+                   (in addition to regions)
+
+    Returns
+    -------
+    W : Regions image (i.e., W[i,j] == region for pixel (i,j))
+    WL : Lines image (`if return_lines==True`)
     '''
     _verify_is_integer_type(surface, 'cwatershed')
     _verify_is_integer_type(markers, 'cwatershed')
@@ -137,6 +146,7 @@ def hitmiss(input, Bc, output=None):
       input : input ndarray
       Bc : hit & miss template (with 0, 1, 2)
       output : output array
+
     Returns
     -------
       output
@@ -172,8 +182,12 @@ def close_holes(ref, Bc=None):
 
     Parameters
     ----------
-        * ref: Reference image.
-        * Bc: structuring element (default: 3x3 cross)
+    ref : Reference image.
+    Bc : structuring element (default: 3x3 cross)
+
+    Returns
+    -------
+    closed : superset of `ref` (i.e. with closed holes)
     '''
     if ref.dtype != np.bool:
         if ((ref== 0)|(ref==1)).sum() != ref.size:
@@ -199,6 +213,7 @@ def majority_filter(img, N=3, output=None):
       img : input img (currently only 2-D images accepted)
       N : size of filter (must be odd integer)
       output : used for output. Must be Boolean ndarray of same size as `img`
+
     Returns
     -------
       filtered : boolean image of same size as img.
