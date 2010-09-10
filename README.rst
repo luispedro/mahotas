@@ -22,6 +22,9 @@ Notable algorithms:
 *Website*: `http://luispedro.org/software/mahotas
 <http://luispedro.org/software/mahotas>`_
 
+*API Docs*: `http://packages.python.org/mahotas/
+<http://packages.python.org/mahotas/>`_
+
 *Mailing List*: Use the `pythonvision mailing list
 <http://groups.google.com/group/pythonvision?pli=1>`_ for questions, bug
 submissions, etc.
