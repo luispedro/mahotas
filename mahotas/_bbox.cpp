@@ -38,15 +38,21 @@ void bbox(numpy::aligned_array<T> array, numpy::index_type* extrema) {
 
 
 template<typename T>
-void carray_bbox(const T* array, unsigned N0, unsigned N1, numpy::index_type* extrema) {
+void carray2_bbox(const T* array, unsigned N0, unsigned N1, numpy::index_type* extrema) {
     for (unsigned y = 0; y != N0; ++y) {
-        for (unsigned x = 0; x != N1; ++x, ++array)
+        for (unsigned x = 0; x < N1; ++x, ++array)
             if (*array) {
                 extrema[0] = std::min<numpy::index_type>(extrema[0], y);
                 extrema[1] = std::max<numpy::index_type>(extrema[1], y+1);
-
                 extrema[2] = std::min<numpy::index_type>(extrema[2], x);
-                extrema[3] = std::max<numpy::index_type>(extrema[3], x+1);
+
+                if (static_cast<numpy::index_type>(x+1) < extrema[3]) {
+                    int step = extrema[3]-x-1;
+                    x += step;
+                    array += step;
+                } else {
+                    extrema[3] = x+1;
+                }
             }
     }
 }
@@ -71,7 +77,7 @@ PyObject* py_bbox(PyObject* self, PyObject* args) {
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
         if (PyArray_ISCARRAY_RO(array) && array->nd == 2) { \
-            carray_bbox<type>(static_cast<const type*>(PyArray_DATA(array)), PyArray_DIM(array,0), PyArray_DIM(array, 1), extrema_v); \
+            carray2_bbox<type>(static_cast<const type*>(PyArray_DATA(array)), PyArray_DIM(array,0), PyArray_DIM(array, 1), extrema_v); \
         } else { \
             bbox<type>(numpy::aligned_array<type>(array), extrema_v); \
         }

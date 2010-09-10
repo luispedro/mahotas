@@ -9,6 +9,13 @@ def test_croptobbox():
     assert mahotas.croptobbox(ball,border=2).sum() == ball.sum()
     assert mahotas.croptobbox(ball,border=256).sum() == ball.sum()
     assert mahotas.croptobbox(ball,border=256).size == ball.size
+    assert mahotas.croptobbox(ball.T).sum() == ball.sum()
+
+    assert mahotas.croptobbox(ball[::2]).sum() == ball[::2].sum()
+    assert mahotas.croptobbox(ball[::2].T).sum() == ball[::2].sum()
+    assert mahotas.croptobbox(ball.T, border=2).sum() == ball.sum()
+    assert mahotas.croptobbox(ball.T, border=256).sum() == ball.sum()
+    assert mahotas.croptobbox(ball.T, border=256).size == ball.size
 
 def test_bbox_empty():
     assert mahotas.bbox(np.zeros((), np.bool)).shape == (0,)
