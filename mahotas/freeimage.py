@@ -458,7 +458,7 @@ def imread(filename, as_grey=False):
       img : ndarray
     """
     img = read(filename)
-    if as_grey and len(img) == 3:
+    if as_grey and len(img.shape) == 3:
         # these are the values that wikipedia says are typical
         transform = np.array([ 0.30,  0.59,  0.11])
         return np.dot(img, transform)
