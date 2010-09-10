@@ -37,9 +37,7 @@ def bbox(img):
     """
     if not img.shape:
         return np.array([], dtype=np.intp)
-    if len(img.shape) == 2:
-        return _bbox.bbox(img)
-    raise NotImplementedError, 'mahotas.bbox for images of more than 2 dimensions'
+    return _bbox.bbox(img)
 
 def croptobbox(img, border=None):
     """

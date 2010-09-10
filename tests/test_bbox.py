@@ -20,7 +20,18 @@ def test_croptobbox():
 def test_bbox_empty():
     assert mahotas.bbox(np.zeros((), np.bool)).shape == (0,)
 
-@raises(NotImplementedError)
 def test_bbox_3():
-    mahotas.bbox(np.arange(3*3*3).reshape((3,3,3)))
+    YXZ = np.indices((32,32,64), float)
+    YXZ -= 8
+    Y,X,Z = YXZ
+    ball = ((X**2+Y**2+Z**2) < 64).astype(np.uint8)
+    m0,M0,m1,M1,m2,M2 = mahotas.bbox(ball)
+
+    Y,X,Z = np.where(ball)
+    assert np.all(m0 <= Y)
+    assert np.all(m1 <= X)
+    assert np.all(m2 <= Z)
+    assert np.all(M0 > Y)
+    assert np.all(M1 > X)
+    assert np.all(M2 > Z)
 
