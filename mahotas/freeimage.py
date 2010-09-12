@@ -12,8 +12,11 @@ _lib_dirs.extend([
     '/usr/local/lib',
     '/opt/local/lib',
     ])
-
-API = {
+_possible_filenames = (
+    'libfreeimage',
+    'libFreeImage',
+    )
+_API = {
     'FreeImage_Load': (ctypes.c_voidp,
                        [ctypes.c_int, ctypes.c_char_p, ctypes.c_int]),
     'FreeImage_GetWidth': (ctypes.c_uint,
@@ -31,7 +34,7 @@ API = {
     }
 
 # Albert's ctypes pattern
-def register_api(lib,api):
+def _register_api(lib, api):
     for f, (restype, argtypes) in api.iteritems():
         func = getattr(lib, f)
         func.restype = restype
@@ -39,7 +42,7 @@ def register_api(lib,api):
 
 _FI = None
 for d in _lib_dirs:
-    for libname in ('libfreeimage', 'libFreeImage'):
+    for libname in _possible_filenames:
         try:
             _FI = np.ctypeslib.load_library(libname, d)
         except OSError:
@@ -54,7 +57,7 @@ if not _FI:
     raise OSError('mahotas.freeimage: could not find libFreeImage in any of the following '
                   'directories: \'%s\'' % '\', \''.join(_lib_dirs))
 
-register_api(_FI, API)
+_register_api(_FI, _API)
 
 if sys.platform == 'win32':
     _functype = ctypes.WINFUNCTYPE
