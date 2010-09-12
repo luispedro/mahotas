@@ -18,8 +18,16 @@ from .edge import sobel
 from .euler import euler
 from .moments import moments
 from .distance import distance
-from .freeimage import imread, imsave
 from mahotas_version import __version__
 
 import segmentation
 import features
+
+try:
+    from .freeimage import imread, imsave
+except OSError as e:
+    def imread(*args, **kwargs):
+        raise ImportError('mahotas.imread dependends on freeimage. Could not find it. Error was: %s' % e)
+    def imsave(*args, **kwargs):
+        raise ImportError('mahotas.imread dependends on freeimage. Could not find it. Error was: %s' % e)
+
