@@ -1,3 +1,8 @@
+Version 0.5.1 2010-09-13
+	* freeimage dependency made optional
+	* bbox() for N>2 dimensions
+	* documentation work
+
 Version 0.5 2010-09-09
 	* Distance transform 
 	* bwperim()
