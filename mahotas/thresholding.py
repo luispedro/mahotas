@@ -44,15 +44,16 @@ def otsu(img, ignore_zeros=False):
 
     Calculate a threshold according to the Otsu method.
 
-    Inputs
-    ------
-        * img: an image as a numpy array. This should be of an unsigned
-            integer type.
-        * ignore_zeros: whether to ignore any zero-valued pixels
-            (default: False)
-    Outputs
+    Parameters
+    ----------
+    img : an image as a numpy array. This should be of an unsigned
+          integer type.
+    ignore_zeros : whether to ignore zero-valued pixels
+                   (default: False)
+
+    Returns
     -------
-        T: the threshold as an integer
+    T : the threshold as an integer
     """
 # Calculated according to CVonline:
 # http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/MORSE/threshold.pdf
@@ -90,6 +91,7 @@ def rc(img, ignore_zeros=False):
     ----------
       img : Image of any type
       ignore_zeros : Whether to ignore zero valued pixels (default: False)
+
     Returns
     -------
       T : threshold

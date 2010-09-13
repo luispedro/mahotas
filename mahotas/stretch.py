@@ -39,6 +39,7 @@ def stretch(img, arg0, arg1=None, dtype=np.uint8):
       min : minimum value for output [default: 0]
       max : maximum value for output
       dtype : dtype of output [default: np.uint8]
+
     Returns
     -------
       img': resulting image. ndarray of same shape as img and type dtype.

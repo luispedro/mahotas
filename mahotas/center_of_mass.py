@@ -27,13 +27,18 @@ def center_of_mass(img, labels=None):
 
     Returns the center of mass of img.
 
+    If `labels` is given, then it returns `L` centers of mass, one for each
+    region identified by `labels` (including region 0).
+
     Parameters
     ----------
-      img : Any ndarray
+    img : Any ndarray
+    labels : A labeled array
+
     Returns
     -------
-      coords : if not labels, a 1-ndarray of coordinates (size = len(img.shape)),
-                if labels, a 2-ndarray of coordinates (shape = (labels.max()+1) x len(img.shape))
+    coords : if ``not labels``, a 1-ndarray of coordinates (size = len(img.shape)),
+             if ``labels``, a 2-ndarray of coordinates (shape = (labels.max()+1) x len(img.shape))
     '''
     if labels is not None:
         if labels.dtype != np.int32 or \

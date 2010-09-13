@@ -45,18 +45,18 @@ def fullhistogram(img):
 
     for all i.
 
-    Inputs
-    ------
-        * img: an array of an unsigned type
-            (or something that can be converted to an array)
+    Parameters
+    ----------
+    img : an array of an unsigned type
+          (or something that can be converted to an array)
 
-    Outputs
+    Returns
     -------
-        * hist: an array (of type numpy.uint32)
+    hist : an array (of type np.uint32). This will be of size `img.max() + 1`
 
     Limitations
     -----------
-        Only handles unsigned integer arrays.
+    Only handles unsigned integer arrays.
     """
     img = np.ascontiguousarray(img)
     if img.dtype == np.bool:

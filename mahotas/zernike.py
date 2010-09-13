@@ -44,9 +44,11 @@ def zernike(img, D, radius):
       img : 2-d ndarray
       D : Maximum degree to use
       radius : the maximum radius for the Zernike polynomials, in pixels
+
     Returns
     -------
       zvalues : 1-D array of Zernike moments
+
     Reference
     ---------
         Teague, MR. (1980). Image Analysis via the General Theory of Moments.  J.

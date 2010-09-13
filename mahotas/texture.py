@@ -52,6 +52,7 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
       ignore_zeros : Whether to ignore zero pixels (default: False).
       preserve_haralick_bug : Whether to replicate Haralick's type
                               (default: False).
+
     Returns
     -------
       feats : A 4x13 feature vector (one row per direction).

@@ -39,12 +39,14 @@ def sobel(img):
 
     Compute edges using Sobel's algorithm
 
-    `edges` is a binary image of edges computed according to Matlab's
-    implementation of Sobel's algorithm.
+    `edges` is a binary image of edges computed according to Sobel's algorithm.
+
+    This implementation is tuned to match MATLAB's implementation.
 
     Parameters
     ----------
       img : Any 2D-ndarray
+
     Returns
     -------
       edges : Binary image of edges

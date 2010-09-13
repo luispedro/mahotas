@@ -54,8 +54,8 @@ def lbp(image, radius, points):
       radius : radius (in pixels)
       points : nr of points to consider
 
-    Output
-    ------
+    Returns
+    -------
       features : histogram of features (1-D numpy ndarray)
     
 

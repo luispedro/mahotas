@@ -65,6 +65,14 @@ def thin(binimg):
     skel = thin(binimg)
 
     Skeletonisation by thinning
+
+    Parameters
+    ----------
+    binimg : Binary input image
+
+    Returns
+    -------
+    skel : Skeletonised version of `binimg`
     """
 
     res = np.zeros_like(binimg)

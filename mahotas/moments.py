@@ -47,9 +47,11 @@ def moments(img, p0, p1, cm=None, convert_to_float=True):
       p1 : Power for second dimension
       cm : center of mass (default: 0,0)
       convert_to_float : whether to convert to floating point
+
     Returns
     -------
       moment: floating point number
+
     Bugs
     ----
       It only works for 2-D images

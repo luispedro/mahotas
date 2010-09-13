@@ -36,6 +36,7 @@ def euler(f, n=8):
     ----------
       f : A 2-D binary image
       n : Connectivity, one of (4,8). default: 8
+
     Returns
     -------
       euler_nr : Euler number

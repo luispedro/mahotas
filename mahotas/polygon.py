@@ -62,6 +62,14 @@ def convexhull(bwimg):
     hull = convexhull(bwimg)
 
     Compute the convex hull as a polygon
+
+    Parameters
+    ----------
+    bwimg : input image (interpreted as boolean)
+
+    Returns
+    -------
+    hull : Set of (y,x) coordinates of hull corners
     '''
     Y,X = np.where(bwimg)
     P = list(zip(Y,X))
@@ -74,6 +82,14 @@ def fill_convexhull(bwimg):
     hull = fill_convexhull(bwimg)
 
     Compute the convex hull and return it as a binary mask
+
+    Parameters
+    ----------
+    bwimage : input image (interpreted as boolean)
+
+    Returns
+    -------
+    hull : image of same size and dtype as `bwimg` with the hull filled in.
     '''
 
     points = convexhull(bwimg)

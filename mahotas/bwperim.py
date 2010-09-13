@@ -39,6 +39,7 @@ def bwperim(bw, n=4):
     ----------
       bw : A black-and-white image
       n : Connectivity. Must be 4 or 8 (default: 8)
+
     Returns
     -------
       perim : A boolean image

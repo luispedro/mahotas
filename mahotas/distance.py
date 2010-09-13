@@ -23,14 +23,15 @@ def distance(bw, metric='euclidean2'):
     '''
     dmap = distance(bw, metric='euclidean2')
 
-    Computes the distance transform of image `bw`.
+    Computes the distance transform of image `bw`::
 
-    dmap[i,j] = min_{i', j'} { (i-i')**2 + (j-j')**2 | bw[i', j'] }
+        dmap[i,j] = min_{i', j'} { (i-i')**2 + (j-j')**2 | bw[i', j'] }
 
     Parameters
     ----------
       bw : Black & White image
       metric : one of 'euclidean2' or 'euclidean'
+
     Returns
     -------
       dmap : distance map

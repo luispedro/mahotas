@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2008-2010 Murphy Lab
+# vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # Carnegie Mellon University
 # 
 # Written by Luis Pedro Coelho <lpc@cmu.edu>
@@ -30,7 +31,7 @@ __all__ = [
     ]
 
 def gvoronoi(labeled):
-    r"""
+    '''
     segmented = gvoronoi(labeled)
 
     Generalised Voronoi Transform.
@@ -38,16 +39,15 @@ def gvoronoi(labeled):
     The generalised Voronoi diagram assigns to the pixel (i,j) the label of the nearest
     object (i.e., the value of the nearest non-zero pixel in labeled).
 
-    Inputs
-    ------
-        * labeled: an array, of a form similar to the return of scipy.ndimage.label()
+    Parameters
+    ----------
+    labeled : an array, of a form similar to the return of scipy.ndimage.label()
 
-    Output
-    ------
-    segmented is of the same size and type as labeled and
-        segmented[y,x] is the label of the object at position y,x
-    """
+    Returns
+    -------
+    segmented : is of the same size and type as labeled and
+                `segmented[y,x]` is the label of the object at position `y,x`.
+    '''
     L1,L2 = ndimage.distance_transform_edt(labeled== 0, return_distances=False, return_indices=True)
     return labeled[L1,L2]
 
-# vim: set ts=4 sts=4 sw=4 expandtab smartindent:

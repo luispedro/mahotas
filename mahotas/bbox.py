@@ -30,6 +30,7 @@ def bbox(img):
     Parameters
     ----------
       img : Any image type
+
     Returns
     -------
       min1,max1,min2,max2 : These are such that img[min1:max1, min2:max2]
@@ -49,9 +50,11 @@ def croptobbox(img, border=None):
     ----------
       img : image
       border : whether to add a border (default no border)
+
     Returns
     -------
       nimg : A subimage of img.
+
     Bugs
     ----
     Note that the border is on the bounding box, not on the final image! This
