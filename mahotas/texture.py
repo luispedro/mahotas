@@ -19,6 +19,7 @@
 from __future__ import division
 import numpy as np
 from . import _texture
+from .morph import _verify_is_integer_type
 import math
 
 __all__ = ['haralick']
@@ -57,6 +58,7 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     -------
       feats : A 4x13 feature vector (one row per direction).
     '''
+    _verify_is_integer_type(f, 'mahotas.haralick')
 
     feats = np.zeros((4, 13), np.double)
     fm1 = f.max() + 1
@@ -151,6 +153,7 @@ def cooccurence(f, direction, output=None, symmetric=True):
     -------
       cooccurence_matrix : cooccurence matrix
     '''
+    _verify_is_integer_type(f, 'mahotas.cooccurence')
     assert direction in (0,1,2,3), 'mahotas.texture.cooccurence: `direction` %s is not in range(4).' % direction
     if output is None:
         mf = f.max()
