@@ -1,5 +1,6 @@
 import numpy as np
 import mahotas
+from mahotas import bbox
 from nose.tools import raises
 
 def test_croptobbox():
@@ -34,4 +35,33 @@ def test_bbox_3():
     assert np.all(M0 > Y)
     assert np.all(M1 > X)
     assert np.all(M2 > Z)
+
+
+def test_bbox():
+    img = np.zeros((10,10), np.uint16)
+    
+    a0,b0,a1,b1 = bbox(img)
+    assert a0 == b0
+    assert a1 == b1
+
+    img[4,2]=1
+    a0,b0,a1,b1=bbox(img)
+    assert a0 == 4
+    assert b0 == 5
+    assert a1 == 2
+    assert b1 == 3
+
+    img[6,8]=1
+    a0,b0,a1,b1=bbox(img)
+    assert a0 == 4 
+    assert b0 == 7 
+    assert a1 == 2 
+    assert b1 == 9 
+
+    img[7,7]=1
+    a0,b0,a1,b1=bbox(img)
+    assert a0 == 4
+    assert b0 == 8
+    assert a1 == 2
+    assert b1 == 9
 
