@@ -21,6 +21,8 @@ import numpy
 
 import _bbox
 import numpy as np
+from .morph import _verify_is_integer_type
+
 def bbox(img):
     """
     min1,max1,min2,max2 = bbox(img)
@@ -36,6 +38,7 @@ def bbox(img):
       min1,max1,min2,max2 : These are such that img[min1:max1, min2:max2]
                             contains all non-zero pixels
     """
+    _verify_is_integer_type(img, 'mahotas.bbox')
     if not img.shape:
         return np.array([], dtype=np.intp)
     return _bbox.bbox(img)
