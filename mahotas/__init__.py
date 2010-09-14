@@ -25,7 +25,7 @@ import features
 
 try:
     from .freeimage import imread, imsave
-except OSError as e:
+except OSError, e:
     def imread(*args, **kwargs):
         raise ImportError('mahotas.imread dependends on freeimage. Could not find it. Error was: %s' % e)
     def imsave(*args, **kwargs):
