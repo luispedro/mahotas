@@ -7,6 +7,7 @@
 
 #include "numpypp/array.hpp"
 #include "numpypp/dispatch.hpp"
+#include "utils.hpp"
 
 extern "C" {
     #include <Python.h>
@@ -23,6 +24,7 @@ const char TypeErrorMsg[] =
 
 template<typename T>
 void bbox(numpy::aligned_array<T> array, numpy::index_type* extrema) {
+    gil_release nogil;
     const unsigned N = array.size();
     typename numpy::aligned_array<T>::iterator pos = array.begin();
     for (unsigned i = 0; i != N; ++i, ++pos) {
@@ -39,6 +41,7 @@ void bbox(numpy::aligned_array<T> array, numpy::index_type* extrema) {
 
 template<typename T>
 void carray2_bbox(const T* array, unsigned N0, unsigned N1, numpy::index_type* extrema) {
+    gil_release nogil;
     for (unsigned y = 0; y != N0; ++y) {
         for (unsigned x = 0; x < N1; ++x, ++array)
             if (*array) {
@@ -69,6 +72,7 @@ PyObject* py_bbox(PyObject* self, PyObject* args) {
     PyArrayObject* extrema = (PyArrayObject*)PyArray_SimpleNew(1, dims, numpy::index_type_number);
 
     if (!extrema) return NULL;
+    // format for extrema: [ min_0, max_0, min_1, max_1, min_2, max_2, ..., min_k, max_k]
     npy_intp* extrema_v = static_cast<npy_intp*>(PyArray_DATA(extrema));
     for (int j = 0; j != array->nd; ++j) {
         extrema_v[2*j] = PyArray_DIM(array,j);

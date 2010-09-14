@@ -8,6 +8,7 @@
 
 #include "numpypp/array.hpp"
 #include "numpypp/dispatch.hpp"
+#include "utils.hpp"
 
 extern "C" {
     #include <Python.h>
@@ -24,6 +25,7 @@ const char TypeErrorMsg[] =
 template<typename T>
 void cooccurence(numpy::aligned_array<long> res, numpy::aligned_array<T> array, int diagonal) {
     using numpy::position;
+    gil_release nogil;
     const T* ptr = array.data();
     int delta = array.stride(1);
     int nr_rows = array.size(0);

@@ -97,34 +97,33 @@ PyObject* py_dt(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError, "_distance only implemented for 2-d arrays.");
         goto exit;
     }
-    for (int k = 0; k != ndims; ++k) {
-        npy_intp cur = PyArray_DIM(f, k);
-        if (cur > max_size) max_size = cur;
-    }
     try {
+        for (int k = 0; k != ndims; ++k) {
+            npy_intp cur = PyArray_DIM(f, k);
+            if (cur > max_size) max_size = cur;
+        }
         z = new double[max_size + 1];
         v = new int[max_size];
         Df = operator new(PyArray_ITEMSIZE(f) * max_size);
-    } catch (std::bad_alloc) {
-        PyErr_NoMemory();
-        goto exit;
-    }
 
-    for (int k = 0; k != ndims; ++k) {
-        const int n = PyArray_DIM(f, k);
-        const int outer_n = size/n;
-        for (int start = 0; start != outer_n; ++start) {
-            switch(PyArray_TYPE(f)) {
+        for (int k = 0; k != ndims; ++k) {
+            const int n = PyArray_DIM(f, k);
+            const int outer_n = size/n;
+            for (int start = 0; start != outer_n; ++start) {
+                switch(PyArray_TYPE(f)) {
 #define HANDLE(type) { \
-                    type* typed_data = static_cast<type*>(data); \
-                    const int offset = start*strides[1-k]/sizeof(type); \
-                    dist_transform<type>(static_cast<type*>(Df), typed_data + offset, n, strides[k]/sizeof(type), z, v); \
-                }
+                        type* typed_data = static_cast<type*>(data); \
+                        const int offset = start*strides[1-k]/sizeof(type); \
+                        dist_transform<type>(static_cast<type*>(Df), typed_data + offset, n, strides[k]/sizeof(type), z, v); \
+                    }
 
-                HANDLE_FLOAT_TYPES();
+                    HANDLE_FLOAT_TYPES();
 #undef HANDLE
+                }
             }
         }
+    } catch (std::bad_alloc) {
+        PyErr_NoMemory();
     }
     exit:
     delete [] z;

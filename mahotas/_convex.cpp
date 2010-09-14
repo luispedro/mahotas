@@ -20,6 +20,7 @@
 #include <Python.h>
 #include <algorithm>
 #include <vector>
+#include "utils.hpp"
 
 namespace {
 struct Point {
@@ -89,7 +90,11 @@ convexhull(PyObject* self, PyObject* args) {
 		P[i].y=y;
 		P[i].x=x;
 	}
-	unsigned h = inPlaceGraham(P,N);
+	unsigned h;
+    { // Release GIL
+        gil_release nogil;
+        h = inPlaceGraham(P,N);
+    }
 	PyObject* output = PyList_New(h);
 	if (!output) {
 		PyErr_NoMemory();

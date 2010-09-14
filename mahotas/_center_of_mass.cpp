@@ -7,6 +7,7 @@
 
 #include "numpypp/array.hpp"
 #include "numpypp/dispatch.hpp"
+#include "utils.hpp"
 
 extern "C" {
     #include <Python.h>
@@ -67,6 +68,7 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
         }
         labels = static_cast<const npy_int32*>(PyArray_DATA(labels_obj));
     }
+    holdref labels_obj_hr(labels_obj);
     if (labels) {
         const int N = PyArray_SIZE(array);
         for (int i = 0; i != N; ++i) {
@@ -86,31 +88,36 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
     npy_intp dims[1];
     dims[0] = array->nd * (max_label+1);
     PyArrayObject* centers = (PyArrayObject*)PyArray_SimpleNew(1, dims, NPY_DOUBLE);
-    if (!centers) return 0;
-    npy_double* centers_v = static_cast<npy_double*>(PyArray_DATA(centers));
-    for (int j = 0; j != dims[0]; ++j) {
-        centers_v[j] = 0;
-    }
-    switch(PyArray_TYPE(array)) {
+    if (!centers) return NULL;
+    { // DROP THE GIL
+        gil_release nogil;
+        npy_double* centers_v = static_cast<npy_double*>(PyArray_DATA(centers));
+        for (int j = 0; j != dims[0]; ++j) {
+            centers_v[j] = 0;
+        }
+        switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
-        center_of_mass<type>(numpy::aligned_array<type>(array), centers_v, labels, totals); \
+            center_of_mass<type>(numpy::aligned_array<type>(array), centers_v, labels, totals); \
 
-        HANDLE_TYPES();
+            HANDLE_TYPES();
 #undef HANDLE
-        default:
-        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
-        return NULL;
-    }
-    int nd = array->nd;
-    for (int label = 0; label != (max_label+1); ++label) {
-        for (int j = 0; j != nd; ++j) {
-            centers_v[label*nd+j] /= totals[label];
+            default: {
+                nogil.restore();
+                PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+                return NULL;
+            }
         }
-        for (int j = 0; j != nd/2; ++j) {
-            std::swap(centers_v[label*nd + j], centers_v[(label+1) * nd - j - 1]);
+        int nd = array->nd;
+        for (int label = 0; label != (max_label+1); ++label) {
+            for (int j = 0; j != nd; ++j) {
+                centers_v[label*nd+j] /= totals[label];
+            }
+            for (int j = 0; j != nd/2; ++j) {
+                std::swap(centers_v[label*nd + j], centers_v[(label+1) * nd - j - 1]);
+            }
         }
+        if (labels) delete [] totals;
     }
-    if (labels) delete [] totals;
     return PyArray_Return(centers);
 }
 

@@ -2,6 +2,8 @@
 #include <cmath>
 #include <new>
 
+#include "utils.hpp"
+
 extern "C" {
     #include <Python.h>
     #include <numpy/ndarrayobject.h>
@@ -44,37 +46,42 @@ PyObject* py_znl(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
+    holdref Da_hr(Da);
+    holdref Aa_hr(Aa);
+    holdref Pa_hr(Pa);
+
     double* D = static_cast<double*>(PyArray_DATA(Da));
     complex<double>* A = static_cast<complex<double>*>(PyArray_DATA(Aa));
     double* P = static_cast<double*>(PyArray_DATA(Pa));
-    int Nelems = PyArray_SIZE(Da);
-    complex<double> Vnl = 0.0;
+    const int Nelems = PyArray_SIZE(Da);
     complex<double> v = 0.;
-    double * g_m = new(std::nothrow) double[ int( (n-l)/2 ) + 1];
-    if (!g_m) {
+    try {
+        gil_release nogil;
+        complex<double> Vnl = 0.0;
+        double * g_m = new double[ int( (n-l)/2 ) + 1];
+        for(int m = 0; m <= (n-l)/2; m++) {
+            double f = (m & 1) ? -1 : 1;
+            g_m[m] = f * fact(n-m) /
+                   ( fact(m) * fact((n - 2*m + l) / 2) * fact((n - 2*m - l) / 2) );
+        }
+
+        for (int i = 0; i != Nelems; ++i) {
+            double d=D[i];
+            complex<double> a=A[i];
+            double p=P[i];
+            Vnl = 0.;
+            for(int m = 0; m <= (n-l)/2; m++) {
+                Vnl += g_m[m] * pow(d, double(n - 2*m)) * a;
+            }
+            v += p * conj(Vnl);
+        }
+        v *= (n+1)/pi;
+        delete [] g_m;
+    } catch (std::bad_alloc) {
         PyErr_NoMemory();
         return NULL;
     }
-    for(int m = 0; m <= (n-l)/2; m++) {
-        double f = (m & 1) ? -1 : 1;
-        g_m[m] = f * fact(n-m) /
-               ( fact(m) * fact((n - 2*m + l) / 2) * fact((n - 2*m - l) / 2) );
-    }
-
-    for (int i = 0; i != Nelems; ++i) {
-        double d=D[i];
-        complex<double> a=A[i];
-        double p=P[i];
-        Vnl = 0.;
-        for(int m = 0; m <= (n-l)/2; m++) {
-            Vnl += g_m[m] * pow(d, double(n - 2*m)) * a;
-        }
-        v += p * conj(Vnl);
-    }
-    v *= (n+1)/pi;
-    delete [] g_m;
     return PyComplex_FromDoubles(v.real(), v.imag());
-
 }
 PyMethodDef methods[] = {
   {"znl",(PyCFunction)py_znl, METH_VARARGS, NULL},
