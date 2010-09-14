@@ -1,6 +1,7 @@
 import numpy as np
 import mahotas.texture
 import mahotas._texture
+from nose.tools import raises
 
 def test__cooccurence():
     cooccurence = mahotas._texture.cooccurence
@@ -69,3 +70,20 @@ def test_haralick():
     feats = mahotas.texture.haralick(f)
     assert not np.any(np.isnan(feats))
 
+
+def test_single_point():
+    A = np.zeros((5,5), np.uint8)
+    A[2,2]=12
+    assert not np.any(np.isnan(mahotas.texture.cooccurence(A,0)))
+
+@raises(TypeError)
+def test_float_cooccurence():
+    A = np.zeros((5,5), np.float32)
+    A[2,2]=12
+    mahotas.texture.cooccurence(A,0)
+
+@raises(TypeError)
+def test_float_haralick():
+    A = np.zeros((5,5), np.float32)
+    A[2,2]=12
+    mahotas.texture.haralick(A)
