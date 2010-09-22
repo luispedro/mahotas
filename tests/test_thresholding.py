@@ -15,3 +15,12 @@ def test_thresholding():
         assert (A > T)[:,48:].mean() < .5
     yield tm, otsu
     yield tm, rc
+
+
+def test_nozeros():
+    np.seterr(all='raise')
+    np.random.seed(22)
+    A = (np.random.rand(100,100)*50).astype(np.uint8)+201
+    assert rc(A) > 200
+    assert otsu(A) > 200
+

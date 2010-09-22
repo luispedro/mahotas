@@ -116,7 +116,8 @@ def rc(img, ignore_zeros=False):
     res = maxt
     t = 0
     while t < min(maxt, res):
-        res = (sum1[t]/sum2[t] + sum3[t+1]/sum4[t+1])/2
+        if sum2[t] and sum4[t+1]:
+            res = (sum1[t]/sum2[t] + sum3[t+1]/sum4[t+1])/2
         t += 1
     return res
 
