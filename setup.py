@@ -31,39 +31,11 @@ On linux, the package is often called python-setuptools'''
     from sys import exit
     exit(1)
 import numpy.distutils.core as numpyutils
+
+
 execfile('mahotas/mahotas_version.py')
-long_description = '''\
-=======
-Mahotas
-=======
-Python Image Processing Toolkit
--------------------------------
+long_description = file('docs/source/readme.rst').read()
 
-Image Processing Library for Python.
-
-It includes a couple of algorithms implemented in C++ for speed while operating
-in numpy arrays.
-
-Notable algorithms:
- - watershed.
- - thresholding.
- - convex points calculations.
- - hit & miss. thinning.
- - Zernike & Haralick features.
- - freeimage based image loading (requires freeimage libraries to be
-   installed).
-
-
-*Website*: `http://luispedro.org/software/mahotas
-<http://luispedro.org/software/mahotas>`_
-
-*API Docs*: `http://packages.python.org/mahotas/
-<http://packages.python.org/mahotas/>`_
-
-*Mailing List*: Use the `pythonvision mailing list
-<http://groups.google.com/group/pythonvision?pli=1>`_ for questions, bug
-submissions, etc.
-'''
 
 histogram = numpyutils.Extension('mahotas/_histogram', sources = ['mahotas/_histogram.cpp'])
 morph = numpyutils.Extension('mahotas._morph', sources = ['mahotas/_morph.cpp'], extra_compile_args=['-Wno-sign-compare'])
