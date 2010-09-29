@@ -1,3 +1,9 @@
+Version 0.5.2-git 2010-10-1
+    * Drop GIL when possible
+
+Version 0.5.2 2010-09-13
+	* support Python2.5
+
 Version 0.5.1 2010-09-13
 	* freeimage dependency made optional
 	* bbox() for N>2 dimensions
