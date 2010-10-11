@@ -1,4 +1,5 @@
 Version 0.5.2-git 2010-10-1
+    * Add np.uint64 support to fullhistogram()
     * Drop GIL when possible
 
 Version 0.5.2 2010-09-13

@@ -39,6 +39,14 @@ def test_fullhistogram_boolean():
     assert H[0] == (~A).sum()
     assert H[1] == A.sum()
 
+def test_types():
+    A100 = np.arange(100).reshape((10,10)).astype(np.uint32)
+    assert np.all(fullhistogram(A100.astype(np.uint8)) == fullhistogram(A100))
+    assert np.all(fullhistogram(A100.astype(np.uint16)) == fullhistogram(A100))
+    assert np.all(fullhistogram(A100.astype(np.uint32)) == fullhistogram(A100))
+    assert np.all(fullhistogram(A100.astype(np.uint64)) == fullhistogram(A100))
+
 @raises(TypeError)
 def test_float():
     fullhistogram(np.arange(16.*4., dtype=float).reshape((16,4)))
+

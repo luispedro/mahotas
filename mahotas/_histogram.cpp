@@ -63,6 +63,9 @@ PyObject* py_histogram(PyObject* self, PyObject* args) {
         case NPY_ULONG:
             compute_histogram(static_cast<npy_ulong*>(PyArray_DATA(array)), N, histogram_data);
             break;
+        case NPY_ULONGLONG:
+            compute_histogram(static_cast<npy_ulonglong*>(PyArray_DATA(array)), N, histogram_data);
+            break;
         default:
             PyErr_SetString(PyExc_RuntimeError, "Cannot handle type.");
             return NULL;
