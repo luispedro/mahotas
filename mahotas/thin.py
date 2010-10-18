@@ -20,7 +20,7 @@
 from __future__ import division
 import numpy as np
 from .bbox import bbox
-from .morph import hitmiss
+from ._morph import hitmiss
 
 __all__ = ['thin']
 
