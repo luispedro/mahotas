@@ -1,11 +1,3 @@
-'''
-PyMorph++ 
-
-This is a companion package to pymorph which includes a C++ implementation
-of some of the algorithms for speed.
-
-The license on this package is GPL (as opposed to pymorph which is BSD).
-'''
 import numpy
 import numpy as np
 try:

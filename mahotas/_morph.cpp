@@ -17,7 +17,7 @@ namespace{
 
 const char TypeErrorMsg[] =
     "Type not understood. "
-    "This is caused by either a direct call to _morph (which is dangerous: types are not checked!) or a bug in morph.py.\n";
+    "This is caused by either a direct call to _morph (which is dangerous: types are not checked!) or a bug in mahotas.\n";
 
 
 template <typename T>
