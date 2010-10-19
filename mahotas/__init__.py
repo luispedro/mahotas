@@ -18,6 +18,7 @@ from .edge import sobel
 from .euler import euler
 from .moments import moments
 from .distance import distance
+from .resize import imresize
 from mahotas_version import __version__
 
 import segmentation

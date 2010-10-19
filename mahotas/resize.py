@@ -1,0 +1,32 @@
+from __future__ import division
+import numpy as np
+
+def imresize(img, nsize):
+    '''
+    img' = imresize(img, nsize)
+    
+    Resizes img
+
+    Parameters
+    ----------
+    img : ndarray
+    nsize : float or tuple(float) or tuple(integers)
+        Size of return. Meaning depends on the type
+            float: img'.shape[i] = nsize * img.shape[i]
+            tuple of float: img'.shape[i] = nsize[i] * img.shape[i]
+            tuple of int: img'.shape[i] = nsize[i]
+
+    Returns
+    -------
+    img' : ndarray
+
+    See Also
+    --------
+    ``scipy.ndimage.zoom`` and ``scipy.misc.pilutil.imresize``
+    '''
+    from scipy import ndimage
+    if type(nsize) == tuple:
+        if type(nsize[0]) == int:
+            nsize = np.array(nsize, dtype=float)
+            nsize /= img.shape
+    return ndimage.zoom(img, nsize)
