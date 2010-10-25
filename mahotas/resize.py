@@ -1,7 +1,7 @@
 from __future__ import division
 import numpy as np
 
-def imresize(img, nsize):
+def imresize(img, nsize, order=3):
     '''
     img' = imresize(img, nsize)
     
@@ -15,6 +15,8 @@ def imresize(img, nsize):
             float: img'.shape[i] = nsize * img.shape[i]
             tuple of float: img'.shape[i] = nsize[i] * img.shape[i]
             tuple of int: img'.shape[i] = nsize[i]
+    order : integer, optional
+        Spline order to use (default: 3)
 
     Returns
     -------
@@ -29,4 +31,4 @@ def imresize(img, nsize):
         if type(nsize[0]) == int:
             nsize = np.array(nsize, dtype=float)
             nsize /= img.shape
-    return ndimage.zoom(img, nsize)
+    return ndimage.zoom(img, nsize, order=order)
