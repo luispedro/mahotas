@@ -1,6 +1,7 @@
 Version 0.5.2-git 2010-10-1
-    * Add np.uint64 support to fullhistogram()
-    * Drop GIL when possible
+	* Add np.uint64 support to fullhistogram()
+	* Drop GIL when possible
+	* Add imresize() wrapper around ndimage.zoom
 
 Version 0.5.2 2010-09-13
 	* support Python2.5
