@@ -36,14 +36,11 @@ extern "C" {
     #include <numpy/ndarrayobject.h>
 }
 
-#define MAXDIM NPY_MAXDIMS
-typedef unsigned char Bool;
-
 namespace {
 
 /* Calculate the offsets to the filter points, for all border regions and
      the interior of the array: */
-int NI_InitFilterOffsets(PyArrayObject *array, Bool *footprint,
+int NI_InitFilterOffsets(PyArrayObject *array, bool *footprint,
          npy_intp *filter_shape, npy_intp* origins,
          NI_ExtendMode mode, npy_intp **offsets, npy_intp *border_flag_value,
          npy_intp **coordinate_offsets)
@@ -51,8 +48,8 @@ int NI_InitFilterOffsets(PyArrayObject *array, Bool *footprint,
     int rank, ii;
     npy_intp kk, ll, filter_size = 1, offsets_size = 1, max_size = 0;
     npy_intp max_stride = 0, *ashape = NULL, *astrides = NULL;
-    npy_intp footprint_size = 0, coordinates[MAXDIM], position[MAXDIM];
-    npy_intp fshape[MAXDIM], forigins[MAXDIM], *po, *pc = NULL;
+    npy_intp footprint_size = 0, coordinates[NPY_MAXDIMS], position[NPY_MAXDIMS];
+    npy_intp fshape[NPY_MAXDIMS], forigins[NPY_MAXDIMS], *po, *pc = NULL;
 
     rank = array->nd;
     ashape = array->dimensions;
