@@ -45,36 +45,37 @@ int NI_InitFilterOffsets(PyArrayObject *array, bool *footprint,
          NI_ExtendMode mode, npy_intp **offsets, npy_intp *border_flag_value,
          npy_intp **coordinate_offsets)
 {
-    int rank, ii;
-    npy_intp kk, ll, filter_size = 1, offsets_size = 1, max_size = 0;
-    npy_intp max_stride = 0, *ashape = NULL, *astrides = NULL;
-    npy_intp footprint_size = 0, coordinates[NPY_MAXDIMS], position[NPY_MAXDIMS];
+    npy_intp max_size = 0;
+    npy_intp max_stride = 0;
+    npy_intp coordinates[NPY_MAXDIMS], position[NPY_MAXDIMS];
     npy_intp fshape[NPY_MAXDIMS], forigins[NPY_MAXDIMS], *po, *pc = NULL;
-
-    rank = array->nd;
-    ashape = array->dimensions;
-    astrides = array->strides;
-    for(ii = 0; ii < rank; ii++) {
+    const int rank = array->nd;
+    const npy_intp* const ashape = array->dimensions;
+    const npy_intp* const astrides = array->strides;
+    for(int ii = 0; ii < rank; ii++) {
         fshape[ii] = *filter_shape++;
         forigins[ii] = origins ? *origins++ : 0;
     }
+
     /* the size of the footprint array: */
-    for(ii = 0; ii < rank; ii++)
-        filter_size *= fshape[ii];
+    npy_intp filter_size = 1;
+    for(int i = 0; i < rank; ++i) filter_size *= fshape[i];
+
     /* calculate the number of non-zero elements in the footprint: */
+    npy_intp footprint_size = 0;
     if (footprint) {
-        for(kk = 0; kk < filter_size; kk++)
-            if (footprint[kk])
-                ++footprint_size;
+        for(int i = 0; i < filter_size; ++i)
+            footprint_size += footprint[i];
     } else {
         footprint_size = filter_size;
     }
     /* calculate how many sets of offsets must be stored: */
-    for(ii = 0; ii < rank; ii++)
+    npy_intp offsets_size = 1;
+    for(int ii = 0; ii < rank; ii++)
         offsets_size *= (ashape[ii] < fshape[ii] ? ashape[ii] : fshape[ii]);
     /* allocate offsets data: */
-    *offsets = (npy_intp*)malloc(offsets_size * footprint_size *
-                                                        sizeof(npy_intp));
+    *offsets = (npy_intp*)malloc(offsets_size * footprint_size * sizeof(npy_intp));
+
     if (!*offsets) {
         PyErr_NoMemory();
         goto exit;
@@ -87,7 +88,7 @@ int NI_InitFilterOffsets(PyArrayObject *array, bool *footprint,
             goto exit;
         }
     }
-    for(ii = 0; ii < rank; ii++) {
+    for(int ii = 0; ii < rank; ii++) {
         npy_intp stride;
         /* find maximum axis size: */
         if (ashape[ii] > max_size)
@@ -111,17 +112,17 @@ int NI_InitFilterOffsets(PyArrayObject *array, bool *footprint,
         pc = *coordinate_offsets;
     }
     /* iterate over all regions: */
-    for(ll = 0; ll < offsets_size; ll++) {
+    for(int ll = 0; ll < offsets_size; ll++) {
         /* iterate over the elements in the footprint array: */
-        for(kk = 0; kk < filter_size; kk++) {
+        for(int kk = 0; kk < filter_size; kk++) {
             npy_intp offset = 0;
             /* only calculate an offset if the footprint is 1: */
             if (!footprint || footprint[kk]) {
                 /* find offsets along all axes: */
-                for(ii = 0; ii < rank; ii++) {
-                    npy_intp orgn = fshape[ii] / 2 + forigins[ii];
+                for(int ii = 0; ii < rank; ii++) {
+                    const npy_intp orgn = fshape[ii] / 2 + forigins[ii];
                     npy_intp cc = coordinates[ii] - orgn + position[ii];
-                    npy_intp len = ashape[ii];
+                    const npy_intp len = ashape[ii];
                     /* apply boundary conditions, if necessary: */
                     switch (mode) {
                     case NI_EXTEND_MIRROR:
@@ -195,8 +196,7 @@ int NI_InitFilterOffsets(PyArrayObject *array, bool *footprint,
                             cc = *border_flag_value;
                         break;
                     default:
-                    PyErr_SetString(PyExc_RuntimeError,
-                                                                                    "boundary mode not supported");
+                        PyErr_SetString(PyExc_RuntimeError, "boundary mode not supported");
                         goto exit;
                     }
 
@@ -208,8 +208,7 @@ int NI_InitFilterOffsets(PyArrayObject *array, bool *footprint,
                             pc[ii] = 0;
                         break;
                     } else {
-                        /* use an offset that is possibly mapped from outside
-                           the border: */
+                        /* use an offset that is possibly mapped from outside the border: */
                         cc = cc - position[ii];
                         offset += astrides[ii] * cc;
                         if (coordinate_offsets)
@@ -222,7 +221,7 @@ int NI_InitFilterOffsets(PyArrayObject *array, bool *footprint,
                     pc += rank;
             }
             /* next point in the filter: */
-            for(ii = rank - 1; ii >= 0; ii--) {
+            for(int ii = rank - 1; ii >= 0; ii--) {
                 if (coordinates[ii] < fshape[ii] - 1) {
                     coordinates[ii]++;
                     break;
@@ -233,7 +232,7 @@ int NI_InitFilterOffsets(PyArrayObject *array, bool *footprint,
         }
 
         /* move to the next array region: */
-        for(ii = rank - 1; ii >= 0; ii--) {
+        for(int ii = rank - 1; ii >= 0; ii--) {
             int orgn = fshape[ii] / 2 + forigins[ii];
             if (position[ii] == orgn) {
                 position[ii] += ashape[ii] - fshape[ii] + 1;
@@ -252,10 +251,8 @@ int NI_InitFilterOffsets(PyArrayObject *array, bool *footprint,
 
  exit:
     if (PyErr_Occurred()) {
-        if (*offsets)
-            free(*offsets);
-        if (coordinate_offsets && *coordinate_offsets)
-            free(*coordinate_offsets);
+        if (*offsets) free(*offsets);
+        if (coordinate_offsets && *coordinate_offsets) free(*coordinate_offsets);
         return 0;
     } else {
         return 1;
