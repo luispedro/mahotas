@@ -1,4 +1,5 @@
 /* Copyright (C) 2003-2005 Peter J. Verveer
+ * Copyright (C) 2010 Luis Pedro Coelho
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +30,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cassert>
+#include <memory>
 #include "_filters.h"
 
 extern "C" {
@@ -37,6 +40,84 @@ extern "C" {
 }
 
 namespace {
+npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len, const npy_intp border_flag_value) {
+    /* apply boundary conditions, if necessary: */
+    switch (mode) {
+    case EXTEND_MIRROR:
+        if (cc < 0) {
+            if (len <= 1) {
+                return 0;
+            } else {
+                int sz2 = 2 * len - 2;
+                cc = sz2 * (int)(-cc / sz2) + cc;
+                return cc <= 1 - len ? cc + sz2 : -cc;
+            }
+        } else if (cc >= len) {
+            if (len <= 1) {
+                return 0;
+            } else {
+                int sz2 = 2 * len - 2;
+                cc -= sz2 * (int)(cc / sz2);
+                if (cc >= len)
+                    cc = sz2 - cc;
+            }
+        }
+        return cc;
+
+    case EXTEND_REFLECT:
+        if (cc < 0) {
+            if (len <= 1) {
+                return 0;
+            } else {
+                int sz2 = 2 * len;
+                if (cc < -sz2)
+                    cc = sz2 * (int)(-cc / sz2) + cc;
+                cc = cc < -len ? cc + sz2 : -cc - 1;
+            }
+        } else if (cc >= len) {
+            if (len <= 1) {
+                return 0;
+            } else {
+                int sz2 = 2 * len;
+                cc -= sz2 * (int)(cc / sz2);
+                if (cc >= len)
+                    cc = sz2 - cc - 1;
+            }
+        }
+        return cc;
+    case EXTEND_WRAP:
+        if (cc < 0) {
+            if (len <= 1) {
+                return 0;
+            } else {
+                int sz = len;
+                cc += sz * (int)(-cc / sz);
+                if (cc < 0)
+                    cc += sz;
+            }
+        } else if (cc >= len) {
+            if (len <= 1) {
+                return 0;
+            } else {
+                int sz = len;
+                cc -= sz * (int)(cc / sz);
+            }
+        }
+        return cc;
+    case EXTEND_NEAREST:
+        if (cc < 0) {
+            return 0;
+        } else if (cc >= len) {
+            return len - 1;
+        }
+        return cc;
+    case EXTEND_CONSTANT:
+        if (cc < 0 || cc >= len)
+            return border_flag_value;
+        return cc;
+    }
+    assert(false); // We should never get here
+}
 
 /* Calculate the offsets to the filter points, for all border regions and
      the interior of the array: */
@@ -45,71 +126,74 @@ int initFilterOffsets(PyArrayObject *array, bool *footprint,
          const ExtendMode mode, npy_intp **offsets, npy_intp *border_flag_value,
          npy_intp **coordinate_offsets)
 {
-    npy_intp max_size = 0;
-    npy_intp max_stride = 0;
     npy_intp coordinates[NPY_MAXDIMS], position[NPY_MAXDIMS];
-    npy_intp forigins[NPY_MAXDIMS], *po, *pc = NULL;
+    npy_intp forigins[NPY_MAXDIMS];
     const int rank = array->nd;
     const npy_intp* const ashape = array->dimensions;
     const npy_intp* const astrides = array->strides;
-    for(int ii = 0; ii < rank; ii++) {
-        forigins[ii] = origins ? *origins++ : 0;
-    }
 
-    /* the size of the footprint array: */
-    npy_intp filter_size = 1;
-    for(int i = 0; i < rank; ++i) filter_size *= fshape[i];
-
-    /* calculate the number of non-zero elements in the footprint: */
-    npy_intp footprint_size = 0;
-    if (footprint) {
-        for(int i = 0; i < filter_size; ++i)
-            footprint_size += footprint[i];
-    } else {
-        footprint_size = filter_size;
-    }
     /* calculate how many sets of offsets must be stored: */
     npy_intp offsets_size = 1;
     for(int ii = 0; ii < rank; ii++)
         offsets_size *= (ashape[ii] < fshape[ii] ? ashape[ii] : fshape[ii]);
-    /* allocate offsets data: */
-    *offsets = (npy_intp*)malloc(offsets_size * footprint_size * sizeof(npy_intp));
+    /* the size of the footprint array: */
+    npy_intp filter_size = 1;
+    for(int i = 0; i < rank; ++i) filter_size *= fshape[i];
+    /* calculate the number of non-zero elements in the footprint: */
+    npy_intp footprint_size = 0;
+    if (footprint) {
+        for(int i = 0; i < filter_size; ++i) footprint_size += footprint[i];
+    } else {
+        footprint_size = filter_size;
+    }
 
-    if (!*offsets) {
-        PyErr_NoMemory();
-        goto exit;
+    if (int(mode) < 0 || int(mode) > EXTEND_LAST) {
+        PyErr_SetString(PyExc_RuntimeError, "boundary mode not supported");
+        return 0;
     }
-    if (coordinate_offsets) {
-        *coordinate_offsets = (npy_intp*)malloc(offsets_size * rank *
-                                        footprint_size * sizeof(npy_intp));
-        if (!*coordinate_offsets) {
-            PyErr_NoMemory();
-            goto exit;
+    try {
+        *offsets = 0;
+        if (coordinate_offsets) *coordinate_offsets = 0;
+        *offsets = new npy_intp[offsets_size * footprint_size];
+        if (coordinate_offsets) {
+            *coordinate_offsets = new npy_intp[offsets_size * rank * footprint_size];
         }
+    } catch (std::bad_alloc&) {
+        if (*offsets) delete [] offsets;
+        PyErr_NoMemory();
+        return 0;
     }
+    // from here on, we cannot fail anymore:
+
     for(int ii = 0; ii < rank; ii++) {
-        npy_intp stride;
-        /* find maximum axis size: */
-        if (ashape[ii] > max_size)
-            max_size = ashape[ii];
-        /* find maximum stride: */
-        stride = astrides[ii] < 0 ? -astrides[ii] : astrides[ii];
+        forigins[ii] = fshape[ii]/2 + (origins ? *origins++ : 0);
+    }
+
+    npy_intp max_size = 0; // maximum ashape[i]
+    npy_intp max_stride = 0; // maximum abs( astrides[i] )
+    for(int ii = 0; ii < rank; ii++) {
+        const npy_intp stride = astrides[ii] < 0 ? -astrides[ii] : astrides[ii];
         if (stride > max_stride)
             max_stride = stride;
+        if (ashape[ii] > max_size)
+            max_size = ashape[ii];
+
         /* coordinates for iterating over the kernel elements: */
         coordinates[ii] = 0;
         /* keep track of the kernel position: */
         position[ii] = 0;
     }
+
+
     /* the flag to indicate that we are outside the border must have a
          value that is larger than any possible offset: */
     *border_flag_value = max_size * max_stride + 1;
     /* calculate all possible offsets to elements in the filter kernel,
          for all regions in the array (interior and border regions): */
-    po = *offsets;
-    if (coordinate_offsets) {
-        pc = *coordinate_offsets;
-    }
+
+    npy_intp* po = *offsets;
+    npy_intp* pc = coordinate_offsets ? *coordinate_offsets : 0;
+
     /* iterate over all regions: */
     for(int ll = 0; ll < offsets_size; ll++) {
         /* iterate over the elements in the footprint array: */
@@ -119,85 +203,9 @@ int initFilterOffsets(PyArrayObject *array, bool *footprint,
             if (!footprint || footprint[kk]) {
                 /* find offsets along all axes: */
                 for(int ii = 0; ii < rank; ii++) {
-                    const npy_intp orgn = fshape[ii] / 2 + forigins[ii];
+                    const npy_intp orgn = forigins[ii];
                     npy_intp cc = coordinates[ii] - orgn + position[ii];
-                    const npy_intp len = ashape[ii];
-                    /* apply boundary conditions, if necessary: */
-                    switch (mode) {
-                    case EXTEND_MIRROR:
-                        if (cc < 0) {
-                            if (len <= 1) {
-                                cc = 0;
-                            } else {
-                                int sz2 = 2 * len - 2;
-                                cc = sz2 * (int)(-cc / sz2) + cc;
-                                cc = cc <= 1 - len ? cc + sz2 : -cc;
-                            }
-                        } else if (cc >= len) {
-                            if (len <= 1) {
-                                cc = 0;
-                            } else {
-                                int sz2 = 2 * len - 2;
-                                cc -= sz2 * (int)(cc / sz2);
-                                if (cc >= len)
-                                    cc = sz2 - cc;
-                            }
-                        }
-                        break;
-                    case EXTEND_REFLECT:
-                        if (cc < 0) {
-                            if (len <= 1) {
-                                cc = 0;
-                            } else {
-                                int sz2 = 2 * len;
-                                if (cc < -sz2)
-                                    cc = sz2 * (int)(-cc / sz2) + cc;
-                                cc = cc < -len ? cc + sz2 : -cc - 1;
-                            }
-                        } else if (cc >= len) {
-                            if (len <= 1) {cc = 0;
-                            } else {
-                                int sz2 = 2 * len;
-                                cc -= sz2 * (int)(cc / sz2);
-                                if (cc >= len)
-                                    cc = sz2 - cc - 1;
-                            }
-                        }
-                        break;
-                    case EXTEND_WRAP:
-                        if (cc < 0) {
-                            if (len <= 1) {
-                                cc = 0;
-                            } else {
-                                int sz = len;
-                                cc += sz * (int)(-cc / sz);
-                                if (cc < 0)
-                                    cc += sz;
-                            }
-                        } else if (cc >= len) {
-                            if (len <= 1) {
-                                cc = 0;
-                            } else {
-                                int sz = len;
-                                cc -= sz * (int)(cc / sz);
-                            }
-                        }
-                        break;
-                    case EXTEND_NEAREST:
-                        if (cc < 0) {
-                            cc = 0;
-                        } else if (cc >= len) {
-                            cc = len - 1;
-                        }
-                        break;
-                    case EXTEND_CONSTANT:
-                        if (cc < 0 || cc >= len)
-                            cc = *border_flag_value;
-                        break;
-                    default:
-                        PyErr_SetString(PyExc_RuntimeError, "boundary mode not supported");
-                        goto exit;
-                    }
+                    cc = fix_offset(mode, cc, ashape[ii], *border_flag_value);
 
                     /* calculate offset along current axis: */
                     if (cc == *border_flag_value) {
@@ -208,7 +216,7 @@ int initFilterOffsets(PyArrayObject *array, bool *footprint,
                         break;
                     } else {
                         /* use an offset that is possibly mapped from outside the border: */
-                        cc = cc - position[ii];
+                        cc -= position[ii];
                         offset += astrides[ii] * cc;
                         if (coordinate_offsets)
                             pc[ii] = cc;
@@ -232,7 +240,7 @@ int initFilterOffsets(PyArrayObject *array, bool *footprint,
 
         /* move to the next array region: */
         for(int ii = rank - 1; ii >= 0; ii--) {
-            int orgn = fshape[ii] / 2 + forigins[ii];
+            const int orgn = forigins[ii];
             if (position[ii] == orgn) {
                 position[ii] += ashape[ii] - fshape[ii] + 1;
                 if (position[ii] <= orgn)
@@ -248,14 +256,7 @@ int initFilterOffsets(PyArrayObject *array, bool *footprint,
         }
     }
 
- exit:
-    if (PyErr_Occurred()) {
-        if (*offsets) free(*offsets);
-        if (coordinate_offsets && *coordinate_offsets) free(*coordinate_offsets);
-        return 0;
-    } else {
-        return 1;
-    }
+    return 1;
 }
 
 }
