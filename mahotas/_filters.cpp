@@ -40,20 +40,19 @@ namespace {
 
 /* Calculate the offsets to the filter points, for all border regions and
      the interior of the array: */
-int NI_InitFilterOffsets(PyArrayObject *array, bool *footprint,
-         npy_intp *filter_shape, npy_intp* origins,
-         NI_ExtendMode mode, npy_intp **offsets, npy_intp *border_flag_value,
+int initFilterOffsets(PyArrayObject *array, bool *footprint,
+         const npy_intp * const fshape, npy_intp* origins,
+         const ExtendMode mode, npy_intp **offsets, npy_intp *border_flag_value,
          npy_intp **coordinate_offsets)
 {
     npy_intp max_size = 0;
     npy_intp max_stride = 0;
     npy_intp coordinates[NPY_MAXDIMS], position[NPY_MAXDIMS];
-    npy_intp fshape[NPY_MAXDIMS], forigins[NPY_MAXDIMS], *po, *pc = NULL;
+    npy_intp forigins[NPY_MAXDIMS], *po, *pc = NULL;
     const int rank = array->nd;
     const npy_intp* const ashape = array->dimensions;
     const npy_intp* const astrides = array->strides;
     for(int ii = 0; ii < rank; ii++) {
-        fshape[ii] = *filter_shape++;
         forigins[ii] = origins ? *origins++ : 0;
     }
 
@@ -125,7 +124,7 @@ int NI_InitFilterOffsets(PyArrayObject *array, bool *footprint,
                     const npy_intp len = ashape[ii];
                     /* apply boundary conditions, if necessary: */
                     switch (mode) {
-                    case NI_EXTEND_MIRROR:
+                    case EXTEND_MIRROR:
                         if (cc < 0) {
                             if (len <= 1) {
                                 cc = 0;
@@ -145,7 +144,7 @@ int NI_InitFilterOffsets(PyArrayObject *array, bool *footprint,
                             }
                         }
                         break;
-                    case NI_EXTEND_REFLECT:
+                    case EXTEND_REFLECT:
                         if (cc < 0) {
                             if (len <= 1) {
                                 cc = 0;
@@ -165,7 +164,7 @@ int NI_InitFilterOffsets(PyArrayObject *array, bool *footprint,
                             }
                         }
                         break;
-                    case NI_EXTEND_WRAP:
+                    case EXTEND_WRAP:
                         if (cc < 0) {
                             if (len <= 1) {
                                 cc = 0;
@@ -184,14 +183,14 @@ int NI_InitFilterOffsets(PyArrayObject *array, bool *footprint,
                             }
                         }
                         break;
-                    case NI_EXTEND_NEAREST:
+                    case EXTEND_NEAREST:
                         if (cc < 0) {
                             cc = 0;
                         } else if (cc >= len) {
                             cc = len - 1;
                         }
                         break;
-                    case NI_EXTEND_CONSTANT:
+                    case EXTEND_CONSTANT:
                         if (cc < 0 || cc >= len)
                             cc = *border_flag_value;
                         break;
