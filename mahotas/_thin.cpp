@@ -90,7 +90,8 @@ PyObject* py_thin(PyObject* self, PyObject* args) {
         PyArray_TYPE(array) != NPY_BOOL || PyArray_TYPE(buffer) != NPY_BOOL ||
         PyArray_NDIM(array) != 2 || PyArray_NDIM(buffer) != 2 ||
         PyArray_DIM(array, 0) != PyArray_DIM(buffer,0) ||
-        PyArray_DIM(array, 1) != PyArray_DIM(buffer, 1)) {
+        PyArray_DIM(array, 1) != PyArray_DIM(buffer, 1) ||
+        !PyArray_ISCONTIGUOUS(array) || !PyArray_ISCONTIGUOUS(buffer)) {
             PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
             return NULL;
     }
