@@ -1,4 +1,5 @@
 #include <cstring>
+#include "utils.hpp"
 
 extern "C" {
     #include <Python.h>
@@ -41,7 +42,7 @@ inline
 npy_intp coordinates_delta(PyArrayObject* array, npy_intp d0, npy_intp d1) {
     return (d0*PyArray_STRIDE(array,0) + d1*PyArray_STRIDE(array,1))/sizeof(bool);
 }
- 
+
 const bool boolvals[] =    { true, true, true, false, false, false };
 // edge
 const npy_intp edelta0[] = {   -1,   -1,   -1,    +1,    +1,    +1 };
@@ -50,7 +51,7 @@ const npy_intp edelta1[] = {   -1,    0,   +1,    -1,     0,    +1 };
 const npy_intp cdelta0[] = {   -1,   -1,    0,     0,    +1,    +1 };
 const npy_intp cdelta1[] = {   -1,   +1,   -1,    +1,     0,    +1 };
 
-void fill_data(PyArrayObject* array, bool* data, npy_intp* offset, const bool flip, const npy_intp* delta0, const npy_intp* delta1) {    
+void fill_data(PyArrayObject* array, bool* data, npy_intp* offset, const bool flip, const npy_intp* delta0, const npy_intp* delta1) {
     for (int j = 0; j != Element_Size; ++j) {
         data[j] = (flip ? ! boolvals[j]: boolvals[j]);
         offset[j] = coordinates_delta(array, delta0[j], delta1[j]);
@@ -61,38 +62,48 @@ void fill_data(PyArrayObject* array, bool* data, npy_intp* offset, const bool fl
 PyObject* py_thin(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* buffer;
-    if (!PyArg_ParseTuple(args,"OO", &array, &buffer)) return NULL;
+    if (!PyArg_ParseTuple(args,"OO", &array, &buffer) ||
+        !PyArray_Check(array) || !PyArray_Check(buffer) ||
+        PyArray_TYPE(array) != NPY_BOOL || PyArray_TYPE(buffer) != NPY_BOOL ||
+        PyArray_NDIM(array) != 2 || PyArray_NDIM(buffer) != 2 ||
+        PyArray_DIM(array, 0) != PyArray_DIM(buffer,0) ||
+        PyArray_DIM(array, 1) != PyArray_DIM(buffer, 1)) {
+            PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+            return NULL;
+    }
+    { // DROP THE GIL
+        gil_release nogil;
+        const int Nr_Elements = 8;
+        structure_element elems[Nr_Elements];
+        fill_data(array, elems[0].data, elems[0].offset, false, edelta0, edelta1);
+        fill_data(array, elems[1].data, elems[1].offset, false, cdelta0, cdelta1);
+        fill_data(array, elems[2].data, elems[2].offset, false, edelta1, edelta0);
+        fill_data(array, elems[3].data, elems[3].offset, false, cdelta1, cdelta0);
+        fill_data(array, elems[4].data, elems[4].offset,  true, edelta0, edelta1);
+        fill_data(array, elems[5].data, elems[5].offset,  true, cdelta0, cdelta1);
+        fill_data(array, elems[6].data, elems[6].offset,  true, edelta1, edelta0);
+        fill_data(array, elems[7].data, elems[7].offset,  true, cdelta1, cdelta0);
 
-
-    const int Nr_Elements = 8;
-    structure_element elems[Nr_Elements];
-    fill_data(array, elems[0].data, elems[0].offset, false, edelta0, edelta1);
-    fill_data(array, elems[1].data, elems[1].offset, false, cdelta0, cdelta1);
-    fill_data(array, elems[2].data, elems[2].offset, false, edelta1, edelta0);
-    fill_data(array, elems[3].data, elems[3].offset, false, cdelta1, cdelta0);
-    fill_data(array, elems[4].data, elems[4].offset,  true, edelta0, edelta1);
-    fill_data(array, elems[5].data, elems[5].offset,  true, cdelta0, cdelta1);
-    fill_data(array, elems[6].data, elems[6].offset,  true, edelta1, edelta0);
-    fill_data(array, elems[7].data, elems[7].offset,  true, cdelta1, cdelta0);
-
-    const npy_int N = PyArray_SIZE(array);
-    bool any_change;
-    do {
-        any_change = false;
-        for (int i = 0; i != Nr_Elements; ++i) {
-            fast_hitmiss(array, elems[i], buffer);
-            bool* pa = reinterpret_cast<bool*>(PyArray_DATA(array));
-            const bool* pb = reinterpret_cast<bool*>(PyArray_DATA(buffer));
-            for (int j = 0; j != N; ++j) {
-                if (*pb && *pa) {
-                    *pa = false;
-                    any_change = true;
+        const npy_int N = PyArray_SIZE(array);
+        bool any_change;
+        do {
+            any_change = false;
+            for (int i = 0; i != Nr_Elements; ++i) {
+                fast_hitmiss(array, elems[i], buffer);
+                bool* pa = reinterpret_cast<bool*>(PyArray_DATA(array));
+                const bool* pb = reinterpret_cast<bool*>(PyArray_DATA(buffer));
+                for (int j = 0; j != N; ++j) {
+                    if (*pb && *pa) {
+                        *pa = false;
+                        any_change = true;
+                    }
+                    ++pa;
+                    ++pb;
                 }
-                ++pa;
-                ++pb;
             }
-        }
-    } while (any_change);
+        } while (any_change);
+
+    }
 
     Py_INCREF(array);
     return PyArray_Return(array);

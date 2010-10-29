@@ -19,46 +19,8 @@
 
 from __future__ import division
 import numpy as np
-from .bbox import bbox
-from ._morph import hitmiss
 
 __all__ = ['thin']
-
-_struct_elems = []
-_struct_elems.append([
-        [0,0,0],
-        [2,1,2],
-        [1,1,1]])
-_struct_elems.append([
-        [2,0,0],
-        [1,1,0],
-        [1,1,2]])
-_struct_elems.append([
-        [1,2,0],
-        [1,1,0],
-        [1,2,0]])
-_struct_elems.append([
-        [1,1,2],
-        [1,1,0],
-        [2,0,0]])
-_struct_elems.append([
-        [1,1,1],
-        [2,1,2],
-        [0,0,0]])
-_struct_elems.append([
-        [2,1,1],
-        [0,1,1],
-        [0,0,2]])
-_struct_elems.append([
-        [0,2,1],
-        [0,1,1],
-        [0,2,1]])
-_struct_elems.append([
-        [0,0,2],
-        [0,1,1],
-        [2,1,1]])
-
-_struct_elems = [np.array(elem, np.uint8) for elem in _struct_elems]
 
 def thin(binimg):
     """
@@ -74,23 +36,18 @@ def thin(binimg):
     -------
     skel : Skeletonised version of `binimg`
     """
+    from .bbox import bbox
+    from ._thin import thin as _thin
 
     res = np.zeros_like(binimg)
     min0,max0,min1,max1 = bbox(binimg)
-
     r,c = (max0-min0,max1-min1)
 
-    image_exp = np.zeros((r+2, c+2), np.uint8)
-    imagebuf = np.zeros((r+2,c+2), np.uint8)
-    prev = np.zeros((r+2,c+2), np.uint8)
+    image_exp = np.zeros((r+2, c+2), bool)
     image_exp[1:r+1, 1:c+1] = binimg[min0:max0,min1:max1]
-    while True:
-        prev[:] = image_exp[:]
-        for elem in _struct_elems:
-            newimg = hitmiss(image_exp, elem, imagebuf)
-            image_exp -= newimg
-        if np.all(prev == image_exp):
-            break
+    imagebuf = np.empty((r+2,c+2), bool)
+
+    _thin(image_exp, imagebuf)
     res[min0:max0,min1:max1] = image_exp[1:r+1, 1:c+1]
     return res
 
