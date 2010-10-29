@@ -19,6 +19,13 @@ Notable algorithms:
  installed).
 
 
+Recent Changes
+--------------
+
+- Releases GIL when possible
+- Added ``imresize()``
+- Much improved ``thin()`` function
+
 *Website*: `http://luispedro.org/software/mahotas
 <http://luispedro.org/software/mahotas>`_
 
