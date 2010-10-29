@@ -121,7 +121,7 @@ npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len, cons
 
 /* Calculate the offsets to the filter points, for all border regions and
      the interior of the array: */
-int initFilterOffsets(PyArrayObject *array, bool *footprint,
+int init_filter_offsets(PyArrayObject *array, bool *footprint,
          const npy_intp * const fshape, npy_intp* origins,
          const ExtendMode mode, npy_intp **offsets, npy_intp *border_flag_value,
          npy_intp **coordinate_offsets)

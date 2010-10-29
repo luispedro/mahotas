@@ -18,11 +18,28 @@ typedef enum {
     EXTEND_DEFAULT = EXTEND_MIRROR
 } ExtendMode;
 
+int init_filter_offsets(PyArrayObject *array, bool *footprint,
+         const npy_intp * const fshape, npy_intp* origins,
+         const ExtendMode mode, npy_intp **offsets, npy_intp *border_flag_value,
+         npy_intp **coordinate_offsets);
+
 template <typename T>
 struct filter_iterator {
     /* Move to the next point in an array, possible changing the pointer
          to the filter offsets when moving into a different region in the
          array: */
+    filter_iterator(PyArrayObject* array, PyArrayObject* filter)
+        :offsets_(0)
+        ,coordinate_offsets_(0)
+    {
+        init_filter_offsets(array, 0, PyArray_DIMS(array), 0,
+        EXTEND_NEAREST, &offsets_, &border_flag_value_, 0);
+
+    }
+    ~filter_iterator() {
+        delete [] offsets_;
+        if (coordinate_offsets_) delete coordinate_offsets_;
+    }
     template <typename OtherIterator>
     void iterate_with(OtherIterator& iterator) {
         for (int i = 0; i != iterator.position_.nd_; ++i) {
@@ -40,8 +57,11 @@ struct filter_iterator {
     }
     private:
         T* data_;
+        npy_intp* offsets_;
+        npy_intp* coordinate_offsets_;
         npy_intp strides_[NPY_MAXDIMS];
         npy_intp minbound_[NPY_MAXDIMS];
         npy_intp maxbound_[NPY_MAXDIMS];
+        npy_intp border_flag_value_;
 };
 
