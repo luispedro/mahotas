@@ -68,3 +68,19 @@ def test_thin():
     A[20:40] = 1
     W = mahotas.thin(A)
     assert mahotas.erode(W).sum() == 0
+
+def test_compare():
+    def compare(A):
+        W = mahotas.thin(A)
+        W2 = slow_thin(A)
+        assert np.all(W == W2)
+    A = np.zeros((100,100), bool)
+    yield compare, A
+    A[20:40] = 1
+    yield compare, A
+    A[:,20:40] = 1
+    yield compare, A
+
+    A[60:80,60:80] = 1
+    yield compare, A
+
