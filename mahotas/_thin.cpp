@@ -61,8 +61,7 @@ void fill_data(PyArrayObject* array, bool* data, npy_intp* offset, const bool fl
 PyObject* py_thin(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* buffer;
-    PyArrayObject* previous;
-    if (!PyArg_ParseTuple(args,"OOO", &array, &buffer, &previous)) return NULL;
+    if (!PyArg_ParseTuple(args,"OO", &array, &buffer)) return NULL;
 
 
     const int Nr_Elements = 8;
@@ -76,23 +75,24 @@ PyObject* py_thin(PyObject* self, PyObject* args) {
     fill_data(array, elems[6].data, elems[6].offset,  true, edelta1, edelta0);
     fill_data(array, elems[7].data, elems[7].offset,  true, cdelta1, cdelta0);
 
-    PyArray_FILLWBYTE(buffer, 0);
     const npy_int N = PyArray_SIZE(array);
+    bool any_change;
     do {
-        std::memcpy(PyArray_DATA(previous), PyArray_DATA(array), PyArray_NBYTES(array));
+        any_change = false;
         for (int i = 0; i != Nr_Elements; ++i) {
             fast_hitmiss(array, elems[i], buffer);
             bool* pa = reinterpret_cast<bool*>(PyArray_DATA(array));
             const bool* pb = reinterpret_cast<bool*>(PyArray_DATA(buffer));
             for (int j = 0; j != N; ++j) {
-                if (*pb) {
+                if (*pb && *pa) {
                     *pa = false;
+                    any_change = true;
                 }
                 ++pa;
                 ++pb;
             }
         }
-    } while (std::memcmp(PyArray_DATA(previous), PyArray_DATA(array), PyArray_NBYTES(array)));
+    } while (any_change);
 
     Py_INCREF(array);
     return PyArray_Return(array);
