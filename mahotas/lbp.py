@@ -29,16 +29,9 @@ def _roll_left(v, points):
     return (v >> 1) | ( (1 << (points-1)) * (v & 1) )
 
 def _precompute_mapping(points):
-    res = np.zeros(2**points, np.int32)
-    res -= 1
-    for i in xrange(2**points):
-        if res[i] == -1:
-            cur = i
-            for j in xrange(points):
-                # if cur < i, then res[i] should not have been -1!
-                assert cur >= i
-                res[cur] = i
-                cur = _roll_left(cur, points)
+    res = np.zeros(2**points, np.uint32)
+    from ._lbp import map
+    map(res, points)
     return res
 
 
@@ -71,15 +64,9 @@ def lbp(image, radius, points):
     if points < 20:
         mapping = _precompute_mapping(points).take
     else:
+        from ._lbp import map
         def mapping(codes):
-            res = []
-            for c in codes:
-                bestval = c
-                for r in xrange(points):
-                    c = _roll_left(c, points)
-                    if c < bestval: bestval = c
-                res.append(bestval)
-            return np.array(res, np.int32)
+            return map(codes.astype(np.uint32), points)
 
     h,w = image.shape
     w2r = w - 2*radius
