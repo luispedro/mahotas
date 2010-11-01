@@ -37,17 +37,18 @@ execfile('mahotas/mahotas_version.py')
 long_description = file('docs/source/readme.rst').read()
 
 
-histogram = numpyutils.Extension('mahotas._histogram', sources = ['mahotas/_histogram.cpp'])
-morph = numpyutils.Extension('mahotas._morph', sources = ['mahotas/_morph.cpp'], extra_compile_args=['-Wno-sign-compare'])
-thin = numpyutils.Extension('mahotas._thin', sources = ['mahotas/_thin.cpp'], extra_compile_args=['-Wno-sign-compare'])
 bbox = numpyutils.Extension('mahotas._bbox', sources = ['mahotas/_bbox.cpp'])
 center_of_mass = numpyutils.Extension('mahotas._center_of_mass', sources = ['mahotas/_center_of_mass.cpp'])
-texture = numpyutils.Extension('mahotas._texture', sources = ['mahotas/_texture.cpp'])
 convex = numpyutils.Extension('mahotas._convex', sources = ['mahotas/_convex.cpp'])
-zernike = numpyutils.Extension('mahotas._zernike', sources = ['mahotas/_zernike.cpp'])
 distance = numpyutils.Extension('mahotas._distance', sources = ['mahotas/_distance.cpp'])
+histogram = numpyutils.Extension('mahotas._histogram', sources = ['mahotas/_histogram.cpp'])
+lbp = numpyutils.Extension('mahotas._lbp', sources = ['mahotas/_lbp.cpp'])
+morph = numpyutils.Extension('mahotas._morph', sources = ['mahotas/_morph.cpp'], extra_compile_args=['-Wno-sign-compare'])
+texture = numpyutils.Extension('mahotas._texture', sources = ['mahotas/_texture.cpp'])
+thin = numpyutils.Extension('mahotas._thin', sources = ['mahotas/_thin.cpp'], extra_compile_args=['-Wno-sign-compare'])
+zernike = numpyutils.Extension('mahotas._zernike', sources = ['mahotas/_zernike.cpp'])
 
-ext_modules = [histogram, morph, thin, bbox, center_of_mass, texture, convex, zernike, distance]
+ext_modules = [bbox, center_of_mass, convex, distance, histogram, lbp, morph, texture, thin, zernike]
 
 packages = setuptools.find_packages()
 if 'tests' in packages: packages.remove('tests')

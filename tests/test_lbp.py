@@ -1,4 +1,5 @@
 import numpy as np
+import mahotas._lbp
 import mahotas.thresholding
 from mahotas.lbp import lbp, _roll_left
 
@@ -34,3 +35,9 @@ def test_histogram_large():
     w,h = A.shape
     for r in (2,3,4,5):
         assert lbp(A,r,24).sum() == (w-2*r)*(h-2*r)
+
+
+def test_map():
+    assert len(set(mahotas._lbp.map(np.arange(256,dtype=np.uint32), 8))) == 36
+
+
