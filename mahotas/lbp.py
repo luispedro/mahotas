@@ -43,49 +43,37 @@ def lbp(image, radius, points):
 
     Parameters
     ----------
-      image : input image (2-D numpy ndarray)
-      radius : radius (in pixels)
-      points : nr of points to consider
+    image : ndarray
+        input image (2-D numpy ndarray)
+    radius : number (integer or floating point
+        radius (in pixels)
+    points : integer
+        nr of points to consider
 
     Returns
     -------
-      features : histogram of features (1-D numpy ndarray)
-    
+    features : 1-D numpy ndarray
+        histogram of features
+
 
     Reference
     ---------
-
-        Gray Scale and Rotation Invariant Texture Classification with Local Binary Patterns
-            Ojala, T. Pietikainen, M. Maenpaa, T. LECTURE NOTES IN COMPUTER SCIENCE (Springer)
-            2000, ISSU 1842, pages 404-420  
+    Gray Scale and Rotation Invariant Texture Classification with Local Binary Patterns
+        Ojala, T. Pietikainen, M. Maenpaa, T. LECTURE NOTES IN COMPUTER SCIENCE (Springer)
+        2000, ISSU 1842, pages 404-420
     '''
-    image = image.astype(np.float)
-    final = np.zeros(2**points)
-    if points < 20:
-        mapping = _precompute_mapping(points).take
-    else:
-        from ._lbp import map
-        def mapping(codes):
-            return map(codes.astype(np.uint32), points)
-
-    h,w = image.shape
-    w2r = w - 2*radius
-
+    from scipy.ndimage.interpolation import map_coordinates
+    import mahotas._lbp
+    from mahotas.histogram import fullhistogram
+    Y,X = np.indices(image.shape)
     angles = np.linspace(0, 2*np.pi, points+1)[:-1]
-    coordinates = np.empty( (2, w2r, points) )
-    coordinates[0] = radius * np.sin(angles)
-    coordinates[1] = radius * np.cos(angles)
-    coordinates1T = coordinates[1].T
-    coordinates1T += np.arange(w2r)
-
-    for row in xrange(radius, image.shape[0]-radius):
-        center = image[row, radius:w-radius]
-        coordinates[0] += 1
-        rs = ndimage.interpolation.map_coordinates(image, coordinates, order=1)
-        codes = (2**np.arange(points) * (center > rs.T).T).sum(1)
-        codes = mapping(codes)
-        assert codes.min() >= 0
-        cur = fullhistogram(codes.view(np.uint32))
-        final[:len(cur)] += cur
-    return final
-
+    coordinates = np.empty((2, points, image.size), float)
+    for i,(dy,dx) in enumerate(zip(radius * np.sin(angles), radius * np.cos(angles))):
+        coordinates[0][i] = Y.ravel()
+        coordinates[1][i] = X.ravel()
+        coordinates[0][i] += dy
+        coordinates[1][i] += dx
+    points = map_coordinates(image, coordinates.reshape((2,-1)), order=1).reshape((image.size, -1))
+    codes = (points.T > image.ravel()).sum(0)
+    codes = mahotas._lbp.map(codes.astype(np.uint32), 8)
+    return fullhistogram(codes)
