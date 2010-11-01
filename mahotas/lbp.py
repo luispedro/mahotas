@@ -73,7 +73,16 @@ def lbp(image, radius, points):
         coordinates[1][i] = X.ravel()
         coordinates[0][i] += dy
         coordinates[1][i] += dx
-    points = map_coordinates(image, coordinates.reshape((2,-1)), order=1).reshape((image.size, -1))
-    codes = (points.T > image.ravel()).sum(0)
-    codes = mahotas._lbp.map(codes.astype(np.uint32), 8)
-    return fullhistogram(codes)
+    data = map_coordinates(image, coordinates.reshape((2,-1)), order=1).reshape((image.size, -1))
+    codes = (data.T > image.ravel()).sum(0)
+    mahotas._lbp.map(codes.astype(np.uint32), points)
+    final = fullhistogram(codes.astype(np.uint32))
+
+    codes = np.arange(2**points, dtype=np.uint32)
+    iters = codes.copy()
+    mahotas._lbp.map(codes.astype(np.uint32), points)
+    pivots = (codes == iters)
+    npivots = np.sum(pivots)
+    compressed = final[pivots[:len(final)]]
+    compressed = np.concatenate((compressed, [0]*(npivots - len(compressed))))
+    return compressed
