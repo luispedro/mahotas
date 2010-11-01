@@ -73,11 +73,11 @@ void show_data(const bool flip, const npy_intp* delta0, const npy_intp* delta1) 
     std:: cout << '\n';
 }
 
-void fill_data(PyArrayObject* array, bool* data, npy_intp* offset, const bool flip, const npy_intp* delta0, const npy_intp* delta1) {
+void fill_data(PyArrayObject* array, structure_element& elem, const bool flip, const npy_intp* delta0, const npy_intp* delta1) {
     //show_data(flip, delta0, delta1);
     for (int j = 0; j != Element_Size; ++j) {
-        data[j] = (flip ? ! boolvals[j]: boolvals[j]);
-        offset[j] = coordinates_delta(array, delta0[j], delta1[j]);
+        elem.data[j] = (flip ? ! boolvals[j]: boolvals[j]);
+        elem.offset[j] = coordinates_delta(array, delta0[j], delta1[j]);
     }
 }
 
@@ -99,14 +99,14 @@ PyObject* py_thin(PyObject* self, PyObject* args) {
         gil_release nogil;
         const int Nr_Elements = 8;
         structure_element elems[Nr_Elements];
-        fill_data(array, elems[0].data, elems[0].offset, false, edelta0, edelta1);
-        fill_data(array, elems[1].data, elems[1].offset, false, adelta0, adelta1);
-        fill_data(array, elems[2].data, elems[2].offset,  true, edelta1, edelta0);
-        fill_data(array, elems[3].data, elems[3].offset,  true, cdelta0, cdelta1);
-        fill_data(array, elems[4].data, elems[4].offset,  true, edelta0, edelta1);
-        fill_data(array, elems[5].data, elems[5].offset,  true, adelta0, adelta1);
-        fill_data(array, elems[6].data, elems[6].offset, false, cdelta0, cdelta1);
-        fill_data(array, elems[7].data, elems[7].offset, false, edelta1, edelta0);
+        fill_data(array, elems[0], false, edelta0, edelta1);
+        fill_data(array, elems[1], false, adelta0, adelta1);
+        fill_data(array, elems[2],  true, edelta1, edelta0);
+        fill_data(array, elems[3],  true, cdelta0, cdelta1);
+        fill_data(array, elems[4],  true, edelta0, edelta1);
+        fill_data(array, elems[5],  true, adelta0, adelta1);
+        fill_data(array, elems[6], false, cdelta0, cdelta1);
+        fill_data(array, elems[7], false, edelta1, edelta0);
 
 
         const npy_int N = PyArray_SIZE(array);
