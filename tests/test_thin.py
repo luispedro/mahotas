@@ -68,6 +68,7 @@ def test_thin():
     A[20:40] = 1
     W = mahotas.thin(A)
     assert mahotas.erode(W).sum() == 0
+    assert (W & A).sum() == W.sum()
 
 def test_compare():
     def compare(A):
