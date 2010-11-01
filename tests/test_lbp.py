@@ -32,7 +32,7 @@ def test_roll_left():
 def test_histogram_large():
     A = np.arange(32*32).reshape((32,32))
     for r in (2,3,4,5):
-        assert lbp(A,r,24).sum() == A.size
+        assert lbp(A,r,12).sum() == A.size
 
 
 def test_map():
