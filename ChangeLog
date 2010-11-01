@@ -1,3 +1,6 @@
+Version 0.5.4
+	* Improve Local Binary patterns (faster and better interface)
+
 Version 0.5.3 2010-10-29
 	* Implement mahotas.thin() in C++ for speed
 	* Add np.uint64 support to fullhistogram()
