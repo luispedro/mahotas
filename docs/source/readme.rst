@@ -12,7 +12,7 @@ Notable algorithms:
  - hit & miss. thinning.
  - Zernike & Haralick features.
  - freeimage based numpy image loading (requires freeimage libraries to be
- installed).
+   installed).
 
 
 Examples
