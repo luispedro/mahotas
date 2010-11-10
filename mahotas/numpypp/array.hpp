@@ -14,6 +14,9 @@ extern "C" {
 
 #include <stdio.h>
 
+template <typename T>
+struct filter_iterator;
+
 namespace numpy {
 typedef npy_intp index_type;
 const unsigned index_type_number = NPY_INTP;
@@ -91,6 +94,7 @@ T& operator << (T& out, const numpy::position& p) {
 
 template <typename BaseType>
 struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
+    friend class ::filter_iterator<BaseType>;
     protected:
         BaseType* data_;
         // steps is similar to strides, but more useful for iteration, see implementation of operator ++

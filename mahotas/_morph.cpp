@@ -8,6 +8,8 @@
 #include "numpypp/array.hpp"
 #include "numpypp/dispatch.hpp"
 
+#include "_filters.h"
+
 extern "C" {
     #include <Python.h>
     #include <numpy/ndarrayobject.h>
@@ -55,25 +57,21 @@ numpy::index_type margin_of(const numpy::position& position, const numpy::array_
 
 
 template<typename T>
-void erode(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_array<T> Bc) {
+void erode(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc) {
     const unsigned N = res.size();
-    const unsigned N2 = Bc.size();
-    const numpy::position centre = central_position(Bc);
-    typename numpy::aligned_array<T>::iterator rpos = res.begin();
+    typename numpy::aligned_array<T>::iterator iter = array.begin();
+    filter_iterator<T> filter(array.raw_array(), Bc.raw_array());
+    const unsigned N2 = filter.size();
+    T* rpos = res.data();
 
-    for (int i = 0; i != N; ++i, ++rpos) {
-        bool on = true;
-        typename numpy::aligned_array<T>::iterator startc = Bc.begin();
-        for (int j = 0; j != N2; ++j, ++startc) {
-            if (*startc) {
-                numpy::position npos = rpos.position() + startc.position() - centre;
-                if (array.validposition(npos) && !array.at(npos)) {
-                    on = false;
-                    break;
-                }
-            }
+    for (int i = 0; i != N; ++i, ++rpos, filter.iterate_with(iter), ++iter) {
+        for (int j = 0; j != N2; ++j) {
+            T arr_val = false, filter_val = false;
+            filter.retrieve(iter, j, arr_val, filter_val);
+            if (filter_val && !arr_val) goto skip_this_one;
         }
-        *rpos = on;
+        *rpos = true;
+        skip_this_one: continue;
     }
 }
 
@@ -87,7 +85,7 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
     if (!res_a) return NULL;
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
-    erode<type>(numpy::aligned_array<type>(res_a),numpy::array<type>(array),numpy::aligned_array<type>(Bc));\
+    erode<type>(numpy::aligned_array<type>(res_a), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));\
 
         HANDLE_INTEGER_TYPES();
 #undef HANDLE
