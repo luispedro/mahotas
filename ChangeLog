@@ -1,5 +1,6 @@
 Version 0.5.4
 	* Improve Local Binary patterns (faster and better interface)
+	* Much faster erode() (10x faster)
 
 Version 0.5.3 2010-10-29
 	* Implement mahotas.thin() in C++ for speed
