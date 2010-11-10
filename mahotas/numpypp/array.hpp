@@ -129,6 +129,8 @@ struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
 
         int index(unsigned i) const { return index_rev(position_.nd_ - i - 1); }
         int index_rev(unsigned i) const { return position_.position_[i]; }
+        npy_intp dimension(unsigned i) const { return dimension_rev(position_.nd_ - i - 1); }
+        npy_intp dimension_rev(unsigned i) const { return dimensions_[i]; }
 
         bool operator == (const iterator_base& other) { return this->position_ == other.position_; }
         bool operator != (const iterator_base& other) { return !(*this == other); }
@@ -146,7 +148,7 @@ class iterator_type : public iterator_base<BaseType> {
         iterator_type(PyArrayObject* array)
             :iterator_base<BaseType>(array) {
             }
-        BaseType operator * () {
+        BaseType operator * () const {
             BaseType res;
             std::memcpy(&res,this->data_,sizeof(res));
             return res;
@@ -160,7 +162,7 @@ class aligned_iterator_type : public iterator_base<BaseType> {
             :iterator_base<BaseType>(array) {
                 assert(PyArray_ISALIGNED(array));
             }
-        BaseType& operator * () {
+        BaseType& operator * () const {
             return *this->data_;
         }
 };
