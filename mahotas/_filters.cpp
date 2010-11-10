@@ -39,7 +39,6 @@ extern "C" {
     #include <numpy/ndarrayobject.h>
 }
 
-namespace {
 npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len, const npy_intp border_flag_value) {
     /* apply boundary conditions, if necessary: */
     switch (mode) {
@@ -117,6 +116,7 @@ npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len, cons
         return cc;
     }
     assert(false); // We should never get here
+    return 0;
 }
 
 /* Calculate the offsets to the filter points, for all border regions and
@@ -161,7 +161,7 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
     } catch (std::bad_alloc&) {
         if (*offsets) delete [] offsets;
         PyErr_NoMemory();
-        return 0;
+        return -1;
     }
     // from here on, we cannot fail anymore:
 
@@ -256,8 +256,7 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
         }
     }
 
-    return 1;
+    return footprint_size;
 }
 
-}
 
