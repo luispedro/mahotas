@@ -60,7 +60,7 @@ template<typename T>
 void erode(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc) {
     const unsigned N = res.size();
     typename numpy::aligned_array<T>::iterator iter = array.begin();
-    filter_iterator<T> filter(array.raw_array(), Bc.raw_array());
+    filter_iterator<T> filter(res.raw_array(), Bc.raw_array());
     const unsigned N2 = filter.size();
     T* rpos = res.data();
 
@@ -99,24 +99,19 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
 template<typename T>
 void dilate(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_array<T> Bc) {
     const unsigned N = res.size();
-    const unsigned N2 = Bc.size();
-    const numpy::position centre = central_position(Bc);
+    typename numpy::array<T>::iterator iter = array.begin();
+    filter_iterator<T> filter(array.raw_array(), Bc.raw_array());
+    const unsigned N2 = filter.size();
+    // T* is a fine iterator type.
+    T* rpos = res.data();
 
-    typename numpy::array<T>::iterator pos = array.begin();
-    for (int i = 0; i != N; ++i, ++pos) {
-        if (*pos) {
-            typename numpy::aligned_array<T>::iterator startc = Bc.begin();
-            for (int j = 0; j != N2; ++j, ++startc) {
-                if (*startc) {
-                    numpy::position npos = pos.position() + startc.position() - centre;
-                    if (res.validposition(npos)) {
-                        res.at(npos) = *pos+*startc;
-                    }
-                }
+    for (int i = 0; i != N; ++i, ++rpos, filter.iterate_with(iter), ++iter) {
+        if (*iter) {
+            for (int j = 0; j != N2; ++j) {
+                if (filter[j]) filter.set(rpos, j, true);
             }
         }
     }
-
 }
 
 PyObject* py_dilate(PyObject* self, PyObject* args) {

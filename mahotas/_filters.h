@@ -76,6 +76,12 @@ struct filter_iterator {
         array_val = *( (&*iterator) + this->cur_offsets_[j]);
         filter_val = filter_data_[j];
     }
+    template <typename OtherIterator>
+    void set(const OtherIterator& iterator, npy_intp j, const T& val) {
+        *( (&*iterator) + this->cur_offsets_[j]) = val;
+    }
+
+    const T& operator [] (const npy_intp j) const { return filter_data_[j]; }
     npy_intp size() const { return size_; }
     private:
         const T* const filter_data_;
