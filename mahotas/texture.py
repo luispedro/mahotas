@@ -44,19 +44,26 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     only reason why you'd want the buggy behaviour is if you want to match
     another implementation.
 
+    Bugs
+    ----
     This implementation does not compute the 14-th feature described by
     Haralick (a patch for it would be welcome).
 
     Parameters
     ----------
-      f : A 2-D integer image.
-      ignore_zeros : Whether to ignore zero pixels (default: False).
-      preserve_haralick_bug : Whether to replicate Haralick's type
-                              (default: False).
+    f : ndarray of integer type
+        input image
+    ignore_zeros : bool, optional
+        Whether to ignore zero pixels (default: False).
+    preserve_haralick_bug : bool, optional
+        whether to replicate Haralick's typo (default: False).
+        You probably want to always set this to ``False`` unless you want to
+        replicate someone else's wrong implementation.
 
     Returns
     -------
-      feats : A 4x13 feature vector (one row per direction).
+    feats : ndarray of np.double
+        A 4x13 feature vector (one row per direction).
     '''
     _verify_is_integer_type(f, 'mahotas.haralick')
 
@@ -144,11 +151,16 @@ def cooccurence(f, direction, output=None, symmetric=True):
 
     Parameters
     ----------
-      f : An integer valued 2-D image
-      direction : Direction as index into (horizontal [default], diagonal
-                  [nw-se], vertical, diagonal [ne-sw])
-      output : A np.long 2-D array for the result.
-      symmetric : Whether return a symmetric matrix (default: False)
+    f : ndarray of integer type
+        The input image
+    direction : integer
+        Direction as index into (horizontal [default], diagonal
+        [nw-se], vertical, diagonal [ne-sw])
+    output : np.long 2 ndarray, optional
+        preallocated result.
+    symmetric : boolean, optional
+        whether return a symmetric matrix (default: False)
+
     Returns
     -------
       cooccurence_matrix : cooccurence matrix
