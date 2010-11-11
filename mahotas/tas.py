@@ -27,18 +27,30 @@ from mahotas.thresholding import otsu
 
 __all__ = ['pftas', 'tas']
 
-_M = np.array([
-    [1,  1, 1],
-    [1, 10, 1],
-    [1,  1, 1]
-    ])
-_bins = np.arange(11)
+_M2 = np.ones((2, 2))
+_M2[1, 1] = 10
+_bins2 = np.arange(11)
+
+_M3 = np.ones((3, 3, 3))
+_M3[1,1,1] = _M3.sum() + 1
+_bins3 = np.arange(28)
 
 def _tas(img, thresh, margin):
+    if len(img.shape) == 2:
+        M = _M2
+        bins = _bins2
+        saved = 9
+    elif len(img.shape) == 3:
+        M = _M3
+        bins = _bins3
+        saved = 27
+    else:
+        raise ValueError('mahotas.tas: Cannot compute TAS for image of %s dimensions' % len(img.shape))
+
     def _ctas(img):
-        V = ndimage.convolve(img.astype(np.uint8), _M)
-        values,_ = np.histogram(V, bins=_bins)
-        values = values[:9]
+        V = ndimage.convolve(img.astype(np.uint8), M)
+        values,_ = np.histogram(V, bins=bins)
+        values = values[:saved]
         return values/values.sum()
 
     def _compute(bimg):
