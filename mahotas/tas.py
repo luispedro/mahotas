@@ -82,11 +82,17 @@ def tas(img):
 
     Parameters
     ----------
-      img : A 2-D image
+    img : ndarray, 2D or 3D
+        input image
 
     Returns
     -------
-      values : A 1-D ndarray of feature values
+    values : ndarray
+        A 1-D ndarray of feature values
+
+    See Also
+    --------
+    pftas : Parameter free TAS
     '''
     return _tas(img, 30, 30)
 
@@ -111,11 +117,15 @@ def pftas(img, T=None):
 
     Parameters
     ----------
-      img : A 2-D image
-      T : Threshold to use (default: compute with otsu)
+    img : ndarray, 2D or 3D
+        input image
+    T : integer, optional
+        Threshold to use (default: compute with otsu)
+
     Returns
     -------
-      values : A 1-D ndarray of feature values
+    values : ndarray
+        A 1-D ndarray of feature values
     '''
     if T is None:
         T = otsu(img)
