@@ -329,10 +329,16 @@ def _array_from_bitmap(bitmap):
         return arr[..., ::-1].T
     if len(shape) == 3 and _FI.FreeImage_IsLittleEndian() and \
        dtype.type == np.uint8:
-        b = array[0]
-        g = array[1]
-        r = array[2]
-        return np.dstack( (n(r), n(g), n(b)) )
+        b = n(array[0])
+        g = n(array[1])
+        r = n(array[2])
+        if shape[0] == 3:
+            return np.dstack( (r,g,b) )
+        elif shape[0] == 4:
+            a = n(array[3])
+            return np.dstack( (r,g,b,a) )
+        else:
+            raise ValueError('mahotas.freeimage: cannot handle images of this shape (%s)' % shape)
 
     # We need to copy because array does *not* own its memory
     # after bitmap is freed.
