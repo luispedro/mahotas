@@ -5,10 +5,12 @@
 #include <limits>
 #include <iostream>
 #include <cstring>
+#include <signal.h>
 
 #include "numpypp/array.hpp"
 #include "numpypp/dispatch.hpp"
 #include "utils.hpp"
+#include "_filters.h"
 
 extern "C" {
     #include <Python.h>
@@ -23,33 +25,29 @@ const char TypeErrorMsg[] =
 
 
 template<typename T>
-void cooccurence(numpy::aligned_array<long> res, numpy::aligned_array<T> array, int diagonal) {
-    using numpy::position;
+void cooccurence(numpy::aligned_array<npy_int32> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc) {
     gil_release nogil;
-    const T* ptr = array.data();
-    int delta = array.stride(1);
-    int nr_rows = array.size(0);
-    int nr_cols = array.size(1)-1;
-    int stride = array.stride(1);
-    int row_step = array.stride(0) - nr_cols*stride;
+    const int N = array.size();
+    typename numpy::aligned_array<T>::iterator iter = array.begin();
+    filter_iterator<T> filter(array.raw_array(), Bc.raw_array(), EXTEND_CONSTANT);
+    const int N2 = filter.size();
 
     //std::cout << "nr_rows: " << nr_rows << '\n';
     //std::cout << "nr_cols: " << nr_cols << '\n';
     //std::cout << "stride: " << stride << '\n';
     //std::cout << "row_step: " << row_step << '\n';
-    if (diagonal == 1) {
-        --nr_rows;
-        delta += array.stride(0);
-    }
 
-    for (int row = 0; row != nr_rows; ++row) {
-        for (int col = 0; col != nr_cols; ++col) {
-            T val = *ptr;
-            T val2 = *(ptr + delta);
-            ++res.at(npy_intp(val), npy_intp(val2));
-            ptr += stride;
+    for (int i = 0; i != N; ++i, filter.iterate_with(iter), ++iter) {
+        T val = *iter;
+        for (int j = 0; j != N2; ++j) {
+            T val2 = 0;
+            T filter_val = 0;
+            bool valid;
+            filter.retrieve(iter, j, val2, filter_val, &valid);
+            if (valid && filter_val) {
+                ++res.at(npy_intp(val), npy_intp(val2));
+            }
         }
-        ptr += row_step;
     }
 }
 
@@ -57,12 +55,21 @@ void cooccurence(numpy::aligned_array<long> res, numpy::aligned_array<T> array, 
 PyObject* py_cooccurent(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* result;
-    int diagonal;
+    PyArrayObject* Bc;
     int symmetric;
-    if (!PyArg_ParseTuple(args,"OOii", &array, &result, &diagonal, &symmetric)) return NULL;
+    if (!PyArg_ParseTuple(args,"OOOi", &array, &result, &Bc, &symmetric)) return NULL;
+    if (!PyArray_Check(array) || !PyArray_Check(result) || !PyArray_Check(Bc)) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    if (PyArray_TYPE(result) != NPY_INT32) {
+        PyErr_SetString(PyExc_RuntimeError, "mahotas._texture: expected NPY_INT32 for result array. Do not call _texture.cooccurence directly. It is dangerous!");
+        return NULL;
+    }
+
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
-    cooccurence<type>(numpy::aligned_array<long>(result), numpy::aligned_array<type>(array), diagonal);\
+    cooccurence<type>(numpy::aligned_array<npy_int32>(result), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));\
 
         HANDLE_INTEGER_TYPES();
 #undef HANDLE

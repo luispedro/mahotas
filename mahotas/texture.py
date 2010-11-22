@@ -69,7 +69,7 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
 
     feats = np.zeros((4, 13), np.double)
     fm1 = f.max() + 1
-    cmat = np.empty((fm1, fm1), np.long)
+    cmat = np.empty((fm1, fm1), np.int32)
     k = np.arange(fm1)
     k2 = k**2
     tk = np.arange(2*fm1)
@@ -169,17 +169,16 @@ def cooccurence(f, direction, output=None, symmetric=True):
     assert direction in (0,1,2,3), 'mahotas.texture.cooccurence: `direction` %s is not in range(4).' % direction
     if output is None:
         mf = f.max()
-        output = np.zeros((mf+1, mf+1), np.long)
+        output = np.zeros((mf+1, mf+1), np.int32)
     else:
         assert np.min(output.shape) >= f.max(), 'mahotas.texture.cooccurence: output is not large enough'
-        assert output.dtype == np.long, 'mahotas.texture.cooccurence: output is not of type np.long'
+        assert output.dtype == np.int32, 'mahotas.texture.cooccurence: output is not of type np.int32'
         output.fill(0)
 
-    if direction == 2:
-        f = f.T
-    elif direction == 3:
-        f = f[:, ::-1]
-    diagonal = (direction in (1,3))
-    _texture.cooccurence(f, output, diagonal, symmetric)
+    Bc = np.zeros((3,3), f.dtype)
+    positions = [(1,2), (2,2), (2,1), (2,0)]
+    y,x = positions[direction]
+    Bc[y,x] = 1
+    _texture.cooccurence(f, output, Bc, symmetric)
     return output
 

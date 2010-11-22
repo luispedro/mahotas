@@ -10,8 +10,10 @@ def test__cooccurence():
           [0,0,1,1],
           [2,2,2,2],
         ])
-    res = np.zeros((5,5), np.long)
-    cooccurence(f, res, 0, 0)
+    Bc = np.zeros((3,3), f.dtype)
+    Bc[1,2] = 1
+    res = np.zeros((5,5), np.int32)
+    cooccurence(f, res, Bc, 0)
     assert res[0,0] == 1
     assert res[0,1] == 2
     assert res[1,0] == 0
@@ -22,8 +24,10 @@ def test__cooccurence():
     res[:3,:3] = 0
     assert not np.any(res)
 
-    res = np.zeros((5,5), np.long)
-    cooccurence(f, res, 1, 0)
+    res = np.zeros((5,5), np.int32)
+    Bc = np.zeros((3,3), f.dtype)
+    Bc[2,2] = 1
+    cooccurence(f, res, Bc, 0)
     assert res[0,0] == 1
     assert res[0,1] == 0
     assert res[0,2] == 2
