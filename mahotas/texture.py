@@ -35,7 +35,8 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
 
     Compute Haralick texture features
 
-    Computes the Haralick texture features for the four 2-D directions.
+    Computes the Haralick texture features for the four 2-D directions or
+    thirteen 3-D directions (depending on the dimensions of `f`).
 
     Notes
     -----
@@ -52,7 +53,7 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     Parameters
     ----------
     f : ndarray of integer type
-        input image
+        input image. 2-D and 3-D images are supported.
     ignore_zeros : bool, optional
         Whether to ignore zero pixels (default: False).
     preserve_haralick_bug : bool, optional
