@@ -1,3 +1,6 @@
+Version 0.6+
+	* Release the GIL in morphological functions
+
 Version 0.6 2010-11-22
 	* Improve Local Binary patterns (faster and better interface)
 	* Much faster erode() (10x faster)

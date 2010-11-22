@@ -7,6 +7,7 @@
 
 #include "numpypp/array.hpp"
 #include "numpypp/dispatch.hpp"
+#include "utils.hpp"
 
 #include "_filters.h"
 
@@ -58,6 +59,7 @@ numpy::index_type margin_of(const numpy::position& position, const numpy::array_
 
 template<typename T>
 void erode(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc) {
+    gil_release nogil;
     const unsigned N = res.size();
     typename numpy::aligned_array<T>::iterator iter = array.begin();
     filter_iterator<T> filter(res.raw_array(), Bc.raw_array());
@@ -98,6 +100,7 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
 
 template<typename T>
 void dilate(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_array<T> Bc) {
+    gil_release nogil;
     const unsigned N = res.size();
     typename numpy::array<T>::iterator iter = array.begin();
     filter_iterator<T> filter(array.raw_array(), Bc.raw_array());
@@ -233,6 +236,7 @@ struct NeighbourElem {
 
 template<typename BaseType>
 void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* lines, numpy::aligned_array<BaseType> array, numpy::aligned_array<BaseType> markers, numpy::aligned_array<BaseType> Bc) {
+    gil_release nogil;
     const unsigned N = res.size();
     const unsigned N2 = Bc.size();
     std::vector<NeighbourElem> neighbours;
@@ -356,6 +360,7 @@ struct HitMissNeighbour {
 
 template <typename T>
 void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, const numpy::aligned_array<T>& Bc) {
+    gil_release nogil;
     typedef typename numpy::aligned_array<T>::iterator iterator;
     typedef typename numpy::aligned_array<T>::const_iterator const_iterator;
     const numpy::index_type N = input.size();
