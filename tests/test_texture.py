@@ -47,6 +47,17 @@ def brute_force(f, dy, dx):
                 res[f[y,x], f[y +dy,x+dx]] += 1
     return res
 
+def brute_force3(f, dy, dx, dz):
+    res = np.zeros((f.max()+1, f.max() + 1), np.double)
+    for y in xrange(f.shape[0]):
+        for x in xrange(f.shape[1]):
+            for z in xrange(f.shape[2]):
+                if 0 <= y + dy < f.shape[0] and \
+                    0 <= x + dx < f.shape[1] and \
+                    0 <= z + dz < f.shape[2]:
+                    res[f[y,x,z], f[y +dy,x+dx,z+dz]] += 1
+    return res
+
 
 def brute_force_sym(f, dy, dx):
     cmat = brute_force(f, dy, dx)
@@ -67,9 +78,24 @@ def test_cooccurence():
     assert np.all(mahotas.texture.cooccurence(f, 2, symmetric=1) == brute_force_sym(f, 1, 0))
     assert np.all(mahotas.texture.cooccurence(f, 3, symmetric=1) == brute_force_sym(f, 1, -1))
 
+def test_cooccurence3():
+    np.random.seed(222)
+    f = np.random.rand(32, 32, 8)
+    f = (f * 255).astype(np.int32)
+
+    for di, (d0,d1,d2) in enumerate(mahotas.texture._3d_deltas):
+        assert np.all(mahotas.texture.cooccurence(f, di, symmetric=False) == brute_force3(f, d0, d1, d2))
+
 def test_haralick():
     np.random.seed(123)
     f = np.random.rand(1024, 1024)
+    f = (f * 255).astype(np.int32)
+    feats = mahotas.texture.haralick(f)
+    assert not np.any(np.isnan(feats))
+
+def test_haralick3():
+    np.random.seed(123)
+    f = np.random.rand(34, 12, 8)
     f = (f * 255).astype(np.int32)
     feats = mahotas.texture.haralick(f)
     assert not np.any(np.isnan(feats))

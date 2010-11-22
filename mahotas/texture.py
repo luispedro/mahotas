@@ -143,6 +143,23 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     return feats
 
 
+_2d_deltas= [(0,1), (1,1), (1,0), (1,-1)]
+_3d_deltas = [
+    (1,0,0),
+    (1,1,0),
+    (0,1,0),
+    (1,-1,0),
+    (0,0,1),
+    (1,0,1),
+    (0,1,1),
+    (1,1,1),
+    (1,-1,1),
+    (1,0,-1),
+    (0,1,-1),
+    (1,1,-1),
+    (1,-1,-1),
+]
+
 def cooccurence(f, direction, output=None, symmetric=True):
     '''
     cooccurence_matrix = cooccurence(f, direction, output={new matrix})
@@ -166,7 +183,13 @@ def cooccurence(f, direction, output=None, symmetric=True):
       cooccurence_matrix : cooccurence matrix
     '''
     _verify_is_integer_type(f, 'mahotas.cooccurence')
-    assert direction in (0,1,2,3), 'mahotas.texture.cooccurence: `direction` %s is not in range(4).' % direction
+    if len(f.shape) == 2:
+        assert direction in (0,1,2,3), 'mahotas.texture.cooccurence: `direction` %s is not in range(4).' % direction
+    elif len(f.shape) == 3:
+        assert direction in xrange(13), 'mahotas.texture.cooccurence: `direction` %s is not in range(13).' % direction
+    else:
+        raise ValueError('mahotas.texture.cooccurence: cannot handle images of %s dimensions.' % len(f.shape))
+
     if output is None:
         mf = f.max()
         output = np.zeros((mf+1, mf+1), np.int32)
@@ -175,10 +198,14 @@ def cooccurence(f, direction, output=None, symmetric=True):
         assert output.dtype == np.int32, 'mahotas.texture.cooccurence: output is not of type np.int32'
         output.fill(0)
 
-    Bc = np.zeros((3,3), f.dtype)
-    positions = [(1,2), (2,2), (2,1), (2,0)]
-    y,x = positions[direction]
-    Bc[y,x] = 1
+    if len(f.shape) == 2:
+        Bc = np.zeros((3, 3), f.dtype)
+        y,x = _2d_deltas[direction]
+        Bc[y+1,x+1] = 1
+    else:
+        Bc = np.zeros((3, 3, 3), f.dtype)
+        y,x,z = _3d_deltas[direction]
+        Bc[y+1,x+1,z+1] = 1
     _texture.cooccurence(f, output, Bc, symmetric)
     return output
 
