@@ -3,7 +3,7 @@ extern "C" {
     #include <numpy/ndarrayobject.h>
 }
 
-#include <iostream>
+#include "numpypp/array.hpp"
 
 /* The different boundary conditions. The mirror condition is not used
      by the python code, but C code is kept around in case we might wish
@@ -29,13 +29,38 @@ struct filter_iterator {
     /* Move to the next point in an array, possible changing the pointer
          to the filter offsets when moving into a different region in the
          array: */
-    filter_iterator(PyArrayObject* array, PyArrayObject* filter, ExtendMode mode = EXTEND_NEAREST)
+    filter_iterator(PyArrayObject* array, PyArrayObject* filter, ExtendMode mode = EXTEND_NEAREST, bool compress=true)
         :filter_data_(reinterpret_cast<const T* const>(PyArray_DATA(filter)))
+        ,own_filter_data_(false)
         ,offsets_(0)
         ,coordinate_offsets_(0)
     {
-        size_ = init_filter_offsets(array, 0, PyArray_DIMS(filter), 0,
+        numpy::aligned_array<T> filter_array(filter);
+        const npy_intp filter_size = filter_array.size();
+        bool* footprint = 0;
+        if (compress) {
+            footprint = new bool[filter_size];
+            typename numpy::aligned_array<T>::iterator fiter = filter_array.begin();
+            for (int i = 0; i != filter_size; ++i, ++fiter) {
+                footprint[i] = bool(*fiter);
+            }
+        }
+        size_ = init_filter_offsets(array, footprint, PyArray_DIMS(filter), 0,
                     mode, &offsets_, &border_flag_value_, 0);
+        if (compress) {
+            int j = 0;
+            T* new_filter_data = new T[size_];
+            typename numpy::aligned_array<T>::iterator fiter = filter_array.begin();
+            for (int i = 0; i != filter_size; ++i, ++fiter) {
+                if (*fiter) {
+                    new_filter_data[j++] = *fiter;
+                }
+            }
+            filter_data_ = new_filter_data;
+            own_filter_data_ = true;
+            delete [] footprint;
+        }
+
         cur_offsets_ = offsets_;
         nd_ = PyArray_NDIM(array);
         //init_filter_boundaries(array, filter, minbound_, maxbound_);
@@ -56,6 +81,7 @@ struct filter_iterator {
     ~filter_iterator() {
         delete [] offsets_;
         if (coordinate_offsets_) delete coordinate_offsets_;
+        if (own_filter_data_) delete [] filter_data_;
     }
     template <typename OtherIterator>
     void iterate_with(const OtherIterator& iterator) {
@@ -89,7 +115,8 @@ struct filter_iterator {
     const T& operator [] (const npy_intp j) const { return filter_data_[j]; }
     npy_intp size() const { return size_; }
     private:
-        const T* const filter_data_;
+        const T* filter_data_;
+        bool own_filter_data_;
         npy_intp* cur_offsets_;
         npy_intp size_;
         npy_intp nd_;

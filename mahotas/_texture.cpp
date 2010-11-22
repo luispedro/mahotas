@@ -29,24 +29,16 @@ void cooccurence(numpy::aligned_array<npy_int32> res, numpy::aligned_array<T> ar
     gil_release nogil;
     const int N = array.size();
     typename numpy::aligned_array<T>::iterator iter = array.begin();
-    filter_iterator<T> filter(array.raw_array(), Bc.raw_array(), EXTEND_CONSTANT);
-    const int N2 = filter.size();
-
-    //std::cout << "nr_rows: " << nr_rows << '\n';
-    //std::cout << "nr_cols: " << nr_cols << '\n';
-    //std::cout << "stride: " << stride << '\n';
-    //std::cout << "row_step: " << row_step << '\n';
+    filter_iterator<T> filter(array.raw_array(), Bc.raw_array(), EXTEND_CONSTANT, true);
 
     for (int i = 0; i != N; ++i, filter.iterate_with(iter), ++iter) {
         T val = *iter;
-        for (int j = 0; j != N2; ++j) {
-            T val2 = 0;
-            T filter_val = 0;
-            bool valid;
-            filter.retrieve(iter, j, val2, filter_val, &valid);
-            if (valid && filter_val) {
-                ++res.at(npy_intp(val), npy_intp(val2));
-            }
+        T val2 = 0;
+        T filter_val;
+        bool valid;
+        filter.retrieve(iter, 0, val2, filter_val, &valid);
+        if (valid) {
+            ++res.at(npy_intp(val), npy_intp(val2));
         }
     }
 }
