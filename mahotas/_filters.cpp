@@ -131,6 +131,7 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
     const int rank = array->nd;
     const npy_intp* const ashape = array->dimensions;
     const npy_intp* const astrides = array->strides;
+    const npy_intp sizeof_element = PyArray_ITEMSIZE(array);
 
     /* calculate how many sets of offsets must be stored: */
     npy_intp offsets_size = 1;
@@ -222,6 +223,7 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
                             pc[ii] = cc;
                     }
                 }
+                if (offset != *border_flag_value) offset /= sizeof_element;
                 /* store the offset */
                 *po++ = offset;
                 if (coordinate_offsets)

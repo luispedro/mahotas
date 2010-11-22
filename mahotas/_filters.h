@@ -29,13 +29,13 @@ struct filter_iterator {
     /* Move to the next point in an array, possible changing the pointer
          to the filter offsets when moving into a different region in the
          array: */
-    filter_iterator(PyArrayObject* array, PyArrayObject* filter)
+    filter_iterator(PyArrayObject* array, PyArrayObject* filter, ExtendMode mode = EXTEND_NEAREST)
         :filter_data_(reinterpret_cast<const T* const>(PyArray_DATA(filter)))
         ,offsets_(0)
         ,coordinate_offsets_(0)
     {
         size_ = init_filter_offsets(array, 0, PyArray_DIMS(filter), 0,
-                    EXTEND_NEAREST, &offsets_, &border_flag_value_, 0);
+                    mode, &offsets_, &border_flag_value_, 0);
         cur_offsets_ = offsets_;
         nd_ = PyArray_NDIM(array);
         //init_filter_boundaries(array, filter, minbound_, maxbound_);
@@ -72,9 +72,14 @@ struct filter_iterator {
         }
     }
     template <typename OtherIterator>
-    void retrieve(const OtherIterator& iterator, const npy_intp j, T& array_val, T& filter_val) {
-        array_val = *( (&*iterator) + this->cur_offsets_[j]);
-        filter_val = filter_data_[j];
+    void retrieve(const OtherIterator& iterator, const npy_intp j, T& array_val, T& filter_val, bool* valid = 0) {
+        if (valid) *valid = true;
+        if (this->cur_offsets_[j] != border_flag_value_) {
+            array_val = *( (&*iterator) + this->cur_offsets_[j]);
+            filter_val = filter_data_[j];
+        } else if (valid) {
+            *valid = false;
+        }
     }
     template <typename OtherIterator>
     void set(const OtherIterator& iterator, npy_intp j, const T& val) {
