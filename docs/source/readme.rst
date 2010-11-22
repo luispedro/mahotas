@@ -37,6 +37,17 @@ threshold).
     pylab.imshow(labeled)
 
 
+Recent Changes
+--------------
+
+For version 0.6
+
+- Improve Local Binary patterns (faster and better interface)
+- Much faster erode() (10x faster)
+- Faster dilate() (2x faster)
+- TAS for 3D images
+- Haralick for 3D images
+
 Support
 -------
 
