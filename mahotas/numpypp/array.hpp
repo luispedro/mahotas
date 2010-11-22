@@ -1,7 +1,10 @@
+#ifndef MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_
+#define MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_
 /* Copyright 2008-2010 (C)
- * Luís Pedro Coelho <lpc@cmu.edu>
+ * Luis Pedro Coelho <lpc@cmu.edu>
  * License GPL Version 2, or later.
  */
+
 
 #include <iterator>
 #include <algorithm>
@@ -57,6 +60,7 @@ struct position {
     }
 };
 
+inline
 position operator + (const position& a, const position& b) {
     assert(a.nd_ == b.nd_);
     position res = a;
@@ -64,6 +68,7 @@ position operator + (const position& a, const position& b) {
     return res;
 }
 
+inline
 position operator - (const position& a, const position& b) {
     assert(a.nd_ == b.nd_);
     position res = a;
@@ -71,12 +76,14 @@ position operator - (const position& a, const position& b) {
     return res;
 }
 
+inline
 bool operator == (const position& a, const position& b) {
     if (a.nd_ != b.nd_) return false;
     for (int i = 0; i != a.nd_; ++i) if (a.position_[i] != b.position_[i]) return false;
     return true;
 }
 
+inline
 bool operator != (const position& a, const position b) {
     return !(a == b);
 }
@@ -380,4 +387,6 @@ aligned_array<BaseType> array_like(const array_base<BaseType>& orig) {
 }
 
 } // namespace numpy
+
+#endif // MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_
 
