@@ -47,13 +47,15 @@ def otsu(img, ignore_zeros=False):
     Parameters
     ----------
     img : an image as a numpy array. This should be of an unsigned
-          integer type.
-    ignore_zeros : whether to ignore zero-valued pixels
-                   (default: False)
+        integer type.
+    ignore_zeros : Boolean
+        whether to ignore zero-valued pixels
+        (default: False)
 
     Returns
     -------
-    T : the threshold as an integer
+    T : integer
+        the threshold
     """
 # Calculated according to CVonline:
 # http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/MORSE/threshold.pdf

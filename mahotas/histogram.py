@@ -37,22 +37,28 @@ def fullhistogram(img):
     hist = fullhistogram(img)
 
     Return a histogram with bins
+    
+    ::
+
         0, 1, ..., img.max()
 
     After calling this function, it will be true that
+    
+    ::
 
         hist[i] == (img == i).sum()
 
-    for all i.
+    for all ``i``.
 
     Parameters
     ----------
-    img : an array of an unsigned type
-          (or something that can be converted to an array)
+    img : array-like of an unsigned type
+        input image.
 
     Returns
     -------
-    hist : an array (of type np.uint32). This will be of size `img.max() + 1`
+    hist : an dnarray of type np.uint32
+        This will be of size `img.max() + 1`
 
     Limitations
     -----------
