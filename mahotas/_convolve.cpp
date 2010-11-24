@@ -1,0 +1,87 @@
+#include "numpypp/array.hpp"
+#include "numpypp/dispatch.hpp"
+#include "utils.hpp"
+#include "_filters.h"
+
+extern "C" {
+    #include <Python.h>
+    #include <numpy/ndarrayobject.h>
+}
+
+namespace{
+
+const char TypeErrorMsg[] =
+    "Type not understood. "
+    "This is caused by either a direct call to _convolve (which is dangerous: types are not checked!) or a bug in convolve.py.\n";
+
+
+template<typename T>
+void convolve(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, numpy::aligned_array<T> result, int mode) {
+    gil_release nogil;
+    const int N = array.size();
+    typename numpy::aligned_array<T>::iterator iter = array.begin();
+    filter_iterator<T> fiter(array.raw_array(), filter.raw_array(), ExtendMode(mode), true);
+    const int N2 = fiter.size();
+    T* out = result.data();
+
+    for (int i = 0; i != N; ++i, fiter.iterate_with(iter), ++iter, ++out) {
+        // The reasons for using double instead of T:
+        //   (1) it is slightly faster (10%)
+        //   (2) it handles over/underflow better
+        //   (3) scipy.ndimage.convolve does it
+        // 
+        // Alternatively, we could have written:
+        // T cur = T();
+        // 
+        // and removed the double cast in double(val)*fiter[j] below.
+        double cur = 0.;
+        for (int j = 0; j != N2; ++j) {
+            T val;
+            if (fiter.retrieve(iter, j, val)) {
+                cur += double(val)*fiter[j];
+            }
+        }
+        *out = T(cur);
+    }
+}
+
+
+PyObject* py_convolve(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* filter;
+    int mode;
+    if (!PyArg_ParseTuple(args,"OOi", &array, &filter, &mode)) return NULL;
+    if (!PyArray_Check(array) || !PyArray_Check(filter) || PyArray_TYPE(array) != PyArray_TYPE(filter)) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+
+    PyArrayObject* res = reinterpret_cast<PyArrayObject*>(
+                PyArray_EMPTY(PyArray_NDIM(array), PyArray_DIMS(array), PyArray_TYPE(array), 0));
+    if (!res) return NULL;
+    switch(PyArray_TYPE(array)) {
+#define HANDLE(type) \
+        convolve<type>(numpy::aligned_array<type>(array), numpy::aligned_array<type>(filter), numpy::aligned_array<type>(res), mode);
+
+        HANDLE_TYPES();
+#undef HANDLE
+        default:
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    return PyArray_Return(res);
+}
+
+PyMethodDef methods[] = {
+  {"convolve",(PyCFunction)py_convolve, METH_VARARGS, NULL},
+  {NULL, NULL,0,NULL},
+};
+
+} // namespace
+extern "C"
+void init_convolve()
+  {
+    import_array();
+    (void)Py_InitModule("_convolve", methods);
+  }
+
