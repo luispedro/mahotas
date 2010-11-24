@@ -22,6 +22,25 @@ Notable algorithms:
 Recent Changes
 --------------
 
+post 0.6
+~~~~~~~~
+- Release the GIL in morphological functions
+- Convolution
+
+
+0.6 (Nov 22 2010)
+~~~~~~~~~~~~~~~~~
+
+- Improve Local Binary patterns (faster and better interface)
+- Much faster erode() (10x faster)
+- Faster dilate() (2x faster)
+- TAS for 3D images
+- Haralick for 3D images
+- Fix mahotas.imread for RGBA images
+
+0.5.3 (Oct 29 2010)
+~~~~~~~~~~~~~~~~~~~
+
 - Releases GIL when possible
 - Added ``imresize()``
 - Much improved ``thin()`` function
