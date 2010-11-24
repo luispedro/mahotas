@@ -58,5 +58,7 @@ def convolve(f, weights, mode='reflect', cval=0.0, output=None):
         if not output.flags['CONTIGUOUS']: raise ValueError('mahotas.convolve: `output` is not c-array')
     if mode not in modes:
         raise ValueError('mahotas.convolve: `mode` not in %s' % modes)
+    if mode == 'constant' and cval != 0.:
+        raise NotImplementedError('Please email mahotas developers to get this implemented.')
     return _convolve.convolve(f, weights, output, mode2int[mode])
 
