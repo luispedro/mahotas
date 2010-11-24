@@ -68,9 +68,9 @@ void erode(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::al
 
     for (int i = 0; i != N; ++i, ++rpos, filter.iterate_with(iter), ++iter) {
         for (int j = 0; j != N2; ++j) {
-            T arr_val = false, filter_val = false;
-            filter.retrieve(iter, j, arr_val, filter_val);
-            if (filter_val && !arr_val) goto skip_this_one;
+            T arr_val = false;
+            filter.retrieve(iter, j, arr_val);
+            if (filter[j] && !arr_val) goto skip_this_one;
         }
         *rpos = true;
         skip_this_one: continue;

@@ -98,14 +98,10 @@ struct filter_iterator {
         }
     }
     template <typename OtherIterator>
-    void retrieve(const OtherIterator& iterator, const npy_intp j, T& array_val, T& filter_val, bool* valid = 0) {
-        if (valid) *valid = true;
-        if (this->cur_offsets_[j] != border_flag_value_) {
-            array_val = *( (&*iterator) + this->cur_offsets_[j]);
-            filter_val = filter_data_[j];
-        } else if (valid) {
-            *valid = false;
-        }
+    bool retrieve(const OtherIterator& iterator, const npy_intp j, T& array_val) {
+        if (this->cur_offsets_[j] == border_flag_value_) return false;
+        array_val = *( (&*iterator) + this->cur_offsets_[j]);
+        return true;
     }
     template <typename OtherIterator>
     void set(const OtherIterator& iterator, npy_intp j, const T& val) {

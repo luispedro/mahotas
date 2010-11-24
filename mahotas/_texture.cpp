@@ -34,10 +34,7 @@ void cooccurence(numpy::aligned_array<npy_int32> res, numpy::aligned_array<T> ar
     for (int i = 0; i != N; ++i, filter.iterate_with(iter), ++iter) {
         T val = *iter;
         T val2 = 0;
-        T filter_val;
-        bool valid;
-        filter.retrieve(iter, 0, val2, filter_val, &valid);
-        if (valid) {
+        if(filter.retrieve(iter, 0, val2)) {
             ++res.at(npy_intp(val), npy_intp(val2));
         }
     }
