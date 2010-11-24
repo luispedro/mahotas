@@ -49,27 +49,45 @@ void convolve(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, num
 PyObject* py_convolve(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* filter;
+    PyArrayObject* output;
     int mode;
-    if (!PyArg_ParseTuple(args,"OOi", &array, &filter, &mode)) return NULL;
+    if (!PyArg_ParseTuple(args,"OOOi", &array, &filter, &output, &mode)) return NULL;
     if (!PyArray_Check(array) || !PyArray_Check(filter) || PyArray_TYPE(array) != PyArray_TYPE(filter)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
 
-    PyArrayObject* res = reinterpret_cast<PyArrayObject*>(
+    if (reinterpret_cast<PyObject*>(output) == Py_None) {
+        output = reinterpret_cast<PyArrayObject*>(
                 PyArray_EMPTY(PyArray_NDIM(array), PyArray_DIMS(array), PyArray_TYPE(array), 0));
-    if (!res) return NULL;
+        if (!output) return NULL;
+    } else {
+        if (!PyArray_Check(output) ||
+            PyArray_NDIM(output) != PyArray_NDIM(array) ||
+            PyArray_TYPE(output) != PyArray_TYPE(array) ||
+            !PyArray_ISCARRAY(output)) {
+            PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+            return NULL;
+        }
+        for (int d = 0; d != PyArray_NDIM(array); ++d) {
+            if (PyArray_DIM(array, d) != PyArray_DIM(output, d)) {
+                PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+                return NULL;
+            }
+        }
+        Py_INCREF(output);
+    }
+
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
-        convolve<type>(numpy::aligned_array<type>(array), numpy::aligned_array<type>(filter), numpy::aligned_array<type>(res), mode);
-
+        convolve<type>(numpy::aligned_array<type>(array), numpy::aligned_array<type>(filter), numpy::aligned_array<type>(output), mode);
         HANDLE_TYPES();
 #undef HANDLE
         default:
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
-    return PyArray_Return(res);
+    return PyArray_Return(output);
 }
 
 PyMethodDef methods[] = {
