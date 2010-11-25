@@ -22,8 +22,8 @@
 
 from __future__ import division
 import numpy as np
-from scipy import ndimage
-from mahotas.thresholding import otsu
+from .convolve import convolve
+from .thresholding import otsu
 
 __all__ = ['pftas', 'tas']
 
@@ -48,7 +48,7 @@ def _tas(img, thresh, margin):
         raise ValueError('mahotas.tas: Cannot compute TAS for image of %s dimensions' % len(img.shape))
 
     def _ctas(img):
-        V = ndimage.convolve(img.astype(np.uint8), M)
+        V = convolve(img.astype(np.uint8), M)
         values,_ = np.histogram(V, bins=bins)
         values = values[:saved]
         return values/values.sum()

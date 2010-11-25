@@ -3,7 +3,8 @@
 # License: GPL v2, or later
 
 import numpy as np
-from scipy import ndimage
+from .convolve import convolve
+
 _euler_lookup4 = np.array([
             0,  1,  1,  0,
             1,  0,  2, -1,
@@ -60,6 +61,6 @@ def euler(f, n=8):
     if f.dtype is not np.bool:
         assert np.all( (f == 0) | (f == 1)), 'mahotas.euler: Non-binary image'
         f = (f != 0)
-    value = ndimage.convolve(f.astype(_powers.dtype), _powers)
+    value = convolve(f.astype(_powers.dtype), _powers)
     return lookup[value].sum()
 
