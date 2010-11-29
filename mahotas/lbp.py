@@ -25,16 +25,9 @@ import numpy as np
 from scipy import ndimage
 from histogram import fullhistogram
 
-def _roll_left(v, points):
-    return (v >> 1) | ( (1 << (points-1)) * (v & 1) )
-
-def _precompute_mapping(points):
-    res = np.zeros(2**points, np.uint32)
-    from ._lbp import map
-    map(res, points)
-    return res
-
-
+__all__ = [
+    'lbp',
+    ]
 def lbp(image, radius, points):
     '''
     features = lbp(image, radius, points)

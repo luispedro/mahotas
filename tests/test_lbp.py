@@ -1,7 +1,7 @@
 import numpy as np
 import mahotas._lbp
 import mahotas.thresholding
-from mahotas.lbp import lbp, _roll_left
+from mahotas.lbp import lbp
 
 def test_shape():
     A = np.arange(32*32).reshape((32,32))
@@ -19,15 +19,6 @@ def test_histogram():
     A = np.arange(32*32).reshape((32,32))
     for r in (2,3,4,5):
         assert lbp(A,r,8).sum() == A.size
-
-def test_roll_left():
-    y = 1232
-    values = []
-    for i in xrange(12):
-        y = _roll_left(y, 12)
-
-    assert y == 1232
-
 
 def test_histogram_large():
     A = np.arange(32*32).reshape((32,32))
