@@ -61,6 +61,6 @@ def euler(f, n=8):
     if f.dtype is not np.bool:
         assert np.all( (f == 0) | (f == 1)), 'mahotas.euler: Non-binary image'
         f = (f != 0)
-    value = convolve(f.astype(_powers.dtype), _powers)
+    value = convolve(f.astype(_powers.dtype), _powers, mode='constant')
     return lookup[value].sum()
 
