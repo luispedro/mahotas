@@ -9,6 +9,8 @@
 #include <iterator>
 #include <algorithm>
 #include <cstring>
+#include <ostream>
+
 
 extern "C" {
     #include <Python.h>
@@ -151,7 +153,13 @@ struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
             std::reverse(res.position_,res.position_+res.nd_);
             return res;
         }
+        friend inline
+        std::ostream& operator << (std::ostream& out, const iterator_base& iter) {
+            return out << "I {" << iter.position_ << "}";
+        }
 };
+
+
 
 template <typename BaseType>
 class iterator_type : public iterator_base<BaseType> {
