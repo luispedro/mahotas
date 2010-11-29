@@ -261,4 +261,29 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
     return footprint_size;
 }
 
+void init_filter_iterator(const int rank, const npy_intp *fshape,
+                    const npy_intp filter_size, const npy_intp *ashape,
+                    const npy_intp *origins,
+                    npy_intp* strides, npy_intp* backstrides,
+                    npy_intp* minbound, npy_intp* maxbound)
+{
+    /* calculate the strides, used to move the offsets pointer through
+         the offsets table: */
+    if (rank > 0) {
+        strides[rank - 1] = filter_size;
+        for(int ii = rank - 2; ii >= 0; ii--) {
+            const npy_intp step = ashape[ii + 1] < fshape[ii + 1] ? ashape[ii + 1] : fshape[ii + 1];
+            strides[ii] = strides[ii + 1] * step;
+        }
+    }
+    for(int ii = 0; ii < rank; ii++) {
+        const npy_intp step = ashape[ii] < fshape[ii] ? ashape[ii] : fshape[ii];
+        const npy_intp orgn = fshape[ii]/2 + (origins ? *origins++ : 0);
+        /* stride for stepping back to previous offsets: */
+        backstrides[ii] = (step - 1) * strides[ii];
+        /* initialize boundary extension sizes: */
+        minbound[ii] = orgn;
+        maxbound[ii] = ashape[ii] - fshape[ii] + orgn;
+    }
+}
 

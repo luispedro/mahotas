@@ -4,6 +4,8 @@ extern "C" {
 }
 
 #include "numpypp/array.hpp"
+#include <assert.h>
+
 
 /* The different boundary conditions. The mirror condition is not used
      by the python code, but C code is kept around in case we might wish
@@ -23,6 +25,11 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
          const npy_intp * const fshape, npy_intp* origins,
          const ExtendMode mode, npy_intp **offsets, npy_intp *border_flag_value,
          npy_intp **coordinate_offsets);
+void init_filter_iterator(const int rank, const npy_intp *fshape,
+                    const npy_intp filter_size, const npy_intp *ashape,
+                    const npy_intp *origins,
+                    npy_intp* strides, npy_intp* backstrides,
+                    npy_intp* minbound, npy_intp* maxbound);
 
 template <typename T>
 struct filter_iterator {
@@ -32,6 +39,7 @@ struct filter_iterator {
     filter_iterator(PyArrayObject* array, PyArrayObject* filter, ExtendMode mode = EXTEND_NEAREST, bool compress=true)
         :filter_data_(reinterpret_cast<const T* const>(PyArray_DATA(filter)))
         ,own_filter_data_(false)
+        ,nd_(PyArray_NDIM(array))
         ,offsets_(0)
         ,coordinate_offsets_(0)
     {
@@ -62,21 +70,10 @@ struct filter_iterator {
         }
 
         cur_offsets_ = offsets_;
-        nd_ = PyArray_NDIM(array);
-        //init_filter_boundaries(array, filter, minbound_, maxbound_);
-        for (int i = 0; i != PyArray_NDIM(filter); ++i) {
-            minbound_[i] = 1;
-            maxbound_[i] = PyArray_DIM(array,i) - 2;
-        }
-        this->strides_[this->nd_ - 1] = size_;
-        for (int i = nd_ - 2; i >= 0; --i) {
-            const npy_intp step = std::min<npy_intp>(PyArray_DIM(filter, i + 1), PyArray_DIM(array, i + 1));
-            this->strides_[i] = this->strides_[i + 1] * step;
-        }
-        for (int i = 0; i < this->nd_; ++i) {
-            const npy_intp step = std::min<npy_intp>(PyArray_DIM(array, i), PyArray_DIM(filter, i));
-            this->backstrides_[i] = (step - 1) * this->strides_[i];
-        }
+        init_filter_iterator(PyArray_NDIM(filter), PyArray_DIMS(filter), size_,
+            PyArray_DIMS(array), /*origins*/0,
+            this->strides_, this->backstrides_,
+            this->minbound_, this->maxbound_);
     }
     ~filter_iterator() {
         delete [] offsets_;
@@ -100,6 +97,7 @@ struct filter_iterator {
     template <typename OtherIterator>
     bool retrieve(const OtherIterator& iterator, const npy_intp j, T& array_val) {
         if (this->cur_offsets_[j] == border_flag_value_) return false;
+        assert((j >= 0) && (j < size_));
         array_val = *( (&*iterator) + this->cur_offsets_[j]);
         return true;
     }
@@ -108,14 +106,14 @@ struct filter_iterator {
         *( (&*iterator) + this->cur_offsets_[j]) = val;
     }
 
-    const T& operator [] (const npy_intp j) const { return filter_data_[j]; }
+    const T& operator [] (const npy_intp j) const { assert(j < size_); return filter_data_[j]; }
     npy_intp size() const { return size_; }
     private:
         const T* filter_data_;
         bool own_filter_data_;
         npy_intp* cur_offsets_;
         npy_intp size_;
-        npy_intp nd_;
+        const npy_intp nd_;
         npy_intp* offsets_;
         npy_intp* coordinate_offsets_;
         npy_intp strides_[NPY_MAXDIMS];
