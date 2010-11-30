@@ -33,9 +33,9 @@ _vsobel_filter = np.array([
 
 __all__ = ['sobel']
 
-def sobel(img):
+def sobel(img, just_filter=False):
     '''
-    edges = sobel(img)
+    edges = sobel(img, just_filter=Filter)
 
     Compute edges using Sobel's algorithm
 
@@ -45,11 +45,16 @@ def sobel(img):
 
     Parameters
     ----------
-      img : Any 2D-ndarray
+    img : Any 2D-ndarray
+    just_filter : boolean, optional
+        If true, then return the result of filtering the image with the sobel
+        filters, but do not threashold.
 
     Returns
     -------
-      edges : Binary image of edges
+    edges : ndarray
+        Binary image of edges, unless `just_filter`, in which case it will be
+        an array of floating point values.
     '''
     # This is based on Octave's implementation,
     # but with some reverse engineering to match Matlab exactly
@@ -62,6 +67,8 @@ def sobel(img):
     vfiltered = ndimage.correlate(img, _vsobel_filter, mode='nearest') # This emulates Matlab's implementation
     hfiltered = ndimage.correlate(img, _hsobel_filter, mode='nearest')
     filtered = vfiltered**2 + hfiltered**2
+    if just_filter:
+        return filtered
     thresh = 2*np.sqrt(filtered.mean())
     filtered *= (np.sqrt(filtered) < thresh)
 

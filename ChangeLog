@@ -1,6 +1,7 @@
 Version 0.6+
 	* Release the GIL in morphological functions
 	* Convolution
+	* just_filter option in edge.sobel()
 
 Version 0.6 2010-11-22
 	* Improve Local Binary patterns (faster and better interface)

@@ -28,4 +28,5 @@ def test_sobel():
 
 def test_zero_images():
     assert np.isnan(sobel(np.zeros((16,16)))).sum() == 0
+    assert sobel(np.zeros((16,16)), just_filter=True).sum() == 0
 
