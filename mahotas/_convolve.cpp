@@ -13,6 +13,9 @@ namespace{
 const char TypeErrorMsg[] =
     "Type not understood. "
     "This is caused by either a direct call to _convolve (which is dangerous: types are not checked!) or a bug in convolve.py.\n";
+const char OutputErrorMsg[] =
+    "Output type is not valid. "
+    "This is caused by either a direct call to _convolve (which is dangerous: types are not checked!) or a bug in convolve.py.\n";
 
 
 template<typename T>
@@ -66,12 +69,12 @@ PyObject* py_convolve(PyObject* self, PyObject* args) {
             PyArray_NDIM(output) != PyArray_NDIM(array) ||
             PyArray_TYPE(output) != PyArray_TYPE(array) ||
             !PyArray_ISCARRAY(output)) {
-            PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+            PyErr_SetString(PyExc_RuntimeError, OutputErrorMsg);
             return NULL;
         }
         for (int d = 0; d != PyArray_NDIM(array); ++d) {
             if (PyArray_DIM(array, d) != PyArray_DIM(output, d)) {
-                PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+                PyErr_SetString(PyExc_RuntimeError, OutputErrorMsg);
                 return NULL;
             }
         }
