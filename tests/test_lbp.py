@@ -13,7 +13,9 @@ def test_shape():
 def test_nonzero():
     A = np.arange(32*32).reshape((32,32))
     features = lbp(A, 3, 12)
+    features_ignore_zeros = lbp(A * (A> 256), 3, 12, ignore_zeros=True)
     assert features.sum() > 0
+    assert not np.all(features == features_ignore_zeros)
 
 def test_histogram():
     A = np.arange(32*32).reshape((32,32))

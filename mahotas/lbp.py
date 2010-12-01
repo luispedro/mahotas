@@ -28,9 +28,9 @@ from histogram import fullhistogram
 __all__ = [
     'lbp',
     ]
-def lbp(image, radius, points):
+def lbp(image, radius, points, ignore_zeros=False):
     '''
-    features = lbp(image, radius, points)
+    features = lbp(image, radius, points, ignore_zeros=False)
 
     Compute Linear Binary Patterns
 
@@ -42,6 +42,8 @@ def lbp(image, radius, points):
         radius (in pixels)
     points : integer
         nr of points to consider
+    ignore_zeros : boolean, optional
+        whether to ignore zeros (default: False)
 
     Returns
     -------
@@ -58,22 +60,27 @@ def lbp(image, radius, points):
     from scipy.ndimage.interpolation import map_coordinates
     import mahotas._lbp
     from mahotas.histogram import fullhistogram
-    Y,X = np.indices(image.shape)
+    if ignore_zeros:
+        Y,X = np.nonzero(image)
+        pixels = image[Y,X].ravel()
+    else:
+        Y,X = np.indices(image.shape)
+        pixels = image.ravel()
     angles = np.linspace(0, 2*np.pi, points+1)[:-1]
-    coordinates = np.empty((2, points, image.size), float)
+    coordinates = np.empty((2, points, Y.size), float)
     for i,(dy,dx) in enumerate(zip(radius * np.sin(angles), radius * np.cos(angles))):
         coordinates[0][i] = Y.ravel()
         coordinates[1][i] = X.ravel()
         coordinates[0][i] += dy
         coordinates[1][i] += dx
-    data = map_coordinates(image, coordinates.reshape((2,-1)), order=1).reshape((image.size, -1))
-    codes = (data.T > image.ravel()).sum(0)
-    mahotas._lbp.map(codes.astype(np.uint32), points)
+    data = map_coordinates(image, coordinates.reshape((2,-1)), order=1).reshape((Y.size, -1))
+    codes = (data.T > pixels).sum(0)
+    codes = mahotas._lbp.map(codes.astype(np.uint32), points)
     final = fullhistogram(codes.astype(np.uint32))
 
     codes = np.arange(2**points, dtype=np.uint32)
     iters = codes.copy()
-    mahotas._lbp.map(codes.astype(np.uint32), points)
+    codes = mahotas._lbp.map(codes.astype(np.uint32), points)
     pivots = (codes == iters)
     npivots = np.sum(pivots)
     compressed = final[pivots[:len(final)]]
