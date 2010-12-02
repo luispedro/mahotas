@@ -7,6 +7,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   faq
+
 Indices and tables
 ==================
 
