@@ -46,7 +46,7 @@ histogram = numpyutils.Extension('mahotas._histogram', sources = ['mahotas/_hist
 labeled = numpyutils.Extension('mahotas._labeled', sources = ['mahotas/_labeled.cpp', 'mahotas/_filters.cpp'])
 lbp = numpyutils.Extension('mahotas._lbp', sources = ['mahotas/_lbp.cpp'])
 morph = numpyutils.Extension('mahotas._morph', sources = ['mahotas/_morph.cpp', 'mahotas/_filters.cpp'], extra_compile_args=['-Wno-sign-compare'])
-surf = numpyutils.Extension('mahotas._surf', sources = ['mahotas/_surf.cpp', 'mahotas/_filters.cpp'])
+surf = numpyutils.Extension('mahotas._surf', sources = ['mahotas/_surf.cpp'])
 texture = numpyutils.Extension('mahotas._texture', sources = ['mahotas/_texture.cpp', 'mahotas/_filters.cpp'])
 thin = numpyutils.Extension('mahotas._thin', sources = ['mahotas/_thin.cpp'], extra_compile_args=['-Wno-sign-compare'])
 zernike = numpyutils.Extension('mahotas._zernike', sources = ['mahotas/_zernike.cpp'])
