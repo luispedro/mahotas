@@ -19,6 +19,8 @@ extern "C" {
 
 #include <stdio.h>
 
+#include "numpy.hpp"
+
 template <typename T>
 struct filter_iterator;
 
@@ -197,6 +199,12 @@ class array_base {
             return PyArray_GetPtr(array_,const_cast<npy_intp*>(pos.position_));
         }
     public:
+        array_base(const array_base<BaseType>& other)
+            :array_(other.array_)
+            {
+                Py_INCREF(array_);
+            }
+
         array_base(PyArrayObject* array)
             :array_(array)
             {
@@ -206,7 +214,14 @@ class array_base {
         ~array_base() {
             Py_XDECREF(array_);
         }
-        
+        array_base<BaseType>& operator = (const BaseType& other) {
+            array_base<BaseType> na(other);
+            this->swap(na);
+        }
+        void swap(array_base<BaseType>& other) {
+            std::swap(this->array_, other.array_);
+        }
+
         unsigned size() const { return PyArray_SIZE(array_); }
         unsigned size(unsigned i) const {
             return this->dim(i);
@@ -273,7 +288,7 @@ struct array : public array_base<BaseType> {
 template <typename BaseType>
 struct aligned_array : public array_base<BaseType> {
     private:
-        const bool is_carray_;
+        bool is_carray_;
     public:
         aligned_array(PyArrayObject* array)
             :array_base<BaseType>(array)
@@ -281,6 +296,10 @@ struct aligned_array : public array_base<BaseType> {
             {
                 assert(PyArray_ISALIGNED(array));
             }
+        aligned_array(const aligned_array<BaseType>& other)
+            :array_base<BaseType>(other)
+            ,is_carray_(other.is_carray_)
+            { }
         typedef aligned_iterator_type<BaseType> iterator;
         typedef aligned_iterator_type<const BaseType> const_iterator;
 
@@ -387,6 +406,33 @@ struct aligned_array : public array_base<BaseType> {
             return *static_cast<BaseType*>(PyArray_GETPTR3(this->array_, p0, p1, p2));
         }
 };
+
+template <typename BaseType>
+aligned_array<BaseType> new_array(const npy_intp ndims, const npy_intp* dims) {
+    return aligned_array<BaseType>(reinterpret_cast<PyArrayObject*>(
+        PyArray_SimpleNew(ndims, const_cast<npy_intp*>(dims), dtype_code<BaseType>())));
+}
+
+template <typename BaseType>
+aligned_array<BaseType> new_array(int s0) {
+    npy_intp dim = s0;
+    return new_array<BaseType>(1, &dim);
+}
+template <typename BaseType>
+aligned_array<BaseType> new_array(int s0, int s1) {
+    npy_intp dims[2];
+    dims[0] = s0;
+    dims[1] = s1;
+    return new_array<BaseType>(2, dims);
+}
+template <typename BaseType>
+aligned_array<BaseType> new_array(int s0, int s1, int s2) {
+    npy_intp dims[3];
+    dims[0] = s0;
+    dims[1] = s1;
+    dims[2] = s2;
+    return new_array<BaseType>(3, dims);
+}
 
 template <typename BaseType>
 aligned_array<BaseType> array_like(const array_base<BaseType>& orig) {
