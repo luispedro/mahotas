@@ -135,13 +135,14 @@ def hitmiss(input, Bc, output=None):
 
     Parameters
     ----------
-      input : input ndarray
-      Bc : hit & miss template (with 0, 1, 2)
-      output : output array
+    input : input ndarray
+    Bc : ndarray
+        hit & miss template, values must be one of (0, 1, 2)
+    output : output array
 
     Returns
     -------
-      output
+    output : ndarray
     '''
     _verify_is_integer_type(input, 'hitmiss')
     _verify_is_integer_type(Bc, 'hitmiss')
