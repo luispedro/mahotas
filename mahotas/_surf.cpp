@@ -58,6 +58,40 @@ int get_step_size(const int initial_step_size, const int octave) {
 
 typedef std::vector<numpy::aligned_array<double> > pyramid_type;
 
+
+inline bool is_maximum_in_region(
+    const pyramid_type& pyr,
+    int o,
+    int i,
+    int r,
+    int c
+)
+{
+    // First check if this point is near the edge of the octave
+    // If it is then we say it isn't a maximum as these points are
+    // not as reliable.
+    if (i <= 0 || i+1 >= int(pyr[0].dim(0))) return false;
+    assert(r > 0);
+    assert(c > 0);
+
+    const double val = pyr[o].at(i,r,c);
+
+    // now check if there are any bigger values around this guy
+    for (int ii = i-1; ii <= i+1; ++ii)
+    {
+        for (int rr = r-1; rr <= r+1; ++rr)
+        {
+            for (int cc = c-1; cc <= c+1; ++cc)
+            {
+                if (pyr[o].at(ii,rr,cc) > val)
+                    return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 template <typename T>
 void build_pyramid(numpy::aligned_array<T> integral,
                 pyramid_type& pyramid,
