@@ -39,3 +39,20 @@ struct gil_release {
 };
 
 
+// This encapsulates the arguments to PyErr_SetString
+// The reason that it doesn't call PyErr_SetString directly is that we wish
+// that this be throw-able in an environment where the thread might not own the
+// GIL as long as it is caught when the GIL is held.
+struct PythonException {
+    PythonException(PyObject *type, const char *message)
+        :type_(type)
+        ,message_(message)
+        { }
+
+    PyObject* type() const { return type_; }
+    const char* message() const { return message_; }
+
+    PyObject* const type_;
+    const char* const message_;
+};
+
