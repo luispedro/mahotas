@@ -16,7 +16,7 @@ const char TypeErrorMsg[] =
 
 
 template<typename T>
-bool labeled(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, numpy::aligned_array<bool> result, T i, T j) {
+bool border(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, numpy::aligned_array<bool> result, T i, T j) {
     gil_release nogil;
     const int N = array.size();
     typename numpy::aligned_array<T>::iterator iter = array.begin();
@@ -43,7 +43,7 @@ bool labeled(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, nump
 }
 
 
-PyObject* py_labeled(PyObject* self, PyObject* args) {
+PyObject* py_border(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* filter;
     PyArrayObject* output;
@@ -67,7 +67,7 @@ PyObject* py_labeled(PyObject* self, PyObject* args) {
     bool has_any;
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
-        has_any = labeled<type>( \
+        has_any = border<type>( \
                     numpy::aligned_array<type>(array), \
                     numpy::aligned_array<type>(filter), \
                     numpy::aligned_array<bool>(output), \
@@ -87,7 +87,7 @@ PyObject* py_labeled(PyObject* self, PyObject* args) {
 }
 
 PyMethodDef methods[] = {
-  {"labeled",(PyCFunction)py_labeled, METH_VARARGS, NULL},
+  {"border",(PyCFunction)py_border, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 
