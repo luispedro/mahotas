@@ -1,3 +1,13 @@
+// This file contains much code ported from dlib
+//
+// DLIB is under the following copyright and license:
+    // Copyright (C) 2009  Davis E. King (davis@dlib.net)
+    // License: Boost Software License
+//
+// Mahotas itself is
+// Copyright (C) 2010 Luis Pedro Coelho (luis@luispedro.org)
+// License: GPLv3 or later
+
 #include "numpypp/array.hpp"
 #include "numpypp/dispatch.hpp"
 #include "utils.hpp"
@@ -25,12 +35,10 @@ const char TypeErrorMsg[] =
  * by Christopher Evans.
  */
 
+typedef numpy::aligned_array<double> integral_image_type;
+
 template <typename T>
-double sum_rect(numpy::aligned_array<T> integral, int y, int x, const int dy, const int dx, int h, int w) {
-    int y0 = y + dy - h/2;
-    int x0 = x + dx - w/2;
-    int y1 = y0 + h;
-    int x1 = x0 + w;
+double sum_rect(numpy::aligned_array<T> integral, int y0, int x0, int y1, int x1) {
     y0 = std::max<T>(y0, 0);
     y1 = std::max<T>(y1, 0);
     x0 = std::min<T>(x0, integral.dim(1));
@@ -44,6 +52,27 @@ double sum_rect(numpy::aligned_array<T> integral, int y, int x, const int dy, co
     // This expression, unlike equivalent alternatives,
     // has no overflows. (D > B) and (C > A) and (D-B) > (C-A)
     return (D - B) - (C - A);
+}
+
+template <typename T>
+double csum_rect(numpy::aligned_array<T> integral, int y, int x, const int dy, const int dx, int h, int w) {
+    int y0 = y + dy - h/2;
+    int x0 = x + dx - w/2;
+    int y1 = y0 + h;
+    int x1 = x0 + w;
+    return sum_rect(integral, y0, x0, y1, x1);
+}
+
+double haar_x(const integral_image_type& integral, int y, int x, const int w) {
+    const double left  = sum_rect(integral, y - w/2,  x - w/2, (y - w/2) + w, x);
+    const double right = sum_rect(integral, y - w/2,        x, (y - w/2) + w, (x - w/2) + w);
+    return left - right;
+}
+
+double haar_y(const integral_image_type& integral, int y, int x, const int w) {
+    const double top  = sum_rect(integral, y - w/2,  x - w/2,             y, (x - w/2) + w);
+    const double bottom = sum_rect(integral,       y,  x - w/2, (y - w/2) + w, (x - w/2) + w);
+    return top - bottom;
 }
 
 int get_border_size(const int octave, const int nr_intervals) {
@@ -318,16 +347,16 @@ void build_pyramid(numpy::aligned_array<T> integral,
             {
                 for (int x = border_size; x < N1 - border_size; x += step_size)
                 {
-                    double Dxx =     sum_rect(integral, y, x, 0, 0, lobe_size*3, 2*lobe_size-1) -
-                                 3.* sum_rect(integral, y, x, 0, 0, lobe_size,   2*lobe_size-1);
+                    double Dxx =     csum_rect(integral, y, x, 0, 0, lobe_size*3, 2*lobe_size-1) -
+                                 3.* csum_rect(integral, y, x, 0, 0, lobe_size,   2*lobe_size-1);
 
-                    double Dyy =     sum_rect(integral, y, x, 0, 0, 2*lobe_size-1, lobe_size*3) -
-                                 3.* sum_rect(integral, y, x, 0, 0, 2*lobe_size-1, lobe_size);
+                    double Dyy =     csum_rect(integral, y, x, 0, 0, 2*lobe_size-1, lobe_size*3) -
+                                 3.* csum_rect(integral, y, x, 0, 0, 2*lobe_size-1, lobe_size);
 
-                    double Dxy = sum_rect(integral, y, x, -lobe_offset, +lobe_offset, lobe_size, lobe_size) +
-                                 sum_rect(integral, y, x, +lobe_offset, -lobe_offset, lobe_size, lobe_size) -
-                                 sum_rect(integral, y, x, +lobe_offset, +lobe_offset, lobe_size, lobe_size) -
-                                 sum_rect(integral, y, x, -lobe_offset, -lobe_offset, lobe_size, lobe_size);
+                    double Dxy = csum_rect(integral, y, x, -lobe_offset, +lobe_offset, lobe_size, lobe_size) +
+                                 csum_rect(integral, y, x, +lobe_offset, -lobe_offset, lobe_size, lobe_size) -
+                                 csum_rect(integral, y, x, +lobe_offset, +lobe_offset, lobe_size, lobe_size) -
+                                 csum_rect(integral, y, x, -lobe_offset, -lobe_offset, lobe_size, lobe_size);
 
                     // now we normalize the filter responses
                     Dxx *= area_inv;
@@ -366,6 +395,185 @@ void integral(numpy::aligned_array<T> array) {
             array.at(i,j) += array.at(i-1, j) + array.at(i, j-1) - array.at(i-1, j-1);
         }
     }
+}
+
+struct surf_point {
+    interest_point p;
+    double angle;
+    double des[64];
+};
+
+const double pi = 3.1415926535898;
+struct double_v2 {
+
+    double_v2() {
+        data[0] = 0.;
+        data[1] = 0.;
+    }
+    double_v2(double y, double x) {
+        data[0] = y;
+        data[1] = x;
+    }
+    double& y() { return data[0];}
+    double& x() { return data[1];}
+
+    double y() const { return data[0];}
+    double x() const { return data[1];}
+
+    double angle() const { return std::atan2(data[1], data[0]); }
+    double norm2() const { return data[0]*data[0] + data[1]*data[1]; }
+
+    double_v2 abs() const { return double_v2(std::abs(data[0]), std::abs(data[1])); }
+
+    void clear() {
+        data[0] = 0.;
+        data[1] = 0.;
+    }
+
+    double_v2& operator += (const double_v2& rhs) {
+        data[0] += rhs.data[0];
+        data[1] += rhs.data[1];
+        return *this;
+    }
+
+
+    double data[2];
+};
+
+inline
+double gaussian (const double x, const double y, const double sig) {
+    return 1.0/(sig*sig*2*pi) * std::exp( -(x*x + y*y)/(2*sig*sig));
+}
+
+double compute_dominant_angle(
+        const integral_image_type& img,
+        const double_v2& center,
+        const double& scale
+    ) {
+    std::vector<double> ang;
+    std::vector<double_v2> samples;
+
+    // accumulate a bunch of angle and vector samples
+    double_v2 vect;
+    for (int r = -6; r <= 6; ++r)
+    {
+        for (int c = -6; c <= 6; ++c)
+        {
+            if (r*r + c*c < 36)
+            {
+                // compute a Gaussian weighted gradient and the gradient's angle.
+                const double gauss = gaussian(c,r, 2.5);
+                vect.y() = gauss*haar_y(img, int(scale*r+center.y()), int(scale*c+center.x()), static_cast<int>(4*scale+0.5));
+                vect.x() = gauss*haar_x(img, int(scale*r+center.y()), int(scale*c+center.x()), static_cast<int>(4*scale+0.5));
+
+                samples.push_back(vect);
+                ang.push_back(vect.angle());
+            }
+        }
+    }
+
+
+    // now find the dominant direction
+    double max_length = 0;
+    double best_ang = 0;
+    // look at a bunch of pie shaped slices of a circle
+    const int slices = 45;
+    const double ang_step = (2*pi)/slices;
+    for (int ang_i = 0; ang_i < slices; ++ang_i) {
+        // compute the bounding angles
+        double ang1 = ang_step*ang_i - pi;
+        double ang2 = ang1 + pi/3;
+
+
+        // compute sum of all vectors that are within the above two angles
+        vect.clear();
+        for (unsigned i = 0; i < ang.size(); ++i)
+        {
+            if ( (ang1 <= ang[i] && ang[i] <= ang2) ||
+                (ang2 > pi && (ang[i] >= ang1 || ang[i] <= (-2*pi+ang2)))) {
+                vect += samples[i];
+            }
+        }
+
+
+        const double cur_length = vect.norm2();
+
+        // record the angle of the best vectors
+        if (cur_length > max_length) {
+            max_length = cur_length;
+            best_ang = vect.angle();
+        }
+    }
+
+    return best_ang;
+}
+
+inline
+double_v2 rotate_point(const double_v2& p, const double sin_angle, const double cos_angle) {
+    return double_v2(
+        cos_angle*p.x() - sin_angle*p.y(),
+        sin_angle*p.x() + cos_angle*p.y());
+}
+
+// ----------------------------------------------------------------------------------------
+
+void compute_surf_descriptor (
+    const integral_image_type& img,
+    double_v2 center,
+    const double scale,
+    const double angle,
+    double des[64]) {
+    assert(scale > 0);
+
+    const double sin_angle = std::sin(angle);
+    const double cos_angle = std::cos(angle);
+
+    int count = 0;
+
+    // loop over the 4x4 grid of histogram buckets
+    for (int r = -10; r < 10; r += 5)
+    {
+        for (int c = -10; c < 10; c += 5)
+        {
+            double_v2 vect, abs_vect;
+
+            // now loop over 25 points in this bucket and sum their features
+            for (int y = r; y < r+5; ++y)
+            {
+                for (int x = c; x < c+5; ++x)
+                {
+                    // get the rotated point for this extraction point
+                    double_v2 p = rotate_point(double_v2(x*scale, y*scale), sin_angle, cos_angle);
+                    p += center;
+
+                    const double gauss = gaussian(x,y, 3.3);
+                    double_v2 temp(
+                            gauss*haar_x(img, int(p.y()), int(p.x()), static_cast<int>(2*scale+0.5)),
+                            gauss*haar_y(img, int(p.y()), int(p.x()), static_cast<int>(2*scale+0.5)));
+
+                    // rotate this vector into alignment with the surf descriptor box
+                    temp = rotate_point(temp, -sin_angle, cos_angle);
+
+                    vect += temp;
+                    abs_vect += temp.abs();
+                }
+            }
+
+            des[count++] = vect.x();
+            des[count++] = vect.y();
+            des[count++] = abs_vect.x();
+            des[count++] = abs_vect.y();
+        }
+    }
+
+    assert(count == 64);
+
+    // Return the length normalized descriptor.  Add a small number
+    // to guard against division by zero.
+    double len = 1e-7;
+    for (int i = 0; i != 64; ++i) len += des[i]*des[i];
+    len = std::sqrt(len);
+    for (int i = 0; i != 64; ++i) des[i] /= len;
 }
 
 PyObject* py_interest_points(PyObject* self, PyObject* args) {
