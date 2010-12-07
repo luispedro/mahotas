@@ -227,15 +227,15 @@ inline const interest_point interpolate_point (
     if (std::max(inter0, std::max(inter1, inter2)) < .5) {
         const int initial_step_size = 1;
         const int step = get_step_size(initial_step_size, o);
-        const double p0 = i + inter0 * step;
-        const double p1 = r + inter1 * step;
-        const double p2 = c + inter2 * step;
-        const double lobe_size = std::pow(2.0, o+1.0)*(i+p0+1) + 1;
+        const double p0 = r + inter0 * step;
+        const double p1 = c + inter1 * step;
+        const double p2 = i + inter2 * step;
+        const double lobe_size = std::pow(2.0, o+1.0)*(i+p2+1) + 1;
         const double filter_size = 3*lobe_size;
         const double scale = 1.2/9.0 * filter_size;
 
-        res.c0 = r;
-        res.c1 = c;
+        res.c0 = p0;
+        res.c1 = p1;
         res.scale = scale;
         res.score = pyr.get_value(o,i,r,c);
         res.laplacian = pyr.get_laplacian(o,i,r,c);
