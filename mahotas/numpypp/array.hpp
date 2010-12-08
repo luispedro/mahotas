@@ -322,14 +322,40 @@ struct aligned_array : public array_base<BaseType> {
         }
 
         BaseType* data() {
-            return reinterpret_cast<BaseType*>PyArray_DATA(this->array_);
+            return reinterpret_cast<BaseType*>(PyArray_DATA(this->array_));
         }
+
+        BaseType* data(npy_intp p0) {
+            return reinterpret_cast<BaseType*>(PyArray_GETPTR1(this->array_, p0));
+        }
+
+        BaseType* data(npy_intp p0, npy_intp p1) {
+            return reinterpret_cast<BaseType*>(PyArray_GETPTR2(this->array_, p0, p1));
+        }
+
+        BaseType* data(npy_intp p0, npy_intp p1, npy_intp p2) {
+            return reinterpret_cast<BaseType*>(PyArray_GETPTR3(this->array_, p0, p1, p2));
+        }
+
         const BaseType* data() const {
-            return reinterpret_cast<const BaseType*>PyArray_DATA(this->array_);
+            return reinterpret_cast<const BaseType*>(PyArray_DATA(this->array_));
         }
         const BaseType* data(const position& pos) const {
             return reinterpret_cast<const BaseType*>(this->raw_data(pos));
         }
+
+        const BaseType* data(npy_intp p0) const {
+            return reinterpret_cast<const BaseType*>(PyArray_GETPTR1(this->array_, p0));
+        }
+
+        const BaseType* data(npy_intp p0, npy_intp p1) const {
+            return reinterpret_cast<const BaseType*>(PyArray_GETPTR2(this->array_, p0, p1));
+        }
+
+        const BaseType* data(npy_intp p0, npy_intp p1, npy_intp p2) const {
+            return reinterpret_cast<const BaseType*>(PyArray_GETPTR3(this->array_, p0, p1, p2));
+        }
+
 
         BaseType* data(const position& pos) {
             return reinterpret_cast<BaseType*>(this->raw_data(pos));
