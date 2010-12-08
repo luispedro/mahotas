@@ -137,38 +137,43 @@ const double pi = 3.1415926535898;
 struct double_v2 {
 
     double_v2() {
-        data[0] = 0.;
-        data[1] = 0.;
+        data_[0] = 0.;
+        data_[1] = 0.;
     }
     double_v2(double y, double x) {
-        data[0] = y;
-        data[1] = x;
+        data_[0] = y;
+        data_[1] = x;
     }
-    double& y() { return data[0];}
-    double& x() { return data[1];}
+    double& y() { return data_[0];}
+    double& x() { return data_[1];}
 
-    double y() const { return data[0];}
-    double x() const { return data[1];}
+    double y() const { return data_[0];}
+    double x() const { return data_[1];}
 
-    double angle() const { return std::atan2(data[1], data[0]); }
-    double norm2() const { return data[0]*data[0] + data[1]*data[1]; }
+    double angle() const { return std::atan2(data_[1], data_[0]); }
+    double norm2() const { return data_[0]*data_[0] + data_[1]*data_[1]; }
 
-    double_v2 abs() const { return double_v2(std::abs(data[0]), std::abs(data[1])); }
+    double_v2 abs() const { return double_v2(std::abs(data_[0]), std::abs(data_[1])); }
 
     void clear() {
-        data[0] = 0.;
-        data[1] = 0.;
+        data_[0] = 0.;
+        data_[1] = 0.;
     }
 
     double_v2& operator += (const double_v2& rhs) {
-        data[0] += rhs.data[0];
-        data[1] += rhs.data[1];
+        data_[0] += rhs.data_[0];
+        data_[1] += rhs.data_[1];
         return *this;
     }
 
-
-    double data[2];
+    private:
+    double data_[2];
 };
+
+inline
+bool operator < (const double_v2& lhs, const double_v2& rhs) {
+    return (lhs.y() == rhs.y()) ? (lhs.x() < rhs.x()) : (lhs.y() < rhs.y());
+}
 
 struct interest_point {
     interest_point()
@@ -454,14 +459,21 @@ inline
 double gaussian (const double x, const double y, const double sig) {
     return 1.0/(sig*sig*2*pi) * std::exp( -(x*x + y*y)/(2*sig*sig));
 }
+inline
+bool between_angles(const double a1, double a, const double a2) {
+    const double two_pi = 2*pi;
+    if ((a1 <= a) && (a < a2)) return true;
+    a += two_pi;
+    if ((a1 <= a) && (a < a2)) return true;
+    return false;
+}
 
 double compute_dominant_angle(
         const integral_image_type& img,
         const double_v2& center,
         const double& scale
     ) {
-    std::vector<double> ang;
-    std::vector<double_v2> samples;
+    std::vector<std::pair<double, double_v2> > samples;
 
     // accumulate a bunch of angle and vector samples
     double_v2 vect;
@@ -473,37 +485,35 @@ double compute_dominant_angle(
                 vect.y() = gauss*haar_y(img, int(scale*r+center.y()), int(scale*c+center.x()), static_cast<int>(4*scale+0.5));
                 vect.x() = gauss*haar_x(img, int(scale*r+center.y()), int(scale*c+center.x()), static_cast<int>(4*scale+0.5));
 
-                samples.push_back(vect);
-                ang.push_back(vect.angle());
+                samples.push_back(std::make_pair(vect.angle(), vect));
             }
         }
     }
 
+    const int Nsamples = samples.size();
+    std::sort(samples.begin(), samples.end());
+    const double window_size = pi/3;
 
     // now find the dominant direction
     double max_length = 0;
     double best_ang = 0;
-    // look at a bunch of pie shaped slices of a circle
-    const int slices = 45;
-    const double ang_step = (2*pi)/slices;
-    for (int ang_i = 0; ang_i < slices; ++ang_i) {
-        // compute the bounding angles
-        double ang1 = ang_step*ang_i - pi;
-        double ang2 = ang1 + pi/3;
 
+    for (int i = 0; i < Nsamples; ++i) {
+        // compute the bounding angles
+        const double ang1 = samples[i].first;
+        const double ang2 = ang1 + window_size;
 
         // compute sum of all vectors that are within the above two angles
         vect.clear();
-        for (unsigned i = 0; i < ang.size(); ++i) {
-            if ( (ang1 <= ang[i] && ang[i] <= ang2) ||
-                (ang2 > pi && (ang[i] >= ang1 || ang[i] <= (-2*pi+ang2)))) {
-                vect += samples[i];
-            }
+        int j = i + 1;
+        if (j == Nsamples) j = 0;
+        while (j != i && between_angles(ang1, samples[j].first, ang2)) {
+            vect += samples[i].second;
+            ++j;
+            if (j == Nsamples) j = 0;
         }
 
-
         const double cur_length = vect.norm2();
-
         // record the angle of the best vectors
         if (cur_length > max_length) {
             max_length = cur_length;
