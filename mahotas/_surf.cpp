@@ -3,6 +3,7 @@
 // DLIB is under the following copyright and license:
     // Copyright (C) 2009  Davis E. King (davis@dlib.net)
     // License: Boost Software License
+    // (See the file LICENSE.BOOST in the mahotas distribution)
 //
 // Mahotas itself is
 // Copyright (C) 2010 Luis Pedro Coelho (luis@luispedro.org)
@@ -64,13 +65,13 @@ double csum_rect(numpy::aligned_array<T> integral, int y, int x, const int dy, c
 }
 
 double haar_x(const integral_image_type& integral, int y, int x, const int w) {
-    const double left  = sum_rect(integral, y - w/2,  x - w/2, (y - w/2) + w, x);
+    const double left  = sum_rect(integral, y - w/2,  x - w/2, (y - w/2) + w,             x);
     const double right = sum_rect(integral, y - w/2,        x, (y - w/2) + w, (x - w/2) + w);
     return left - right;
 }
 
 double haar_y(const integral_image_type& integral, int y, int x, const int w) {
-    const double top  = sum_rect(integral, y - w/2,  x - w/2,             y, (x - w/2) + w);
+    const double top    = sum_rect(integral, y - w/2,  x - w/2,             y, (x - w/2) + w);
     const double bottom = sum_rect(integral,       y,  x - w/2, (y - w/2) + w, (x - w/2) + w);
     return top - bottom;
 }
@@ -104,10 +105,10 @@ struct hessian_pyramid {
 
 inline bool is_maximum_in_region(
     const hessian_pyramid& pyr,
-    int o,
-    int i,
-    int r,
-    int c
+    const int o,
+    const int i,
+    const int r,
+    const int c
 )
 {
     // First check if this point is near the edge of the octave
@@ -120,14 +121,10 @@ inline bool is_maximum_in_region(
     const double val = pyr.get_value(o,i,r,c);
 
     // now check if there are any bigger values around this guy
-    for (int ii = i-1; ii <= i+1; ++ii)
-    {
-        for (int rr = r-1; rr <= r+1; ++rr)
-        {
-            for (int cc = c-1; cc <= c+1; ++cc)
-            {
-                if (pyr.get_value(o,ii,rr,cc) > val)
-                    return false;
+    for (int ii = i-1; ii <= i+1; ++ii) {
+        for (int rr = r-1; rr <= r+1; ++rr) {
+            for (int cc = c-1; cc <= c+1; ++cc) {
+                if (pyr.get_value(o,ii,rr,cc) > val) return false;
             }
         }
     }
@@ -173,8 +170,7 @@ struct double_v2 {
     double data[2];
 };
 
-struct interest_point
-{
+struct interest_point {
     interest_point()
         :scale(0)
         ,score(0)
@@ -213,9 +209,8 @@ inline const interest_point interpolate_point (
     const int o,
     const int i,
     const int r,
-    const int c
-)
-{
+    const int c,
+    const int initial_step_size) {
     // The original (dlib) code reads:
     //
     // interpolated_point = -inv(get_hessian_hessian(pyr,o,i,r,c))*
@@ -253,8 +248,8 @@ inline const interest_point interpolate_point (
     const double Mf = Dys;
 
     // get_hessian_gradient:
-    const double g0 = (pyr.get_value(o,i,r,c+1) - pyr.get_value(o,i,r,c-1))/2.0;
-    const double g1 = (pyr.get_value(o,i,r+1,c) - pyr.get_value(o,i,r-1,c))/2.0;
+    const double g0 = (pyr.get_value(o,i,r+1,c) - pyr.get_value(o,i,r-1,c))/2.0;
+    const double g1 = (pyr.get_value(o,i,r,c+1) - pyr.get_value(o,i,r,c-1))/2.0;
     const double g2 = (pyr.get_value(o,i+1,r,c) - pyr.get_value(o,i-1,r,c))/2.0;
 
     // now compute inverse and multiply mat vec
@@ -279,7 +274,6 @@ inline const interest_point interpolate_point (
 
     interest_point res;
     if (std::max(inter0, std::max(inter1, inter2)) < .5) {
-        const int initial_step_size = 1;
         const int step = get_step_size(initial_step_size, o);
         const double p0 = r + inter0 * step;
         const double p1 = c + inter1 * step;
@@ -289,7 +283,7 @@ inline const interest_point interpolate_point (
         const double scale = 1.2/9.0 * filter_size;
 
         res.y() = p0;
-        res.x()= p1;
+        res.x() = p1;
         res.scale = scale;
         res.score = pyr.get_value(o,i,r,c);
         res.laplacian = pyr.get_laplacian(o,i,r,c);
@@ -297,45 +291,38 @@ inline const interest_point interpolate_point (
     return res;
 }
 
-void get_interest_points (
+void get_interest_points(
     const hessian_pyramid& pyr,
     double threshold,
-    std::vector<interest_point>& result_points) {
+    std::vector<interest_point>& result_points,
+    const int initial_step_size) {
     assert(threshold >= 0);
 
     result_points.clear();
     const int nr_octaves = pyr.nr_octaves();
     const int nr_intervals = pyr.nr_intervals();
 
-    for (int o = 0; o < nr_octaves; ++o)
-    {
+    for (int o = 0; o < nr_octaves; ++o) {
         const int border_size = get_border_size(o, nr_intervals);
         const int nr = pyr.nr(o);
         const int nc = pyr.nc(o);
 
         // do non-maximum suppression on all the intervals in the current octave and
         // accumulate the results in result_points
-        for (int i = 1; i < nr_intervals-1;  i += 3)
-        {
-            for (int r = border_size+1; r < nr - border_size-1; r += 3)
-            {
-                for (int c = border_size+1; c < nc - border_size-1; c += 3)
-                {
+        for (int i = 1; i < nr_intervals-1;  i += 3) {
+            for (int r = border_size+1; r < nr - border_size-1; r += 3) {
+                for (int c = border_size+1; c < nc - border_size-1; c += 3) {
                     double max_val = pyr.get_value(o,i,r,c);
                     int max_i = i;
                     int max_r = r;
                     int max_c = c;
 
                     // loop over this 3x3x3 block and find the largest element
-                    for (int ii = i; ii < std::min(i + 3, pyr.nr_intervals()-1); ++ii)
-                    {
-                        for (int rr = r; rr < std::min(r + 3, nr - border_size - 1); ++rr)
-                        {
-                            for (int cc = c; cc < std::min(c + 3, nc - border_size - 1); ++cc)
-                            {
+                    for (int ii = i; ii < std::min(i + 3, pyr.nr_intervals()-1); ++ii) {
+                        for (int rr = r; rr < std::min(r + 3, nr - border_size - 1); ++rr) {
+                            for (int cc = c; cc < std::min(c + 3, nc - border_size - 1); ++cc) {
                                 double temp = pyr.get_value(o,ii,rr,cc);
-                                if (temp > max_val)
-                                {
+                                if (temp > max_val) {
                                     max_val = temp;
                                     max_i = ii;
                                     max_r = rr;
@@ -347,11 +334,9 @@ void get_interest_points (
 
                     // If the max point we found is really a maximum in its own region and
                     // is big enough then add it to the results.
-                    if (max_val > threshold && is_maximum_in_region(pyr, o, max_i, max_r, max_c))
-                    {
-                        interest_point sp = interpolate_point (pyr, o, max_i, max_r, max_c);
-                        if (sp.score > threshold)
-                        {
+                    if (max_val > threshold && is_maximum_in_region(pyr, o, max_i, max_r, max_c)) {
+                        interest_point sp = interpolate_point(pyr, o, max_i, max_r, max_c, initial_step_size);
+                        if (sp.score > threshold) {
                             result_points.push_back(sp);
                         }
                     }
@@ -480,12 +465,9 @@ double compute_dominant_angle(
 
     // accumulate a bunch of angle and vector samples
     double_v2 vect;
-    for (int r = -6; r <= 6; ++r)
-    {
-        for (int c = -6; c <= 6; ++c)
-        {
-            if (r*r + c*c < 36)
-            {
+    for (int r = -6; r <= 6; ++r) {
+        for (int c = -6; c <= 6; ++c) {
+            if (r*r + c*c < 36) {
                 // compute a Gaussian weighted gradient and the gradient's angle.
                 const double gauss = gaussian(c,r, 2.5);
                 vect.y() = gauss*haar_y(img, int(scale*r+center.y()), int(scale*c+center.x()), static_cast<int>(4*scale+0.5));
@@ -512,8 +494,7 @@ double compute_dominant_angle(
 
         // compute sum of all vectors that are within the above two angles
         vect.clear();
-        for (unsigned i = 0; i < ang.size(); ++i)
-        {
+        for (unsigned i = 0; i < ang.size(); ++i) {
             if ( (ang1 <= ang[i] && ang[i] <= ang2) ||
                 (ang2 > pi && (ang[i] >= ang1 || ang[i] <= (-2*pi+ang2)))) {
                 vect += samples[i];
@@ -556,17 +537,13 @@ void compute_surf_descriptor (
     int count = 0;
 
     // loop over the 4x4 grid of histogram buckets
-    for (int r = -10; r < 10; r += 5)
-    {
-        for (int c = -10; c < 10; c += 5)
-        {
+    for (int r = -10; r < 10; r += 5) {
+        for (int c = -10; c < 10; c += 5) {
             double_v2 vect, abs_vect;
 
             // now loop over 25 points in this bucket and sum their features
-            for (int y = r; y < r+5; ++y)
-            {
-                for (int x = c; x < c+5; ++x)
-                {
+            for (int y = r; y < r+5; ++y) {
+                for (int x = c; x < c+5; ++x) {
                     // get the rotated point for this extraction point
                     double_v2 p = rotate_point(double_v2(x*scale, y*scale), sin_angle, cos_angle);
                     p += center;
@@ -577,6 +554,8 @@ void compute_surf_descriptor (
                             gauss*haar_y(img, int(p.y()), int(p.x()), static_cast<int>(2*scale+0.5)));
 
                     // rotate this vector into alignment with the surf descriptor box
+                    // This is a reverse rotation (takes advantage of the fact that
+                    // sin(-a) = -sin(a) & cos(-a) = cos(a))
                     temp = rotate_point(temp, -sin_angle, cos_angle);
 
                     vect += temp;
@@ -584,10 +563,10 @@ void compute_surf_descriptor (
                 }
             }
 
-            des[count++] = vect.x();
             des[count++] = vect.y();
-            des[count++] = abs_vect.x();
+            des[count++] = vect.x();
             des[count++] = abs_vect.y();
+            des[count++] = abs_vect.x();
         }
     }
 
@@ -611,7 +590,7 @@ std::vector<surf_point> get_surf_points(const numpy::aligned_array<T>& int_img, 
     gil_release nogil;
     std::vector<interest_point> points;
     build_pyramid<T>(int_img, pyramid, nr_octaves, nr_intervals, initial_step_size);
-    get_interest_points(pyramid, 0.10, points);
+    get_interest_points(pyramid, 0.10, points, initial_step_size);
     // sort all the points by how strong their detect is
     std::sort(points.rbegin(), points.rend());
 
@@ -693,7 +672,7 @@ PyObject* py_interest_points(PyObject* self, PyObject* args) {
         #define HANDLE(type) {\
             gil_release nogil; \
             build_pyramid<type>(numpy::aligned_array<type>(array), pyramid, nr_octaves, nr_intervals, initial_step_size); \
-            get_interest_points(pyramid, 0, interest_points); \
+            get_interest_points(pyramid, 0, interest_points, initial_step_size); \
         }
 
             HANDLE_TYPES();
