@@ -134,23 +134,77 @@ inline bool is_maximum_in_region(
 
     return true;
 }
+
+
+const double pi = 3.1415926535898;
+struct double_v2 {
+
+    double_v2() {
+        data[0] = 0.;
+        data[1] = 0.;
+    }
+    double_v2(double y, double x) {
+        data[0] = y;
+        data[1] = x;
+    }
+    double& y() { return data[0];}
+    double& x() { return data[1];}
+
+    double y() const { return data[0];}
+    double x() const { return data[1];}
+
+    double angle() const { return std::atan2(data[1], data[0]); }
+    double norm2() const { return data[0]*data[0] + data[1]*data[1]; }
+
+    double_v2 abs() const { return double_v2(std::abs(data[0]), std::abs(data[1])); }
+
+    void clear() {
+        data[0] = 0.;
+        data[1] = 0.;
+    }
+
+    double_v2& operator += (const double_v2& rhs) {
+        data[0] += rhs.data[0];
+        data[1] += rhs.data[1];
+        return *this;
+    }
+
+
+    double data[2];
+};
+
 struct interest_point
 {
     interest_point()
-        :c0(0.)
-        ,c1(0.)
-        ,scale(0)
+        :scale(0)
         ,score(0)
         ,laplacian(0)
         { }
 
-    double c0;
-    double c1;
+    double& y() { return center_.y(); }
+    double& x() { return center_.x(); }
+
+    double y() const { return center_.y(); }
+    double x() const { return center_.x(); }
+
+    double_v2& center() { return center_; }
+    const double_v2& center() const { return center_; }
+
+    double_v2 center_;
     double scale;
     double score;
     double laplacian;
 
     bool operator < (const interest_point& p) const { return score < p.score; }
+
+    static const size_t ndoubles = 2 + 3;
+    void dump(double out[ndoubles]) {
+        out[0] = center_.y();
+        out[1] = center_.x();
+        out[2] = scale;
+        out[3] = score;
+        out[4] = laplacian;
+    }
 };
 
 
@@ -234,8 +288,8 @@ inline const interest_point interpolate_point (
         const double filter_size = 3*lobe_size;
         const double scale = 1.2/9.0 * filter_size;
 
-        res.c0 = p0;
-        res.c1 = p1;
+        res.y() = p0;
+        res.x()= p1;
         res.scale = scale;
         res.score = pyr.get_value(o,i,r,c);
         res.laplacian = pyr.get_laplacian(o,i,r,c);
@@ -401,44 +455,15 @@ struct surf_point {
     interest_point p;
     double angle;
     double des[64];
+    static const size_t ndoubles = interest_point::ndoubles + 1 + 64;
+    void dump(double out[ndoubles]) {
+        p.dump(out);
+        out[interest_point::ndoubles] = angle;
+        std::memcpy(out+interest_point::ndoubles + 1, des, 64 * sizeof(double));
+    }
+
 };
 
-const double pi = 3.1415926535898;
-struct double_v2 {
-
-    double_v2() {
-        data[0] = 0.;
-        data[1] = 0.;
-    }
-    double_v2(double y, double x) {
-        data[0] = y;
-        data[1] = x;
-    }
-    double& y() { return data[0];}
-    double& x() { return data[1];}
-
-    double y() const { return data[0];}
-    double x() const { return data[1];}
-
-    double angle() const { return std::atan2(data[1], data[0]); }
-    double norm2() const { return data[0]*data[0] + data[1]*data[1]; }
-
-    double_v2 abs() const { return double_v2(std::abs(data[0]), std::abs(data[1])); }
-
-    void clear() {
-        data[0] = 0.;
-        data[1] = 0.;
-    }
-
-    double_v2& operator += (const double_v2& rhs) {
-        data[0] += rhs.data[0];
-        data[1] += rhs.data[1];
-        return *this;
-    }
-
-
-    double data[2];
-};
 
 inline
 double gaussian (const double x, const double y, const double sig) {
@@ -576,6 +601,79 @@ void compute_surf_descriptor (
     for (int i = 0; i != 64; ++i) des[i] /= len;
 }
 
+template<typename T>
+std::vector<surf_point> get_surf_points(const numpy::aligned_array<T>& int_img, const int nr_octaves, const int nr_intervals, const int initial_step_size, const int max_points) {
+    assert(max_points > 0);
+    hessian_pyramid pyramid;
+
+    const int N0 = int_img.dim(0);
+    const int N1 = int_img.dim(1);
+    gil_release nogil;
+    std::vector<interest_point> points;
+    build_pyramid<T>(int_img, pyramid, nr_octaves, nr_intervals, initial_step_size);
+    get_interest_points(pyramid, 0.10, points);
+    // sort all the points by how strong their detect is
+    std::sort(points.rbegin(), points.rend());
+
+    std::vector<surf_point> spoints;
+    // now extract SURF descriptors for the points
+    surf_point sp;
+    for (unsigned i = 0; i < std::min(size_t(max_points), points.size()); ++i)
+    {
+        // ignore points that are close to the edge of the image
+        const double border = 31;
+        const interest_point& p = points[i];
+        const unsigned long border_size = static_cast<unsigned long>(border*points[i].scale);
+        if (border_size <= p.y() && (p.y() + border_size) < N0 &&
+            border_size <= p.x() && (p.x() + border_size) < N1) {
+
+            sp.angle = compute_dominant_angle(int_img, points[i].center(), points[i].scale);
+            compute_surf_descriptor(int_img, points[i].center(), points[i].scale, sp.angle, sp.des);
+            sp.p = points[i];
+
+            spoints.push_back(sp);
+        }
+    }
+
+    return spoints;
+}
+
+PyObject* py_surf(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* res;
+    int nr_octaves;
+    int nr_intervals;
+    int initial_step_size;
+    if (!PyArg_ParseTuple(args,"Oiii", &array, &nr_octaves, &nr_intervals, &initial_step_size)) return NULL;
+    if (!PyArray_Check(array) ||
+        PyArray_NDIM(array) != 2 ||
+        PyArray_TYPE(array) != NPY_DOUBLE) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    holdref array_ref(array);
+    try {
+        std::vector<surf_point> spoints;
+        const int max_points = 1000;
+        spoints = get_surf_points<double>(numpy::aligned_array<double>(array), nr_octaves, nr_intervals, initial_step_size, max_points);
+
+        numpy::aligned_array<double> arr = numpy::new_array<double>(spoints.size(), surf_point::ndoubles);
+        for (unsigned int i = 0; i != spoints.size(); ++i) {
+            spoints[i].dump(arr.data(i));
+        }
+        res = arr.raw_array();
+        Py_INCREF(res);
+        return PyArray_Return(res);
+    } catch (const std::bad_alloc&) {
+        PyErr_NoMemory();
+        return NULL;
+    } catch (const PythonException& exc) {
+        PyErr_SetString(exc.type(), exc.message());
+        return NULL;
+    }
+}
+
+
 PyObject* py_interest_points(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* res;
@@ -606,8 +704,8 @@ PyObject* py_interest_points(PyObject* self, PyObject* args) {
         }
         numpy::aligned_array<double> arr = numpy::new_array<double>(interest_points.size(), 3);
         for (unsigned int i = 0; i != interest_points.size(); ++i) {
-            arr.at(i, 0) = interest_points[i].c0;
-            arr.at(i, 1) = interest_points[i].c1;
+            arr.at(i, 0) = interest_points[i].y();
+            arr.at(i, 1) = interest_points[i].x();
             arr.at(i, 2) = interest_points[i].score;
         }
         res = arr.raw_array();
@@ -688,6 +786,7 @@ PyMethodDef methods[] = {
   {"integral",(PyCFunction)py_integral, METH_VARARGS, NULL},
   {"pyramid",(PyCFunction)py_pyramid, METH_VARARGS, NULL},
   {"interest_points",(PyCFunction)py_interest_points, METH_VARARGS, NULL},
+  {"surf",(PyCFunction)py_surf, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 
