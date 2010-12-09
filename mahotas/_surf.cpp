@@ -284,12 +284,11 @@ inline const interest_point interpolate_point (
     const double inter2 = ( E/L*g0 + F/L*g1 + C/L*g2 );
 
     interest_point res;
-    if (std::max(inter0, std::max(inter1, inter2)) < .5) {
+    if (std::max(std::abs(inter0), std::max(std::abs(inter1), std::abs(inter2))) < .5) {
         const int step = get_step_size(initial_step_size, o);
-        const double p0 = r + inter0 * step;
-        const double p1 = c + inter1 * step;
-        const double p2 = i + inter2 * step;
-        const double lobe_size = std::pow(2.0, o+1.0)*(i+p2+1) + 1;
+        const double p0 = (r + inter0) * step;
+        const double p1 = (c + inter1) * step;
+        const double lobe_size = std::pow(2.0, o+1.0)*(i+inter2+1) + 1;
         const double filter_size = 3*lobe_size;
         const double scale = 1.2/9.0 * filter_size;
 
@@ -385,28 +384,26 @@ void build_pyramid(numpy::aligned_array<T> integral,
     {
         const int step_size = get_step_size(initial_step_size, o);
         const int border_size = get_border_size(o, nr_intervals)*step_size;
-        double *pout = pyramid[o].data();
+        numpy::aligned_array<double>& cur_data = pyramid[o];
 
-        for (int i = 0; i < nr_intervals; ++i)
-        {
+        for (int i = 0; i < nr_intervals; ++i) {
             const int lobe_size = static_cast<int>(std::pow(2.0, o+1.0)+0.5)*(i+1) + 1;
             const double area_inv = 1.0/std::pow(3.0*lobe_size, 2.0);
             const int lobe_offset = lobe_size/2+1;
 
-            for (int y = border_size; y < N0 - border_size; y += step_size)
-            {
-                for (int x = border_size; x < N1 - border_size; x += step_size)
-                {
-                    double Dxx =     csum_rect(integral, y, x, 0, 0, lobe_size*3, 2*lobe_size-1) -
-                                 3.* csum_rect(integral, y, x, 0, 0, lobe_size,   2*lobe_size-1);
+            for (int y = border_size; y < N0 - border_size; y += step_size) {
+                for (int x = border_size; x < N1 - border_size; x += step_size) {
 
-                    double Dyy =     csum_rect(integral, y, x, 0, 0, 2*lobe_size-1, lobe_size*3) -
-                                 3.* csum_rect(integral, y, x, 0, 0, 2*lobe_size-1, lobe_size);
+                    double Dxx =     csum_rect(integral, y, x, 0, 0, 2*lobe_size-1, 3*lobe_size) -
+                                 3.* csum_rect(integral, y, x, 0, 0, 2*lobe_size-1,   lobe_size);
 
-                    double Dxy = csum_rect(integral, y, x, -lobe_offset, +lobe_offset, lobe_size, lobe_size) +
-                                 csum_rect(integral, y, x, +lobe_offset, -lobe_offset, lobe_size, lobe_size) -
-                                 csum_rect(integral, y, x, +lobe_offset, +lobe_offset, lobe_size, lobe_size) -
-                                 csum_rect(integral, y, x, -lobe_offset, -lobe_offset, lobe_size, lobe_size);
+                    double Dyy =     csum_rect(integral, y, x, 0, 0, 3*lobe_size, 2*lobe_size-1) -
+                                 3.* csum_rect(integral, y, x, 0, 0,   lobe_size, 2*lobe_size-1);
+
+                    double Dxy =    csum_rect(integral, y, x, -lobe_offset, +lobe_offset, lobe_size, lobe_size)
+                                  + csum_rect(integral, y, x, +lobe_offset, -lobe_offset, lobe_size, lobe_size)
+                                  - csum_rect(integral, y, x, +lobe_offset, +lobe_offset, lobe_size, lobe_size)
+                                  - csum_rect(integral, y, x, -lobe_offset, -lobe_offset, lobe_size, lobe_size);
 
                     // now we normalize the filter responses
                     Dxx *= area_inv;
@@ -422,7 +419,7 @@ void build_pyramid(numpy::aligned_array<T> integral,
 
                     // Save the determinant of the Hessian into our image pyramid.  Also
                     // pack the laplacian sign into the value so we can get it out later.
-                    *pout++ = sign_of_laplacian*determinant;
+                    cur_data.at(i,y/step_size,x/step_size) = sign_of_laplacian*determinant;
                 }
             }
 
@@ -628,7 +625,7 @@ std::vector<surf_point> get_surf_points(const numpy::aligned_array<T>& int_img, 
         // ignore points that are close to the edge of the image
         const double border = 31;
         const interest_point& p = points[i];
-        const unsigned long border_size = static_cast<unsigned long>(border*points[i].scale);
+        const unsigned long border_size = static_cast<unsigned long>(border*points[i].scale)/2;
         if (border_size <= p.y() && (p.y() + border_size) < N0 &&
             border_size <= p.x() && (p.x() + border_size) < N1) {
 
