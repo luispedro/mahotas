@@ -30,12 +30,16 @@ setuptools not found.
 On linux, the package is often called python-setuptools'''
     from sys import exit
     exit(1)
+import os
 import numpy.distutils.core as numpyutils
 
 
 execfile('mahotas/mahotas_version.py')
 long_description = file('docs/source/readme.rst').read()
 
+undef_macros=[]
+if os.environ.get('DEBUG'):
+    undef_macros=['NDEBUG']
 
 bbox = numpyutils.Extension('mahotas._bbox', sources = ['mahotas/_bbox.cpp'])
 center_of_mass = numpyutils.Extension('mahotas._center_of_mass', sources = ['mahotas/_center_of_mass.cpp'])
@@ -46,7 +50,7 @@ histogram = numpyutils.Extension('mahotas._histogram', sources = ['mahotas/_hist
 labeled = numpyutils.Extension('mahotas._labeled', sources = ['mahotas/_labeled.cpp', 'mahotas/_filters.cpp'])
 lbp = numpyutils.Extension('mahotas._lbp', sources = ['mahotas/_lbp.cpp'])
 morph = numpyutils.Extension('mahotas._morph', sources = ['mahotas/_morph.cpp', 'mahotas/_filters.cpp'], extra_compile_args=['-Wno-sign-compare'])
-surf = numpyutils.Extension('mahotas._surf', sources = ['mahotas/_surf.cpp'])
+surf = numpyutils.Extension('mahotas._surf', sources = ['mahotas/_surf.cpp'], undef_macros=undef_macros)
 texture = numpyutils.Extension('mahotas._texture', sources = ['mahotas/_texture.cpp', 'mahotas/_filters.cpp'])
 thin = numpyutils.Extension('mahotas._thin', sources = ['mahotas/_thin.cpp'], extra_compile_args=['-Wno-sign-compare'])
 zernike = numpyutils.Extension('mahotas._zernike', sources = ['mahotas/_zernike.cpp'])
