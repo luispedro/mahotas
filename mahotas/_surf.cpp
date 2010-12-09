@@ -166,6 +166,12 @@ struct double_v2 {
         return *this;
     }
 
+    double_v2& operator -= (const double_v2& rhs) {
+        data_[0] -= rhs.data_[0];
+        data_[1] -= rhs.data_[1];
+        return *this;
+    }
+
     private:
     double data_[2];
 };
@@ -460,8 +466,10 @@ double gaussian (const double x, const double y, const double sig) {
     return 1.0/(sig*sig*2*pi) * std::exp( -(x*x + y*y)/(2*sig*sig));
 }
 inline
-bool between_angles(const double a1, double a, const double a2) {
+bool between_angles(const double a1, double a) {
     const double two_pi = 2*pi;
+    const double window_size = pi/3;
+    const double a2 = a1 + window_size;
     if ((a1 <= a) && (a < a2)) return true;
     a += two_pi;
     if ((a1 <= a) && (a < a2)) return true;
@@ -492,29 +500,38 @@ double compute_dominant_angle(
 
     const int Nsamples = samples.size();
     std::sort(samples.begin(), samples.end());
-    const double window_size = pi/3;
 
-    // now find the dominant direction
-    double max_length = 0;
-    double best_ang = 0;
+    // Perform the following:
+    //
+    // Loop: for i \in 0..Nsamples
+    //          vect_i = \sum { a_j } | a_i <= a_j < a_i + pi/3
+    //
+    // where the angle comparison takes into account circularity (i.e., x == 2 pi + x)
+    //
+    // However, vect_{i+1} - vect_i = - a_i + ( \sum { a_j } |a_i + pi/3 <= a_j < a_{i+1} + pi/3 )
+    //
+    // So, we first compute vect_0 and then update it to get vect_i for i > 0
 
-    for (int i = 0; i < Nsamples; ++i) {
-        // compute the bounding angles
-        const double ang1 = samples[i].first;
-        const double ang2 = ang1 + window_size;
+    vect.clear();
+    int j;
+    for (j = 1; j != Nsamples && between_angles(samples[0].first, samples[j].first); ++j) {
+        vect += samples[j].second;
+    }
+    // If we got all of the elements in our window, we are done:
+    if (j == Nsamples) return vect.angle();
 
-        // compute sum of all vectors that are within the above two angles
-        vect.clear();
-        int j = i + 1;
-        if (j == Nsamples) j = 0;
-        while (j != i && between_angles(ang1, samples[j].first, ang2)) {
-            vect += samples[i].second;
+    double max_length = vect.norm2();
+    double best_ang = vect.angle();
+
+    for (int i = 1; i < Nsamples; ++i) {
+        vect -= samples[i].second;
+        while (j != i && between_angles(samples[i].first, samples[j].first)) {
+            vect += samples[j].second;
             ++j;
             if (j == Nsamples) j = 0;
         }
 
         const double cur_length = vect.norm2();
-        // record the angle of the best vectors
         if (cur_length > max_length) {
             max_length = cur_length;
             best_ang = vect.angle();
