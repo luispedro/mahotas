@@ -50,3 +50,21 @@ def integral(f, in_place=False, dtype=np.double):
             f = f.copy()
     return _surf.integral(f)
 
+def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1):
+    '''
+    points = surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1):
+
+    Run SURF detection and descriptor computations
+
+    Parameters
+    ----------
+    f : ndarray
+        input image
+    nr_octaves : integer, optional
+        Nr of octaves (default: 4)
+    nr_scale : integer, optional
+        Nr of scales (default: 6)
+    initial_step_size : integer, optional
+        Initial step size in pixels (default: 1)
+    '''
+    return _surf.surf(integral(f), nr_octaves, nr_scales, initial_step_size)
