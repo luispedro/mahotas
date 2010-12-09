@@ -22,6 +22,54 @@ import _convex
 
 __all__ = ['fill_polygon', 'convexhull', 'fill_polygon']
 
+
+def line(p0, p1, canvas, color=1):
+    '''
+    line((y0,x0), (y1,x1), canvas, color=1)
+
+    Draw a line
+
+    Parameters
+    ----------
+    p0 : pair of integers
+        first point
+    p1 : pair of integers
+        second point
+    canvas : ndarray
+        where to draw, will be modified in place
+    color : integer, optional
+        which value to store on the pixels (default: 1)
+
+    Implementation Reference
+    ------------------------
+
+    http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+    '''
+    y0,x0 = p0
+    y1,x1 = p1
+    steep = abs(y1-y0) > abs(x1 -x0)
+    if steep:
+        x0,y0 = y0,x0
+        x1,y1 = y1,x1
+    if x0 > x1:
+        x0,x1 = x1,x0
+        y0,y1 = y1,y0
+    dx = x1 - x0
+    dy = abs(y1-y0)
+    error = dx/2.
+    y = y0
+    ystep = (+1 if y0 < y1 else -1)
+    for x in xrange(x0,x1+1):
+        if steep:
+            canvas[y,x] = color
+        else:
+            canvas[x,y] = color
+        error -= dy
+        if error < 0:
+            y += ystep
+            error += dx
+    
+
 def fill_polygon(polygon, canvas, color=1):
     '''
     fill_polygon([(y0,x0), (y1,x1),...], canvas, color=1)
@@ -30,9 +78,12 @@ def fill_polygon(polygon, canvas, color=1):
 
     Parameters
     ----------
-      polygon : a list of (y,x) points
-      canvas : where to draw
-      color : which colour to use (default: 1)
+    polygon : list of pairs
+        a list of (y,x) points
+    canvas : ndarray
+        where to draw, will be modified in place
+    color : integer, optional
+        which colour to use (default: 1)
     '''
 # algorithm adapted from: http://www.alienryderflex.com/polygon_fill/
     if not polygon:

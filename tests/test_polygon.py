@@ -32,3 +32,11 @@ def test_fill3():
     polygon = [(1, 1), (1, 2), (2, 1)]
     mahotas.polygon.fill_polygon(polygon, canvas)
     assert canvas.sum()
+
+def test_line():
+    canvas = np.zeros((32,32), int)
+    polygon = [(8,8), (8,16),(16,16),(16,8), (8,8)]
+    for p0,p1 in zip(polygon[:-1], polygon[1:]):
+        mahotas.polygon.line(p0,p1, canvas, color=2)
+    assert set(canvas.ravel()) == set([0,2])
+    assert canvas.sum() == 2*(8*4) # 8*4 is perim size, 2 is value
