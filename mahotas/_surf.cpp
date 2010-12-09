@@ -41,8 +41,8 @@ typedef numpy::aligned_array<double> integral_image_type;
 template <typename T>
 double sum_rect(numpy::aligned_array<T> integral, int y0, int x0, int y1, int x1) {
     y0 = std::max<T>(y0, 0);
-    y1 = std::max<T>(y1, 0);
-    x0 = std::min<T>(x0, integral.dim(0));
+    x0 = std::max<T>(x0, 0);
+    y1 = std::min<T>(y1, integral.dim(0));
     x1 = std::min<T>(x1, integral.dim(1));
 
     const T A = integral.at(y0,x0);
