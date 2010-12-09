@@ -55,6 +55,6 @@ post 0.6
 <http://groups.google.com/group/pythonvision?pli=1>`_ for questions, bug
 submissions, etc.
 
-*Author*: Luis Pedro Coelho (with code by Zachary Pincus [from scikits.image]
-and Peter J. Verveer [from scipy.ndimage])
+*Author*: Luis Pedro Coelho (with code by Zachary Pincus [from scikits.image],
+Peter J. Verveer [from scipy.ndimage], and Davis King [from dlib]
 
