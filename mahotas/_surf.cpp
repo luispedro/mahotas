@@ -786,11 +786,34 @@ PyObject* py_integral(PyObject* self, PyObject* args) {
     }
     return PyArray_Return(array);
 }
+PyObject* py_sum_rect(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    int y0, x0, y1, x1;
+    if (!PyArg_ParseTuple(args,"Oiiii", &array, &y0, &x0, &y1, &x1)) return NULL;
+    if (!PyArray_Check(array) || PyArray_NDIM(array) != 2) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    holdref a_ref(array);
+    double res;
+    switch(PyArray_TYPE(array)) {
+    #define HANDLE(type) \
+        res = sum_rect<type>(numpy::aligned_array<type>(array), y0, x0, y1, x1);
+
+        HANDLE_TYPES();
+    #undef HANDLE
+        default:
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    return PyFloat_FromDouble(res);
+}
 
 PyMethodDef methods[] = {
   {"integral",(PyCFunction)py_integral, METH_VARARGS, NULL},
   {"pyramid",(PyCFunction)py_pyramid, METH_VARARGS, NULL},
   {"interest_points",(PyCFunction)py_interest_points, METH_VARARGS, NULL},
+  {"sum_rect",(PyCFunction)py_sum_rect, METH_VARARGS, NULL},
   {"surf",(PyCFunction)py_surf, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
