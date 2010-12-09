@@ -479,8 +479,7 @@ bool between_angles(const double a1, double a) {
 double compute_dominant_angle(
         const integral_image_type& img,
         const double_v2& center,
-        const double& scale
-    ) {
+        const double scale) {
     std::vector<std::pair<double, double_v2> > samples;
 
     // accumulate a bunch of angle and vector samples
