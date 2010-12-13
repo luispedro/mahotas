@@ -67,7 +67,7 @@ PyObject* py_cooccurent(PyObject* self, PyObject* args) {
         return NULL;
     }
     if (symmetric) {
-        numpy::aligned_array<long> cmatrix(result);
+        numpy::aligned_array<npy_int32> cmatrix(result);
         const int s0 = cmatrix.size(0);
         const int s1 = cmatrix.size(0);
 
@@ -77,7 +77,7 @@ PyObject* py_cooccurent(PyObject* self, PyObject* args) {
         }
         for (int y = 0; y != s0; ++y) {
             for (int x = y; x < s1; ++x) {
-                long total = cmatrix.at(y,x) + cmatrix.at(x,y);
+                npy_int32 total = cmatrix.at(y,x) + cmatrix.at(x,y);
                 cmatrix.at(y,x) = total;
                 cmatrix.at(x,y) = total;
             }
