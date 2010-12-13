@@ -22,10 +22,15 @@ Notable algorithms:
 Recent Changes
 --------------
 
-post 0.6
-~~~~~~~~
-- Release the GIL in morphological functions
+
+For version **0.6.1**
+~~~~~~~~~~~~~~~~~~~~~
+
+- SURF local features
 - Convolution
+- mahotas.labeled functions
+- just_filter option in edge.sobel()
+- Release the GIL in morphological functions
 
 
 0.6 (Nov 22 2010)
