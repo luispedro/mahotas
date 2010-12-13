@@ -66,5 +66,13 @@ def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1):
         Nr of scales (default: 6)
     initial_step_size : integer, optional
         Initial step size in pixels (default: 1)
+
+    Returns
+    -------
+    points : ndarray of double, shape = (N, 6 + 64)
+        `N` is nr of points. Each point is represented as
+        *(y,x,scale,score,laplacian,angle, D_0,...,D_63)* where *y,x,scale* is
+        the position, *angle* the orientation, *score* and *laplacian* the
+        score and sign of the detector; and *D_i* is the descriptor
     '''
     return _surf.surf(integral(f), nr_octaves, nr_scales, initial_step_size)
