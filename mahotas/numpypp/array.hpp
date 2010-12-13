@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <cstring>
 #include <ostream>
-
+#include <iostream>
 
 extern "C" {
     #include <Python.h>
@@ -202,12 +202,18 @@ class array_base {
         array_base(const array_base<BaseType>& other)
             :array_(other.array_)
             {
+                if (sizeof(BaseType) != PyArray_ITEMSIZE(array_)) {
+                    std::cerr << "mahotas: mix up of array types.\n";
+                }
                 Py_INCREF(array_);
             }
 
         array_base(PyArrayObject* array)
             :array_(array)
             {
+                if (sizeof(BaseType) != PyArray_ITEMSIZE(array_)) {
+                    std::cerr << "mahotas: mix up of array types.\n";
+                }
                 Py_INCREF(array_);
             }
 
