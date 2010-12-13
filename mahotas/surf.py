@@ -76,3 +76,56 @@ def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1):
         score and sign of the detector; and *D_i* is the descriptor
     '''
     return _surf.surf(integral(f), nr_octaves, nr_scales, initial_step_size)
+
+
+def show_surf(f, spoints, values=None, colors=None):
+    '''
+    f2 = show_surf(f, spoints, values=None, colors={[(255,0,0)]}):
+
+    Parameters
+    ----------
+    f : image
+        original image
+    spoints : ndarray
+        output of `surf`
+    values : ndarray, same length as `spoints`, optional
+        You can pass classes for each point here. If it is not used, then all
+        the points are displayed the same way (or, equivalently,
+        ``values=np.zeros(len(spoints))``).
+    colors : ndarray, length must be same as ``values.max()``, optional
+        points with values ``vi`` will have colour ``colors[vi]``.
+    '''
+    import mahotas.polygon
+    if values is None:
+        values = np.zeros(len(spoints), int)
+        if colors is None:
+            colors = [(255,0,0)]
+    if colors is None:
+        raise NotImplementedError('mahotas.surf.show_surf: colors is None, but values is not')
+    def rotate(y,x, a):
+        sa = np.sin(a)
+        ca = np.cos(a)
+        return (ca*x-sa*y, sa*x+ca*y)
+
+    f2 = np.dstack([f,f,f])
+
+    for p,vi in zip(spoints, values):
+        y = p[0]
+        x = p[1]
+        scale = p[2]
+        angle = p[5]
+        size = int(scale*10)
+        y0 = int(y) - size//2
+        x0 = int(x) - size//2
+        x1 = x + size
+        y1 = y + size
+        def rotate_around((p0,p1),(c0,c1), a):
+            d0 = p0-c0
+            d1 = p1 - c1
+            d0,d1 = rotate(d0,d1,a)
+            return int(c0+d0), int(c1+d1)
+        polygon = [(y0,x0), (y0,x1), (y1,x1), (y1,x0), (y0,x0)]
+        polygon = [rotate_around(p, (y,x), angle) for p in polygon]
+        for p0,p1 in zip(polygon[:-1], polygon[1:]):
+            mahotas.polygon.line(p0,p1, f2, color=colors[vi])
+    return f2.astype(np.uint8)
