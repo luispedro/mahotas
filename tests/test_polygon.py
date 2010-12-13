@@ -40,3 +40,9 @@ def test_line():
         mahotas.polygon.line(p0,p1, canvas, color=2)
     assert set(canvas.ravel()) == set([0,2])
     assert canvas.sum() == 2*(8*4) # 8*4 is perim size, 2 is value
+
+def test_line_non_square():
+    A = np.zeros((128, 64))
+    mahotas.polygon.line((0,0),(127,63), A)
+    assert A.sum()
+

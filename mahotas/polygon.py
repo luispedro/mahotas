@@ -61,9 +61,9 @@ def line(p0, p1, canvas, color=1):
     ystep = (+1 if y0 < y1 else -1)
     for x in xrange(x0,x1+1):
         if steep:
-            canvas[y,x] = color
-        else:
             canvas[x,y] = color
+        else:
+            canvas[y,x] = color
         error -= dy
         if error < 0:
             y += ystep
