@@ -40,7 +40,15 @@ threshold).
 Recent Changes
 --------------
 
-For version 0.6
+For version **0.6.1**:
+
+- Release the GIL in morphological functions
+- Convolution
+- just_filter option in edge.sobel()
+- mahotas.labeled functions
+- SURF local features
+
+For version **0.6**:
 
 - Improve Local Binary patterns (faster and better interface)
 - Much faster erode() (10x faster)
