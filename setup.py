@@ -49,10 +49,10 @@ distance = numpyutils.Extension('mahotas._distance', sources = ['mahotas/_distan
 histogram = numpyutils.Extension('mahotas._histogram', sources = ['mahotas/_histogram.cpp'])
 labeled = numpyutils.Extension('mahotas._labeled', sources = ['mahotas/_labeled.cpp', 'mahotas/_filters.cpp'])
 lbp = numpyutils.Extension('mahotas._lbp', sources = ['mahotas/_lbp.cpp'])
-morph = numpyutils.Extension('mahotas._morph', sources = ['mahotas/_morph.cpp', 'mahotas/_filters.cpp'], extra_compile_args=['-Wno-sign-compare'])
+morph = numpyutils.Extension('mahotas._morph', sources = ['mahotas/_morph.cpp', 'mahotas/_filters.cpp'])
 surf = numpyutils.Extension('mahotas._surf', sources = ['mahotas/_surf.cpp'], undef_macros=undef_macros)
 texture = numpyutils.Extension('mahotas._texture', sources = ['mahotas/_texture.cpp', 'mahotas/_filters.cpp'])
-thin = numpyutils.Extension('mahotas._thin', sources = ['mahotas/_thin.cpp'], extra_compile_args=['-Wno-sign-compare'])
+thin = numpyutils.Extension('mahotas._thin', sources = ['mahotas/_thin.cpp'])
 zernike = numpyutils.Extension('mahotas._zernike', sources = ['mahotas/_zernike.cpp'])
 
 ext_modules = [bbox, center_of_mass, convex, convolve, distance, histogram, labeled, lbp, morph, surf, texture, thin, zernike]

@@ -247,7 +247,7 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
             numpy::position npos = Bi.position() - centre;
             int margin = 0;
             for (int d = 0; d != Bc.ndims(); ++d) {
-                margin = std::max<int>(std::abs(npos[d]), margin);
+                margin = std::max<int>(std::abs(int(npos[d])), margin);
             }
             int delta = markers.pos_to_flat(npos);
             if (!delta) continue;

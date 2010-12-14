@@ -41,21 +41,29 @@ def _register_api(lib, api):
         func.argtypes = argtypes
 
 _FI = None
-for d in _lib_dirs:
-    for libname in _possible_filenames:
-        try:
-            _FI = np.ctypeslib.load_library(libname, d)
-        except OSError:
-            pass
-        else:
+if sys.platform == 'win32':
+    _FI = ctypes.windll.LoadLibrary(
+        os.path.join(os.path.abspath(os.path.dirname(__file__)), 'FreeImage.dll'))
+    if not _FI:
+        raise OSError('mahotas.freeimage: could not find FreeImage.dll')
+else:
+    for d in _lib_dirs:
+        for libname in _possible_filenames:
+            try:
+                _FI = np.ctypeslib.load_library(libname, d)
+            except OSError:
+                pass
+            else:
+                break
+
+        if _FI is not None:
             break
 
-    if _FI is not None:
-        break
+    if not _FI:
+        raise OSError('mahotas.freeimage: could not find libFreeImage in any of the following '
+                      'directories: \'%s\'' % '\', \''.join(_lib_dirs))
 
-if not _FI:
-    raise OSError('mahotas.freeimage: could not find libFreeImage in any of the following '
-                  'directories: \'%s\'' % '\', \''.join(_lib_dirs))
+
 
 _register_api(_FI, _API)
 
