@@ -441,8 +441,12 @@ struct aligned_array : public array_base<BaseType> {
 
 template <typename BaseType>
 aligned_array<BaseType> new_array(const npy_intp ndims, const npy_intp* dims) {
-    return aligned_array<BaseType>(reinterpret_cast<PyArrayObject*>(
+    aligned_array<BaseType> res(reinterpret_cast<PyArrayObject*>(
         PyArray_SimpleNew(ndims, const_cast<npy_intp*>(dims), dtype_code<BaseType>())));
+    // SimpleNew returns an object with count = 1
+    // constructing an array sets it to 2.
+    Py_XDECREF(res.raw_array());
+    return res;
 }
 
 template <typename BaseType>
