@@ -704,7 +704,7 @@ PyObject* py_interest_points(PyObject* self, PyObject* args) {
         #define HANDLE(type) {\
             gil_release nogil; \
             build_pyramid<type>(numpy::aligned_array<type>(array), pyramid, nr_octaves, nr_intervals, initial_step_size); \
-            get_interest_points(pyramid, 0, interest_points, initial_step_size); \
+            get_interest_points(pyramid, 0.10, interest_points, initial_step_size); \
         }
 
             HANDLE_TYPES();
@@ -718,6 +718,7 @@ PyObject* py_interest_points(PyObject* self, PyObject* args) {
             interest_points[i].dump(arr.data(i));
         }
         res = arr.raw_array();
+        Py_INCREF(res);
     } catch (const std::bad_alloc&) {
         PyErr_NoMemory();
         return NULL;
@@ -725,7 +726,6 @@ PyObject* py_interest_points(PyObject* self, PyObject* args) {
         PyErr_SetString(exc.type(), exc.message());
         return NULL;
     }
-    Py_INCREF(res);
     return PyArray_Return(res);
 }
 
