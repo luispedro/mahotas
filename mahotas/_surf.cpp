@@ -205,12 +205,23 @@ struct interest_point {
     bool operator < (const interest_point& p) const { return score < p.score; }
 
     static const size_t ndoubles = 2 + 3;
-    void dump(double out[ndoubles]) {
+    void dump(double out[ndoubles]) const {
         out[0] = center_.y();
         out[1] = center_.x();
         out[2] = scale;
         out[3] = score;
         out[4] = laplacian;
+    }
+
+    static
+    interest_point load(const double in[ndoubles]) {
+        interest_point res;
+        res.center_.y() = in[0];
+        res.center_.x() = in[1];
+        res.scale = in[2];
+        res.score = in[3];
+        res.laplacian = in[4];
+        return res;
     }
 };
 
@@ -449,7 +460,7 @@ struct surf_point {
     double angle;
     double des[64];
     static const size_t ndoubles = interest_point::ndoubles + 1 + 64;
-    void dump(double out[ndoubles]) {
+    void dump(double out[ndoubles]) const {
         p.dump(out);
         out[interest_point::ndoubles] = angle;
         std::memcpy(out+interest_point::ndoubles + 1, des, 64 * sizeof(double));
@@ -684,6 +695,50 @@ PyObject* py_surf(PyObject* self, PyObject* args) {
     }
 }
 
+PyObject* py_descriptors(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* points_arr;
+    PyArrayObject* res;
+    if (!PyArg_ParseTuple(args,"OO", &array, &points_arr)) return NULL;
+    if (!PyArray_Check(array) || !PyArray_Check(points_arr) ||
+        PyArray_NDIM(array) != 2 || PyArray_NDIM(points_arr) != 2 ||
+        PyArray_DIM(points_arr,1) != npy_intp(interest_point::ndoubles) ||
+        PyArray_TYPE(array) != NPY_DOUBLE ||
+        PyArray_TYPE(points_arr) != NPY_DOUBLE) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    holdref array_ref(array);
+    try {
+
+        std::vector<surf_point> spoints;
+        { // no gil block
+            gil_release nogil;
+            numpy::aligned_array<double> points_raw(points_arr);
+            const unsigned npoints = points_raw.dim(0);
+            std::vector<interest_point> points;
+            for (unsigned int i = 0; i != npoints; ++i) {
+                points.push_back(interest_point::load(points_raw.data(i)));
+            }
+            spoints = compute_descriptors(integral_image_type(array), points, npoints);
+        }
+
+        numpy::aligned_array<double> arr = numpy::new_array<double>(spoints.size(), surf_point::ndoubles);
+        for (unsigned int i = 0; i != spoints.size(); ++i) {
+            spoints[i].dump(arr.data(i));
+        }
+        res = arr.raw_array();
+        Py_INCREF(res);
+        return PyArray_Return(res);
+    } catch (const std::bad_alloc&) {
+        PyErr_NoMemory();
+        return NULL;
+    } catch (const PythonException& exc) {
+        PyErr_SetString(exc.type(), exc.message());
+        return NULL;
+    }
+}
+
 
 PyObject* py_interest_points(PyObject* self, PyObject* args) {
     PyArrayObject* array;
@@ -818,6 +873,7 @@ PyMethodDef methods[] = {
   {"pyramid",(PyCFunction)py_pyramid, METH_VARARGS, NULL},
   {"interest_points",(PyCFunction)py_interest_points, METH_VARARGS, NULL},
   {"sum_rect",(PyCFunction)py_sum_rect, METH_VARARGS, NULL},
+  {"descriptors",(PyCFunction)py_descriptors, METH_VARARGS, NULL},
   {"surf",(PyCFunction)py_surf, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };

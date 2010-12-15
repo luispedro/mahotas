@@ -47,3 +47,18 @@ def test_surf_guassians():
         if (np.abs(y-768) < 8 and np.abs(x-768) < 8): is_768 = True
     assert is_256
     assert is_768
+
+def test_interest_points_descriptors():
+    np.random.seed(22)
+    f = np.random.rand(256,256)*230
+    f = f.astype(np.uint8)
+    spoints = mahotas.surf.surf(f, 6, 24, 1)
+    fi = mahotas.surf.integral(f.copy())
+    points = mahotas._surf.interest_points(fi, 6, 24, 1)
+    points = list(points)
+    points.sort(key=(lambda p: -p[3]))
+    points = np.array(points, dtype=np.float64)
+    descs = mahotas._surf.descriptors(fi, points)
+    assert np.all(descs[:len(spoints)] == spoints)
+
+
