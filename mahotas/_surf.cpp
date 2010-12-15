@@ -603,23 +603,13 @@ void compute_surf_descriptor (
     for (int i = 0; i != 64; ++i) des[i] /= len;
 }
 
-template<typename T>
-std::vector<surf_point> get_surf_points(const numpy::aligned_array<T>& int_img, const int nr_octaves, const int nr_intervals, const int initial_step_size, const int max_points) {
-    assert(max_points > 0);
-    hessian_pyramid pyramid;
-
+std::vector<surf_point> compute_descriptors(
+            const integral_image_type& int_img,
+            const std::vector<interest_point>& points,
+            const int max_points) {
+    std::vector<surf_point> spoints;
     const int N0 = int_img.dim(0);
     const int N1 = int_img.dim(1);
-    gil_release nogil;
-    std::vector<interest_point> points;
-    build_pyramid<T>(int_img, pyramid, nr_octaves, nr_intervals, initial_step_size);
-    get_interest_points(pyramid, 0.10, points, initial_step_size);
-    // sort all the points by how strong their detect is
-    std::sort(points.rbegin(), points.rend());
-
-    std::vector<surf_point> spoints;
-    // now extract SURF descriptors for the points
-    surf_point sp;
     for (unsigned i = 0; i < std::min(size_t(max_points), points.size()); ++i)
     {
         // ignore points that are close to the edge of the image
@@ -628,16 +618,30 @@ std::vector<surf_point> get_surf_points(const numpy::aligned_array<T>& int_img, 
         const unsigned long border_size = static_cast<unsigned long>(border*points[i].scale)/2;
         if (border_size <= p.y() && (p.y() + border_size) < N0 &&
             border_size <= p.x() && (p.x() + border_size) < N1) {
+            surf_point sp;
 
-            sp.angle = compute_dominant_angle(int_img, points[i].center(), points[i].scale);
-            compute_surf_descriptor(int_img, points[i].center(), points[i].scale, sp.angle, sp.des);
-            sp.p = points[i];
-
+            sp.angle = compute_dominant_angle(int_img, p.center(), p.scale);
+            compute_surf_descriptor(int_img, p.center(), p.scale, sp.angle, sp.des);
+            sp.p = p;
             spoints.push_back(sp);
         }
     }
-
     return spoints;
+}
+
+template<typename T>
+std::vector<surf_point> get_surf_points(const numpy::aligned_array<T>& int_img, const int nr_octaves, const int nr_intervals, const int initial_step_size, const int max_points) {
+    assert(max_points > 0);
+    hessian_pyramid pyramid;
+
+    gil_release nogil;
+    std::vector<interest_point> points;
+    build_pyramid<T>(int_img, pyramid, nr_octaves, nr_intervals, initial_step_size);
+    get_interest_points(pyramid, 0.10, points, initial_step_size);
+    // sort all the points by how strong their detect is
+    std::sort(points.rbegin(), points.rend());
+    // compute descriptors and return
+    return compute_descriptors(int_img, points, max_points);
 }
 
 PyObject* py_surf(PyObject* self, PyObject* args) {
@@ -657,7 +661,12 @@ PyObject* py_surf(PyObject* self, PyObject* args) {
     try {
         std::vector<surf_point> spoints;
         const int max_points = 1000;
-        spoints = get_surf_points<double>(numpy::aligned_array<double>(array), nr_octaves, nr_intervals, initial_step_size, max_points);
+        spoints = get_surf_points<double>(
+                        numpy::aligned_array<double>(array),
+                        nr_octaves,
+                        nr_intervals,
+                        initial_step_size,
+                        max_points);
 
         numpy::aligned_array<double> arr = numpy::new_array<double>(spoints.size(), surf_point::ndoubles);
         for (unsigned int i = 0; i != spoints.size(); ++i) {
