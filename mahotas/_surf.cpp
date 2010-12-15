@@ -713,11 +713,9 @@ PyObject* py_interest_points(PyObject* self, PyObject* args) {
             PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
             return NULL;
         }
-        numpy::aligned_array<double> arr = numpy::new_array<double>(interest_points.size(), 3);
+        numpy::aligned_array<double> arr = numpy::new_array<double>(interest_points.size(), interest_point::ndoubles);
         for (unsigned int i = 0; i != interest_points.size(); ++i) {
-            arr.at(i, 0) = interest_points[i].y();
-            arr.at(i, 1) = interest_points[i].x();
-            arr.at(i, 2) = interest_points[i].score;
+            interest_points[i].dump(arr.data(i));
         }
         res = arr.raw_array();
     } catch (const std::bad_alloc&) {
