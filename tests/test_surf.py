@@ -27,3 +27,23 @@ def test_sum_rect():
         x0 = np.random.randint(1,150)
         x1 = np.random.randint(x0+1, 159)
         assert mahotas._surf.sum_rect(fi, y0, x0, y1, x1) == f[y0:y1, x0:x1].sum()
+
+def test_surf_guassians():
+    f = np.zeros((1024,1024))
+    Y,X = np.indices(f.shape)
+    Y -= 768
+    X -= 768
+    f += 120*np.exp(-Y**2/2048.-X**2/480.)
+    Y += 512
+    X += 512
+    f += 120*np.exp(-Y**2/2048.-X**2/480.)
+    spoints = mahotas.surf.surf(f, 1, 24, 2)
+
+    YX = np.array([spoints[:,0],spoints[:,1]]).T
+    is_256 = False
+    is_768 = False
+    for y,x in YX:
+        if (np.abs(y-256) < 8 and np.abs(x-256) < 8): is_256 = True
+        if (np.abs(y-768) < 8 and np.abs(x-768) < 8): is_768 = True
+    assert is_256
+    assert is_768
