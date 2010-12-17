@@ -19,6 +19,7 @@ from .euler import euler
 from .moments import moments
 from .distance import distance
 from .resize import imresize
+from .convolve import convolve
 from mahotas_version import __version__
 
 import segmentation
