@@ -23,8 +23,18 @@ Recent Changes
 --------------
 
 
-For version **0.6.1**
+For version **0.6.2**
 ~~~~~~~~~~~~~~~~~~~~~
+
+Bugfix releas:
+
+- Fix memory leak in _surf
+- More robust searching for freeimage
+- More functions in mahotas.surf() to retrieve intermediate results
+- Improve compilation on Windows (patches by Christoph Gohlke)
+
+0.6.1 (Dec 13 2010)
+~~~~~~~~~~~~~~~~~~~
 
 - SURF local features
 - Convolution

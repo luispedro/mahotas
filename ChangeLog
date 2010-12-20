@@ -1,3 +1,9 @@
+Version 0.6.2
+	* Fix memory leak in _surf
+	* More robust searching for freeimage
+	* More functions in mahotas.surf() to retrieve intermediate results
+	* Improve compilation on Windows (patches by Christoph Gohlke)
+
 Version 0.6.1 2010-12-13
 	* Release the GIL in morphological functions
 	* Convolution

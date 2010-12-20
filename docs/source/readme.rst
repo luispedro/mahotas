@@ -40,6 +40,15 @@ threshold).
 Recent Changes
 --------------
 
+For version **0.6.2**:
+
+Bugfix releas:
+
+- Fix memory leak in _surf
+- More robust searching for freeimage
+- More functions in mahotas.surf() to retrieve intermediate results
+- Improve compilation on Windows (patches by Christoph Gohlke)
+
 For version **0.6.1**:
 
 - Release the GIL in morphological functions
