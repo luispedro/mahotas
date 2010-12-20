@@ -42,7 +42,7 @@ Recent Changes
 
 For version **0.6.2**:
 
-Bugfix releas:
+Bugfix release:
 
 - Fix memory leak in _surf
 - More robust searching for freeimage
