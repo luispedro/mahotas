@@ -1,21 +1,9 @@
 import ctypes
+import ctypes.util
 import numpy as np
 import sys
 import os
 
-_lib_dirs = os.environ.get('LD_LIBRARY_PATH','').split(':')
-_lib_dirs = filter(None, _lib_dirs)
-_lib_dirs.extend([
-    os.path.dirname(__file__),
-    '/lib',
-    '/usr/lib',
-    '/usr/local/lib',
-    '/opt/local/lib',
-    ])
-_possible_filenames = (
-    'libfreeimage',
-    'libFreeImage',
-    )
 _API = {
     'FreeImage_Load': (ctypes.c_voidp,
                        [ctypes.c_int, ctypes.c_char_p, ctypes.c_int]),
@@ -40,30 +28,45 @@ def _register_api(lib, api):
         func.restype = restype
         func.argtypes = argtypes
 
-_FI = None
-if sys.platform == 'win32':
-    _FI = ctypes.windll.LoadLibrary(
-        os.path.join(os.path.abspath(os.path.dirname(__file__)), 'FreeImage.dll'))
-    if not _FI:
-        raise OSError('mahotas.freeimage: could not find FreeImage.dll')
+libname = ctypes.util.find_library('freeimage')
+if libname:
+    _FI = ctypes.CDLL(libname)
 else:
-    for d in _lib_dirs:
-        for libname in _possible_filenames:
-            try:
-                _FI = np.ctypeslib.load_library(libname, d)
-            except OSError:
-                pass
-            else:
+    _FI = None
+    _lib_dirs = os.environ.get('LD_LIBRARY_PATH','').split(':')
+    _lib_dirs = filter(None, _lib_dirs)
+    _lib_dirs.extend([
+        os.path.dirname(__file__),
+        '/lib',
+        '/usr/lib',
+        '/usr/local/lib',
+        '/opt/local/lib',
+        ])
+    _possible_filenames = (
+        'libfreeimage',
+        'libFreeImage',
+        )
+    if sys.platform == 'win32':
+        _FI = ctypes.windll.LoadLibrary(
+            os.path.join(os.path.abspath(os.path.dirname(__file__)), 'FreeImage.dll'))
+        if not _FI:
+            raise OSError('mahotas.freeimage: could not find FreeImage.dll')
+    else:
+        for d in _lib_dirs:
+            for libname in _possible_filenames:
+                try:
+                    _FI = np.ctypeslib.load_library(libname, d)
+                except OSError:
+                    pass
+                else:
+                    break
+
+            if _FI is not None:
                 break
 
-        if _FI is not None:
-            break
-
-    if not _FI:
-        raise OSError('mahotas.freeimage: could not find libFreeImage in any of the following '
-                      'directories: \'%s\'' % '\', \''.join(_lib_dirs))
-
-
+        if not _FI:
+            raise OSError('mahotas.freeimage: could not find libFreeImage in any of the following '
+                          'directories: \'%s\'' % '\', \''.join(_lib_dirs))
 
 _register_api(_FI, _API)
 
