@@ -19,7 +19,7 @@
 
 from __future__ import division
 import numpy as np
-from scipy import ndimage
+from . import convolve
 
 _hsobel_filter = np.array([
     [-1, 0, 1],
@@ -64,8 +64,9 @@ def sobel(img, just_filter=False):
     if ptp == 0:
         return img
     img /= ptp
-    vfiltered = ndimage.correlate(img, _vsobel_filter, mode='nearest') # This emulates Matlab's implementation
-    hfiltered = ndimage.correlate(img, _hsobel_filter, mode='nearest')
+    # Using 'nearest' seems to be MATLAB's implementation
+    vfiltered = convolve(img, _vsobel_filter, mode='nearest')
+    hfiltered = convolve(img, _hsobel_filter, mode='nearest')
     filtered = vfiltered**2 + hfiltered**2
     if just_filter:
         return filtered
