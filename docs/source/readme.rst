@@ -7,13 +7,15 @@ in numpy arrays.
 
 Notable algorithms:
  - watershed.
- - thresholding.
  - convex points calculations.
  - hit & miss. thinning.
- - Zernike & Haralick features.
+ - Zernike & Haralick, LBP, and TAS features.
  - freeimage based numpy image loading (requires freeimage libraries to be
-   installed).
-
+ installed).
+ - Speeded-Up Robust Features (SURF), a form of local features.
+ - thresholding.
+ - convolution.
+ - Sobel edge detection.
 
 Examples
 --------
