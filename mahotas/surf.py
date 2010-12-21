@@ -1,6 +1,6 @@
 # Copyright (C) 2010, Luis Pedro Coelho <lpc@cmu.edu>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
 # by the Free Software Foundation; either version 2 of the License,
@@ -62,7 +62,7 @@ def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1):
         input image
     nr_octaves : integer, optional
         Nr of octaves (default: 4)
-    nr_scale : integer, optional
+    nr_scales : integer, optional
         Nr of scales (default: 6)
     initial_step_size : integer, optional
         Initial step size in pixels (default: 1)
@@ -76,6 +76,71 @@ def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1):
         score and sign of the detector; and *D_i* is the descriptor
     '''
     return _surf.surf(integral(f), nr_octaves, nr_scales, initial_step_size)
+
+
+def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, is_integral=False):
+    '''
+    desc_array = interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, is_integral=False)
+
+    SURF Detector
+
+    Parameters
+    ----------
+    f : ndarray
+        input image or integral image (if `is_integral`)
+    nr_octaves : integer, optional
+        Nr of octaves (default: 4)
+    nr_scales : integer, optional
+        Nr of scales (default: 6)
+    initial_step_size : integer, optional
+        Initial step size in pixels (default: 1)
+    is_integral : boolean, optional
+        Whether `f` is an integral image
+
+    Returns
+    -------
+    points : ndarray of double, shape = (N, 5)
+        `N` is nr of points. Each point is represented as
+        *(y,x,scale,score,laplacian)* where *y,x,scale* is
+        the position, *score* and *laplacian* the score and sign of the
+        detector.
+
+    See Also
+    --------
+    surf : SURF detection and descriptors
+    descriptors : SURF descriptors
+    '''
+    if not is_integral:
+        f = integral(f)
+    return _surf.interest_points(f, nr_octaves, nr_scales, initial_step_size)
+
+
+def descriptors(f, interest_points, is_integral=False):
+    '''
+    desc_array = descriptors(f, interest_points, is_integral=False)
+
+    Compute SURF descriptors
+
+    Parameters
+    ----------
+    f : ndarray
+        input image or integral image (if `is_integral`)
+    interest_points : ndarray
+        interest points in the format returned by the ``interest_points()`` function
+    is_integral : boolean, optional
+        Whether `f` is an integral image
+
+    Returns
+    -------
+    points : ndarray of double, shape = (N, 6 + 64)
+        `N` is nr of points. Each point is represented as
+        *(y,x,scale,score,laplacian,angle, D_0,...,D_63)* where *y,x,scale* is
+        the position, *angle* the orientation, *score* and *laplacian* the
+        score and sign of the detector; and *D_i* is the descriptor
+    '''
+    if not is_integral:
+        f = integral(f)
+    return _surf.descriptors(f, interest_points)
 
 
 def show_surf(f, spoints, values=None, colors=None):
