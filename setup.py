@@ -60,12 +60,26 @@ ext_modules = [bbox, center_of_mass, convex, convolve, distance, histogram, labe
 packages = setuptools.find_packages()
 if 'tests' in packages: packages.remove('tests')
 
+classifiers = [
+'Development Status :: 5 - Production/Stable',
+'Intended Audience :: Developers',
+'Intended Audience :: Science/Research',
+'License :: OSI Approved :: GNU General Public License (GPL)',
+'Programming Language :: C++',
+'Topic :: Scientific/Engineering :: Image Recognition',
+'Topic :: Software Development :: Libraries',
+'Programming Language :: Python',
+]
+
 numpyutils.setup(name = 'mahotas',
       version = __version__,
       description = 'Mahotas: Python Image Processing Library',
       long_description = long_description,
       author = 'Luis Pedro Coelho',
       author_email = 'lpc@cmu.edu',
+      license = 'GPL',
+      platforms = ['Any'],
+      classifiers = classifiers,
       url = 'http://luispedro.org/software/mahotas',
       packages = packages,
       ext_modules = ext_modules,
