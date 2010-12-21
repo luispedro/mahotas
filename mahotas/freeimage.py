@@ -374,8 +374,6 @@ def _wrap_bitmap_bits_in_array(bitmap, shape, dtype):
             'version' : 3,
             }
 
-    # Still segfaulting on 64-bit machine because of illegal memory access
-
     return np.array(DummyArray(), copy=False)
 
 def _array_from_bitmap(bitmap):
