@@ -5,7 +5,7 @@ import sys
 import os
 
 _API = {
-    'FreeImage_Load': (ctypes.c_voidp,
+    'FreeImage_Load': (ctypes.c_void_p,
                        [ctypes.c_int, ctypes.c_char_p, ctypes.c_int]),
     'FreeImage_GetWidth': (ctypes.c_uint,
                            [ctypes.c_void_p]),
@@ -13,12 +13,24 @@ _API = {
                            [ctypes.c_void_p]),
     'FreeImage_GetImageType': (ctypes.c_uint,
                                [ctypes.c_void_p]),
+    'FreeImage_GetFileTypeFromMemory': (ctypes.c_int,
+                                [ctypes.c_void_p, ctypes.c_int]),
     'FreeImage_GetBPP': (ctypes.c_uint,
                          [ctypes.c_void_p]),
     'FreeImage_GetPitch': (ctypes.c_uint,
                            [ctypes.c_void_p]),
     'FreeImage_GetBits': (ctypes.c_void_p,
                           [ctypes.c_void_p]),
+    'FreeImage_OpenMemory': (ctypes.c_void_p,
+                            [ctypes.c_void_p, ctypes.c_uint32]),
+    'FreeImage_AcquireMemory': (ctypes.c_int,
+                            [ctypes.c_void_p, ctypes.POINTER(ctypes.c_void_p), ctypes.POINTER(ctypes.c_int)]),
+    'FreeImage_CloseMemory': (None,
+                            [ctypes.c_void_p]),
+    'FreeImage_LoadFromMemory': (ctypes.c_void_p,
+                            [ctypes.c_int, ctypes.c_void_p, ctypes.c_int]),
+    'FreeImage_SaveToMemory': (ctypes.c_int,
+                            [ctypes.c_int, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int]),
     }
 
 # Albert's ctypes pattern
@@ -246,6 +258,45 @@ class METADATA_MODELS(object):
     FIMD_ANIMATION = 9
     FIMD_CUSTOM = 10
 
+class FI_FORMAT(object):
+    FIF_UNKNOWN     = -1
+    FIF_BMP         =  0
+    FIF_ICO         =  1
+    FIF_JPEG        =  2
+    FIF_JNG         =  3
+    FIF_KOALA       =  4
+    FIF_LBM         =  5
+    FIF_IFF         = FIF_LBM
+    FIF_MNG         =  6
+    FIF_PBM         =  7
+    FIF_PBMRAW      =  8
+    FIF_PCD         =  9
+    FIF_PCX         = 10
+    FIF_PGM         = 11
+    FIF_PGMRAW      = 12
+    FIF_PNG         = 13
+    FIF_PPM         = 14
+    FIF_PPMRAW      = 15
+    FIF_RAS         = 16
+    FIF_TARGA       = 17
+    FIF_TIFF        = 18
+    FIF_WBMP        = 19
+    FIF_PSD         = 20
+    FIF_CUT         = 21
+    FIF_XBM         = 22
+    FIF_XPM         = 23
+    FIF_DDS         = 24
+    FIF_GIF         = 25
+    FIF_HDR         = 26
+    FIF_FAXG3       = 27
+    FIF_SGI         = 28
+    FIF_EXR         = 29
+    FIF_J2K         = 30
+    FIF_JP2         = 31
+    FIF_PFM         = 32
+    FIF_PICT        = 33
+    FIF_RAW         = 34
+
 def read(filename, flags=0):
     """Read an image to a numpy array of shape (width, height) for
     greyscale images, or shape (width, height, nchannels) for RGB or
@@ -461,6 +512,77 @@ def _array_to_bitmap(array):
     except:
       _FI.FreeImage_Unload(bitmap)
       raise
+
+
+def imsavetoblob(img, filetype, flags=0):
+    '''
+    s = imsavetoblob(img, filetype, flags=0)
+
+    Save `img` to a `str` object
+
+    Parameters
+    ----------
+    img : ndarray
+        input image
+    filetype : str or integer
+        A file name like string, used only to determine the file type.
+        Alternatively, an integer flag (from FI_FORMAT).
+    flags : integer, optional
+
+    Returns
+    -------
+    s : str
+        byte representation of `img` in format `filetype`
+    '''
+    if type(filetype) == str:
+        ftype = _FI.FreeImage_GetFIFFromFilename(filetype)
+    else:
+        ftype = filetype
+    try:
+        bitmap, fi_type = _array_to_bitmap(img)
+        mem = _FI.FreeImage_OpenMemory(0,0)
+        if not _FI.FreeImage_SaveToMemory(ftype, bitmap, mem, flags):
+            raise IOError('mahotas.freeimage.imsavetoblob: Cannot save to memory.')
+        data = ctypes.c_voidp()
+        size = ctypes.c_int()
+        _FI.FreeImage_AcquireMemory(mem, ctypes.byref(data), ctypes.byref(size))
+        return ctypes.string_at(data, size)
+    finally:
+        _FI.FreeImage_CloseMemory(mem)
+
+
+def imreadfromblob(blob, ftype=None, as_grey=False):
+    '''
+    arr = imreadfromblob(blob, ftype={auto}, as_grey=False)
+
+    Read an image from a blob (string)
+
+    Parameters
+    ----------
+    blob : str
+        Input
+    filetype : integer, optional
+        input type. By default, infer from image.
+    as_grey : boolean, optional
+        whether to convert colour images to grey scale
+
+    Returns
+    -------
+    arr : ndarray
+    '''
+    try:
+        mem = _FI.FreeImage_OpenMemory(blob, len(blob))
+        if ftype is None:
+            ftype = _FI.FreeImage_GetFileTypeFromMemory(mem, 0)
+        bitmap = _FI.FreeImage_LoadFromMemory(ftype, mem, 0)
+        img = _array_from_bitmap(bitmap)
+        if as_grey and len(img.shape) == 3:
+            # these are the values that wikipedia says are typical
+            transform = np.array([ 0.30,  0.59,  0.11])
+            return np.dot(img, transform)
+        return img
+    finally:
+        _FI.FreeImage_CloseMemory(mem)
 
 
 def imread(filename, as_grey=False):

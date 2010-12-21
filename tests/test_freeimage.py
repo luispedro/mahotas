@@ -42,3 +42,12 @@ def test_save_load_rgba():
     assert img.shape == img_.shape
     assert np.all(img == img_)
 
+def test_fromblob():
+    img = np.arange(100, dtype=np.uint8).reshape((10,10))
+    s = freeimage.imsavetoblob(img, 't.png')
+    assert np.all(freeimage.imreadfromblob(s) == img)
+
+    s = freeimage.imsavetoblob(img, 't.bmp')
+    assert np.all(freeimage.imreadfromblob(s) == img)
+
+
