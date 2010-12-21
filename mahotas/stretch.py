@@ -25,8 +25,9 @@ import numpy as np
 
 __all__ = ['stretch']
 
-def stretch(img, arg0, arg1=None, dtype=np.uint8):
+def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
     '''
+    img' = stretch(img, [dtype=np.uint8])
     img' = stretch(img, max, [dtype=np.uint8])
     img' = stretch(img, min, max, [dtype=np.uint8])
 
@@ -35,20 +36,28 @@ def stretch(img, arg0, arg1=None, dtype=np.uint8):
 
     Parameters
     ----------
-      img : an np.ndarray. It is *not modified* by this function
-      min : minimum value for output [default: 0]
-      max : maximum value for output
-      dtype : dtype of output [default: np.uint8]
+    img : ndarray
+        input image. It is *not modified* by this function
+    min : integer, optional
+        minimum value for output [default: 0]
+    max : integer, optional
+        maximum value for output [default: 255]
+    dtype : dtype of output,optional
+         [default: np.uint8]
 
     Returns
     -------
-      img': resulting image. ndarray of same shape as img and type dtype.
+    img': ndarray
+        resulting image. ndarray of same shape as `img` and type `dtype`.
 
     Bugs
     ----
-        If max > 255, then it truncates the values if dtype is not specified.
+    If max > 255, then it truncates the values if dtype is not specified.
     '''
-    if arg1 is None:
+    if arg0 is None:
+        min = 0
+        max = 255
+    elif arg1 is None:
         min = 0
         max = arg0
     else:
