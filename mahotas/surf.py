@@ -112,6 +112,9 @@ def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, is_integr
     '''
     if not is_integral:
         f = integral(f)
+    else:
+        if f.dtype != np.double:
+            raise TypeError('mahotas.surf: integral image must be of dtype double')
     return _surf.interest_points(f, nr_octaves, nr_scales, initial_step_size)
 
 
@@ -140,6 +143,9 @@ def descriptors(f, interest_points, is_integral=False):
     '''
     if not is_integral:
         f = integral(f)
+    else:
+        if f.dtype != np.double:
+            raise TypeError('mahotas.surf: integral image must be of dtype double')
     return _surf.descriptors(f, interest_points)
 
 
