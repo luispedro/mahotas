@@ -1,5 +1,6 @@
 Version 0.6.2+
 	* imreadfromblob() & imsavetoblob() functions
+	* `max_points` argument for mahotas.surf.interest_points()
 
 Version 0.6.2 2010-12-20
 	* Fix memory leak in _surf

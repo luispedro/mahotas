@@ -78,9 +78,9 @@ def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1):
     return _surf.surf(integral(f), nr_octaves, nr_scales, initial_step_size)
 
 
-def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, is_integral=False):
+def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, max_points=None, is_integral=False):
     '''
-    desc_array = interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, is_integral=False)
+    desc_array = interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, max_points={all}, is_integral=False)
 
     SURF Detector
 
@@ -94,6 +94,8 @@ def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, is_integr
         Nr of scales (default: 6)
     initial_step_size : integer, optional
         Initial step size in pixels (default: 1)
+    max_points : integer, optional
+        Maximum number of points to return. By default, return all.
     is_integral : boolean, optional
         Whether `f` is an integral image
 
@@ -115,7 +117,9 @@ def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, is_integr
     else:
         if f.dtype != np.double:
             raise TypeError('mahotas.surf: integral image must be of dtype double')
-    return _surf.interest_points(f, nr_octaves, nr_scales, initial_step_size)
+    if max_points is None:
+        max_points = -1
+    return _surf.interest_points(f, nr_octaves, nr_scales, initial_step_size, max_points)
 
 
 def descriptors(f, interest_points, is_integral=False):

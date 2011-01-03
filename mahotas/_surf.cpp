@@ -366,6 +366,9 @@ void get_interest_points(
             }
         }
     }
+    // sort all the points by how strong their score is
+    // We want the highest scoring in front, so we sort on rbegin()/rend()
+    std::sort(result_points.rbegin(), result_points.rend());
 }
 
 template <typename T>
@@ -649,8 +652,6 @@ std::vector<surf_point> get_surf_points(const numpy::aligned_array<T>& int_img, 
     std::vector<interest_point> points;
     build_pyramid<T>(int_img, pyramid, nr_octaves, nr_intervals, initial_step_size);
     get_interest_points(pyramid, 0.10, points, initial_step_size);
-    // sort all the points by how strong their detect is
-    std::sort(points.rbegin(), points.rend());
     // compute descriptors and return
     return compute_descriptors(int_img, points, max_points);
 }
@@ -746,7 +747,8 @@ PyObject* py_interest_points(PyObject* self, PyObject* args) {
     int nr_octaves;
     int nr_intervals;
     int initial_step_size;
-    if (!PyArg_ParseTuple(args,"Oiii", &array, &nr_octaves, &nr_intervals, &initial_step_size)) return NULL;
+    int max_points;
+    if (!PyArg_ParseTuple(args,"Oiiii", &array, &nr_octaves, &nr_intervals, &initial_step_size, &max_points)) return NULL;
     if (!PyArray_Check(array) || PyArray_NDIM(array) != 2) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
@@ -760,6 +762,11 @@ PyObject* py_interest_points(PyObject* self, PyObject* args) {
             gil_release nogil; \
             build_pyramid<type>(numpy::aligned_array<type>(array), pyramid, nr_octaves, nr_intervals, initial_step_size); \
             get_interest_points(pyramid, 0.10, interest_points, initial_step_size); \
+            if (max_points >= 0 && interest_points.size() > unsigned(max_points)) { \
+                interest_points.erase( \
+                            interest_points.begin() + max_points, \
+                            interest_points.end()); \
+            } \
         }
 
             HANDLE_TYPES();
