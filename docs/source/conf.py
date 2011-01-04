@@ -14,19 +14,11 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../sphinxext')))
-
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.pngmath', 'numpydoc',
               'sphinx.ext.intersphinx', 'sphinx.ext.coverage',
               'sphinx.ext.doctest',
               ]
 
-# If your extensions (or modules documented by autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.append(os.path.abspath('.'))
 
 # General configuration
 # ---------------------
