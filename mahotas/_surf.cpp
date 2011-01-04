@@ -425,7 +425,17 @@ void build_pyramid(numpy::aligned_array<T> integral,
                     Dxy *= area_inv;
 
                     const double sign_of_laplacian = (Dxx + Dyy < 0) ? -1 : +1;
-                    double determinant = Dxx*Dyy - 0.81*Dxy*Dxy;
+                    // The constant below is the matter of some debate:
+                    // In the original papers, the authors use 0.81 (.9^2).
+                    // However, some have claimed that 0.36 (.6^2) is better
+                    // and the review "Local Invariant Feature Detectors: A
+                    // Survey."by Tuytelaars T and Mikolajczyk K.; Foundations
+                    // and Trends® in Computer Graphics and Vision.
+                    // 2007;3(3):177-280. Available at:
+                    // http://www.nowpublishers.com/product.aspx?product=CGV&doi=0600000017.
+                    //
+                    // Also uses 0.6
+                    double determinant = Dxx*Dyy - 0.36*Dxy*Dxy;
 
                     // If the determinant is negative then just blank it out by setting
                     // it to zero.
