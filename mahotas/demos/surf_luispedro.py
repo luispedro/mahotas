@@ -5,7 +5,14 @@ import pymorph
 import mahotas.polygon
 from pylab import *
 
-f = mahotas.imread('mahotas/demos/data/luispedro.jpg', as_grey=True)
+from os import path
+
+luispedro_image = path.join(
+                    path.dirname(path.abspath(__file__)),
+                    'data',
+                    'luispedro.jpg')
+
+f = mahotas.imread(luispedro_image, as_grey=True)
 f = f.astype(np.uint8)
 spoints = mahotas._surf.surf(mahotas.surf.integral(f.copy()), 4, 6, 2)
 print "Nr points:", len(spoints)
