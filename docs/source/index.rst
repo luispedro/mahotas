@@ -8,6 +8,7 @@ Contents:
    :maxdepth: 2
 
    features
+   surf
    faq
    internals
 
