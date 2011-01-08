@@ -14,10 +14,16 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.pngmath', 'numpydoc',
-              'sphinx.ext.intersphinx', 'sphinx.ext.coverage',
-              'sphinx.ext.doctest',
-              ]
+extensions = [
+        'sphinx.ext.autodoc',
+        'sphinx.ext.pngmath',
+        'sphinx.ext.intersphinx',
+        'sphinx.ext.coverage',
+        'sphinx.ext.doctest',
+        'numpydoc',
+        'matplotlib.sphinxext.only_directives',
+        'matplotlib.sphinxext.plot_directive',
+        ]
 
 
 # General configuration
