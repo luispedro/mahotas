@@ -36,3 +36,11 @@ def test_borders():
     _included(mahotas.labeled.border(labeled,1,3), borders)
     _included(mahotas.labeled.border(labeled,2,3), borders)
 
+    union = np.zeros_like(borders)
+    for i in xrange(4):
+        for j in xrange(4):
+            if i != j:
+                union |= mahotas.labeled.border(labeled, i, j)
+
+    assert np.all(union == borders)
+
