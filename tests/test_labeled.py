@@ -20,3 +20,19 @@ def test_border():
 
     b13 = mahotas.labeled.border(labeled, 1, 3, always_return=0)
     assert b13 is None
+
+def _included(a,b):
+    assert np.sum(a&b) == a.sum()
+
+def test_borders():
+    labeled = np.zeros((32,32), np.uint8)
+    labeled[8:11] = 1
+    labeled[11:14] = 2
+    labeled[14:17] = 3
+    labeled[10,8:] = 0
+    borders = mahotas.labeled.borders(labeled)
+    _included(mahotas.labeled.border(labeled,1,2), borders)
+    _included(mahotas.labeled.border(labeled,1,23), borders)
+    _included(mahotas.labeled.border(labeled,1,3), borders)
+    _included(mahotas.labeled.border(labeled,2,3), borders)
+

@@ -49,3 +49,38 @@ def border(labeled, i, j, Bc=None, output=None, always_return=True):
         if output.shape != labeled.shape:
             raise ValueError('mahotas.labeled.border: output must be of same size as `labeled`')
     return _labeled.border(labeled, Bc, output, i, j, bool(always_return))
+
+def borders(labeled, Bc=None, output=None):
+    '''
+    border_img = borders(labeled, Bc={3x3 cross}, output={np.zeros(labeled.shape, bool)})
+
+    Compute border pixels
+
+    A pixel is on a border if it has value `i` and a pixel in its neighbourhood
+    (defined by `Bc`) has value `j`, with ``i != j``.
+
+    Parameters
+    ----------
+    labeled : ndarray of integer type
+        input labeled array
+    Bc : structure element, optional
+    output : ndarray of same shape as `labeled`, dtype=bool, optional
+        where to store the output. If ``None``, a new array is allocated
+
+    Returns
+    -------
+    border_img : boolean ndarray
+        Pixels are True exactly where there is a border in `labeled`
+    '''
+    Bc = get_structuring_elem(labeled, Bc)
+    if output is None:
+        output = np.zeros(labeled.shape, bool)
+    else:
+        if output.dtype != bool:
+            raise TypeError('mahotas.labeled.borders: output must be boolean')
+        if not output.flags['C_CONTIGUOUS']:
+            raise TypeError('mahotas.labeled.borders: output must be C-contiguous')
+        if output.shape != labeled.shape:
+            raise ValueError('mahotas.labeled.borders: output must be of same size as `labeled`')
+    return _labeled.borders(labeled, Bc, output)
+
