@@ -9,6 +9,7 @@ Contents:
 
    features
    surf
+   thresholding
    faq
    internals
 
