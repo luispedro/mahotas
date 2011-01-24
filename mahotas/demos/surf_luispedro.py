@@ -1,8 +1,5 @@
 import numpy as np
 import mahotas.surf
-import mahotas._surf
-import pymorph
-import mahotas.polygon
 from pylab import *
 
 from os import path
