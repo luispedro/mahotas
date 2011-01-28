@@ -50,9 +50,9 @@ def integral(f, in_place=False, dtype=np.double):
             f = f.copy()
     return _surf.integral(f)
 
-def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1):
+def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1):
     '''
-    points = surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1):
+    points = surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1):
 
     Run SURF detection and descriptor computations
 
@@ -66,6 +66,8 @@ def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1):
         Nr of scales (default: 6)
     initial_step_size : integer, optional
         Initial step size in pixels (default: 1)
+    threshold : float, optional
+        Threshold of the strength of the interest point (default: 0.1)
 
     Returns
     -------
@@ -75,12 +77,12 @@ def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1):
         the position, *angle* the orientation, *score* and *laplacian* the
         score and sign of the detector; and *D_i* is the descriptor
     '''
-    return _surf.surf(integral(f), nr_octaves, nr_scales, initial_step_size)
+    return _surf.surf(integral(f), nr_octaves, nr_scales, initial_step_size, threshold)
 
 
-def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, max_points=None, is_integral=False):
+def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points=None, is_integral=False):
     '''
-    desc_array = interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, max_points={all}, is_integral=False)
+    desc_array = interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points={all}, is_integral=False)
 
     SURF Detector
 
@@ -94,6 +96,8 @@ def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, max_point
         Nr of scales (default: 6)
     initial_step_size : integer, optional
         Initial step size in pixels (default: 1)
+    threshold : float, optional
+        Threshold of the strength of the interest point (default: 0.1)
     max_points : integer, optional
         Maximum number of points to return. By default, return all.
     is_integral : boolean, optional
@@ -119,7 +123,7 @@ def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, max_point
             raise TypeError('mahotas.surf: integral image must be of dtype double')
     if max_points is None:
         max_points = -1
-    return _surf.interest_points(f, nr_octaves, nr_scales, initial_step_size, max_points)
+    return _surf.interest_points(f, nr_octaves, nr_scales, initial_step_size, threshold, max_points)
 
 
 def descriptors(f, interest_points, is_integral=False):

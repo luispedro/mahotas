@@ -658,14 +658,14 @@ std::vector<surf_point> compute_descriptors(
 }
 
 template<typename T>
-std::vector<surf_point> get_surf_points(const numpy::aligned_array<T>& int_img, const int nr_octaves, const int nr_intervals, const int initial_step_size, const int max_points) {
+std::vector<surf_point> get_surf_points(const numpy::aligned_array<T>& int_img, const int nr_octaves, const int nr_intervals, const int initial_step_size, const float threshold, const int max_points) {
     assert(max_points > 0);
     hessian_pyramid pyramid;
 
     gil_release nogil;
     std::vector<interest_point> points;
     build_pyramid<T>(int_img, pyramid, nr_octaves, nr_intervals, initial_step_size);
-    get_interest_points(pyramid, 0.10, points, initial_step_size);
+    get_interest_points(pyramid, threshold, points, initial_step_size);
     // compute descriptors and return
     return compute_descriptors(int_img, points, max_points);
 }
@@ -676,7 +676,8 @@ PyObject* py_surf(PyObject* self, PyObject* args) {
     int nr_octaves;
     int nr_intervals;
     int initial_step_size;
-    if (!PyArg_ParseTuple(args,"Oiii", &array, &nr_octaves, &nr_intervals, &initial_step_size)) return NULL;
+    float threshold;
+    if (!PyArg_ParseTuple(args,"Oiiif", &array, &nr_octaves, &nr_intervals, &initial_step_size, &threshold)) return NULL;
     if (!PyArray_Check(array) ||
         PyArray_NDIM(array) != 2 ||
         PyArray_TYPE(array) != NPY_DOUBLE) {
@@ -692,6 +693,7 @@ PyObject* py_surf(PyObject* self, PyObject* args) {
                         nr_octaves,
                         nr_intervals,
                         initial_step_size,
+                        threshold,
                         max_points);
 
         numpy::aligned_array<double> arr = numpy::new_array<double>(spoints.size(), surf_point::ndoubles);
@@ -762,7 +764,8 @@ PyObject* py_interest_points(PyObject* self, PyObject* args) {
     int nr_intervals;
     int initial_step_size;
     int max_points;
-    if (!PyArg_ParseTuple(args,"Oiiii", &array, &nr_octaves, &nr_intervals, &initial_step_size, &max_points)) return NULL;
+    float threshold;
+    if (!PyArg_ParseTuple(args,"Oiiifi", &array, &nr_octaves, &nr_intervals, &initial_step_size, &threshold, &max_points)) return NULL;
     if (!PyArray_Check(array) || PyArray_NDIM(array) != 2) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
@@ -775,7 +778,7 @@ PyObject* py_interest_points(PyObject* self, PyObject* args) {
         #define HANDLE(type) {\
             gil_release nogil; \
             build_pyramid<type>(numpy::aligned_array<type>(array), pyramid, nr_octaves, nr_intervals, initial_step_size); \
-            get_interest_points(pyramid, 0.10, interest_points, initial_step_size); \
+            get_interest_points(pyramid, threshold, interest_points, initial_step_size); \
             if (max_points >= 0 && interest_points.size() > unsigned(max_points)) { \
                 interest_points.erase( \
                             interest_points.begin() + max_points, \
