@@ -75,6 +75,10 @@ double haar_y(const integral_image_type& integral, int y, int x, const int w) {
     const double bottom = sum_rect(integral,       y,  x - w/2, (y - w/2) + w, (x - w/2) + w);
     return top - bottom;
 }
+int round(double f) {
+    if (f > 0) return int(f+.5);
+    return int(f-.5);
+}
 
 int get_border_size(const int octave, const int nr_intervals) {
     const double lobe_size = std::pow(2.0, octave+1.0)*(nr_intervals+1) + 1;
@@ -510,8 +514,8 @@ double compute_dominant_angle(
             if (r*r + c*c < 36) {
                 // compute a Gaussian weighted gradient and the gradient's angle.
                 const double gauss = gaussian(c,r, 2.5);
-                vect.y() = gauss*haar_y(img, int(scale*r+center.y()), int(scale*c+center.x()), static_cast<int>(4*scale+0.5));
-                vect.x() = gauss*haar_x(img, int(scale*r+center.y()), int(scale*c+center.x()), static_cast<int>(4*scale+0.5));
+                vect.y() = gauss*haar_y(img, round(scale*r+center.y()), round(scale*c+center.x()), (~1)&static_cast<int>(4*scale+0.5));
+                vect.x() = gauss*haar_x(img, round(scale*r+center.y()), round(scale*c+center.x()), (~1)&static_cast<int>(4*scale+0.5));
 
                 samples.push_back(std::make_pair(vect.angle(), vect));
             }
@@ -532,8 +536,8 @@ double compute_dominant_angle(
     //
     // So, we first compute vect_0 and then update it to get vect_i for i > 0
 
-    vect.clear();
     int j;
+    vect = samples[0].second;
     for (j = 1; j != Nsamples && between_angles(samples[0].first, samples[j].first); ++j) {
         vect += samples[j].second;
     }
