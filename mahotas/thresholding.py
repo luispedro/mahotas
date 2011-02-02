@@ -25,8 +25,9 @@ Thresholding Module
 ===================
 
 Thresholding functions:
-    * otsu(): Otsu method
-    * rc(): Riddler-Calvard's method
+
+:otsu(): Otsu method
+:rc(): Riddler-Calvard's method
 '''
 
 from __future__ import division
@@ -46,8 +47,8 @@ def otsu(img, ignore_zeros=False):
 
     Parameters
     ----------
-    img : an image as a numpy array. This should be of an unsigned
-        integer type.
+    img : an image as a numpy array.
+        This should be of an unsigned integer type.
     ignore_zeros : Boolean
         whether to ignore zero-valued pixels
         (default: False)
