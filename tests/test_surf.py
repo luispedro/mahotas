@@ -55,9 +55,11 @@ def test_interest_points_descriptors():
     fi = mahotas.surf.integral(f)
     spoints = mahotas.surf.surf(f, 6, 24, 1)
     for arr, is_integral in zip([f,fi], [False, True]):
-        points = mahotas.surf.interest_points(arr, 6, 24, 1, is_integral)
+        points = mahotas.surf.interest_points(arr, 6, 24, 1, is_integral=is_integral)
         points = list(points)
         points.sort(key=(lambda p: -p[3]))
         points = np.array(points, dtype=np.float64)
         descs = mahotas.surf.descriptors(arr, points, is_integral)
         assert np.all(descs[:len(spoints)] == spoints)
+
+
