@@ -2,7 +2,6 @@ import mahotas.polygon
 from pylab import imshow, show
 import numpy as np
 import mahotas.surf
-import mahotas._surf
 
 f = np.zeros((1024,1024))
 Y,X = np.indices(f.shape)
