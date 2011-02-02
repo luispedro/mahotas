@@ -46,17 +46,18 @@ def get_structuring_elem(A,Bc):
     ----------
     A : array which will be operated on
     Bc : can be either:
-        - None: Then Bc is taken to be 1
-        - an integer: There are two associated semantics:
-            - connectivity:
+        :None: Then Bc is taken to be 1
+        :An integer: There are two associated semantics:
+            connectivity
               ``Bc[y,x] = [[ is |y - 1| + |x - 1| <= Bc_i ]]``
-            - count:
+            count
               ``Bc.sum() == Bc_i``
               This is the more traditional meaning (when one writes that "4-connected", this is what
               one has in mind).
+
           Fortunately, the value itself allows one to distinguish between the two semantics and, if
           used correctly, no ambiguity should ever occur.
-        - An array. This should be of the same nr. of dimensions as A and will be passed through if of the
+        :An array: This should be of the same nr. of dimensions as A and will be passed through if of the
             right type. Otherwise, it will be cast.
 
     Returns
