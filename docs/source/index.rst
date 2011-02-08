@@ -10,6 +10,7 @@ Contents:
    features
    surf
    thresholding
+   distance
    faq
    internals
 
