@@ -16,6 +16,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <limits>
 
 extern "C" {
     #include <Python.h>
@@ -288,7 +289,12 @@ inline const interest_point interpolate_point (
     const double F = Md*Me-Mf*Ma;
 
     const double L = Ma*A - Md*D + Me*E;
-    if (L == 0) throw PythonException(PyExc_RuntimeError, "Determinant is zero.");
+    // it might be, that we encounter a degraded point. ignore it
+    if (L == 0) {
+        interest_point res;
+        res.score = -std::numeric_limits<double>::max();
+        return res;
+    }
 
     // H^{-1} = 1./L | A D E |
     //               | D B F |
@@ -365,7 +371,6 @@ void get_interest_points(
                             result_points.push_back(sp);
                         }
                     }
-
                 }
             }
         }
