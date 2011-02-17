@@ -25,9 +25,17 @@ Notable algorithms:
 Recent Changes
 --------------
 
+For version 0.6.3
+~~~~~~~~~~~~~~~~~
+- Improve ``mahotas.stretch()`` function
+- Fix corner case in surf (when determinant was zero)
+- ``threshold`` argument in mahotas.surf
+- imreadfromblob() & imsavetoblob() functions
+- ``max_points`` argument for mahotas.surf.interest_points()
+- Add ``mahotas.labeled.borders`` function
 
-For version **0.6.2**
-~~~~~~~~~~~~~~~~~~~~~
+For version 0.6.2
+~~~~~~~~~~~~~~~~~
 
 Bugfix release:
 
