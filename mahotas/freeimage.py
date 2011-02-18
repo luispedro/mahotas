@@ -7,6 +7,8 @@ import os
 _API = {
     'FreeImage_Load': (ctypes.c_void_p,
                        [ctypes.c_int, ctypes.c_char_p, ctypes.c_int]),
+    'FreeImage_Unload': (None,
+                        [ctypes.c_void_p]),
     'FreeImage_GetWidth': (ctypes.c_uint,
                            [ctypes.c_void_p]),
     'FreeImage_GetHeight': (ctypes.c_uint,
