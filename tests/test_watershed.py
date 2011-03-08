@@ -46,3 +46,13 @@ def test_watershed2():
     assert np.all( (W == 1) | (W == 2) )
 
 
+def test_mix_types():
+    f = np.zeros((64,64), np.uint16)
+    f += np.indices(f.shape)[1]**2
+    f += (np.indices(f.shape)[0]-23)**2
+    markers = np.zeros((64,64), np.int64)
+    markers[32,32] = 1
+# Below used to force a crash (at least in debug mode)
+    a,b = mahotas.cwatershed(f, markers, return_lines=1)
+
+

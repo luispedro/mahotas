@@ -321,12 +321,16 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args,"OOOi", &array, &markers, &Bc,&return_lines)) {
         return NULL;
     }
+    if (PyArray_TYPE(array) != PyArray_TYPE(markers)) {
+        PyErr_SetString(PyExc_RuntimeError, "mahotas._cwatershed: markers and f should have the same type");
+        return NULL;
+    }
     PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
     if (!res_a) return NULL;
     PyArrayObject* lines =  0;
     numpy::aligned_array<bool>* lines_a = 0;
     if (return_lines) {
-        lines = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
+        lines = (PyArrayObject*)PyArray_SimpleNew(array->nd, array->dimensions, NPY_BOOL);
         if (!lines) return NULL;
         lines_a = new numpy::aligned_array<bool>(lines);
     }
