@@ -109,10 +109,12 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
     Parameters
     ----------
     surface : image
-    markers : initial markers (must be a labeled image)
-    Bc : structuring element (default: 3x3 cross)
-    return_lines : whether to return separating lines
-                   (in addition to regions)
+    markers : image
+        initial markers (must be a labeled image)
+    Bc : ndarray, optional
+        structuring element (default: 3x3 cross)
+    return_lines : boolean, optional
+        whether to return separating lines (in addition to regions)
 
     Returns
     -------
