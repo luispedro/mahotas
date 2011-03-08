@@ -1,7 +1,7 @@
 #ifndef MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_
 #define MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_
-/* Copyright 2008-2010 (C)
- * Luis Pedro Coelho <lpc@cmu.edu>
+/* Copyright 2008-2011 (C)
+ * Luis Pedro Coelho <luis@luispedro.org>
  * License GPL Version 2, or later.
  */
 
@@ -11,6 +11,7 @@
 #include <cstring>
 #include <ostream>
 #include <iostream>
+#include <cassert>
 
 extern "C" {
     #include <Python.h>
@@ -203,7 +204,9 @@ class array_base {
             :array_(other.array_)
             {
                 if (sizeof(BaseType) != PyArray_ITEMSIZE(array_)) {
-                    std::cerr << "mahotas: mix up of array types.\n";
+                    std::cerr << "mahotas:" << __PRETTY_FUNCTION__ << " mix up of array types"
+                        << " [using size " <<sizeof(BaseType) << " expecting " << PyArray_ITEMSIZE(array_) << "]\n";
+                    assert(false);
                 }
                 Py_INCREF(array_);
             }
@@ -212,7 +215,9 @@ class array_base {
             :array_(array)
             {
                 if (sizeof(BaseType) != PyArray_ITEMSIZE(array_)) {
-                    std::cerr << "mahotas: mix up of array types.\n";
+                    std::cerr << "mahotas:" << __PRETTY_FUNCTION__ << " mix up of array types"
+                        << " [using size " <<sizeof(BaseType) << " expecting " << PyArray_ITEMSIZE(array_) << "]\n";
+                    assert(false);
                 }
                 Py_INCREF(array_);
             }
