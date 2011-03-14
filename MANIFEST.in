@@ -5,4 +5,5 @@ include mahotas/*h
 include mahotas/*py
 include README.rst
 include docs/source/*.rst
+include ChangeLog
 
