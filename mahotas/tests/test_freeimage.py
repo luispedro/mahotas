@@ -2,6 +2,7 @@ import numpy as np
 from mahotas import freeimage
 from mahotas import imread,imsave
 import os
+from os import path
 from nose.tools import with_setup
 
 _testimgname = '/tmp/mahotas_test.png'
@@ -30,7 +31,11 @@ def test_as_grey():
     assert c2.shape == colour.shape[:-1]
 
 def test_rgba():
-    rgba = imread('tests/data/rgba.png')
+    rgba = path.join(
+                path.dirname(__file__),
+                'data',
+                'rgba.png')
+    rgba = imread(rgba)
     assert np.all(np.diff(rgba[:,:,3].mean(1)) < 0 ) # the image contains an alpha gradient
 
 
