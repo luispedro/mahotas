@@ -1,5 +1,7 @@
 Version 0.6.3+
 	* Fix bug in ``cwatershed()`` when using return_lines=1
+	* Move tests to mahotas.tests and include them in distribution
+	* Include ChangeLog in distribution
 
 Version 0.6.3 2011-02-17
 	* Improve ``mahotas.stretch()`` function
