@@ -11,7 +11,7 @@ luispedro_image = path.join(
 
 f = mahotas.imread(luispedro_image, as_grey=True)
 f = f.astype(np.uint8)
-spoints = mahotas._surf.surf(mahotas.surf.integral(f.copy()), 4, 6, 2)
+spoints = mahotas.surf.surf(f, 4, 6, 2)
 print "Nr points:", len(spoints)
 
 try:
