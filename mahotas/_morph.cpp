@@ -321,8 +321,8 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args,"OOOi", &array, &markers, &Bc,&return_lines)) {
         return NULL;
     }
-    if (PyArray_TYPE(array) != PyArray_TYPE(markers)) {
-        PyErr_SetString(PyExc_RuntimeError, "mahotas._cwatershed: markers and f should have the same type");
+    if (!PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(markers))) {
+        PyErr_SetString(PyExc_RuntimeError, "mahotas._cwatershed: markers and f should have equivalent types.");
         return NULL;
     }
     PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
