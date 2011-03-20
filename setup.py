@@ -80,5 +80,6 @@ numpyutils.setup(name = 'mahotas',
       url = 'http://luispedro.org/software/mahotas',
       packages = packages,
       ext_modules = ext_modules,
+      test_suite = 'nose.collector',
       )
 
