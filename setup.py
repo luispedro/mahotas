@@ -55,7 +55,13 @@ zernike = numpyutils.Extension('mahotas._zernike', sources = ['mahotas/_zernike.
 ext_modules = [bbox, center_of_mass, convex, convolve, distance, histogram, labeled, lbp, morph, surf, texture, thin, zernike]
 
 packages = setuptools.find_packages()
-if 'tests' in packages: packages.remove('tests')
+
+package_dir = {
+    'mahotas.tests': 'mahotas/tests',
+    }
+package_data = {
+    'mahotas.tests': ['data/*.png'],
+    }
 
 classifiers = [
 'Development Status :: 5 - Production/Stable',
@@ -80,6 +86,8 @@ numpyutils.setup(name = 'mahotas',
       url = 'http://luispedro.org/software/mahotas',
       packages = packages,
       ext_modules = ext_modules,
+      package_dir = package_dir,
+      package_data = package_data,
       test_suite = 'nose.collector',
       )
 
