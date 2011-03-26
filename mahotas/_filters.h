@@ -1,10 +1,11 @@
+#include <assert.h>
+#include "numpypp/array.hpp"
+
 extern "C" {
     #include <Python.h>
     #include <numpy/ndarrayobject.h>
 }
 
-#include "numpypp/array.hpp"
-#include <assert.h>
 
 
 /* The different boundary conditions. The mirror condition is not used
