@@ -14,8 +14,7 @@ Notable algorithms:
  - convex points calculations.
  - hit & miss. thinning.
  - Zernike & Haralick, LBP, and TAS features.
- - freeimage based numpy image loading (requires freeimage libraries to be
- installed).
+ - freeimage based numpy image loading (requires freeimage libraries to be installed).
  - Speeded-Up Robust Features (SURF), a form of local features.
  - thresholding.
  - convolution.
