@@ -4,6 +4,7 @@ Version 0.6.3+
 	markers
 	* Move tests to mahotas.tests and include them in distribution
 	* Include ChangeLog in distribution
+	* Fix compilation on the Mac OS
 
 Version 0.6.3 2011-02-17
 	* Improve ``mahotas.stretch()`` function
