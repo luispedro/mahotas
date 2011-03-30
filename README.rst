@@ -15,7 +15,7 @@ Notable algorithms:
  - hit & miss. thinning.
  - Zernike & Haralick, LBP, and TAS features.
  - freeimage based numpy image loading (requires freeimage libraries to be
- installed).
+   installed).
  - Speeded-Up Robust Features (SURF), a form of local features.
  - thresholding.
  - convolution.
