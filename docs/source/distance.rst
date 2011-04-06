@@ -46,4 +46,5 @@ API Documentation
 
 .. automodule:: mahotas
     :members: distance
+    :noindex:
 
