@@ -60,10 +60,10 @@ numpy::index_type margin_of(const numpy::position& position, const numpy::array_
 template<typename T>
 void erode(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc) {
     gil_release nogil;
-    const unsigned N = res.size();
+    const int N = res.size();
     typename numpy::aligned_array<T>::iterator iter = array.begin();
     filter_iterator<T> filter(res.raw_array(), Bc.raw_array());
-    const unsigned N2 = filter.size();
+    const int N2 = filter.size();
     T* rpos = res.data();
 
     for (int i = 0; i != N; ++i, ++rpos, filter.iterate_with(iter), ++iter) {
@@ -101,10 +101,10 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
 template<typename T>
 void dilate(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_array<T> Bc) {
     gil_release nogil;
-    const unsigned N = res.size();
+    const int N = res.size();
     typename numpy::array<T>::iterator iter = array.begin();
     filter_iterator<T> filter(array.raw_array(), Bc.raw_array());
-    const unsigned N2 = filter.size();
+    const int N2 = filter.size();
     // T* is a fine iterator type.
     T* rpos = res.data();
 
@@ -141,9 +141,9 @@ void close_holes(numpy::aligned_array<bool> ref, numpy::aligned_array<bool> f, n
     std::fill_n(f.data(),f. size(), false);
 
     std::vector<numpy::position> stack;
-    const unsigned N = ref.size();
+    const int N = ref.size();
     const std::vector<numpy::position> Bc_neighbours = neighbours(Bc);
-    const unsigned N2 = Bc_neighbours.size();
+    const int N2 = Bc_neighbours.size();
     for (int d = 0; d != ref.ndims(); ++d) {
         if (ref.dim(d) == 0) continue;
         numpy::position pos;
@@ -164,7 +164,7 @@ void close_holes(numpy::aligned_array<bool> ref, numpy::aligned_array<bool> f, n
 
             for (int j = 0; j != ref.ndims() - 1; ++j) {
                 if (j == d) ++j;
-                if (pos.position_[j] < ref.dim(j)) {
+                if (pos.position_[j] < int(ref.dim(j))) {
                     ++pos.position_[j];
                     break;
                 }
@@ -237,8 +237,8 @@ struct NeighbourElem {
 template<typename BaseType>
 void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* lines, numpy::aligned_array<BaseType> array, numpy::aligned_array<BaseType> markers, numpy::aligned_array<BaseType> Bc) {
     gil_release nogil;
-    const unsigned N = res.size();
-    const unsigned N2 = Bc.size();
+    const int N = res.size();
+    const int N2 = Bc.size();
     std::vector<NeighbourElem> neighbours;
     const numpy::position centre = central_position(Bc);
     typename numpy::aligned_array<BaseType>::iterator Bi = Bc.begin();
@@ -415,7 +415,7 @@ void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, 
         for (std::vector<HitMissNeighbour>::const_iterator neighbour = neighbours.begin(), past = neighbours.end();
             neighbour != past;
             ++neighbour) {
-            if (input.at_flat(i + neighbour->delta) != neighbour->value) {
+            if (input.at_flat(i + neighbour->delta) != static_cast<T>(neighbour->value)) {
                 value = 0;
                 break;
             }

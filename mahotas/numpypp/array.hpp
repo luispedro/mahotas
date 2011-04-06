@@ -233,12 +233,12 @@ class array_base {
             std::swap(this->array_, other.array_);
         }
 
-        unsigned size() const { return PyArray_SIZE(array_); }
-        unsigned size(unsigned i) const {
+        index_type size() const { return PyArray_SIZE(array_); }
+        index_type size(index_type i) const {
             return this->dim(i);
         }
-        unsigned ndims() const { return PyArray_NDIM(array_); }
-        unsigned dim(unsigned i) const {
+        index_type ndims() const { return PyArray_NDIM(array_); }
+        index_type dim(index_type i) const {
             assert(i < this->ndims());
             return PyArray_DIM(array_,i);
         }

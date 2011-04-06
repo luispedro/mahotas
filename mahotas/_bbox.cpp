@@ -25,12 +25,12 @@ const char TypeErrorMsg[] =
 template<typename T>
 void bbox(numpy::aligned_array<T> array, numpy::index_type* extrema) {
     gil_release nogil;
-    const unsigned N = array.size();
+    const int N = array.size();
     typename numpy::aligned_array<T>::iterator pos = array.begin();
-    for (unsigned i = 0; i != N; ++i, ++pos) {
+    for (int i = 0; i != N; ++i, ++pos) {
         if (*pos) {
             numpy::position where = pos.position();
-            for (unsigned j = 0; j != array.ndims(); ++j) {
+            for (int j = 0; j != array.ndims(); ++j) {
                 extrema[2*j] = std::min<numpy::index_type>(extrema[2*j], where[j]);
                 extrema[2*j+1] = std::max<numpy::index_type>(extrema[2*j+1], where[j]+1);
             }
@@ -40,10 +40,10 @@ void bbox(numpy::aligned_array<T> array, numpy::index_type* extrema) {
 
 
 template<typename T>
-void carray2_bbox(const T* array, unsigned N0, unsigned N1, numpy::index_type* extrema) {
+void carray2_bbox(const T* array, int N0, int N1, numpy::index_type* extrema) {
     gil_release nogil;
-    for (unsigned y = 0; y != N0; ++y) {
-        for (unsigned x = 0; x < N1; ++x, ++array)
+    for (int y = 0; y != N0; ++y) {
+        for (int x = 0; x < N1; ++x, ++array)
             if (*array) {
                 extrema[0] = std::min<numpy::index_type>(extrema[0], y);
                 extrema[1] = std::max<numpy::index_type>(extrema[1], y+1);

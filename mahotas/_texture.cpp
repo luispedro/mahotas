@@ -94,7 +94,7 @@ PyObject* py_compute_plus_minus(PyObject* self, PyObject* args) {
     numpy::aligned_array<double> px_plus_y(px_plus_y_);
     numpy::aligned_array<double> px_minus_y(px_minus_y_);
     const int N = p.size(0);
-    if (p.size(1) != unsigned(N)) {
+    if (p.size(1) != N) {
         PyErr_SetString(PyExc_RuntimeError, "compute_plus_minus: p is not square.");
         return NULL;
     }
