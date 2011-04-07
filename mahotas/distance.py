@@ -29,18 +29,21 @@ def distance(bw, metric='euclidean2'):
 
     Parameters
     ----------
-      bw : Black & White image
-      metric : one of 'euclidean2' or 'euclidean'
+    bw : 2d-ndarray
+        Black & White image
+    metric : str, optional
+        one of 'euclidean2' (default) or 'euclidean'
 
     Returns
     -------
-      dmap : distance map
+    dmap : ndarray
+        distance map
 
     Reference
     ---------
-     Felzenszwalb P, Huttenlocher D. *Distance transforms of sampled functions.
+    Felzenszwalb P, Huttenlocher D. *Distance transforms of sampled functions.
     Cornell Computing and Information.* 2004.
-    
+
     Available at:
     http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.88.1647&rep=rep1&type=pdf.
     '''
