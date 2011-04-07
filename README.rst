@@ -25,6 +25,15 @@ Notable algorithms:
 Recent Changes
 --------------
 
+For version 0.6.4
+~~~~~~~~~~~~~~~~~
+
+- Fix bug in ``cwatershed()`` when using return_lines=1
+- Fix bug in ``cwatershed()`` when using equivalent types for image and markers
+- Move tests to mahotas.tests and include them in distribution
+- Include ChangeLog in distribution
+- Fix compilation on the Mac OS
+- Fix compilation warnings on gcc
 For version 0.6.3
 ~~~~~~~~~~~~~~~~~
 - Improve ``mahotas.stretch()`` function
@@ -64,12 +73,6 @@ Bugfix release:
 - Haralick for 3D images
 - Fix mahotas.imread for RGBA images
 
-0.5.3 (Oct 29 2010)
-~~~~~~~~~~~~~~~~~~~
-
-- Releases GIL when possible
-- Added ``imresize()``
-- Much improved ``thin()`` function
 
 *Website*: `http://luispedro.org/software/mahotas
 <http://luispedro.org/software/mahotas>`_

@@ -42,6 +42,15 @@ threshold).
 Recent Changes
 --------------
 
+For version **0.6.4**:
+
+- Fix bug in ``cwatershed()`` when using return_lines=1
+- Fix bug in ``cwatershed()`` when using equivalent types for image and markers
+- Move tests to mahotas.tests and include them in distribution
+- Include ChangeLog in distribution
+- Fix compilation on the Mac OS
+- Fix compilation warnings on gcc
+
 For version **0.6.3**:
 
 - Improve ``mahotas.stretch()`` function

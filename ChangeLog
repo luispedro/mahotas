@@ -1,10 +1,10 @@
-Version 0.6.3+
+Version 0.6.4 2011-04-06 by luispedro
 	* Fix bug in ``cwatershed()`` when using return_lines=1
 	* Fix bug in ``cwatershed()`` when using equivalent types for image and
 	markers
 	* Move tests to mahotas.tests and include them in distribution
 	* Include ChangeLog in distribution
-	* Fix compilation on the Mac OS
+	* Fix compilation on the Mac OS (patch by K-Michael Aye)
 	* Fix compilation warnings on gcc
 
 Version 0.6.3 2011-02-17
