@@ -433,25 +433,25 @@ struct aligned_array : public array_base<BaseType> {
             return *static_cast<BaseType*>(PyArray_GETPTR1(this->array_, p0));
         }
         BaseType at(int p0, int p1) const {
-            assert(unsigned(p0) < this->dim(0));
-            assert(unsigned(p1) < this->dim(1));
+            assert(p0 < this->dim(0));
+            assert(p1 < this->dim(1));
             return *static_cast<BaseType*>(PyArray_GETPTR2(this->array_, p0, p1));
         }
         BaseType& at(int p0, int p1) {
-            assert(unsigned(p0) < this->dim(0));
-            assert(unsigned(p1) < this->dim(1));
+            assert(p0 < this->dim(0));
+            assert(p1 < this->dim(1));
             return *static_cast<BaseType*>(PyArray_GETPTR2(this->array_, p0, p1));
         }
         BaseType at(int p0, int p1, int p2) const {
-            assert(unsigned(p0) < this->dim(0));
-            assert(unsigned(p1) < this->dim(1));
-            assert(unsigned(p2) < this->dim(2));
+            assert(p0 < this->dim(0));
+            assert(p1 < this->dim(1));
+            assert(p2 < this->dim(2));
             return *static_cast<BaseType*>(PyArray_GETPTR3(this->array_, p0, p1, p2));
         }
         BaseType& at(int p0, int p1, int p2) {
-            assert(unsigned(p0) < this->dim(0));
-            assert(unsigned(p1) < this->dim(1));
-            assert(unsigned(p2) < this->dim(2));
+            assert(p0 < this->dim(0));
+            assert(p1 < this->dim(1));
+            assert(p2 < this->dim(2));
             return *static_cast<BaseType*>(PyArray_GETPTR3(this->array_, p0, p1, p2));
         }
 };

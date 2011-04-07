@@ -298,7 +298,7 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
                 // we are good, but the margin might have been wrong. Recompute
                 nmargin = margin_of(npos, markers);
             }
-            assert(npos < cost.size());
+            assert(npos < int(cost.size()));
             if (!status[npos]) {
                 BaseType ncost = array.at_flat(npos);
                 if (ncost < cost[npos]) {
