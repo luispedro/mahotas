@@ -22,6 +22,10 @@ extern "C" {
 
 #include "numpy.hpp"
 
+#ifndef __GNUC__
+#define __PRETTY_FUNCTION__ ""
+#endif
+
 template <typename T>
 struct filter_iterator;
 
