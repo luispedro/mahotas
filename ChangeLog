@@ -1,3 +1,6 @@
+Version 0.6.4+
+	* Add `max_points` argument to mahotas.surf
+
 Version 0.6.4 2011-04-06 by luispedro
 	* Fix bug in ``cwatershed()`` when using return_lines=1
 	* Fix bug in ``cwatershed()`` when using equivalent types for image and

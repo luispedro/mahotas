@@ -682,7 +682,8 @@ PyObject* py_surf(PyObject* self, PyObject* args) {
     int nr_intervals;
     int initial_step_size;
     float threshold;
-    if (!PyArg_ParseTuple(args,"Oiiif", &array, &nr_octaves, &nr_intervals, &initial_step_size, &threshold)) return NULL;
+    int max_points;
+    if (!PyArg_ParseTuple(args,"Oiiifi", &array, &nr_octaves, &nr_intervals, &initial_step_size, &threshold, &max_points)) return NULL;
     if (!PyArray_Check(array) ||
         PyArray_NDIM(array) != 2 ||
         PyArray_TYPE(array) != NPY_DOUBLE) {
@@ -692,7 +693,6 @@ PyObject* py_surf(PyObject* self, PyObject* args) {
     holdref array_ref(array);
     try {
         std::vector<surf_point> spoints;
-        const int max_points = 1000;
         spoints = get_surf_points<double>(
                         numpy::aligned_array<double>(array),
                         nr_octaves,
