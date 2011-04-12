@@ -117,3 +117,14 @@ def test_float_haralick():
     A = np.zeros((5,5), np.float32)
     A[2,2]=12
     mahotas.texture.haralick(A)
+
+def test_haralick3d():
+    np.random.seed(22)
+    img = mahotas.stretch(255*np.random.rand(20,20,4))
+    features = mahotas.texture.haralick(img)
+    assert features.shape == (13,13)
+
+    features = mahotas.texture.haralick(img[:,:,0])
+    assert features.shape == (4,13)
+
+

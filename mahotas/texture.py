@@ -68,7 +68,13 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     '''
     _verify_is_integer_type(f, 'mahotas.haralick')
 
-    feats = np.zeros((4, 13), np.double)
+    if len(f.shape) == 2:
+        nr_dirs = len(_2d_deltas)
+    elif len(f.shape) == 3:
+        nr_dirs = len(_3d_deltas)
+    else:
+        raise ValueError('mahotas.texture.haralick: Can only handle 2D and 3D images.')
+    feats = np.zeros((nr_dirs, 13), np.double)
     fm1 = f.max() + 1
     cmat = np.empty((fm1, fm1), np.int32)
     k = np.arange(fm1)
@@ -83,7 +89,7 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     i_j2_p1 = i_j2_p1.ravel()
     px_plus_y = np.empty(2*fm1, np.double)
     px_minus_y = np.empty(fm1, np.double)
-    for dir in xrange(4):
+    for dir in xrange(nr_dirs):
         cooccurence(f, dir, cmat, symmetric=True)
         if ignore_zeros:
             cmat[0] = 0
