@@ -50,9 +50,9 @@ def integral(f, in_place=False, dtype=np.double):
             f = f.copy()
     return _surf.integral(f)
 
-def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points=1024):
+def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points=1024, descriptor_only=False):
     '''
-    points = surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points=1024):
+    points = surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points=1024, descriptor_only=False):
 
     Run SURF detection and descriptor computations
 
@@ -74,6 +74,8 @@ def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_p
         there are that many points. This is a side-effect of the way the
         threshold is implemented: only ``max_points`` are considered, but some
         of those may be filtered out.
+    descriptor_only : boolean, optional
+        If ``descriptor_only``, then returns only the 64-element descriptors
 
     Returns
     -------
@@ -82,8 +84,14 @@ def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_p
         *(y,x,scale,score,laplacian,angle, D_0,...,D_63)* where *y,x,scale* is
         the position, *angle* the orientation, *score* and *laplacian* the
         score and sign of the detector; and *D_i* is the descriptor
+
+        If ``descriptor_only``, then only the *D_i*s are returned and the array
+        has shape (N, 64)!
     '''
-    return _surf.surf(integral(f), nr_octaves, nr_scales, initial_step_size, threshold, max_points)
+    surfs = _surf.surf(integral(f), nr_octaves, nr_scales, initial_step_size, threshold, max_points)
+    if descriptor_only:
+        surfs = surfs[:,6:]
+    return surfs
 
 
 def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points=None, is_integral=False):

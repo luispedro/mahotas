@@ -1,5 +1,5 @@
 Version 0.6.4+
-	* Add `max_points` argument to mahotas.surf
+	* Add `max_points` & `descriptor_only` arguments to mahotas.surf
 
 Version 0.6.4 2011-04-06 by luispedro
 	* Fix bug in ``cwatershed()`` when using return_lines=1
