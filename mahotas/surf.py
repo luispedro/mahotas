@@ -43,6 +43,8 @@ def integral(f, in_place=False, dtype=np.double):
     fi : ndarray of `dtype` of same shape as `f`
         The integral image
     '''
+    if len(f.shape) != 2:
+        raise ValueError('mahotas.surf.integral: Can only handle images with 2D (i.e., greyscale images).')
     if not in_place:
         if dtype != f.dtype:
             f = f.astype(dtype)
