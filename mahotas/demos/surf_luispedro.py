@@ -22,7 +22,7 @@ try:
     colors = np.array([(255-52*i,25+52*i,37**i % 101) for i in xrange(k)])
 except:
     values = np.zeros(100)
-    colors = [(255,0,0)]
+    colors = np.array([(255,0,0)])
 
 f2 = mahotas.surf.show_surf(f, spoints[:100], values, colors)
 imshow(f2)
