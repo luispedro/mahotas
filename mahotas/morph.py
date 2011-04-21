@@ -162,7 +162,7 @@ def hitmiss(input, Bc, output=None):
         output = np.empty_like(input)
     else:
         if output.shape != input.shape:
-            raise ValueError('mahotas.hitmiss: output must be of same shape as output')
+            raise ValueError('mahotas.hitmiss: output must be of same shape as input')
         if output.dtype != input.dtype:
             if output.dtype == np.bool_ and input.dtype == np.uint8:
                 output = output.view(np.uint8)
