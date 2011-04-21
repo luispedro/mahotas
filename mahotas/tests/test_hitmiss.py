@@ -45,3 +45,12 @@ def test_hitmiss_against_slow():
         W = mahotas.morph.hitmiss(A,Bc)
         assert np.all(W == slow_hitmiss(A, Bc))
 
+
+def test_hitmiss_types():
+    f = np.zeros((16,16), np.uint8)
+    f[8:12,8:12] = 1
+    Bc = np.array([[1, 1, 2],[1,1,2],[0,0,0]], dtype=np.int32)
+    assert np.sum(mahotas.morph.hitmiss(f,Bc))
+    Bc = np.array([[1, 1, 2],[1,1,2],[0,0,0]], dtype=np.int64)
+    assert np.sum(mahotas.morph.hitmiss(f,Bc))
+

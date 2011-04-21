@@ -157,7 +157,7 @@ def hitmiss(input, Bc, output=None):
             else:
                 Bc = Bc.astype(np.uint8)
         else:
-            Bc = Bc.astype(np.dtype)
+            Bc = Bc.astype(input.dtype)
     if output is None:
         output = np.empty_like(input)
     else:
