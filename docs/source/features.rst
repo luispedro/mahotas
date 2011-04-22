@@ -48,7 +48,10 @@ Threshold Adjancency Statistics
 
 Threshold adjancency statistics (TAS) are a recent innovation too. In the
 original version, they have fixed parameters, but we have adapted them to
-*parameter-free* versions. Mahotas supports both.
+*parameter-free* versions (see `Structured Literature Image Finder: Extracting
+Information from Text and Images in Biomedical Literature
+<http://dx.doi.org/10.1007/978-3-642-13131-8_4>`__ by Coelho et al. for a
+reference). Mahotas supports both.
 
 Zernike Moments
 ~~~~~~~~~~~~~~~
