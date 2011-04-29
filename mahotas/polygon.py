@@ -1,4 +1,4 @@
-# Copyright (C) 2010, Luis Pedro Coelho <lpc@cmu.edu>
+# Copyright (C) 2010-2011, Luis Pedro Coelho <lpc@cmu.edu>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,12 @@ from __future__ import division
 import numpy as np
 import _convex
 
-__all__ = ['fill_polygon', 'convexhull', 'fill_polygon']
+__all__ = [
+    'line',
+    'fill_polygon',
+    'convexhull',
+    'fill_convexhull',
+    ]
 
 
 def line(p0, p1, canvas, color=1):
@@ -68,7 +73,7 @@ def line(p0, p1, canvas, color=1):
         if error < 0:
             y += ystep
             error += dx
-    
+
 
 def fill_polygon(polygon, canvas, color=1):
     '''
@@ -92,7 +97,7 @@ def fill_polygon(polygon, canvas, color=1):
     max_y = max(y for y,x in polygon)
     polygon = [(float(y),float(x)) for y,x in polygon]
     for y in xrange(min_y, max_y+1):
-        nodes = [] 
+        nodes = []
         j = -1
         for i,p in enumerate(polygon):
             pj = polygon[j]
