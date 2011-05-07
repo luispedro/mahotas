@@ -1,3 +1,5 @@
+#include <map>
+
 #include "numpypp/array.hpp"
 #include "numpypp/dispatch.hpp"
 #include "utils.hpp"
@@ -13,6 +15,59 @@ namespace{
 const char TypeErrorMsg[] =
     "Type not understood. "
     "This is caused by either a direct call to _labeled (which is dangerous: types are not checked!) or a bug in labeled.py.\n";
+
+void compress(int* data, int i) {
+    if (data[i] == i) return;
+    compress(data, data[i]);
+    data[i] = data[data[i]];
+}
+
+void join(int* data, int i, int j) {
+    if (i != j) data[j] = i;
+}
+
+int label(numpy::aligned_array<int> labeled, numpy::aligned_array<int> Bc) {
+    gil_release nogil;
+    const int N = labeled.size();
+    int* data = labeled.data();
+    for (int i = 0; i != N; ++i) {
+        data[i] = (data[i] ? i : -1);
+    }
+    numpy::aligned_array<int>::iterator iter = labeled.begin();
+    filter_iterator<int> filter(labeled.raw_array(), Bc.raw_array());
+    const int N2 = filter.size();
+    for (int i = 0; i != N; ++i, filter.iterate_with(iter), ++iter) {
+        if (*iter != -1) {
+            for (int j = 0; j != N2; ++j) {
+                int arr_val = false;
+                filter.retrieve(iter, j, arr_val);
+                if (arr_val != -1) {
+                    join(data, *iter, arr_val);
+                }
+            }
+        }
+    }
+    for (int i = 0; i != N; ++i) {
+        if (data[i] != -1) compress(data, i);
+    }
+    int next = 1;
+    std::map<int, int> seen;
+    seen[-1] = 0;
+    iter = labeled.begin();
+    for (int i = 0; i != N; ++i) {
+        const int val = data[i];
+        std::map<int, int>::iterator where = seen.find(val);
+        if (where == seen.end()) {
+            data[i] = next;
+            seen[val] = next++;
+        } else {
+            data[i] = where->second;
+        }
+    }
+    return (next - 1);
+}
+
+
 
 
 template<typename T>
@@ -63,6 +118,21 @@ bool border(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, numpy
     return any;
 }
 
+
+PyObject* py_label(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* filter;
+    if (!PyArg_ParseTuple(args,"OO", &array, &filter)) return NULL;
+    if (!PyArray_Check(array) || !PyArray_Check(filter) || PyArray_TYPE(array) != PyArray_TYPE(filter) ||
+        !PyArray_ISCARRAY(array) || !PyArray_EquivTypenums(PyArray_TYPE(array), NPY_INT)) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    int n = label(numpy::aligned_array<int>(array), numpy::aligned_array<int>(filter));
+    PyObject* no = PyInt_FromLong(n);
+    Py_INCREF(no);
+    return no;
+}
 
 PyObject* py_borders(PyObject* self, PyObject* args) {
     PyArrayObject* array;
@@ -141,6 +211,7 @@ PyObject* py_border(PyObject* self, PyObject* args) {
 }
 
 PyMethodDef methods[] = {
+  {"label",(PyCFunction)py_label, METH_VARARGS, NULL},
   {"borders",(PyCFunction)py_borders, METH_VARARGS, NULL},
   {"border",(PyCFunction)py_border, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},

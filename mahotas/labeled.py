@@ -8,7 +8,45 @@ import numpy as np
 from .morph import get_structuring_elem
 from . import _labeled
 
-__all__ = ['border']
+__all__ = [
+    'borders',
+    'border',
+    'label',
+    ]
+
+def label(array, Bc=None, output=None):
+    '''
+    labeled, nr_objects = label(array, Bc={3x3 cross}, output=None)
+
+    Label the array
+
+    Parameters
+    ----------
+    array : ndarray
+        This will be interpreted as an integer array
+    Bc : ndarray, optional
+        This is the structuring element to use
+    output : ndarray, optional
+        Output array. Must be a C-array, of type np.int32
+
+    Returns
+    -------
+    labeled : ndarray
+        Labeled result
+    nr_objects : int
+        Number of objects
+    '''
+    if output is None:
+        output = np.empty(array.shape, np.int32)
+    else:
+        if output.dtype != np.int32 or not output.flags['C_CONTIGUOUS']:
+            raise TypeError('mahotas.labeled.label: output must be C-contiguous')
+        if output.shape != array.shape:
+            raise ValueError('mahotas.labeled.label: output must be of same size as `array`')
+    output[:] = array
+    Bc = get_structuring_elem(output, Bc)
+    nr_objects = _labeled.label(output, Bc)
+    return output, nr_objects
 
 def border(labeled, i, j, Bc=None, output=None, always_return=True):
     '''

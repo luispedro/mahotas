@@ -3,6 +3,7 @@ Version 0.6.4+
 	* Fix haralick for 3-D images (bug report by Rita Simões)
 	* Better error messages
 	* Fix hit&miss for non-boolean inputs
+	* Add `label()` function
 
 Version 0.6.4 2011-04-06 by luispedro
 	* Fix bug in ``cwatershed()`` when using return_lines=1
