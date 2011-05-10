@@ -16,14 +16,23 @@ const char TypeErrorMsg[] =
     "Type not understood. "
     "This is caused by either a direct call to _labeled (which is dangerous: types are not checked!) or a bug in labeled.py.\n";
 
+int find(int* data, int i) {
+    if (data[i] == i) return i;
+    int j = find(data, data[i]);
+    data[i] = j;
+    return j;
+}
 void compress(int* data, int i) {
-    if (data[i] == i) return;
-    compress(data, data[i]);
-    data[i] = data[data[i]];
+    find(data,i);
 }
 
+
 void join(int* data, int i, int j) {
-    if (i != j) data[j] = i;
+    i = find(data, i);
+    j = find(data, j);
+    assert(i >= 0);
+    assert(j >= 0);
+    data[i] = j;
 }
 
 int label(numpy::aligned_array<int> labeled, numpy::aligned_array<int> Bc) {
@@ -42,7 +51,7 @@ int label(numpy::aligned_array<int> labeled, numpy::aligned_array<int> Bc) {
                 int arr_val = false;
                 filter.retrieve(iter, j, arr_val);
                 if (arr_val != -1) {
-                    join(data, *iter, arr_val);
+                    join(data, i, arr_val);
                 }
             }
         }
@@ -53,13 +62,13 @@ int label(numpy::aligned_array<int> labeled, numpy::aligned_array<int> Bc) {
     int next = 1;
     std::map<int, int> seen;
     seen[-1] = 0;
-    iter = labeled.begin();
     for (int i = 0; i != N; ++i) {
         const int val = data[i];
         std::map<int, int>::iterator where = seen.find(val);
         if (where == seen.end()) {
             data[i] = next;
-            seen[val] = next++;
+            seen[val] = next;
+            ++next;
         } else {
             data[i] = where->second;
         }
