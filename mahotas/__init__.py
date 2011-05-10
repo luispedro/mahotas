@@ -13,6 +13,7 @@ from .distance import distance
 from .edge import sobel
 from .euler import euler
 from .histogram import fullhistogram
+from .labeled import label
 from .moments import moments
 from .morph import close_holes, get_structuring_elem, dilate, erode, cwatershed, majority_filter
 from .resize import imresize
@@ -41,6 +42,7 @@ __all__ = [
     'fullhistogram',
     'get_structuring_elem',
     'imresize',
+    'label',
     'majority_filter',
     'moments',
     'morph',
