@@ -94,3 +94,4 @@ they are also available in the main ``mahotas`` namespace.
 
 .. automodule:: mahotas.thresholding
     :members:
+    :noindex:
