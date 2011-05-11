@@ -11,6 +11,7 @@ Contents:
    surf
    thresholding
    distance
+   labeled
    polygon
    faq
    internals
