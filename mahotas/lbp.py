@@ -38,7 +38,7 @@ def lbp(image, radius, points, ignore_zeros=False):
     ----------
     image : ndarray
         input image (2-D numpy ndarray)
-    radius : number (integer or floating point
+    radius : number (integer or floating point)
         radius (in pixels)
     points : integer
         nr of points to consider
