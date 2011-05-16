@@ -42,6 +42,13 @@ threshold).
 Recent Changes
 --------------
 
+For version **0.6.5**:
+- Add ``max_points`` & ``descriptor_only`` arguments to mahotas.surf
+- Fix haralick for 3-D images (bug report by Rita Simões)
+- Better error messages
+- Fix hit&miss for non-boolean inputs
+- Add ``label()`` function
+
 For version **0.6.4**:
 
 - Fix bug in ``cwatershed()`` when using return_lines=1

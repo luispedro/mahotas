@@ -25,6 +25,14 @@ Notable algorithms:
 Recent Changes
 --------------
 
+For version 0.6.5
+~~~~~~~~~~~~~~~~~
+- Add ``max_points`` & ``descriptor_only`` arguments to mahotas.surf
+- Fix haralick for 3-D images (bug report by Rita Simões)
+- Better error messages
+- Fix hit&miss for non-boolean inputs
+- Add ``label()`` function
+
 For version 0.6.4
 ~~~~~~~~~~~~~~~~~
 
@@ -34,6 +42,7 @@ For version 0.6.4
 - Include ChangeLog in distribution
 - Fix compilation on the Mac OS
 - Fix compilation warnings on gcc
+
 For version 0.6.3
 ~~~~~~~~~~~~~~~~~
 - Improve ``mahotas.stretch()`` function

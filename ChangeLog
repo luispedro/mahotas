@@ -1,4 +1,4 @@
-Version 0.6.4+
+Version 0.6.5 2011-05-16 by luispedro
 	* Add `max_points` & `descriptor_only` arguments to mahotas.surf
 	* Fix haralick for 3-D images (bug report by Rita Simões)
 	* Better error messages
