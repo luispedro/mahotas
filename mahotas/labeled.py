@@ -43,7 +43,7 @@ def label(array, Bc=None, output=None):
             raise TypeError('mahotas.labeled.label: output must be C-contiguous')
         if output.shape != array.shape:
             raise ValueError('mahotas.labeled.label: output must be of same size as `array`')
-    output[:] = array
+    output[:] = (array != 0)
     Bc = get_structuring_elem(output, Bc)
     nr_objects = _labeled.label(output, Bc)
     return output, nr_objects
