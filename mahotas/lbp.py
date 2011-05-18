@@ -22,7 +22,6 @@
 # send email to murphy@cmu.edu
 
 import numpy as np
-from scipy import ndimage
 from histogram import fullhistogram
 
 __all__ = [
