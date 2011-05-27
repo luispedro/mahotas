@@ -64,7 +64,8 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     Returns
     -------
     feats : ndarray of np.double
-        A 4x13 feature vector (one row per direction).
+        A 4x13 feature vector (one row per direction) if `f` is 2D, 13x13 if it
+        is 3xD.
     '''
     _verify_is_integer_type(f, 'mahotas.haralick')
 
@@ -131,7 +132,7 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
         if preserve_haralick_bug:
             feats[dir, 6] = ((tk-feats[dir, 7])**2*px_plus_y).sum()
         else:
-            feats[dir, 6] = np.dot(tk2, px_plus_y) - feats[dir, 5]
+            feats[dir, 6] = np.dot(tk2, px_plus_y) - feats[dir, 5]**2
 
         feats[dir,  8] = _entropy(pravel)
         feats[dir,  9] = px_minus_y.var() # This is wrongly implemented in ml_texture
