@@ -15,6 +15,7 @@ Contents:
    polygon
    faq
    internals
+   principles
 
 Indices and tables
 ==================
