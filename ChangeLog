@@ -1,5 +1,7 @@
 Version 0.6.5+
 	* Fix Haralick feature 6 (fix by Rita Simões)
+	* Implement morph.get_structuring_element for ndim > 2. This implies that
+	functions such as label() now also work in multiple dimensions.
 
 Version 0.6.5 2011-05-16 by luispedro
 	* Add `max_points` & `descriptor_only` arguments to mahotas.surf

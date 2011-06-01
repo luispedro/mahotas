@@ -1,4 +1,12 @@
-import numpy
+# Copyright (C) 2008-2011, Luis Pedro Coelho <luis@luispedro.org>
+# vim: set ts=4 sts=4 sw=4 expandtab smartindent:
+# 
+# License: GPL v2 or later
+
+from __future__ import division
+import numpy as np
+
+
 import numpy as np
 try:
     import _morph
@@ -23,9 +31,9 @@ def _verify_is_integer_type(A,function):
                 np.uint64,
                 ]
     _verify_types(A,int_types,function)
-    
+
 def _verify_is_bool(A,function):
-    _verify_types(A,[numpy.bool],function)
+    _verify_types(A,[np.bool],function)
 
 __all__ = [
         'get_structuring_elem',
@@ -35,7 +43,7 @@ __all__ = [
         'close_holes',
         'hitmiss',
         ]
-    
+
 def get_structuring_elem(A,Bc):
     '''
     Bc_out = get_structuring_elem(A, Bc)
@@ -44,48 +52,63 @@ def get_structuring_elem(A,Bc):
 
     Parameters
     ----------
-    A : array which will be operated on
-    Bc : can be either:
+    A : ndarray
+        array which will be operated on
+    Bc : None, int, or array-like
         :None: Then Bc is taken to be 1
         :An integer: There are two associated semantics:
             connectivity
               ``Bc[y,x] = [[ is |y - 1| + |x - 1| <= Bc_i ]]``
             count
               ``Bc.sum() == Bc_i``
-              This is the more traditional meaning (when one writes that "4-connected", this is what
-              one has in mind).
+              This is the more traditional meaning (when one writes that
+              "4-connected", this is what one has in mind).
 
-          Fortunately, the value itself allows one to distinguish between the two semantics and, if
-          used correctly, no ambiguity should ever occur.
-        :An array: This should be of the same nr. of dimensions as A and will be passed through if of the
-            right type. Otherwise, it will be cast.
+          Fortunately, the value itself allows one to distinguish between the
+          two semantics and, if used correctly, no ambiguity should ever occur.
+        :An array: This should be of the same nr. of dimensions as A and will
+            be passed through if of the right type. Otherwise, it will be cast.
 
     Returns
     -------
-    Bc_out : will be of the same type as A
+    Bc_out : ndarray
+        Structuring element. This array will be of the same type as A,
+        C-contiguous.
+
     '''
-    if len(A.shape) != 2:
-        raise NotImplementedError('morph.get_structuring_elem: Sorry, only 2D morphology for now.')
+    translate_sizes = {
+            (2, 4) : 1,
+            (2, 8) : 2,
+            (3, 6) : 1,
+    }
     if Bc is None:
-        Bc=numpy.zeros((3,3),A.dtype)
-        Bc[0,1]=1
-        Bc[1]=1
-        Bc[2,1]=1
-        return Bc
-    elif type(Bc) is int:
-        if Bc == 4:
-            return get_structuring_elem(A,None)
-        elif Bc == 8:
-            return numpy.ones((3,3),A.dtype)
-        else:
-            raise ValueError('morph.get_structuring_elem: Forbidden argument %s' % Bc)
-    else:
+        Bc = 1
+    elif type(Bc) == int and (len(A.shape), Bc) in translate_sizes:
+        Bc = translate_sizes[len(A.shape),Bc]
+    elif type(Bc) != int:
         if len(A.shape) != len(Bc.shape):
             raise ValueError('morph.get_structuring_elem: Bc does not have the correct number of dimensions.')
-        Bc=numpy.asanyarray(Bc,A.dtype)
-        if not Bc.flags['C_CONTIGUOUS']:
+        Bc = np.asanyarray(Bc, A.dtype)
+        if not Bc.flags.contiguous:
             return Bc.copy()
         return Bc
+
+    # Special case typical case:
+    if len(A.shape) == 2 and Bc == 1:
+        return np.array([
+                [0,1,0],
+                [1,1,1],
+                [0,1,0]], dtype=A.dtype)
+    max1 = Bc
+    Bc = np.zeros((3,)*len(A.shape), dtype=A.dtype)
+    centre = np.ones(len(A.shape))
+    # This is pretty slow, but this should be a tiny array, so who cares
+    for i in xrange(Bc.size):
+        pos = np.unravel_index(i, Bc.shape)
+        pos -= centre
+        if np.sum(np.abs(pos)) <= max1:
+            Bc.flat[i] = 1
+    return Bc
 
 def dilate(A,Bc=None):
     _verify_is_bool(A,'dilate')
@@ -98,14 +121,14 @@ def erode(A,Bc=None):
     _verify_is_integer_type(A,'erode')
     Bc=get_structuring_elem(A,Bc)
     return _morph.erode(A,Bc)
-    
+
 def cwatershed(surface, markers, Bc=None, return_lines=False):
     '''
     W = cwatershed(surface, markers, Bc=None, return_lines=False)
     W,WL = cwatershed(surface, markers, Bc=None, return_lines=True)
 
     Seeded Watershed
-    
+
     Parameters
     ----------
     surface : image
@@ -178,12 +201,15 @@ def close_holes(ref, Bc=None):
 
     Parameters
     ----------
-    ref : Reference image.
-    Bc : structuring element (default: 3x3 cross)
+    ref : ndarray
+        Reference image. This should be a binary image.
+    Bc : structuring element, optional
+        Default: 3x3 cross
 
     Returns
     -------
-    closed : superset of `ref` (i.e. with closed holes)
+    closed : ndarray
+        superset of `ref` (i.e. with closed holes)
     '''
     if ref.dtype != np.bool:
         if ((ref== 0)|(ref==1)).sum() != ref.size:
@@ -206,14 +232,17 @@ def majority_filter(img, N=3, output=None):
 
     Parameters
     ----------
-      img : input img (currently only 2-D images accepted)
-      N : size of filter (must be odd integer)
-      output : used for output. Must be Boolean ndarray of same size as `img`
+    img : ndarray
+        input img (currently only 2-D images accepted)
+    N : int, optional
+        size of filter (must be odd integer), defaults to 3.
+    output : ndarray, optional
+        Used for output. Must be Boolean ndarray of same size as `img`
 
     Returns
     -------
-      filtered : boolean image of same size as img.
-                 output if passed
+    filtered : ndarray
+        boolean image of same size as img.
     '''
     if img.dtype != np.bool_:
         img = img.astype(bool)
@@ -223,7 +252,7 @@ def majority_filter(img, N=3, output=None):
         raise ValueError('mahotas.majority_filter: filter size must be positive')
     if not N&1:
         import warnings
-        warnings.warn('mahotas.majority_filter: size argument must be odd.')
+        warnings.warn('mahotas.majority_filter: size argument must be odd. Adding 1.')
         N += 1
     return _morph.majority_filter(img, N, output)
 
