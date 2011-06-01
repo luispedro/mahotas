@@ -96,6 +96,12 @@ struct filter_iterator {
         }
     }
     template <typename OtherIterator>
+    void iterate_both(OtherIterator& iterator) {
+        this->iterate_with(iterator);
+        ++iterator;
+    }
+
+    template <typename OtherIterator>
     bool retrieve(const OtherIterator& iterator, const npy_intp j, T& array_val) {
         if (this->cur_offsets_[j] == border_flag_value_) return false;
         assert((j >= 0) && (j < size_));
