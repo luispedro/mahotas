@@ -18,3 +18,12 @@ typedef unsigned short ushort;
 #define HANDLE_TYPES() \
     HANDLE_INTEGER_TYPES() \
     HANDLE_FLOAT_TYPES()
+
+#define SWITCH_ON_TYPES_OF(array) \
+    switch(PyArray_TYPE(array)) { \
+            HANDLE_TYPES();\
+            default: \
+            PyErr_SetString(PyExc_RuntimeError, "Dispatch on types failed!"); \
+            return NULL; \
+    }
+
