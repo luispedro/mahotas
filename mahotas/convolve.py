@@ -21,7 +21,10 @@ import numpy as np
 from . import _convolve
 from ._filters import mode2int, modes
 
-__all__ = ['convolve']
+__all__ = [
+    'convolve',
+    'median_filter',
+    ]
 
 def convolve(f, weights, mode='reflect', cval=0.0, output=None):
     '''
@@ -61,4 +64,46 @@ def convolve(f, weights, mode='reflect', cval=0.0, output=None):
     if mode == 'constant' and cval != 0.:
         raise NotImplementedError('Please email mahotas developers to get this implemented.')
     return _convolve.convolve(f, weights, output, mode2int[mode])
+
+def median_filter(f, Bc=None, mode='reflect', cval=0.0, output=None):
+    '''
+    median = median_filter(f, Bc={square}, mode='reflect', cval=0.0, output=None)
+
+    Median filter
+
+    Parameters
+    ----------
+    f : ndarray
+        input. Any dimension is supported
+    Bc : ndarray or int, optional
+        Defines the neighbourhood, default is a square of side 3.
+    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant'}
+        How to handle borders
+    cval : double, optional
+        If `mode` is constant, which constant to use (default: 0.0)
+    output : ndarray, optional
+        Output array. Must have same shape and dtype as `f` as well as be
+        C-contiguous.
+
+    Returns
+    -------
+    median : ndarray of same type and shape as ``f``
+        median[i,j] is the median value of the points in f close to (i,j)
+    '''
+    if Bc is None:
+        Bc = np.ones((3,) * len(f.shape), f.dtype)
+    elif f.dtype != Bc.dtype:
+        Bc = Bc.astype(f.dtype)
+    rank = Bc.sum()//2
+    if output is not None:
+        if output.dtype != f.dtype: raise ValueError('mahotas.median_filter: `output` has wrong type')
+        if output.shape != f.shape: raise ValueError('mahotas.median_filter: `output` has wrong shape')
+        if not output.flags.contiguous: raise ValueError('mahotas.median_filter: `output` is not c-array')
+    else:
+        output = np.empty(f.shape, f.dtype)
+    if mode not in modes:
+        raise ValueError('mahotas.median_filter: `mode` not in %s' % modes)
+    if mode == 'constant' and cval != 0.:
+        raise NotImplementedError('Please email mahotas developers to get this implemented.')
+    return _convolve.rank_filter(f, Bc, output, rank, mode2int[mode],)
 

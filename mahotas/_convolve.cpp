@@ -93,8 +93,61 @@ PyObject* py_convolve(PyObject* self, PyObject* args) {
     return PyArray_Return(output);
 }
 
+template<typename T>
+void rank_filter(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc, const int rank, const int mode) {
+    gil_release nogil;
+    const int N = res.size();
+    typename numpy::aligned_array<T>::iterator iter = array.begin();
+    filter_iterator<T> fiter(array.raw_array(), Bc.raw_array(), ExtendMode(mode), true);
+    const int N2 = fiter.size();
+    if (rank < 0 || rank >= N2) {
+        return;
+    }
+    // T* is a fine iterator type.
+    T* rpos = res.data();
+    T* neighbours = new T[N2];
+
+    for (int i = 0; i != N; ++i, ++rpos, fiter.iterate_both(iter)) {
+        int n = 0;
+        for (int j = 0; j != N2; ++j) {
+            T val;
+            if (fiter.retrieve(iter, j, val)) neighbours[n++] = val;
+        }
+        int currank = rank;
+        if (n != N2) {
+            currank = int(n * rank/float(N2));
+        }
+        std::nth_element(neighbours, neighbours + currank, neighbours + n);
+        *rpos = neighbours[rank];
+    }
+    delete [] neighbours;
+}
+PyObject* py_rank_filter(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* Bc;
+    int rank;
+    int mode;
+    PyArrayObject* output;
+    if (!PyArg_ParseTuple(args, "OOOii", &array, &Bc, &output, &rank, &mode) ||
+        !PyArray_Check(array) || !PyArray_Check(output) ||
+        PyArray_TYPE(array) != PyArray_TYPE(output) ||
+        PyArray_TYPE(Bc) != PyArray_TYPE(array) ||
+        !PyArray_ISCARRAY(output)) {
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
+    }
+    Py_INCREF(output);
+
+#define HANDLE(type) \
+        rank_filter<type>(numpy::aligned_array<type>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc), rank, mode);
+
+    SWITCH_ON_TYPES_OF(array)
+    return PyArray_Return(output);
+}
+
 PyMethodDef methods[] = {
   {"convolve",(PyCFunction)py_convolve, METH_VARARGS, NULL},
+  {"rank_filter",(PyCFunction)py_rank_filter, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 
