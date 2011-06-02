@@ -89,3 +89,10 @@ In the snippet above, you can see some other C++ machinery:
     This is taken from ``scipy.ndimage`` and it useful for a filter iteration
     matched to an image iteration.
 
+The inner loop is as direct an implementation of erosion as one would wish for:
+for each pixel in the image, look at its neighbours. If all are true, then set
+the corresponding output pixel to ``true`` (else, skip it as it has been
+initialised to zero).
+
+Most of the functions follow this architecture.
+
