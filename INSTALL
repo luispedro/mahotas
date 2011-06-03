@@ -1,1 +1,37 @@
-python setup.py install
+==================
+INSTALLING MAHOTAS
+==================
+
+From binary packages
+--------------------
+
+There are a few binary packages.
+
+For **Windows**: Christoph Gohlke maintains binary packages at
+http://www.lfd.uci.edu/~gohlke/pythonlibs/
+
+For FreeBSD, there are ports packages at
+http://www.freshports.org/graphics/mahotas/ Unfortunately, they may be slightly
+out of date.
+
+Using pip/easy_install
+----------------------
+
+Mahotas should install just fine with pip or easy_install. Either one of the
+following should work::
+
+    pip install mahotas
+    easy_install mahotas
+
+
+
+From source
+-----------
+
+You can use the simple::
+
+    python setup.py install
+
+
+You need the numpy headers and a C++ compiler.
+
