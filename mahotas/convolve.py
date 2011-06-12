@@ -1,4 +1,4 @@
-# Copyright (C) 2010, Luis Pedro Coelho <lpc@cmu.edu>
+# Copyright (C) 2010-2011, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,13 @@
 from __future__ import division
 import numpy as np
 from . import _convolve
+from . import morph
 from ._filters import mode2int, modes
 
 __all__ = [
     'convolve',
     'median_filter',
+    'rank_filter'
     ]
 
 def convolve(f, weights, mode='reflect', cval=0.0, output=None):
@@ -105,5 +107,49 @@ def median_filter(f, Bc=None, mode='reflect', cval=0.0, output=None):
         raise ValueError('mahotas.median_filter: `mode` not in %s' % modes)
     if mode == 'constant' and cval != 0.:
         raise NotImplementedError('Please email mahotas developers to get this implemented.')
-    return _convolve.rank_filter(f, Bc, output, rank, mode2int[mode],)
+    return _convolve.rank_filter(f, Bc, output, rank, mode2int[mode])
+
+def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, output=None):
+    '''
+    ranked = rank_filter(f, Bc, rank, mode='reflect', cval=0.0, output=None)
+
+    Rank filter. The value at ``ranked[i,j[`` will be the ``rank``th largest in
+    the neighbourhood defined by ``Bc``.
+
+    Parameters
+    ----------
+    f : ndarray
+        input. Any dimension is supported
+    Bc : ndarray
+        Defines the neighbourhood. Must be explicitly passed, no default.
+    rank : integer
+    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant'}
+        How to handle borders
+    cval : double, optional
+        If `mode` is constant, which constant to use (default: 0.0)
+    output : ndarray, optional
+        Output array. Must have same shape and dtype as `f` as well as be
+        C-contiguous.
+
+    Returns
+    -------
+    ranked : ndarray of same type and shape as ``f``
+        ranked[i,j] is the ``rank``th value of the points in f close to (i,j)
+
+    See Also
+    --------
+    median_filter : A special case of rank_filter
+    '''
+    Bc = morph.get_structuring_elem(f, Bc)
+    if output is not None:
+        if output.dtype != f.dtype: raise ValueError('mahotas.rank_filter: `output` has wrong type')
+        if output.shape != f.shape: raise ValueError('mahotas.rank_filter: `output` has wrong shape')
+        if not output.flags.contiguous: raise ValueError('mahotas.rank_filter: `output` is not c-array')
+    else:
+        output = np.empty(f.shape, f.dtype)
+    if mode not in modes:
+        raise ValueError('mahotas.rank_filter: `mode` not in %s' % modes)
+    if mode == 'constant' and cval != 0.:
+        raise NotImplementedError('Please email mahotas developers to get this implemented.')
+    return _convolve.rank_filter(f, Bc, output, rank, mode2int[mode])
 
