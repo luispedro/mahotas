@@ -9,7 +9,7 @@ of its technology in your projects (as long as you abide by the GPL).
 C++/Python Division
 -------------------
 
-Mahotas is writte in C++, but almost always, you call a Python function which
+Mahotas is written in C++, but almost always, you call a Python function which
 checks types and then calls the internal function. This is slightly slower, but
 it is easier to develop this way.
 
@@ -86,8 +86,9 @@ In the snippet above, you can see some other C++ machinery:
     This is a thin wrapper around ``PyArrayObject`` that knows its type and has
     iterators.
 ``filter_iterator``
-    This is taken from ``scipy.ndimage`` and it useful for a filter iteration
-    matched to an image iteration.
+    This is taken from ``scipy.ndimage`` and it is useful to iterate over an
+    image and use a centered filter around each pixel (it keeps track of all of
+    the boundary conditions).
 
 The inner loop is as direct an implementation of erosion as one would wish for:
 for each pixel in the image, look at its neighbours. If all are true, then set
