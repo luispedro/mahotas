@@ -3,6 +3,7 @@ Version 0.6.5+
 	* Implement morph.get_structuring_element for ndim > 2. This implies that
 	functions such as label() now also work in multiple dimensions.
 	* Add median filter & rank_filter functions
+	* Add template_match function
 
 Version 0.6.5 2011-05-16 by luispedro
 	* Add `max_points` & `descriptor_only` arguments to mahotas.surf
