@@ -1,6 +1,6 @@
 # Copyright (C) 2010-2011, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
 # by the Free Software Foundation; either version 2 of the License,
@@ -20,12 +20,14 @@ from __future__ import division
 import numpy as np
 from . import _convolve
 from . import morph
-from ._filters import mode2int, modes
+from .internal import _get_output
+from ._filters import mode2int, modes, _check_mode
 
 __all__ = [
     'convolve',
     'median_filter',
-    'rank_filter'
+    'rank_filter',
+    'template_match',
     ]
 
 def convolve(f, weights, mode='reflect', cval=0.0, output=None):
@@ -57,14 +59,8 @@ def convolve(f, weights, mode='reflect', cval=0.0, output=None):
     '''
     if f.dtype != weights.dtype:
         weights = weights.astype(f.dtype)
-    if output is not None:
-        if output.dtype != f.dtype: raise ValueError('mahotas.convolve: `output` has wrong type')
-        if output.shape != f.shape: raise ValueError('mahotas.convolve: `output` has wrong shape')
-        if not output.flags['CONTIGUOUS']: raise ValueError('mahotas.convolve: `output` is not c-array')
-    if mode not in modes:
-        raise ValueError('mahotas.convolve: `mode` not in %s' % modes)
-    if mode == 'constant' and cval != 0.:
-        raise NotImplementedError('Please email mahotas developers to get this implemented.')
+    output = _get_output(f, output, 'convolve')
+    _check_mode(mode, cval, 'convolve')
     return _convolve.convolve(f, weights, output, mode2int[mode])
 
 def median_filter(f, Bc=None, mode='reflect', cval=0.0, output=None):
@@ -97,23 +93,15 @@ def median_filter(f, Bc=None, mode='reflect', cval=0.0, output=None):
     elif f.dtype != Bc.dtype:
         Bc = Bc.astype(f.dtype)
     rank = Bc.sum()//2
-    if output is not None:
-        if output.dtype != f.dtype: raise ValueError('mahotas.median_filter: `output` has wrong type')
-        if output.shape != f.shape: raise ValueError('mahotas.median_filter: `output` has wrong shape')
-        if not output.flags.contiguous: raise ValueError('mahotas.median_filter: `output` is not c-array')
-    else:
-        output = np.empty(f.shape, f.dtype)
-    if mode not in modes:
-        raise ValueError('mahotas.median_filter: `mode` not in %s' % modes)
-    if mode == 'constant' and cval != 0.:
-        raise NotImplementedError('Please email mahotas developers to get this implemented.')
+    output = _get_output(f, output, 'median_filter')
+    _check_mode(mode, cval, 'median_filter')
     return _convolve.rank_filter(f, Bc, output, rank, mode2int[mode])
 
 def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, output=None):
     '''
     ranked = rank_filter(f, Bc, rank, mode='reflect', cval=0.0, output=None)
 
-    Rank filter. The value at ``ranked[i,j[`` will be the ``rank``th largest in
+    Rank filter. The value at ``ranked[i,j]`` will be the ``rank``th largest in
     the neighbourhood defined by ``Bc``.
 
     Parameters
@@ -141,15 +129,44 @@ def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, output=None):
     median_filter : A special case of rank_filter
     '''
     Bc = morph.get_structuring_elem(f, Bc)
-    if output is not None:
-        if output.dtype != f.dtype: raise ValueError('mahotas.rank_filter: `output` has wrong type')
-        if output.shape != f.shape: raise ValueError('mahotas.rank_filter: `output` has wrong shape')
-        if not output.flags.contiguous: raise ValueError('mahotas.rank_filter: `output` is not c-array')
-    else:
-        output = np.empty(f.shape, f.dtype)
-    if mode not in modes:
-        raise ValueError('mahotas.rank_filter: `mode` not in %s' % modes)
-    if mode == 'constant' and cval != 0.:
-        raise NotImplementedError('Please email mahotas developers to get this implemented.')
+    output = _get_output(f, output, 'rank_filter')
+    _check_mode(mode, cval, 'rank_filter')
     return _convolve.rank_filter(f, Bc, output, rank, mode2int[mode])
+
+
+def template_match(f, template, mode='reflect', cval=0., output=None):
+    '''
+    match = template_match(f, template, mode='reflect', cval=0., output={np.empty_like(f)})
+
+    Match template.
+
+    The value at ``match[i,j]`` will be the difference (in squared euclidean
+    terms), between `template` and a same sized window on `f` centered on that
+    point.
+
+    Parameters
+    ----------
+    f : ndarray
+        input. Any dimension is supported
+    template : ndarray
+        Template to match. Must be explicitly passed, no default.
+    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant'}
+        How to handle borders
+    cval : double, optional
+        If `mode` is constant, which constant to use (default: 0.0)
+    output : ndarray, optional
+        Output array. Must have same shape and dtype as `f` as well as be
+        C-contiguous.
+
+    Returns
+    -------
+    match : ndarray of same type and shape as ``f``
+        match[i,j] is the squared euclidean distance between
+        ``f[i-s0:i+s0,j-s1:j+s1]`` and ``template`` (for appropriately defined
+        ``s0`` and ``s1``).
+    '''
+    template = template.astype(f.dtype)
+    output = _get_output(f, output, 'template_match')
+    _check_mode(mode, cval, 'template_match')
+    return _convolve.template_match(f, template, output, mode2int[mode])
 

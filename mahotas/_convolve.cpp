@@ -129,7 +129,7 @@ PyObject* py_rank_filter(PyObject* self, PyObject* args) {
     int mode;
     PyArrayObject* output;
     if (!PyArg_ParseTuple(args, "OOOii", &array, &Bc, &output, &rank, &mode) ||
-        !PyArray_Check(array) || !PyArray_Check(output) ||
+        !PyArray_Check(array) || !PyArray_Check(output) || !PyArray_Check(output) ||
         PyArray_TYPE(array) != PyArray_TYPE(output) ||
         PyArray_TYPE(Bc) != PyArray_TYPE(array) ||
         !PyArray_ISCARRAY(output)) {
@@ -140,14 +140,62 @@ PyObject* py_rank_filter(PyObject* self, PyObject* args) {
 
 #define HANDLE(type) \
         rank_filter<type>(numpy::aligned_array<type>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc), rank, mode);
-
     SWITCH_ON_TYPES_OF(array)
+#undef HANDLE
+
+    return PyArray_Return(output);
+}
+
+template <typename T>
+void template_match(numpy::aligned_array<T> res, numpy::aligned_array<T> f, numpy::aligned_array<T> t, int mode) {
+    gil_release nogil;
+    const int N = res.size();
+    typename numpy::aligned_array<T>::iterator iter = f.begin();
+    filter_iterator<T> fiter(f.raw_array(), t.raw_array(), ExtendMode(mode), false);
+    const int N2 = fiter.size();
+    // T* is a fine iterator type.
+    T* rpos = res.data();
+
+    for (int i = 0; i != N; ++i, ++rpos, fiter.iterate_both(iter)) {
+        T diff2 = T(0);
+        for (int j = 0; j != N2; ++j) {
+            T val;
+            if (fiter.retrieve(iter, j, val)) {
+                const T tj = fiter[j];
+                const T delta = (val > tj ? val - tj : tj - val);
+                diff2 += delta*delta;
+            }
+        }
+        *rpos = diff2;
+    }
+}
+
+PyObject* py_template_match(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* template_;
+    int mode;
+    PyArrayObject* output;
+    if (!PyArg_ParseTuple(args, "OOOi", &array, &template_, &output, &mode) ||
+        !PyArray_Check(array) || !PyArray_Check(output) || !PyArray_Check(template_) ||
+        PyArray_TYPE(array) != PyArray_TYPE(output) ||
+        PyArray_TYPE(template_) != PyArray_TYPE(array) ||
+        !PyArray_ISCARRAY(output)) {
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
+    }
+    Py_INCREF(output);
+
+#define HANDLE(type) \
+        template_match<type>(numpy::aligned_array<type>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(template_), mode);
+    SWITCH_ON_TYPES_OF(array)
+#undef HANDLE
     return PyArray_Return(output);
 }
 
 PyMethodDef methods[] = {
   {"convolve",(PyCFunction)py_convolve, METH_VARARGS, NULL},
   {"rank_filter",(PyCFunction)py_rank_filter, METH_VARARGS, NULL},
+  {"template_match",(PyCFunction)py_template_match, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 
