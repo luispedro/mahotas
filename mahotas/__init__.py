@@ -5,27 +5,41 @@ Mahotas
 
 A set of functions for basic image processing and machine vision.
 '''
-from .bbox import bbox, croptobbox
-from .bwperim import bwperim
-from .center_of_mass import center_of_mass
-from .convolve import convolve
-from .distance import distance
-from .edge import sobel
-from .euler import euler
-from .histogram import fullhistogram
-from .labeled import label
-from .moments import moments
-from .morph import close_holes, get_structuring_elem, dilate, erode, cwatershed, majority_filter
-from .resize import imresize
-from .stretch import stretch
-from .thin import thin
-from .thresholding import otsu, rc
+try:
+    from .bbox import bbox, croptobbox
+    from .bwperim import bwperim
+    from .center_of_mass import center_of_mass
+    from .convolve import convolve
+    from .distance import distance
+    from .edge import sobel
+    from .euler import euler
+    from .histogram import fullhistogram
+    from .labeled import label
+    from .moments import moments
+    from .morph import close_holes, get_structuring_elem, dilate, erode, cwatershed, majority_filter
+    from .resize import imresize
+    from .stretch import stretch
+    from .thin import thin
+    from .thresholding import otsu, rc
 
-from mahotas_version import __version__
+    from mahotas_version import __version__
 
-import features
-import morph
-import segmentation
+    import features
+    import morph
+    import segmentation
+except ImportError, e:
+    import sys
+    print >>sys.stderr, '''\
+Could not import submodules (exact error was: %s).
+
+There are many reasons for this error the most common one is that you have
+either not built the packages or have built (using `python setup.py build`) or
+installed them (using `python setup.py install`) and then proceeded to test
+mahotas **without changing the current directory**.
+
+Try installing and then changing to another directory before importing mahotas.
+''' % e
+
 
 __all__ = [
     'bbox',
