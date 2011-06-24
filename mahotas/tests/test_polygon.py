@@ -7,6 +7,9 @@ def test_polygon():
     canvas = np.zeros((40,40), np.bool)
     fill_polygon(polygon, canvas)
     assert canvas.sum() == (10*10+10)/2
+    canvas2 = canvas.copy()
+    fill_polygon([], canvas2)
+    assert np.all(canvas == canvas2)
 
 
 def test_convex():
