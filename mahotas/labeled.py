@@ -7,6 +7,7 @@ from __future__ import division
 import numpy as np
 from .morph import get_structuring_elem
 from . import _labeled
+from .internal import _get_output
 
 __all__ = [
     'borders',
@@ -36,13 +37,7 @@ def label(array, Bc=None, output=None):
     nr_objects : int
         Number of objects
     '''
-    if output is None:
-        output = np.empty(array.shape, np.int32)
-    else:
-        if output.dtype != np.int32 or not output.flags['C_CONTIGUOUS']:
-            raise TypeError('mahotas.labeled.label: output must be C-contiguous')
-        if output.shape != array.shape:
-            raise ValueError('mahotas.labeled.label: output must be of same size as `array`')
+    output = _get_output(array, output, 'labeled.label', np.int32)
     output[:] = (array != 0)
     Bc = get_structuring_elem(output, Bc)
     nr_objects = _labeled.label(output, Bc)
@@ -77,15 +72,8 @@ def border(labeled, i, j, Bc=None, output=None, always_return=True):
         Pixels are True exactly where there is a border between `i` and `j` in `labeled`
     '''
     Bc = get_structuring_elem(labeled, Bc)
-    if output is None:
-        output = np.zeros(labeled.shape, bool)
-    else:
-        if output.dtype != bool:
-            raise TypeError('mahotas.labeled.border: output must be boolean')
-        if not output.flags['C_CONTIGUOUS']:
-            raise TypeError('mahotas.labeled.border: output must be C-contiguous')
-        if output.shape != labeled.shape:
-            raise ValueError('mahotas.labeled.border: output must be of same size as `labeled`')
+    output = _get_output(labeled, output, 'labeled.border', bool)
+    output.fill(False)
     return _labeled.border(labeled, Bc, output, i, j, bool(always_return))
 
 def borders(labeled, Bc=None, output=None):
@@ -111,14 +99,7 @@ def borders(labeled, Bc=None, output=None):
         Pixels are True exactly where there is a border in `labeled`
     '''
     Bc = get_structuring_elem(labeled, Bc)
-    if output is None:
-        output = np.zeros(labeled.shape, bool)
-    else:
-        if output.dtype != bool:
-            raise TypeError('mahotas.labeled.borders: output must be boolean')
-        if not output.flags['C_CONTIGUOUS']:
-            raise TypeError('mahotas.labeled.borders: output must be C-contiguous')
-        if output.shape != labeled.shape:
-            raise ValueError('mahotas.labeled.borders: output must be of same size as `labeled`')
+    output = _get_output(labeled, output, 'labeled.borders', bool)
+    output.fill(False)
     return _labeled.borders(labeled, Bc, output)
 

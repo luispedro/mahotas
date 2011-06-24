@@ -17,7 +17,7 @@
 # 02110-1301, USA.
 import numpy as np
 
-def _get_output(array, output, fname):
+def _get_output(array, output, fname, dtype=None):
     '''
     output = _get_output(array, output, fname)
 
@@ -36,9 +36,11 @@ def _get_output(array, output, fname):
     -------
     output : ndarray
     '''
+    if dtype is None:
+        dtype = array.dtype
     if output is None:
-        return np.empty(array.shape, array.dtype)
-    if output.dtype != array.dtype:
+        return np.empty(array.shape, dtype)
+    if output.dtype != dtype:
         raise ValueError('mahotas.%s: `output` has wrong type' % fname)
     if output.shape != array.shape:
         raise ValueError('mahotas.%s: `output` has wrong shape' % fname)

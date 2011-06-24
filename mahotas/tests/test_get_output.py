@@ -10,6 +10,11 @@ def test_get_output():
     out2 = _get_output(f, output, 'test')
     assert out2 is output
 
+def test_dtype():
+    f = np.arange(256).reshape((32,8))
+    output = _get_output(f, None, 'test', np.float32)
+    assert output.dtype == np.float32
+
 @raises(ValueError)
 def test_get_output_bad_shape():
     f = np.arange(256).reshape((32,8))
@@ -23,4 +28,10 @@ def test_get_output_non_contiguous():
     output = output[:,::2]
     assert output.shape == f.shape
     _get_output(f, output, 'testing')
+
+@raises(ValueError)
+def test_get_output_explicit_dtype():
+    f = np.arange(256).reshape((32,8))
+    output = np.zeros_like(f)
+    _get_output(f, output, 'testing', bool)
     
