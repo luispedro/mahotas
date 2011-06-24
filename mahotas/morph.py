@@ -6,13 +6,8 @@
 from __future__ import division
 import numpy as np
 
-
-import numpy as np
-try:
-    import _morph
-except:
-    print '''Import of _morph implementation module failed.
-Please check your installation.'''
+from .internal import _get_output
+from . import _morph
 
 def _verify_types(A,allowed_types,function):
     if A.dtype not in allowed_types:
@@ -246,8 +241,7 @@ def majority_filter(img, N=3, output=None):
     '''
     if img.dtype != np.bool_:
         img = img.astype(bool)
-    if output is None or output.dtype != np.bool_ or output.shape != img.shape:
-        output = np.empty(img.shape, np.bool_)
+    output = _get_output(img, output, 'majority_filter', np.bool_)
     if N <= 1:
         raise ValueError('mahotas.majority_filter: filter size must be positive')
     if not N&1:
