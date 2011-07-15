@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2010, Luis Pedro Coelho <lpc@cmu.edu>
+# Copyright (C) 2008-2010, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 # 02110-1301, USA.
 
 from __future__ import division
-import numpy
 
 import _bbox
 import numpy as np
@@ -31,12 +30,14 @@ def bbox(img):
 
     Parameters
     ----------
-      img : Any image type
+    img : ndarray
+        Any image type
 
     Returns
     -------
-      min1,max1,min2,max2 : These are such that img[min1:max1, min2:max2]
-                            contains all non-zero pixels
+    min1,max1,min2,max2 : int,int,int,int
+        These are such that ``img[min1:max1, min2:max2]`` contains all non-zero
+        pixels
     """
     _verify_is_integer_type(img, 'mahotas.bbox')
     if not img.shape:
@@ -51,12 +52,15 @@ def croptobbox(img, border=None):
 
     Parameters
     ----------
-      img : image
-      border : whether to add a border (default no border)
+    img : ndarray
+        image
+    border : int, optional
+        whether to add a border (default no border)
 
     Returns
     -------
-      nimg : A subimage of img.
+    nimg : ndarray
+        A subimage of img.
 
     Bugs
     ----
@@ -66,7 +70,6 @@ def croptobbox(img, border=None):
 
     This ensures that the result is always a sub-image of the input.
     """
-    
     min1,max1,min2,max2 = bbox(img)
     if border:
         min1 = max(0, min1-border)

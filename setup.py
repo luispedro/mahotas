@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2011, Luis Pedro Coelho <lpc@cmu.edu>
+# Copyright (C) 2009-2011, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -69,19 +69,19 @@ classifiers = [
 'Development Status :: 5 - Production/Stable',
 'Intended Audience :: Developers',
 'Intended Audience :: Science/Research',
-'License :: OSI Approved :: GNU General Public License (GPL)',
-'Programming Language :: C++',
 'Topic :: Scientific/Engineering :: Image Recognition',
 'Topic :: Software Development :: Libraries',
 'Programming Language :: Python',
+'Programming Language :: C++',
+'License :: OSI Approved :: GNU General Public License (GPL)',
 ]
 
 numpyutils.setup(name = 'mahotas',
       version = __version__,
-      description = 'Mahotas: Python Image Processing Library',
+      description = 'Mahotas: Computer Vision Library',
       long_description = long_description,
       author = 'Luis Pedro Coelho',
-      author_email = 'lpc@cmu.edu',
+      author_email = 'luis@luispedro.org',
       license = 'GPL',
       platforms = ['Any'],
       classifiers = classifiers,

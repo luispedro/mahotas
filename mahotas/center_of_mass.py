@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2010, Luis Pedro Coelho <lpc@cmu.edu>
+# Copyright (C) 2008-2010, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -32,13 +32,15 @@ def center_of_mass(img, labels=None):
 
     Parameters
     ----------
-    img : Any ndarray
-    labels : A labeled array
+    img : ndarray
+    labels : ndarray
+        A labeled array
 
     Returns
     -------
-    coords : if ``not labels``, a 1-ndarray of coordinates (size = len(img.shape)),
-             if ``labels``, a 2-ndarray of coordinates (shape = (labels.max()+1) x len(img.shape))
+    coords : ndarray
+        if ``not labels``, a 1-ndarray of coordinates (size = len(img.shape)),
+        if ``labels``, a 2-ndarray of coordinates (shape = (labels.max()+1) xlen(img.shape))
     '''
     if labels is not None:
         if labels.dtype != np.int32 or \

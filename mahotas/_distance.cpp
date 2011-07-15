@@ -1,7 +1,5 @@
-// Copyright (C) 2010  Murphy Lab
+// Copyright (C) 2010 Luis Pedro Coelho <luis@luispedro.org>
 // Carnegie Mellon University
-// 
-// Written by Luis Pedro Coelho <lpc@cmu.edu>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published

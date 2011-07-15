@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2010, Luis Pedro Coelho <lpc@cmu.edu>
+# Copyright (C) 2008-2010, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # License: GPL v2, or later
 
@@ -35,12 +35,15 @@ def euler(f, n=8):
 
     Parameters
     ----------
-      f : A 2-D binary image
-      n : Connectivity, one of (4,8). default: 8
+    f : ndarray
+        A 2-D binary image
+    n : int, optional
+        Connectivity, one of (4,8). default: 8
 
     Returns
     -------
-      euler_nr : Euler number
+    euler_nr : int
+        Euler number
 
     Reference
     ---------

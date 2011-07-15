@@ -3,7 +3,7 @@
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # Carnegie Mellon University
 # 
-# Written by Luis Pedro Coelho <lpc@cmu.edu>
+# Written by Luis Pedro Coelho <luis@luispedro.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published

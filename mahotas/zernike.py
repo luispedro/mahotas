@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2010, Luis Pedro Coelho <lpc@cmu.edu>
+# Copyright (C) 2006-2010, Luis Pedro Coelho <luis@luispedro.org>
 # Carnegie Mellon University
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
@@ -41,18 +41,22 @@ def zernike(img, D, radius):
 
     Parameters
     ----------
-      img : 2-d ndarray
-      D : Maximum degree to use
-      radius : the maximum radius for the Zernike polynomials, in pixels
+    img : 2-ndarray
+        input image
+    D : integer
+        Maximum degree to use
+    radius : integer
+        the maximum radius for the Zernike polynomials, in pixels
 
     Returns
     -------
-      zvalues : 1-D array of Zernike moments
+    zvalues : 1-ndarray of floats
+        Zernike moments
 
     Reference
     ---------
-        Teague, MR. (1980). Image Analysis via the General Theory of Moments.  J.
-        Opt. Soc. Am. 70(8):920-930.
+    Teague, MR. (1980). Image Analysis via the General Theory of Moments.  J.
+    Opt. Soc. Am. 70(8):920-930.
     """
     zvalues = []
     c0,c1 = center_of_mass(img)

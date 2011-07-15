@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2010, Luis Pedro Coelho <lpc@cmu.edu>
+# Copyright (C) 2008-2010, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -87,17 +87,20 @@ def otsu(img, ignore_zeros=False):
 def rc(img, ignore_zeros=False):
     """
     T = rc(img, ignore_zeros=False)
-    
+
     Calculate a threshold according to the Riddler-Calvard method.
-    
+
     Parameters
     ----------
-      img : Image of any type
-      ignore_zeros : Whether to ignore zero valued pixels (default: False)
+    img : ndarray
+        Image of any type
+    ignore_zeros : boolean, optional
+        Whether to ignore zero valued pixels (default: False)
 
     Returns
     -------
-      T : threshold
+    T : float
+        threshold
     """
     hist = fullhistogram(img)
     if ignore_zeros:

@@ -1,5 +1,5 @@
 // Part of mahotas. See LICENSE file for License
-// Copyright 2008-2010 Luis Pedro Coelho <lpc@cmu.edu>
+// Copyright 2008-2010 Luis Pedro Coelho <luis@luispedro.org>
 
 extern "C" {
     #include <Python.h>

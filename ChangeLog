@@ -6,6 +6,7 @@ Version 0.6.5+
 	* Add template_match function
 	* Refactor by use of mahotas.internal
 	* Better error message for when the compiled modules cannot be loaded
+	* Update contact email. All docs in numpydoc format now.
 
 Version 0.6.5 2011-05-16 by luispedro
 	* Add `max_points` & `descriptor_only` arguments to mahotas.surf

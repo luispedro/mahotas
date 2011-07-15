@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011, Luis Pedro Coelho <lpc@cmu.edu>
+# Copyright (C) 2010-2011, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # This program is free software; you can redistribute it and/or modify

@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2010, Luis Pedro Coelho <lpc@cmu.edu>
+# Copyright (C) 2008-2010, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -42,15 +42,21 @@ def moments(img, p0, p1, cm=None, convert_to_float=True):
 
     Parameters
     ----------
-      img : An 2-d ndarray
-      p0 : Power for first dimension
-      p1 : Power for second dimension
-      cm : center of mass (default: 0,0)
-      convert_to_float : whether to convert to floating point
+    img : 2-ndarray
+        An 2-d ndarray
+    p0 : float
+        Power for first dimension
+    p1 : float
+        Power for second dimension
+    cm : (int,int), optional
+        center of mass (default: 0,0)
+    convert_to_float : boolean, optional
+        whether to convert to floating point
 
     Returns
     -------
-      moment: floating point number
+    moment: float
+        floating point number
 
     Bugs
     ----
