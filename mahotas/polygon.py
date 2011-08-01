@@ -101,7 +101,7 @@ def fill_polygon(polygon, canvas, color=1):
         j = -1
         for i,p in enumerate(polygon):
             pj = polygon[j]
-            if p[0] <= y and pj[0] >= y or pj[0] <= y and p[0] >= y:
+            if p[0] < y and pj[0] >= y or pj[0] < y and p[0] >= y:
                 dy = pj[0] - p[0]
                 if dy:
                     nodes.append( (p[1] + (y-p[0])/(pj[0]-p[0])*(pj[1]-p[1])) )
@@ -152,5 +152,6 @@ def fill_convexhull(bwimg):
     canvas = np.zeros_like(bwimg)
     black = (1 if bwimg.dtype == np.bool_ else 255)
     fill_polygon(points, canvas, black)
+    canvas[bwimg] = black
     return canvas
 

@@ -3,7 +3,7 @@ import mahotas.polygon
 from mahotas.polygon import fill_polygon, fill_convexhull
 
 def test_polygon():
-    polygon = [(10,10), (10,19), (19,19)]
+    polygon = [(10,10), (10,20), (20,20)]
     canvas = np.zeros((40,40), np.bool)
     fill_polygon(polygon, canvas)
     assert canvas.sum() == (10*10+10)/2
@@ -49,3 +49,15 @@ def test_line_non_square():
     mahotas.polygon.line((0,0),(127,63), A)
     assert A.sum()
 
+
+
+def test_fill_line():
+    # This is a regression test
+    # https://github.com/luispedro/mahotas/issues/3
+    canvas = np.zeros((50,30))
+    poly = [( 0,10),
+            (10, 0),
+            (40,20),
+            ( 0,10)]
+    fill_polygon(poly, canvas)
+    assert np.all(canvas[10,1:10])
