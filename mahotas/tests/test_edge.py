@@ -1,8 +1,11 @@
 from mahotas.edge import sobel
 import numpy as np
 def test_sobel_shape():
-    A = np.zeros((100,100))
+    A = np.arange(100*100)
+    A = (A % 15)
+    A = A.reshape((100,100))
     assert sobel(A).shape == A.shape
+    assert sobel(A, just_filter=True).shape == A.shape
 
 def test_sobel_zeros():
     A = np.zeros((15,100))
