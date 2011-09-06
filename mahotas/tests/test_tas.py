@@ -13,3 +13,11 @@ def test_tas3d():
     f = (f * 255).astype(np.uint8)
     assert np.abs(mahotas.tas.tas(f).sum()-6) < 0.0001
     assert np.abs(mahotas.tas.pftas(f).sum()-6) < 0.0001
+
+def test_regression():
+    np.random.seed(220)
+    img = np.random.random_sample((1024,1024))
+    img *= 255
+    img = img.astype(np.uint8)
+    features = mahotas.tas.pftas(img)
+    assert not np.any(features == 0.)

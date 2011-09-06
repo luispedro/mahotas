@@ -1,3 +1,6 @@
+Version 0.6.6+
+	* Fix Bug in 2D TAS
+
 Version 0.6.6 2011-08-08 by luispedro
 	* Fix fill_polygon bug (fix by joferkington)
 	* Fix Haralick feature 6 (fix by Rita Simões)

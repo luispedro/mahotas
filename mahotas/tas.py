@@ -27,7 +27,7 @@ from .thresholding import otsu
 
 __all__ = ['pftas', 'tas']
 
-_M2 = np.ones((2, 2))
+_M2 = np.ones((3, 3))
 _M2[1, 1] = 10
 _bins2 = np.arange(11)
 
