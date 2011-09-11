@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2010, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2011, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@ def bbox(img):
     Parameters
     ----------
     img : ndarray
-        Any image type
+        Any integer image type
 
     Returns
     -------
@@ -53,7 +53,7 @@ def croptobbox(img, border=None):
     Parameters
     ----------
     img : ndarray
-        image
+        Integer image array
     border : int, optional
         whether to add a border (default no border)
 
