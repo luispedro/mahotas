@@ -5,6 +5,16 @@ import sys
 import os
 
 _API = {
+    'FreeImage_AllocateT':
+                (ctypes.c_void_p,
+                    [ ctypes.c_int # type
+                    , ctypes.c_int # width
+                    , ctypes.c_int # height
+                    , ctypes.c_int #bpp
+                    , ctypes.c_uint # red_mask
+                    , ctypes.c_uint # green_mask
+                    , ctypes.c_uint # blue_mask
+                    ]),
     'FreeImage_Load': (ctypes.c_void_p,
                        [ctypes.c_int, ctypes.c_char_p, ctypes.c_int]),
     'FreeImage_Unload': (None,
@@ -17,6 +27,8 @@ _API = {
                                [ctypes.c_void_p]),
     'FreeImage_GetFileTypeFromMemory': (ctypes.c_int,
                                 [ctypes.c_void_p, ctypes.c_int]),
+    'FreeImage_GetFileType': (ctypes.c_int,
+                                [ctypes.c_char_p, ctypes.c_int]),
     'FreeImage_GetBPP': (ctypes.c_uint,
                          [ctypes.c_void_p]),
     'FreeImage_GetPitch': (ctypes.c_uint,
@@ -543,7 +555,7 @@ def imsavetoblob(img, filetype, flags=0):
         mem = _FI.FreeImage_OpenMemory(0,0)
         if not _FI.FreeImage_SaveToMemory(ftype, bitmap, mem, flags):
             raise IOError('mahotas.freeimage.imsavetoblob: Cannot save to memory.')
-        data = ctypes.c_voidp()
+        data = ctypes.c_void_p()
         size = ctypes.c_int()
         _FI.FreeImage_AcquireMemory(mem, ctypes.byref(data), ctypes.byref(size))
         return ctypes.string_at(data, size)
