@@ -27,6 +27,9 @@ on points.
 
 The implementation is in C++, so it is fast.
 
+A companion function ``fill_convexhull`` returns the convex hull as a binary
+image.
+
 API Documentation
 -----------------
 
