@@ -1,5 +1,6 @@
 Version 0.6.6+
 	* Fix Bug in 2D TAS
+	* Support for 1-bit monochrome image loading with freeimage
 
 Version 0.6.6 2011-08-08 by luispedro
 	* Fix fill_polygon bug (fix by joferkington)
