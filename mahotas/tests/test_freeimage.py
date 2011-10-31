@@ -56,3 +56,11 @@ def test_fromblob():
     assert np.all(freeimage.imreadfromblob(s) == img)
 
 
+def test_1bpp():
+    bpp = path.join(
+                path.dirname(__file__),
+                'data',
+                '1bpp.bmp')
+    bpp = imread(bpp)
+    assert bpp.sum()
+    assert bpp.sum() < bpp.size

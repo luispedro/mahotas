@@ -178,7 +178,10 @@ class FI_TYPES(object):
         dtype = cls.dtypes[fi_type]
         if fi_type == cls.FIT_BITMAP:
             bpp = _FI.FreeImage_GetBPP(bitmap)
-            if bpp == 8:
+            if bpp == 1:
+                # This is a special case
+                return 'bit', None
+            elif bpp == 8:
                 extra_dims = []
             elif bpp == 16:
                 extra_dims = []
@@ -370,7 +373,6 @@ def _wrap_bitmap_bits_in_array(bitmap, shape, dtype):
 
     """
     pitch = _FI.FreeImage_GetPitch(bitmap)
-    height = shape[-1]
     itemsize = dtype.itemsize
 
     if len(shape) == 3:
@@ -395,6 +397,12 @@ def _array_from_bitmap(bitmap):
 
     """
     dtype, shape = FI_TYPES.get_type_and_shape(bitmap)
+    if type(dtype) == str and dtype == 'bit':
+        bitmap8 = _FI.FreeImage_ConvertToGreyscale(bitmap)
+        try:
+            return _array_from_bitmap(bitmap8).astype(np.bool)
+        finally:
+            _FI.FreeImage_Unload(bitmap8)
     array = _wrap_bitmap_bits_in_array(bitmap, shape, dtype)
     # swizzle the color components and flip the scanlines to go from
     # FreeImage's BGR[A] and upside-down internal memory format to something
