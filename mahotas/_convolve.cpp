@@ -81,15 +81,10 @@ PyObject* py_convolve(PyObject* self, PyObject* args) {
         Py_INCREF(output);
     }
 
-    switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
-        convolve<type>(numpy::aligned_array<type>(array), numpy::aligned_array<type>(filter), numpy::aligned_array<type>(output), mode);
-        HANDLE_TYPES();
+    convolve<type>(numpy::aligned_array<type>(array), numpy::aligned_array<type>(filter), numpy::aligned_array<type>(output), mode);
+    SAFE_SWITCH_ON_TYPES_OF(array, true)
 #undef HANDLE
-        default:
-        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
-        return NULL;
-    }
     return PyArray_Return(output);
 }
 
@@ -136,13 +131,14 @@ PyObject* py_rank_filter(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
-    Py_INCREF(output);
+    holdref r(output);
 
 #define HANDLE(type) \
         rank_filter<type>(numpy::aligned_array<type>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc), rank, mode);
-    SWITCH_ON_TYPES_OF(array)
+    SAFE_SWITCH_ON_TYPES_OF(array,true)
 #undef HANDLE
 
+    Py_INCREF(output);
     return PyArray_Return(output);
 }
 
@@ -183,12 +179,14 @@ PyObject* py_template_match(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
-    Py_INCREF(output);
+    holdref r(output);
 
 #define HANDLE(type) \
         template_match<type>(numpy::aligned_array<type>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(template_), mode);
-    SWITCH_ON_TYPES_OF(array)
+    SAFE_SWITCH_ON_TYPES_OF(array,true)
 #undef HANDLE
+
+    Py_INCREF(output);
     return PyArray_Return(output);
 }
 

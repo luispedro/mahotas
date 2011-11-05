@@ -85,14 +85,12 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
     PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
     if (!res_a) return NULL;
     PyArray_FILLWBYTE(res_a, 0);
-    switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
-    erode<type>(numpy::aligned_array<type>(res_a), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));\
-
-        HANDLE_INTEGER_TYPES();
+    erode<type>(numpy::aligned_array<type>(res_a), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, false);
 #undef HANDLE
-        default:
-        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+    if (PyErr_Occurred()) {
+        Py_DECREF(res_a);
         return NULL;
     }
     return PyArray_Return(res_a);
@@ -124,14 +122,12 @@ PyObject* py_dilate(PyObject* self, PyObject* args) {
     PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
     PyArray_FILLWBYTE(res_a, 0);
     if (!res_a) return NULL;
-    switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
-    dilate<type>(numpy::aligned_array<type>(res_a),numpy::array<type>(array),numpy::aligned_array<type>(Bc));\
-
-        HANDLE_INTEGER_TYPES();
+    dilate<type>(numpy::aligned_array<type>(res_a),numpy::array<type>(array),numpy::aligned_array<type>(Bc));
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, false);
 #undef HANDLE
-        default:
-        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+    if (PyErr_Occurred()) {
+        Py_DECREF(res_a);
         return NULL;
     }
     return PyArray_Return(res_a);
@@ -201,7 +197,14 @@ PyObject* py_close_holes(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
-    close_holes(numpy::aligned_array<bool>(ref), numpy::aligned_array<bool>(res_a), numpy::aligned_array<bool>(Bc));
+    try {
+        close_holes(numpy::aligned_array<bool>(ref), numpy::aligned_array<bool>(res_a), numpy::aligned_array<bool>(Bc));
+    }
+    CATCH_PYTHON_EXCEPTIONS(false)
+    if (PyErr_Occurred()) {
+        Py_DECREF(res_a);
+        return NULL;
+    }
     return PyArray_Return(res_a);
 }
 
@@ -334,15 +337,10 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
         if (!lines) return NULL;
         lines_a = new numpy::aligned_array<bool>(lines);
     }
-    switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
     cwatershed<type>(numpy::aligned_array<type>(res_a),lines_a,numpy::aligned_array<type>(array),numpy::aligned_array<type>(markers),numpy::aligned_array<type>(Bc));
-        HANDLE_INTEGER_TYPES();
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array,true)
 #undef HANDLE
-        default:
-        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
-        return NULL;
-    }
     if (return_lines) {
         delete lines_a;
         PyObject* ret_val = PyTuple_New(2);
@@ -432,17 +430,14 @@ PyObject* py_hitmiss(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
-    Py_INCREF(res_a);
+    holdref r(res_a);
 
-    switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
     hitmiss<type>(numpy::aligned_array<type>(res_a), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));
-        HANDLE_INTEGER_TYPES();
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, true);
 #undef HANDLE
-        default:
-        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
-        return NULL;
-    }
+
+    Py_INCREF(res_a);
     return PyArray_Return(res_a);
 }
 

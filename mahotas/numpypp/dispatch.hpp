@@ -27,3 +27,35 @@ typedef unsigned short ushort;
             return NULL; \
     }
 
+#define SAFE_SWITCH_ON_TYPES_OF(array,return_null) \
+    try { \
+        switch(PyArray_TYPE(array)) { \
+                HANDLE_TYPES();\
+                default: \
+                PyErr_SetString(PyExc_RuntimeError, "Dispatch on types failed!"); \
+                return NULL; \
+        } \
+    } \
+    CATCH_PYTHON_EXCEPTIONS(return_null)
+
+#define SAFE_SWITCH_ON_INTEGER_TYPES_OF(array,return_null) \
+    try { \
+        switch(PyArray_TYPE(array)) { \
+                HANDLE_TYPES();\
+                default: \
+                PyErr_SetString(PyExc_RuntimeError, "Dispatch on types failed!"); \
+                return NULL; \
+        } \
+    } \
+    CATCH_PYTHON_EXCEPTIONS(return_null)
+
+
+#define CATCH_PYTHON_EXCEPTIONS(return_null) \
+    catch (const PythonException& pe) { \
+        PyErr_SetString(pe.type(), pe.message()); \
+        if (return_null) return NULL; \
+    } catch (const std::bad_alloc&) {\
+        PyErr_NoMemory(); \
+        if (return_null) return NULL; \
+    }
+

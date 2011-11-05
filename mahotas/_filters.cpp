@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2005 Peter J. Verveer
- * Copyright (C) 2010 Luis Pedro Coelho
+ * Copyright (C) 2010-2011 Luis Pedro Coelho
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include <cassert>
 #include <memory>
 #include "_filters.h"
+#include "utils.hpp"
 
 extern "C" {
     #include <Python.h>
@@ -149,8 +150,7 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
     }
 
     if (int(mode) < 0 || int(mode) > EXTEND_LAST) {
-        PyErr_SetString(PyExc_RuntimeError, "boundary mode not supported");
-        return 0;
+        throw PythonException(PyExc_RuntimeError, "boundary mode not supported");
     }
     try {
         *offsets = 0;
@@ -161,8 +161,7 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
         }
     } catch (std::bad_alloc&) {
         if (*offsets) delete [] offsets;
-        PyErr_NoMemory();
-        return -1;
+        throw;
     }
     // from here on, we cannot fail anymore:
 
