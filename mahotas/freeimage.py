@@ -15,6 +15,12 @@ _API = {
                     , ctypes.c_uint # green_mask
                     , ctypes.c_uint # blue_mask
                     ]),
+    'FreeImage_Save': (ctypes.c_int,
+                        [ ctypes.c_int # type
+                        , ctypes.c_void_p # bitmap
+                        , ctypes.c_char_p # filename
+                        , ctypes.c_int # flags
+                        ]),
     'FreeImage_Load': (ctypes.c_void_p,
                        [ctypes.c_int, ctypes.c_char_p, ctypes.c_int]),
     'FreeImage_Unload': (None,
