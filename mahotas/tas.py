@@ -51,7 +51,10 @@ def _tas(img, thresh, margin):
         V = convolve(img.astype(np.uint8), M)
         values,_ = np.histogram(V, bins=bins)
         values = values[:saved]
-        return values/values.sum()
+        s = values.sum()
+        if s > 0:
+            return values/s
+        return values
 
     def _compute(bimg):
         alltas.append(_ctas(bimg))
@@ -59,7 +62,8 @@ def _tas(img, thresh, margin):
 
     alltas = []
     allntas = []
-    mu = ((img > thresh)*img).sum() / (img > thresh).sum()
+    total = np.sum(img > thresh)
+    mu = ((img > thresh)*img).sum() / (total + 1e-8)
     _compute( (img > mu - margin) * (img < mu + margin) )
     _compute(img > mu - margin)
     _compute(img > mu)

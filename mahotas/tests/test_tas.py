@@ -21,3 +21,7 @@ def test_regression():
     img = img.astype(np.uint8)
     features = mahotas.tas.pftas(img)
     assert not np.any(features == 0.)
+
+def test_zero_image():
+    features = mahotas.tas.pftas(np.zeros((64,64), np.uint8))
+    assert not np.any(np.isnan(features))

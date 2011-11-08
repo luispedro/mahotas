@@ -1,5 +1,5 @@
 Version 0.6.6+
-	* Fix Bug in 2D TAS
+	* Fix bugs in 2D TAS (reported by Jenn Bakal)
 	* Support for 1-bit monochrome image loading with freeimage
 	* Fix GIL handling on errors
 
