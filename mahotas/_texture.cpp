@@ -56,16 +56,10 @@ PyObject* py_cooccurent(PyObject* self, PyObject* args) {
         return NULL;
     }
 
-    switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
-    cooccurence<type>(numpy::aligned_array<npy_int32>(result), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));\
-
-        HANDLE_INTEGER_TYPES();
+    cooccurence<type>(numpy::aligned_array<npy_int32>(result), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, true)
 #undef HANDLE
-        default:
-        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
-        return NULL;
-    }
     if (symmetric) {
         numpy::aligned_array<npy_int32> cmatrix(result);
         const int s0 = cmatrix.size(0);
