@@ -24,7 +24,6 @@
 # send email to murphy@cmu.edu
 
 from __future__ import division
-from scipy import ndimage
 
 __all__ = [
     'gvoronoi',
@@ -48,6 +47,7 @@ def gvoronoi(labeled):
     segmented : is of the same size and type as labeled and
                 `segmented[y,x]` is the label of the object at position `y,x`.
     '''
+    from scipy import ndimage
     L1,L2 = ndimage.distance_transform_edt(labeled== 0, return_distances=False, return_indices=True)
     return labeled[L1,L2]
 
