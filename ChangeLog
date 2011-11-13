@@ -1,4 +1,6 @@
 Version 0.6.6+
+	* gvoronoi no longer depends on scipy
+	* mahotas is importable without scipy
 	* Fix bugs in 2D TAS (reported by Jenn Bakal)
 	* Support for 1-bit monochrome image loading with freeimage
 	* Fix GIL handling on errors

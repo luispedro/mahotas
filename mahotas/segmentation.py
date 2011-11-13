@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2010 Murphy Lab
+# Copyright (C) 2008-2011 Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # Carnegie Mellon University
 # 
-# Written by Luis Pedro Coelho <luis@luispedro.org>
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
 # by the Free Software Foundation; either version 2 of the License,
@@ -24,6 +22,7 @@
 # send email to murphy@cmu.edu
 
 from __future__ import division
+from .morph import cwatershed
 
 __all__ = [
     'gvoronoi',
@@ -47,7 +46,7 @@ def gvoronoi(labeled):
     segmented : is of the same size and type as labeled and
                 `segmented[y,x]` is the label of the object at position `y,x`.
     '''
-    from scipy import ndimage
-    L1,L2 = ndimage.distance_transform_edt(labeled== 0, return_distances=False, return_indices=True)
-    return labeled[L1,L2]
+    labeled = labeled.astype(int)
+    return cwatershed(labeled*0, labeled)
+
 
