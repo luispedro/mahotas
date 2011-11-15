@@ -129,6 +129,20 @@ bool border(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, numpy
     return any;
 }
 
+template <typename T>
+void labeled_sum(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, int max) {
+    gil_release nogil;
+    typename numpy::aligned_array<T>::iterator iterator = array.begin();
+    numpy::aligned_array<int>::iterator literator = labeled.begin();
+    const int N = array.size();
+    for (int i = 0; i != max; ++i) result[i] = 0;
+    for (int i = 0; i != N; ++i, ++iterator, ++literator) {
+        if ((*literator >= 0) && (*literator < max)) {
+            result[*literator] += *iterator;
+        }
+    }
+}
+
 
 PyObject* py_label(PyObject* self, PyObject* args) {
     PyArrayObject* array;
@@ -222,10 +236,46 @@ PyObject* py_border(PyObject* self, PyObject* args) {
     return Py_None;
 }
 
+PyObject* py_labeled_sum(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* labeled;
+    PyArrayObject* output;
+    if (!PyArg_ParseTuple(args,"OOO", &array, &labeled, &output)) return NULL;
+    if (!PyArray_Check(array) || !PyArray_Check(labeled) || PyArray_NDIM(array) != PyArray_NDIM(labeled) ||
+         PyArray_TYPE(labeled) != NPY_INT ||
+        !PyArray_Check(output) || PyArray_TYPE(output) != PyArray_TYPE(array) || !PyArray_ISCARRAY(output)) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    for (int d = 0; d != PyArray_NDIM(array); ++d) {
+        if (PyArray_DIM(array, d) != PyArray_DIM(labeled, d)) {
+            PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+            return NULL;
+        }
+    }
+    const int maxi = PyArray_DIM(output, 0);
+
+#define HANDLE(type) \
+    { \
+        type* odata = static_cast<type*>(PyArray_DATA(output)); \
+        labeled_sum<type>( \
+                numpy::aligned_array<type>(array), \
+                numpy::aligned_array<int>(labeled), \
+                odata, \
+                maxi); \
+    }
+    SAFE_SWITCH_ON_TYPES_OF(array, true);
+#undef HANDLE
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 PyMethodDef methods[] = {
   {"label",(PyCFunction)py_label, METH_VARARGS, NULL},
   {"borders",(PyCFunction)py_borders, METH_VARARGS, NULL},
   {"border",(PyCFunction)py_border, METH_VARARGS, NULL},
+  {"labeled_sum",(PyCFunction)py_labeled_sum, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 

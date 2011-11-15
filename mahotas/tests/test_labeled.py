@@ -44,3 +44,19 @@ def test_borders():
 
     assert np.all(union == borders)
 
+
+def slow_labeled_sum(array, labeled):
+    return np.array([
+            np.sum(array * (labeled == i))
+            for i in xrange(labeled.max()+1)
+        ])
+
+def test_sum_labeled():
+    np.random.seed(334)
+    for i in xrange(16):
+        f = np.random.random_sample((64,128))
+        labeled = np.zeros(f.shape, dtype=np.intc)
+        labeled += 8 * np.random.random_sample(labeled.shape)
+        fast = mahotas.labeled.labeled_sum(f, labeled)
+        slow = slow_labeled_sum(f, labeled)
+        assert np.all(fast == slow)

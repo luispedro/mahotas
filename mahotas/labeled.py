@@ -13,6 +13,7 @@ __all__ = [
     'borders',
     'border',
     'label',
+    'labeled_sum',
     ]
 
 def label(array, Bc=None, output=None):
@@ -103,3 +104,28 @@ def borders(labeled, Bc=None, output=None):
     output.fill(False)
     return _labeled.borders(labeled, Bc, output)
 
+def labeled_sum(array, labeled):
+    '''
+    sum = labeled_sum(array, labeled)
+
+    Labeled sum. sum will be an array of size ``labeled.max() + 1``, where
+    ``sum[i]`` is equal to ``np.sum(array[labeled == i])``.
+
+    Parameters
+    ----------
+    array : ndarray of any type
+    labeled : int ndarray
+        Label map. This is the same type as returned from ``mahotas.label()``
+
+    Returns
+    -------
+    sum : 1-d ndarray of ``array.dtype``
+    '''
+    if labeled.dtype != np.intc or not labeled.flags.carray:
+        raise ValueError('mahotas.labeled.labeled_sum: labeled is not as expected')
+    if array.shape != labeled.shape:
+        raise ValueError('mahotas.labeled.labeled_sum: `array` is not the same size as `labeled`')
+    maxv = labeled.max() + 1
+    output = np.empty(maxv, dtype=array.dtype)
+    _labeled.labeled_sum(array, labeled, output)
+    return output
