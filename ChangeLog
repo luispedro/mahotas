@@ -3,7 +3,7 @@ Version 0.6.6+
 	* mahotas is importable without scipy
 	* Fix bugs in 2D TAS (reported by Jenn Bakal)
 	* Support for 1-bit monochrome image loading with freeimage
-	* Fix GIL handling on errors
+	* Fix GIL handling on errors (reported by Gareth McCaughan)
 	* Fix freeimage for 64-bit computers
 
 Version 0.6.6 2011-08-08 by luispedro

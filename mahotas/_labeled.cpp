@@ -16,6 +16,8 @@ const char TypeErrorMsg[] =
     "Type not understood. "
     "This is caused by either a direct call to _labeled (which is dangerous: types are not checked!) or a bug in labeled.py.\n";
 
+
+// This is a standard union-find structure
 int find(int* data, int i) {
     if (data[i] == i) return i;
     int j = find(data, data[i]);
@@ -161,16 +163,16 @@ PyObject* py_borders(PyObject* self, PyObject* args) {
     }
     Py_INCREF(output);
 
-    switch(PyArray_TYPE(array)) {
+
 #define HANDLE(type) \
-        borders<type>( \
-                    numpy::aligned_array<type>(array), \
-                    numpy::aligned_array<type>(filter), \
-                    numpy::aligned_array<bool>(output));
-        HANDLE_TYPES();
+    borders<type>( \
+                numpy::aligned_array<type>(array), \
+                numpy::aligned_array<type>(filter), \
+                numpy::aligned_array<bool>(output));
+    SAFE_SWITCH_ON_TYPES_OF(array, false)
 #undef HANDLE
-        default:
-        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+    if (PyErr_Occurred()) {
+        Py_DECREF(output);
         return NULL;
     }
     return PyArray_Return(output);
@@ -198,21 +200,22 @@ PyObject* py_border(PyObject* self, PyObject* args) {
     Py_INCREF(output);
 
     bool has_any;
-    switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
-        has_any = border<type>( \
-                    numpy::aligned_array<type>(array), \
-                    numpy::aligned_array<type>(filter), \
-                    numpy::aligned_array<bool>(output), \
-                    static_cast<type>(i), \
-                    static_cast<type>(j));
-        HANDLE_TYPES();
+    has_any = border<type>( \
+                numpy::aligned_array<type>(array), \
+                numpy::aligned_array<type>(filter), \
+                numpy::aligned_array<bool>(output), \
+                static_cast<type>(i), \
+                static_cast<type>(j));
+    SAFE_SWITCH_ON_TYPES_OF(array, false);
 #undef HANDLE
-        default:
-        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+    if (PyErr_Occurred()) {
+        Py_DECREF(output);
         return NULL;
     }
-    if (always_return || has_any) return PyArray_Return(output);
+    if (always_return || has_any) {
+        return PyArray_Return(output);
+    }
 
     Py_DECREF(output);
     Py_INCREF(Py_None);
