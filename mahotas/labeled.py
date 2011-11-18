@@ -106,7 +106,7 @@ def borders(labeled, Bc=None, output=None):
 
 def labeled_sum(array, labeled):
     '''
-    sum = labeled_sum(array, labeled)
+    sums = labeled_sum(array, labeled)
 
     Labeled sum. sum will be an array of size ``labeled.max() + 1``, where
     ``sum[i]`` is equal to ``np.sum(array[labeled == i])``.
@@ -119,7 +119,7 @@ def labeled_sum(array, labeled):
 
     Returns
     -------
-    sum : 1-d ndarray of ``array.dtype``
+    sums : 1-d ndarray of ``array.dtype``
     '''
     if labeled.dtype != np.intc or not labeled.flags.carray:
         raise ValueError('mahotas.labeled.labeled_sum: labeled is not as expected')
@@ -129,3 +129,32 @@ def labeled_sum(array, labeled):
     output = np.empty(maxv, dtype=array.dtype)
     _labeled.labeled_sum(array, labeled, output)
     return output
+
+def labeled_size(labeled):
+    '''
+    sizes = labeled_size(labeled)
+
+    Equivalent to::
+
+        for i in xrange(...):
+            sizes[i] = np.sum(labeled == i)
+
+    but, naturally, much faster.
+
+    Parameters
+    ----------
+    labeled : int ndarray
+
+    Returns
+    -------
+    sizes : 1-d ndarray of int
+
+    See Also
+    --------
+    mahotas.fullhistogram : almost same function by another name (the only
+    difference is that that function only accepts unsigned integer types).
+    '''
+    from .histogram import fullhistogram
+    return fullhistogram(labeled.astype(np.uint32))
+
+
