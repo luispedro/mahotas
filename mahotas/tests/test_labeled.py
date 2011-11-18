@@ -59,4 +59,4 @@ def test_sum_labeled():
         labeled += 8 * np.random.random_sample(labeled.shape)
         fast = mahotas.labeled.labeled_sum(f, labeled)
         slow = slow_labeled_sum(f, labeled)
-        assert np.all(fast == slow)
+        assert np.allclose(fast, slow)
