@@ -60,3 +60,19 @@ def test_sum_labeled():
         fast = mahotas.labeled.labeled_sum(f, labeled)
         slow = slow_labeled_sum(f, labeled)
         assert np.allclose(fast, slow)
+
+def slow_labeled_size(labeled):
+    return np.array([
+            np.sum(labeled == i)
+            for i in xrange(labeled.max()+1)
+        ])
+
+
+def test_size_labeled():
+    np.random.seed(334)
+    for i in xrange(16):
+        labeled = np.zeros((64,125), dtype=np.intc)
+        labeled += 8 * np.random.random_sample(labeled.shape)
+        fast = mahotas.labeled.labeled_size(labeled)
+        slow = slow_labeled_size(labeled)
+        assert np.all(fast == slow)
