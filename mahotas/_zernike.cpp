@@ -77,7 +77,7 @@ PyObject* py_znl(PyObject* self, PyObject* args) {
         }
         v *= (n+1)/pi;
         delete [] g_m;
-    } catch (std::bad_alloc) {
+    } catch (const std::bad_alloc&) {
         PyErr_NoMemory();
         return NULL;
     }

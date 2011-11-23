@@ -37,7 +37,7 @@ def zernike(img, D, radius):
     Zernike moments through degree D
 
     Returns a vector of absolute Zernike moments through degree D for the
-    image I.
+    image ``img``.
 
     Parameters
     ----------
