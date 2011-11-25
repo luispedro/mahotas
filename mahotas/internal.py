@@ -47,3 +47,28 @@ def _get_output(array, output, fname, dtype=None):
     if not output.flags.contiguous:
         raise ValueError('mahotas.%s: `output` is not c-array' % fname)
     return output
+
+def _get_axis(array, axis, fname):
+    '''
+    axis = _get_axis(array, axis, fname)
+
+    Checks that ``axis`` is a valid axis of ``array`` and normalises it.
+
+    Parameters
+    ----------
+    array : ndarray
+    axis : int
+    fname : str
+        Function name. Used in error messages
+
+    Returns
+    -------
+    axis : int
+        The positive index of the axis to use
+    '''
+    if axis < 0:
+        axis += len(array.shape)
+    if not (0 <= axis < len(array.shape)):
+        raise ValueError('mahotas.%s: `axis` is out of bounds' % fname)
+    return axis
+
