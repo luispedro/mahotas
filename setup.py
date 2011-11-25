@@ -45,6 +45,7 @@ extensions = {
     'mahotas._convolve': ['mahotas/_convolve.cpp', 'mahotas/_filters.cpp'],
     'mahotas._distance': ['mahotas/_distance.cpp'],
     'mahotas._histogram': ['mahotas/_histogram.cpp'],
+    'mahotas._interpolate': ['mahotas/_interpolate.cpp'],
     'mahotas._labeled': ['mahotas/_labeled.cpp', 'mahotas/_filters.cpp'],
     'mahotas._lbp': ['mahotas/_lbp.cpp'],
     'mahotas._morph': ['mahotas/_morph.cpp', 'mahotas/_filters.cpp'],
