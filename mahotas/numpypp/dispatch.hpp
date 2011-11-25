@@ -41,7 +41,18 @@ typedef unsigned short ushort;
 #define SAFE_SWITCH_ON_INTEGER_TYPES_OF(array,return_null) \
     try { \
         switch(PyArray_TYPE(array)) { \
-                HANDLE_TYPES();\
+                HANDLE_INTEGER_TYPES();\
+                default: \
+                PyErr_SetString(PyExc_RuntimeError, "Dispatch on types failed!"); \
+                return NULL; \
+        } \
+    } \
+    CATCH_PYTHON_EXCEPTIONS(return_null)
+
+#define SAFE_SWITCH_ON_FLOAT_TYPES_OF(array,return_null) \
+    try { \
+        switch(PyArray_TYPE(array)) { \
+                HANDLE_FLOAT_TYPES();\
                 default: \
                 PyErr_SetString(PyExc_RuntimeError, "Dispatch on types failed!"); \
                 return NULL; \
