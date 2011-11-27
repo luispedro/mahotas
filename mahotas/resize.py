@@ -26,9 +26,9 @@ def imresize(img, nsize, order=3):
     --------
     ``scipy.ndimage.zoom`` and ``scipy.misc.pilutil.imresize``
     '''
-    from scipy import ndimage
+    from .interpolate import zoom
     if type(nsize) == tuple:
         if type(nsize[0]) == int:
             nsize = np.array(nsize, dtype=float)
             nsize /= img.shape
-    return ndimage.zoom(img, nsize, order=order)
+    return zoom(img, nsize, order=order)
