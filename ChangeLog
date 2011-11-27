@@ -1,4 +1,5 @@
 Version 0.6.6+
+	* Remove dependency on scipy
 	* Add interpolate module (from scipy.ndimage)
 	* Add labeled_sum & labeled_sizes
 	* gvoronoi no longer depends on scipy

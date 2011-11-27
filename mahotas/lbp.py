@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2009  Murphy Lab, Carnegie Mellon University
-#
-# Written by Robert Webb and Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2009 Robert Webb and Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2011 Luis Pedro Coelho <luis@luispedro.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
@@ -18,8 +17,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301, USA.
 #
-# For additional information visit http://murphylab.web.cmu.edu or
-# send email to murphy@cmu.edu
 
 import numpy as np
 from histogram import fullhistogram
@@ -56,24 +53,25 @@ def lbp(image, radius, points, ignore_zeros=False):
         Ojala, T. Pietikainen, M. Maenpaa, T. LECTURE NOTES IN COMPUTER SCIENCE (Springer)
         2000, ISSU 1842, pages 404-420
     '''
-    from scipy.ndimage.interpolation import map_coordinates
+    from .interpolate import shift
     import mahotas._lbp
     from mahotas.histogram import fullhistogram
     if ignore_zeros:
         Y,X = np.nonzero(image)
+        def select(im):
+            return im[Y,X].ravel()
         pixels = image[Y,X].ravel()
     else:
-        Y,X = np.indices(image.shape)
+        select = np.ravel
         pixels = image.ravel()
+    image = image.astype(np.float64)
     angles = np.linspace(0, 2*np.pi, points+1)[:-1]
-    coordinates = np.empty((2, points, Y.size), float)
-    for i,(dy,dx) in enumerate(zip(radius * np.sin(angles), radius * np.cos(angles))):
-        coordinates[0][i] = Y.ravel()
-        coordinates[1][i] = X.ravel()
-        coordinates[0][i] += dy
-        coordinates[1][i] += dx
-    data = map_coordinates(image, coordinates.reshape((2,-1)), order=1).reshape((Y.size, -1))
-    codes = (data.T > pixels).sum(0)
+    data = []
+    for dy,dx in zip(np.sin(angles), np.cos(angles)):
+        data.append(
+            select(shift(image, [radius*dy,radius*dx], order=1)))
+    data = np.array(data)
+    codes = (data > pixels).sum(0)
     codes = mahotas._lbp.map(codes.astype(np.uint32), points)
     final = fullhistogram(codes.astype(np.uint32))
 
