@@ -1,13 +1,11 @@
 =======
 Mahotas
 =======
-Python Image Processing Toolkit
--------------------------------
+Python Computer Vision Library
+------------------------------
 
-Image Processing Library for Python.
-
-It includes a couple of algorithms implemented in C++ for speed while operating
-in numpy arrays.
+This library of fast computer vision algorithms (all implemented in C++)
+operates over numpy arrays for convenience.
 
 Notable algorithms:
  - watershed.
@@ -20,6 +18,7 @@ Notable algorithms:
  - thresholding.
  - convolution.
  - Sobel edge detection.
+ - spline interpolation
 
 
 Recent Changes
@@ -106,5 +105,5 @@ Bugfix release:
 submissions, etc.
 
 *Author*: Luis Pedro Coelho (with code by Zachary Pincus [from scikits.image],
-Peter J. Verveer [from scipy.ndimage], and Davis King [from dlib]
+Peter J. Verveer [from scipy.ndimage], and Davis King [from dlib])
 
