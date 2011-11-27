@@ -10,3 +10,11 @@ def test_spline_filter_smoke():
     f  = (np.arange(64*64, dtype=np.intc) % 64).reshape((64,64)).astype(np.float64)
     f2 = interpolate.spline_filter(f,3)
     assert f.shape == f2.shape
+
+def test_zoom_ratio():
+    f = np.zeros((128,128))
+    f[32:64,32:64] = 128
+    for z in [.7,.5,.2,.1]:
+        output = interpolate.zoom(f,z)
+        ratio = output.sum()/f.sum()
+        assert np.abs(ratio - z*z) < .1
