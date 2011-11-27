@@ -29,11 +29,18 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+'''
+Interpolation
+-------------
 
-import _interpolate
+This module was adapted from scipy.ndimage
+'''
+
 import numpy as np
+from . import internal
+from . import _interpolate
 
-def spline_filter1d(array, order=3, axis=-1, output=np.float64):
+def spline_filter1d(array, order=3, axis=-1, output=None, dtype=np.float64):
     """
     Calculates a one-dimensional spline filter along the given axis.
 
@@ -49,16 +56,20 @@ def spline_filter1d(array, order=3, axis=-1, output=np.float64):
     axis : int, optional
         The axis along which the spline filter is applied. Default is the last
         axis.
-    output : ndarray or dtype, optional
-        The array in which to place the output, or the dtype of the returned
-        array. Default is `np.float64`.
+    output : ndarray, optional
+        The array in which to place the output
+    dtype : dtype, optional
+        The dtype to use for computation (default: np.float64)
+
+    For compatibility with scipy.ndimage, you can pass a dtype as the
+    ``output`` argument. This will work as having passed it as a dtype.
+    However, this is deprecated and should not be used in new code.
 
     Returns
     -------
     return_value : ndarray or None
         The filtered input.
     """
-    import internal
     if order < 0 or order > 5:
         raise RuntimeError('mahotas.interpolate.spline_filter1d: spline order not supported')
     array = np.asarray(array)
@@ -73,3 +84,55 @@ def spline_filter1d(array, order=3, axis=-1, output=np.float64):
     _interpolate.spline_filter1d(output, order, axis)
     return output
 
+
+def spline_filter(array, order=3, output=None, dtype=np.float64):
+    """
+    Multi-dimensional spline filter.
+
+    Parameters
+    ----------
+    array : array_like
+        The input array.
+    order : int, optional
+        The order of the spline, default is 3.
+        axis.
+    output : ndarray, optional
+        The array in which to place the output
+    dtype : dtype, optional
+        The dtype to use for computation (default: np.float64)
+
+    For compatibility with scipy.ndimage, you can pass a dtype as the
+    ``output`` argument. This will work as having passed it as a dtype.
+    However, this is deprecated and should not be used in new code.
+
+    Returns
+    -------
+    return_value : ndarray or None
+        The filtered input.
+
+    See Also
+    --------
+    spline_filter1d
+
+    Notes
+    -----
+    The multi-dimensional filter is implemented as a sequence of
+    one-dimensional spline filters. The intermediate arrays are stored
+    in the same data type as the output. Therefore, for output types
+    with a limited precision, the results may be imprecise because
+    intermediate results may be stored with insufficient precision.
+
+    """
+    array = np.asanyarray(array)
+    if not (2 < order < 5):
+        raise RuntimeError('mahotas.interpolation.spline_filter: spline order not supported')
+    if np.iscomplexobj(array):
+        raise TypeError('mahotas.interpolation.spline_filter: Complex type not supported')
+    if isinstance(output, type):
+        dtype = output
+        output = None
+    output = internal._get_output(array, output, 'interpolate.spline_filter', dtype=dtype)
+    output[...] = array
+    for axis in range(array.ndim):
+        _interpolate.spline_filter1d(output, order, axis)
+    return output
