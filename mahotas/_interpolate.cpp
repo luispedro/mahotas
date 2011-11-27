@@ -30,8 +30,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-#include <math.h>
+#include <cstdlib>
+#include <cmath>
 
 #include "utils.hpp"
 #include "numpypp/array.hpp"
@@ -47,7 +47,9 @@ const char TypeErrorMsg[] =
     "Type not understood. "
     "This is caused by either a direct call to _interpolate (which is dangerous: types are not checked!) or a bug in interpolate.py.\n";
 
-void init_poles(double pole[2], int& npoles, double& weight, const int order) {
+template <typename FT>
+void init_poles(FT pole[2], int& npoles, FT& weight, const int order) {
+    using std::sqrt;
     switch (order) {
     case 2:
         npoles = 1;
@@ -80,7 +82,8 @@ void init_poles(double pole[2], int& npoles, double& weight, const int order) {
 /* one-dimensional spline filter: */
 template<typename FT>
 void spline_filter1d(numpy::aligned_array<FT> array, const int order, const int axis) {
-    const double log_tolerance = -16.;
+    gil_release nogil;
+    const FT log_tolerance = -16.;
     if (axis > array.ndims()) {
         throw PythonException(PyExc_RuntimeError, "Unexpected state.");
     }
@@ -89,37 +92,34 @@ void spline_filter1d(numpy::aligned_array<FT> array, const int order, const int 
     if (len <= 1) return;
 
     int npoles;
-    double pole[2];
-    double weight;
+    FT pole[2];
+    FT weight;
     init_poles(pole, npoles, weight, order);
-
-    /* these are used in the spline filter calculation below: */
 
     const int s = array.size();
     typename numpy::aligned_array<FT>::iterator iter = array.begin();
     for (int y = 0; y != s; ++y, ++iter) {
         if (iter.index(axis) != 0) continue;
         FT *line = &*iter;
-        /* spline filter: */
         for(int ll = 0; ll < len; ll++) {
             line[stride*ll] *= weight;
         }
         for(int pi = 0; pi < npoles; ++pi) {
-            double p = pole[pi];
-            int max = (int)ceil(log_tolerance / log(fabs(p)));
+            FT p = pole[pi];
+            int max = (int)std::ceil(log_tolerance / log(fabs(p)));
             if (max < len) {
-                double zn = p;
-                double sum = line[0];
+                FT zn = p;
+                FT sum = line[0];
                 for(int ll = 1; ll < max; ll++) {
                     sum += zn * line[stride*ll];
                     zn *= p;
                 }
                 line[0] = sum;
             } else {
-                double zn = p;
-                const double iz = 1.0 / p;
-                double z2n = pow(p, (double)(len - 1));
-                double sum = line[0] + z2n * line[stride*(len - 1)];
+                FT zn = p;
+                const FT iz = 1.0 / p;
+                FT z2n = pow(p, (FT)(len - 1));
+                FT sum = line[0] + z2n * line[stride*(len - 1)];
                 z2n *= z2n * iz;
                 for(int ll = 1; ll <= len - 2; ll++) {
                     sum += (zn + z2n) * line[stride*ll];
