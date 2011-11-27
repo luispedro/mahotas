@@ -32,8 +32,10 @@
 
 #include <cstdlib>
 #include <cmath>
+#include <vector>
 
 #include "utils.hpp"
+#include "_filters.h"
 #include "numpypp/array.hpp"
 #include "numpypp/dispatch.hpp"
 
@@ -138,6 +140,219 @@ void spline_filter1d(numpy::aligned_array<FT> array, const int order, const int 
 }
 
 
+template <typename FT>
+void spline_coefficients(FT x, const int order, std::vector<FT>& result)
+{
+    const FT start = floor(x + 0.5*(order & 1)) - order / 2;
+
+    for(int hh = 0; hh <= order; hh++)  {
+        FT y = fabs(start - x + hh);
+
+        switch(order) {
+        case 1:
+            result[hh] = y > 1.0 ? 0.0 : 1.0 - y;
+            break;
+        case 2:
+            if (y < 0.5) {
+                result[hh] = 0.75 - y * y;
+            } else if (y < 1.5) {
+                y = 1.5 - y;
+                result[hh] = 0.5 * y * y;
+            } else {
+                result[hh] = 0.0;
+            }
+            break;
+        case 3:
+            if (y < 1.0) {
+                result[hh] =
+                    (y * y * (y - 2.0) * 3.0 + 4.0) / 6.0;
+            } else if (y < 2.0) {
+                y = 2.0 - y;
+                result[hh] = y * y * y / 6.0;
+            } else {
+                result[hh] = 0.0;
+            }
+            break;
+        case 4:
+            if (y < 0.5) {
+                y *= y;
+                result[hh] = y * (y * 0.25 - 0.625) + 115.0 / 192.0;
+            } else if (y < 1.5) {
+                result[hh] = y * (y * (y * (5.0 / 6.0 - y / 6.0) - 1.25) + 5.0 / 24.0) + 55.0 / 96.0;
+            } else if (y < 2.5) {
+                y -= 2.5;
+                y *= y;
+                result[hh] = y * y / 24.0;
+            } else {
+                result[hh] = 0.0;
+            }
+            break;
+        case 5:
+            if (y < 1.0) {
+                const FT f = y * y;
+                result[hh] = f * (f * (0.25 - y / 12.0) - 0.5) + 0.55;
+            } else if (y < 2.0) {
+                result[hh] = y * (y * (y * (y * (y / 24.0 - 0.375) + 1.25) -  1.75) + 0.625) + 0.425;
+            } else if (y < 3.0) {
+                const FT f = 3.0 - y;
+                y = f * f;
+                result[hh] = f * y * y / 120.0;
+            } else {
+                result[hh] = 0.0;
+            }
+            break;
+        }
+    }
+}
+template <typename FT>
+void zoom_shift(numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
+                                 PyArrayObject* shift_ar, numpy::aligned_array<FT> output,
+                                 int order, int mode, FT cval) {
+    gil_release nogil;
+    typename numpy::aligned_array<FT>::iterator io = output.begin();
+    FT *zooms = zoom_ar ? (FT*)PyArray_DATA(zoom_ar) : NULL;
+    FT *shifts = shift_ar ? (FT*)PyArray_DATA(shift_ar) : NULL;
+    const int rank = array.ndims();
+
+    std::vector< std::vector<bool> > zeros;
+    /* if the mode is 'constant' we need some temps later: */
+    if (mode == EXTEND_CONSTANT) {
+        for(int r = 0; r < rank; r++) {
+            zeros.push_back( std::vector<bool>(output.dim(r)) );
+        }
+    }
+
+    /* store offsets, along each axis: */
+    std::vector< std::vector<npy_intp> > offsets;
+    /* store spline coefficients, along each axis: */
+    std::vector< std::vector< std::vector<FT> > > splvals;
+    /* store offsets at all edges: */
+    std::vector< std::vector< std::vector<npy_intp> > > edge_offsets;
+    for(int r = 0; r < rank; ++r) {
+        offsets.push_back( std::vector<npy_intp>(output.dim(r)) );
+        splvals.push_back( std::vector< std::vector<FT> >(output.dim(r)) );
+        edge_offsets.push_back( std::vector< std::vector<npy_intp> >(output.dim(r)) );
+    }
+
+    /* precalculate offsets, and offsets at the edge: */
+    for(int r = 0; r < rank; r++) {
+        double shift = 0.0, zoom = 0.0;
+        if (shifts) shift = shifts[r];
+        if (zooms) zoom = zooms[r];
+        for(int kk = 0; kk < output.dim(r); ++kk) {
+            FT cc = kk;
+            if (shifts) cc += shift;
+            if (zooms) cc *= zoom;
+            cc = fix_offset(ExtendMode(mode), cc, array.dim(r), -1);
+            if (cc != -1) {
+                const int start = int(floor(cc + 0.5*(order & 1)) - order / 2);
+                offsets[r][kk] = array.stride(r) * start;
+                if (start < 0 || start + order >= array.dim(r)) {
+                    edge_offsets[r][kk].resize(order + 1);
+                    for(int hh = 0; hh <= order; hh++) {
+                        int idx = start + hh;
+                         int len = array.dim(r);
+                        if (len <= 1) {
+                            idx = 0;
+                        } else {
+                            int s2 = 2 * len - 2;
+                            if (idx < 0) {
+                                idx = s2 * (int)(-idx / s2) + idx;
+                                idx = idx <= 1 - len ? idx + s2 : -idx;
+                            } else if (idx >= len) {
+                                idx -= s2 * (int)(idx / s2);
+                                if (idx >= len)
+                                    idx = s2 - idx;
+                            }
+                        }
+                        edge_offsets[r][kk][hh] = array.stride(r) * (idx - start);
+                    }
+                }
+                if (order > 0) {
+
+                    splvals[r][kk].resize(order + 1);
+                    spline_coefficients(cc, order, splvals[r][kk]);
+                }
+            } else {
+                zeros[r][kk] = true;
+            }
+        }
+    }
+
+    const int filter_size = std::pow(order + 1, rank);
+    std::vector<npy_intp> idxs(filter_size);
+    std::vector<npy_intp> fcoordinates(rank * filter_size);
+    std::vector<npy_intp> foffsets(filter_size);
+
+    std::vector<npy_intp> ftmp(rank);
+    int off = 0;
+    for(int hh = 0; hh < filter_size; hh++) {
+        for(int r = 0; r < rank; r++)
+            fcoordinates[r + hh * rank] = ftmp[r];
+        foffsets[hh] = off;
+        for(int r = rank - 1; r >= 0; r--) {
+            if (ftmp[r] < order) {
+                ftmp[r]++;
+                off += array.stride(r);
+                break;
+            } else {
+                ftmp[r] = 0;
+                off -= array.stride(r) * order;
+            }
+        }
+    }
+    const npy_intp size = output.size();
+    for(int i = 0; i < size; ++i, ++io) {
+        int oo = 0;
+        bool on_edge = false;
+        bool zero = false;
+        for(int r = 0; r < rank; r++) {
+            if (zeros.size() && zeros[r][io.index(r)]) {
+                /* we use constant border condition */
+                *io = cval;
+                zero = true;
+                break;
+            }
+            oo += offsets[r][io.index(r)];
+            if (edge_offsets[r][io.index(r)].size()) on_edge = true;
+        }
+        if (zero) continue;
+        std::vector<npy_intp>::const_iterator ff = fcoordinates.begin();
+        for(int fi = 0; fi < filter_size; fi++) {
+            int idx = 0;
+            if (on_edge) {
+                    /* use precalculated edge offsets: */
+                for(int r = 0; r < rank; r++) {
+                    if (edge_offsets[r][io.index(r)].size())
+                        idx += edge_offsets[r][io.index(r)][ff[r]];
+                    else
+                        idx += ff[r] * array.stride(r);
+                }
+                idx += oo;
+            } else {
+                /* use normal offsets: */
+                idx += oo + foffsets[fi];
+            }
+            idxs[fi] = idx;
+            ff += rank;
+        }
+        ff = fcoordinates.begin();
+        FT t = 0.0;
+        for(int fi = 0; fi < filter_size; fi++) {
+            double coeff = array.data()[idxs[fi]];
+            /* calculate interpolated value: */
+            for(int r = 0; r < rank; r++)
+                if (order > 0)
+                    coeff *= splvals[r][io.index(r)][ff[r]];
+            t += coeff;
+            ff += rank;
+        }
+        *io = t;
+    }
+}
+
+
+
 PyObject* py_spline_filter1d(PyObject* self, PyObject* args) {
 
     PyArrayObject* array;
@@ -155,8 +370,42 @@ PyObject* py_spline_filter1d(PyObject* self, PyObject* args) {
     SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
     Py_RETURN_NONE;
 }
+
+
+PyObject* py_zoom_shift(PyObject* self, PyObject* args) {
+
+    PyArrayObject* array;
+    PyArrayObject* zooms;
+    PyArrayObject* shifts;
+    PyArrayObject* output;
+    int order;
+    int mode;
+    double cval;
+    if (!PyArg_ParseTuple(args,"OOOOiif", &array, &zooms, &shifts, &output, &order, &mode, &cval)) return NULL;
+    if (!PyArray_Check(array) || !PyArray_ISCARRAY(array)) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    if (!PyArray_SIZE(zooms)) {
+        zooms = 0;
+    }
+    if (!PyArray_SIZE(shifts)) {
+        shifts = 0;
+    }
+    holdref array_hr(array);
+    holdref zoom_hr(zooms);
+    holdref shifts_hr(shifts);
+    holdref output_hr(output);
+#define HANDLE(type) \
+    zoom_shift<type>(numpy::aligned_array<type>(array), zooms, shifts, numpy::aligned_array<type>(output), order, mode, type(cval));
+
+    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
+    Py_RETURN_NONE;
+}
+
 PyMethodDef methods[] = {
   {"spline_filter1d",(PyCFunction)py_spline_filter1d, METH_VARARGS, NULL},
+  {"zoom_shift",(PyCFunction)py_zoom_shift, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 
