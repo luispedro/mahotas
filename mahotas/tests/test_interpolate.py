@@ -18,3 +18,11 @@ def test_zoom_ratio():
         output = interpolate.zoom(f,z)
         ratio = output.sum()/f.sum()
         assert np.abs(ratio - z*z) < .1
+
+def test_shift_ratio():
+    f = np.zeros((128,128))
+    f[32:64,32:64] = 128
+    for s in [0,1,2,3]:
+        output = interpolate.shift(f,(s,s))
+        ratio = output.sum()/f.sum()
+        assert np.abs(ratio - 1.) < .01

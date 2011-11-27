@@ -216,3 +216,54 @@ def zoom(array, zoom, output=None, order=3, mode='constant', cval=0.0, prefilter
     _interpolate.zoom_shift(array, zoom, None, output, order, mode2int[mode], cval)
     return output
 
+
+def shift(array, shift, output=None, order=3, mode='constant', cval=0.0,
+          prefilter=True):
+    """
+    Shift an array.
+
+    The array is shifted using spline interpolation of the requested order.
+    Points outside the boundaries of the input are filled according to the
+    given mode.
+
+    Parameters
+    ----------
+    array : ndarray
+        The input array.
+    shift : float or sequence, optional
+        The shift along the axes. If a float, `shift` is the same for each
+        axis. If a sequence, `shift` should contain one value for each axis.
+    output : ndarray or dtype, optional
+        The array in which to place the output, or the dtype of the returned
+        array.
+    order : int, optional
+        The order of the spline interpolation, default is 3.
+        The order has to be in the range 0-5.
+    mode : str, optional
+        Points outside the boundaries of the input are filled according
+        to the given mode ('constant', 'nearest', 'reflect' or 'wrap').
+        Default is 'constant'.
+    cval : scalar, optional
+        Value used for points outside the boundaries of the input if
+        ``mode='constant'``. Default is 0.0
+    prefilter : bool, optional
+        The parameter prefilter determines if the input is pre-filtered with
+        `spline_filter` before interpolation (necessary for spline
+        interpolation of order > 1).  If False, it is assumed that the input is
+        already filtered. Default is True.
+
+    Returns
+    -------
+    return_value : ndarray
+        The shifted input.
+
+    """
+    array = _maybe_filter(array, order, 'interpolate.shift', prefilter, dtype=np.float64)
+    _check_mode(mode, cval, 'interpolation.shift')
+    output = internal._get_output(array, output, 'interpolate.shift', dtype=np.float64)
+    shift = np.ascontiguousarray(shift, dtype=np.float64)
+    shift *= -1
+    _interpolate.zoom_shift(array, None, shift, output, order, mode2int[mode], cval)
+    return output
+
+
