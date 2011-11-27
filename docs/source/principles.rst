@@ -26,7 +26,7 @@ the output).
 
 Interfaces are designed to be as flexible as possible. No specific types are
 required unless it is really needed or in performance-enhancing features (such
-as using ``out`` parameters).
+as using ``output`` parameters).
 
 Well documented
 ---------------
@@ -56,6 +56,8 @@ numpy, scipy, and freeimage.
 The scipy dependency is something that I would prefer to remove. The freeimage
 dependency is a soft dependency: everything, except for imread works without
 it. The code is written to ensure that ``import``-ing mahotas without freeimage
-will not trigger an error unless the ``imread()`` function is used.
+will not trigger an error unless the ``imread()`` function is used. Similarly,
+mahotas can be imported without scipy and only a few of the functions stop
+working.
 
 
