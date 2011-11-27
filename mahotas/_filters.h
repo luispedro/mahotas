@@ -22,6 +22,8 @@ typedef enum {
     EXTEND_DEFAULT = EXTEND_MIRROR
 } ExtendMode;
 
+npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len, const npy_intp border_flag_value);
+
 int init_filter_offsets(PyArrayObject *array, bool *footprint,
          const npy_intp * const fshape, npy_intp* origins,
          const ExtendMode mode, npy_intp **offsets, npy_intp *border_flag_value,
