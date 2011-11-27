@@ -3,7 +3,7 @@
 Mahotas
 =======
 
-A set of functions for basic image processing and machine vision.
+A package for computer vision in Python.
 '''
 try:
     from .bbox import bbox, croptobbox
