@@ -204,6 +204,14 @@ void spline_coefficients(FT x, const int order, std::vector<FT>& result)
         }
     }
 }
+
+inline
+int int_pow(const int x, const int p) {
+    int r = 1;
+    for (int i = 0; i != p; ++i) r *= x;
+    return r;
+}
+
 template <typename FT>
 void zoom_shift(numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
                                  PyArrayObject* shift_ar, numpy::aligned_array<FT> output,
@@ -279,7 +287,7 @@ void zoom_shift(numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
         }
     }
 
-    const int filter_size = std::pow(order + 1, rank);
+    const int filter_size = int_pow(order + 1, rank);
     std::vector<npy_intp> idxs(filter_size);
     std::vector<npy_intp> fcoordinates(rank * filter_size);
     std::vector<npy_intp> foffsets(filter_size);
