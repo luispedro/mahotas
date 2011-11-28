@@ -71,7 +71,9 @@ def lbp(image, radius, points, ignore_zeros=False):
         data.append(
             select(shift(image, [radius*dy,radius*dx], order=1)))
     data = np.array(data)
-    codes = (data > pixels).sum(0)
+    codes = (data > pixels).astype(np.int32)
+    codes *= (2**np.arange(points)[:,np.newaxis])
+    codes = codes.sum(0)
     codes = mahotas._lbp.map(codes.astype(np.uint32), points)
     final = fullhistogram(codes.astype(np.uint32))
 

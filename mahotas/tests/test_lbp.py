@@ -32,3 +32,9 @@ def test_map():
     assert len(set(mahotas._lbp.map(np.arange(256,dtype=np.uint32), 8))) == 36
 
 
+def test_positives():
+    np.random.seed(23)
+    f = np.random.random_sample((256,256))
+    lbps = mahotas.lbp.lbp(f, 4, 8)
+    assert len(np.where(lbps == 0)[0]) < 2
+    assert lbps.sum() == f.size
