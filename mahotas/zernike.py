@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2010, Luis Pedro Coelho <luis@luispedro.org>
-# Carnegie Mellon University
+# Copyright (C) 2006-2011, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # This program is free software; you can redistribute it and/or modify
@@ -30,23 +29,25 @@ import _zernike
 
 __all__ = ['zernike']
 
-def zernike(img, D, radius):
+def zernike(img, degree, radius, cm=None):
     """
-    zvalues = zernike(img, D, radius)
+    zvalues = zernike(img, degree, radius, cm={center_of_mass(img)})
 
-    Zernike moments through degree D
+    Zernike moments through ``degree``
 
-    Returns a vector of absolute Zernike moments through degree D for the
+    Returns a vector of absolute Zernike moments through ``degree`` for the
     image ``img``.
 
     Parameters
     ----------
     img : 2-ndarray
         input image
-    D : integer
+    degree : integer
         Maximum degree to use
     radius : integer
         the maximum radius for the Zernike polynomials, in pixels
+    cm : pair of floats, optional
+        the centre of mass to use. By default, uses the image's centre of mass.
 
     Returns
     -------
@@ -59,7 +60,10 @@ def zernike(img, D, radius):
     Opt. Soc. Am. 70(8):920-930.
     """
     zvalues = []
-    c0,c1 = center_of_mass(img)
+    if cm is None:
+        c0,c1 = center_of_mass(img)
+    else:
+        c0,c1 = cm
 
     Y,X = np.mgrid[:img.shape[0],:img.shape[1]]
     P = img.ravel()
@@ -88,10 +92,10 @@ def zernike(img, D, radius):
     An.real = (Xn/Dn)
     An.imag = (Yn/Dn)
 
-    Ans = [An**p for p in xrange(2,D+2)]
+    Ans = [An**p for p in xrange(2,degree+2)]
     Ans.insert(0, An) # An**1
     Ans.insert(0, np.ones_like(An)) # An**0
-    for n in xrange(D+1):
+    for n in xrange(degree+1):
         for l in xrange(n+1):
             if (n-l)%2 == 0:
                 z = _zernike.znl(Dn, Ans[l], frac_center, n, l)
