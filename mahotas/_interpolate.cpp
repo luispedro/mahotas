@@ -391,15 +391,23 @@ PyObject* py_zoom_shift(PyObject* self, PyObject* args) {
     int mode;
     double cval;
     if (!PyArg_ParseTuple(args,"OOOOiif", &array, &zooms, &shifts, &output, &order, &mode, &cval)) return NULL;
-    if (!PyArray_Check(array) || !PyArray_ISCARRAY(array)) {
+    if (!PyArray_Check(array) || !PyArray_ISCARRAY(array) ||
+        !PyArray_Check(output) || !PyArray_ISCARRAY(output)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
     if (!PyArray_Check(zooms)) {
         zooms = 0;
+    } else if (!PyArray_ISCARRAY(zooms)) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
     }
+
     if (!PyArray_Check(shifts)) {
         shifts = 0;
+    } else if (!PyArray_ISCARRAY(shifts)) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
     }
     holdref array_hr(array);
     holdref zoom_hr(zooms);
