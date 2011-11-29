@@ -105,13 +105,57 @@ def get_structuring_elem(A,Bc):
             Bc.flat[i] = 1
     return Bc
 
-def dilate(A,Bc=None):
+def dilate(A, Bc=None):
+    '''
+    dilated = dilate(A, Bc={3x3 cross})
+
+    Morphological dilation. Only binary version is currently implemented.
+
+    Parameters
+    ----------
+    A : ndarray of bools
+        input array
+    Bc : ndarray, optional
+        Structuring element. By default, use a cross (see
+        ``get_structuring_elem`` for details on the default).
+
+    Returns
+    -------
+    dilated : ndarray
+        dilated version of ``A``
+
+    See Also
+    --------
+    erode
+    '''
     _verify_is_bool(A,'dilate')
     _verify_is_integer_type(A,'dilate')
     Bc=get_structuring_elem(A,Bc)
     return _morph.dilate(A,Bc)
 
-def erode(A,Bc=None):
+def erode(A, Bc=None):
+    '''
+    eroded = erode(A, Bc={3x3 cross})
+
+    Morphological erosion. Only binary version is currently implemented.
+
+    Parameters
+    ----------
+    A : ndarray of bools
+        input array
+    Bc : ndarray, optional
+        Structuring element. By default, use a cross (see
+        ``get_structuring_elem`` for details on the default).
+
+    Returns
+    -------
+    erosion : ndarray
+        eroded version of ``A``
+
+    See Also
+    --------
+    dilate
+    '''
     _verify_is_bool(A,'dilate')
     _verify_is_integer_type(A,'erode')
     Bc=get_structuring_elem(A,Bc)
