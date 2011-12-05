@@ -34,12 +34,14 @@ def gvoronoi(labeled):
 
     Generalised Voronoi Transform.
 
-    The generalised Voronoi diagram assigns to the pixel (i,j) the label of the nearest
-    object (i.e., the value of the nearest non-zero pixel in labeled).
+    The generalised Voronoi diagram assigns to the pixel (i,j) the label of the
+    nearest object (i.e., the value of the nearest non-zero pixel in labeled).
 
     Parameters
     ----------
-    labeled : an array, of a form similar to the return of scipy.ndimage.label()
+    labeled : ndarray
+        a labeled array, of a form similar to one returned by
+        ``mahotas.label()``
 
     Returns
     -------
