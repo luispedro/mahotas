@@ -21,6 +21,21 @@ _API = {
                         , ctypes.c_char_p # filename
                         , ctypes.c_int # flags
                         ]),
+    'FreeImage_SetOutputMessage':
+                (None, [ctypes.c_void_p]), # callback
+    'FreeImage_ConvertToGreyscale':
+                (ctypes.c_void_p, # FIBITMAP * new_bitmap
+                    [ctypes.c_void_p]), # FIBITMAP* bitmap
+    'FreeImage_GetFIFFromFilename':
+                (ctypes.c_int, # FREE_IMAGE_FORMAT
+                    [ctypes.c_char_p]), # const char* filename
+    'FreeImage_IsLittleEndian':
+                (ctypes.c_int, # BOOL
+                    []),
+    'FreeImage_FIFSupportsExportBPP':
+                (ctypes.c_int, # BOOL
+                    [ctypes.c_int, # FREE_IMAGE_FORMAT format
+                     ctypes.c_int]), # int bpp
     'FreeImage_Load': (ctypes.c_void_p,
                        [ctypes.c_int, ctypes.c_char_p, ctypes.c_int]),
     'FreeImage_Unload': (None,
@@ -53,12 +68,17 @@ _API = {
                             [ctypes.c_int, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int]),
     }
 
+class _ctypes_wrapper(object):
+    pass
 # Albert's ctypes pattern
 def _register_api(lib, api):
+    nlib = _ctypes_wrapper()
     for f, (restype, argtypes) in api.iteritems():
         func = getattr(lib, f)
         func.restype = restype
         func.argtypes = argtypes
+        setattr(nlib, f, func)
+    return nlib
 
 libname = ctypes.util.find_library('freeimage')
 if libname:
@@ -100,7 +120,7 @@ else:
             raise OSError('mahotas.freeimage: could not find libFreeImage in any of the following '
                           'directories: \'%s\'' % '\', \''.join(_lib_dirs))
 
-_register_api(_FI, _API)
+_FI = _register_api(_FI, _API)
 
 if sys.platform == 'win32':
     _functype = ctypes.WINFUNCTYPE

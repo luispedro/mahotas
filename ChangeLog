@@ -1,3 +1,6 @@
+Version 0.7+
+	* Specify all function signatures on freeimage.py
+
 Version 0.7 2011-12-05 by luispedro
 	* Allow specification of centre in Zernike moment computation
 	* Fix Local Binary Patterns
