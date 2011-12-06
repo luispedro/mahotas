@@ -50,7 +50,9 @@ def distance(bw, metric='euclidean2'):
 
     f = np.zeros(bw.shape, np.double)
     f[bw] = len(f.shape)*max(f.shape)**2+1
-    _distance.dt(f)
+    _distance.dt(f, None)
     if metric == 'euclidean':
         np.sqrt(f,f)
     return f
+
+

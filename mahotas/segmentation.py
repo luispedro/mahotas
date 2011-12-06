@@ -22,7 +22,8 @@
 # send email to murphy@cmu.edu
 
 from __future__ import division
-from .morph import cwatershed
+import numpy as np
+from . import _distance
 
 __all__ = [
     'gvoronoi',
@@ -48,7 +49,10 @@ def gvoronoi(labeled):
     segmented : is of the same size and type as labeled and
                 `segmented[y,x]` is the label of the object at position `y,x`.
     '''
-    labeled = labeled.astype(int)
-    return cwatershed(labeled*0, labeled)
-
-
+    labeled = np.ascontiguousarray(labeled)
+    bw = (labeled == 0)
+    f = np.zeros(bw.shape, np.double)
+    f[bw] = len(f.shape)*max(f.shape)**2+1
+    orig = np.arange(f.size, dtype=np.intc).reshape(f.shape)
+    _distance.dt(f, orig)
+    return labeled.flat[orig]
