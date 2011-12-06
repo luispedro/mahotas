@@ -24,6 +24,25 @@ Notable algorithms:
 Recent Changes
 --------------
 
+0.7 (December 5 2011)
+~~~~~~~~~~~~~~~~~~~~~
+
+The big change was that the *dependency on scipy was removed*. As part of this
+process, the interpolate submodule was added. A few important bug fixes as
+well.
+
+- Allow specification of centre in Zernike moment computation
+- Fix Local Binary Patterns
+- Remove dependency on scipy
+- Add interpolate module (from scipy.ndimage)
+- Add labeled_sum & labeled_sizes
+- gvoronoi no longer depends on scipy
+- mahotas is importable without scipy
+- Fix bugs in 2D TAS (reported by Jenn Bakal)
+- Support for 1-bit monochrome image loading with freeimage
+- Fix GIL handling on errors (reported by Gareth McCaughan)
+- Fix freeimage for 64-bit computers
+
 0.6.6 (August 8 2011)
 ~~~~~~~~~~~~~~~~~~~~~
 - Fix ``fill_polygon`` bug (fix by joferkington)
