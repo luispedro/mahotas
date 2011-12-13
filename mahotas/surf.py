@@ -142,7 +142,7 @@ def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold
     return _surf.interest_points(f, nr_octaves, nr_scales, initial_step_size, threshold, max_points)
 
 
-def descriptors(f, interest_points, is_integral=False):
+def descriptors(f, interest_points, is_integral=False, descriptor_only=False):
     '''
     desc_array = descriptors(f, interest_points, is_integral=False)
 
@@ -156,6 +156,8 @@ def descriptors(f, interest_points, is_integral=False):
         interest points in the format returned by the ``interest_points()`` function
     is_integral : boolean, optional
         Whether `f` is an integral image
+    descriptor_only : boolean, optional
+        If ``descriptor_only``, then returns only the 64-element descriptors
 
     Returns
     -------
@@ -163,14 +165,18 @@ def descriptors(f, interest_points, is_integral=False):
         `N` is nr of points. Each point is represented as
         *(y,x,scale,score,laplacian,angle, D_0,...,D_63)* where *y,x,scale* is
         the position, *angle* the orientation, *score* and *laplacian* the
-        score and sign of the detector; and *D_i* is the descriptor
+        score and sign of the detector; and *D_i* is the descriptor.
+        If ``descriptor_only`` is true, then returns only *(D_0,...,D_63)*
     '''
     if not is_integral:
         f = integral(f)
     else:
         if f.dtype != np.double:
             raise TypeError('mahotas.surf: integral image must be of dtype double')
-    return _surf.descriptors(f, interest_points)
+    surfs = _surf.descriptors(f, interest_points)
+    if descriptor_only:
+        surfs = surfs[:,6:]
+    return surfs
 
 
 def show_surf(f, spoints, values=None, colors=None):

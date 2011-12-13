@@ -1,4 +1,5 @@
 Version 0.7+
+	* Add ``descriptor_only`` argument to surf.descriptors
 	* Specify all function signatures on freeimage.py
 
 Version 0.7 2011-12-05 by luispedro
