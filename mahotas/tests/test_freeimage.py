@@ -6,9 +6,10 @@ from os import path
 from nose.tools import with_setup
 
 _testimgname = '/tmp/mahotas_test.png'
-def _remove_image():
+
+def _remove_image(filename=_testimgname):
     try:
-        os.unlink(_testimgname)
+        os.unlink(filename)
     except OSError:
         pass
 
@@ -64,3 +65,18 @@ def test_1bpp():
     bpp = imread(bpp)
     assert bpp.sum()
     assert bpp.sum() < bpp.size
+
+
+_testtif = '/tmp/mahotas_test.tif'
+@with_setup(teardown=lambda: _remove_image(_testtif))
+def test_multi():
+    f = np.zeros((16,16), np.uint8)
+    fs = []
+    for t in xrange(8):
+      f[:t,:t] = t
+      fs.append(f.copy())
+    freeimage.write_multipage(fs, _testtif)
+    fs2 = freeimage.read_multipage(_testtif)
+    for f,f2 in zip(fs,fs2):
+        assert np.all(f == f2)
+

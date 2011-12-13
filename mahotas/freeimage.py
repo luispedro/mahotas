@@ -54,6 +54,27 @@ _API = {
                          [ctypes.c_void_p]),
     'FreeImage_GetPitch': (ctypes.c_uint,
                            [ctypes.c_void_p]),
+    'FreeImage_OpenMultiBitmap' : (ctypes.c_void_p, # FIMULTIBITMAP*
+                            [ctypes.c_int # FREE_IMAGE_FORMAT format
+                            ,ctypes.c_char_p # filename
+                            ,ctypes.c_int # BOOL create_new
+                            ,ctypes.c_int # BOOL read_only
+                            ,ctypes.c_int # BOOL keep_cache_in_memory
+                            ,ctypes.c_int]), # int flags
+    'FreeImage_GetPageCount' : (ctypes.c_int, [ctypes.c_void_p]),
+    'FreeImage_AppendPage' : (None,
+                                [ctypes.c_void_p # FIMULTIBITMAP*
+                                ,ctypes.c_void_p]), # BITMAP
+    'FreeImage_LockPage' : (ctypes.c_void_p, # FIBITMAP*
+                                [ctypes.c_void_p # FIMULTIBITMAP
+                                ,ctypes.c_int]), # int page
+    'FreeImage_UnlockPage' : (None,
+                                [ctypes.c_void_p # FIMULTIBITMAP*
+                                ,ctypes.c_void_p # FIBITMAP* data
+                                ,ctypes.c_int]), # BOOL changed
+    'FreeImage_CloseMultiBitmap' : (ctypes.c_int, # BOOL
+                            [ctypes.c_void_p, # FIMULTIBITMAP* bitmap
+                             ctypes.c_int]), # int flags
     'FreeImage_GetBits': (ctypes.c_void_p,
                           [ctypes.c_void_p]),
     'FreeImage_OpenMemory': (ctypes.c_void_p,
@@ -508,7 +529,7 @@ def write_multipage(arrays, filename, flags=0):
                          filename)
     try:
         for array in arrays:
-            bitmap = _array_to_bitmap(array)
+            bitmap,_ = _array_to_bitmap(array)
             _FI.FreeImage_AppendPage(multibitmap, bitmap)
     finally:
         _FI.FreeImage_CloseMultiBitmap(multibitmap, flags)
