@@ -36,6 +36,10 @@ _API = {
                 (ctypes.c_int, # BOOL
                     [ctypes.c_int, # FREE_IMAGE_FORMAT format
                      ctypes.c_int]), # int bpp
+    'FreeImage_FIFSupportsExportType':
+                (ctypes.c_int, # BOOL
+                    [ctypes.c_int # FREE_IMAGE_FORMAT fif
+                    ,ctypes.c_int]), # FREE_IMAGE_TYPE type
     'FreeImage_Load': (ctypes.c_void_p,
                        [ctypes.c_int, ctypes.c_char_p, ctypes.c_int]),
     'FreeImage_Unload': (None,

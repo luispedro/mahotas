@@ -80,3 +80,14 @@ def test_multi():
     for f,f2 in zip(fs,fs2):
         assert np.all(f == f2)
 
+
+@with_setup(teardown=_remove_image)
+def test_uint16():
+    img = np.zeros((32,32), dtype=np.uint16)
+    freeimage.imsave(_testimgname, img)
+    img_ = freeimage.imread(_testimgname)
+
+    assert img.shape == img_.shape
+    assert img.dtype == img_.dtype
+    assert np.all(img == img_)
+
