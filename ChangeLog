@@ -3,6 +3,7 @@ Version 0.7+
 	* Specify all function signatures on freeimage.py
 	* Check that convolution arguments have right dimensions (instead of
 	crashing)
+	* Add convolve1d
 
 Version 0.7 2011-12-05 by luispedro
 	* Allow specification of centre in Zernike moment computation

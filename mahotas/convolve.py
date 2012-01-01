@@ -172,3 +172,46 @@ def template_match(f, template, mode='reflect', cval=0., output=None):
     _check_mode(mode, cval, 'template_match')
     return _convolve.template_match(f, template, output, mode2int[mode])
 
+def convolve1d(f, weights, axis, mode='reflect', cval=0., output=None):
+    '''
+    convolved = convolve1d(f, weights, axis, mode='reflect', cval=0.0, output={new array})
+
+    Convolution of `f` and `weights` along axis `axis`.
+
+    Convolution is performed in `doubles` to avoid over/underflow, but the
+    result is then cast to `f.dtype`.
+
+    Parameters
+    ----------
+    f : ndarray
+        input. Any dimension is supported
+    weights : 1-D ndarray
+        weight filter. If not of the same dtype as `f`, it is cast
+    axis : int
+        Axis along which to convolve
+    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant'}
+        How to handle borders
+    cval : double, optional
+        If `mode` is constant, which constant to use (default: 0.0)
+    output : ndarray, optional
+        Output array. Must have same shape and dtype as `f` as well as be
+        C-contiguous.
+
+    Returns
+    -------
+    convolved : ndarray of same dtype as `f`
+
+    See Also
+    --------
+    convolve : function
+        generic convolution
+    '''
+
+    from sys import maxint
+    weights = weights.squeeze()
+    if weights.ndim != 1:
+        raise ValueError('mahotas.convolve1d: only 1-D sequences allowed')
+    index = [None] * weights.ndim
+    index[axis] = slice(0, maxint)
+    weights = weights[tuple(index)]
+    return convolve(f, weights, mode=mode, cval=cval, output=output)
