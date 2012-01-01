@@ -4,6 +4,7 @@ Version 0.7+
 	* Check that convolution arguments have right dimensions (instead of
 	crashing)
 	* Add convolve1d
+	* Fix Compilation on Mac OS X
 
 Version 0.7 2011-12-05 by luispedro
 	* Allow specification of centre in Zernike moment computation
