@@ -1,6 +1,7 @@
 import numpy as np
 import mahotas.convolve
 import mahotas._filters
+from nose.tools import raises
 
 def test_compare_w_ndimage():
     from scipy import ndimage
@@ -24,3 +25,13 @@ def test_22():
     AC = mahotas.convolve(A,C)
     assert AB.shape == AC.shape
     assert np.all(AB == AC)
+
+
+@raises(ValueError)
+def test_mismatched_dims():
+    f = np.arange(128*128, dtype=float).reshape((128,128))
+    filter = np.arange(17,dtype=float)-8
+    filter **= 2
+    filter /= -16
+    np.exp(filter,filter)
+    mahotas.convolve(f,filter)
