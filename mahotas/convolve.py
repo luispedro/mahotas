@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # This program is free software; you can redistribute it and/or modify
@@ -59,6 +59,8 @@ def convolve(f, weights, mode='reflect', cval=0.0, output=None):
     '''
     if f.dtype != weights.dtype:
         weights = weights.astype(f.dtype)
+    if f.ndim != weights.ndim:
+        raise ValueError('mahotas.convolve: `f` and `weights` must have the same dimensions')
     output = _get_output(f, output, 'convolve')
     _check_mode(mode, cval, 'convolve')
     return _convolve.convolve(f, weights, output, mode2int[mode])
