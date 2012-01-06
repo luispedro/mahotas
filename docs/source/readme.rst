@@ -42,6 +42,23 @@ threshold).
 Recent Changes
 --------------
 
+
+0.7.1 (January 6 2012)
+~~~~~~~~~~~~~~~~~~~~~~
+
+The most important change fixed compilation on Mac OS X
+
+Other changes:
+
+- Add convolve1d
+- Check that convolution arguments have right dimensions (instead of
+  crashing)
+- Add descriptor_only argument to surf.descriptors
+- Specify all function signatures on freeimage.py
+
+
+
+
 For version **0.7 (Dec 5 2011)**:
 
 The big change was that the *dependency on scipy was removed*. As part of this
