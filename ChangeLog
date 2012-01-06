@@ -1,4 +1,4 @@
-Version 0.7+
+Version 0.7.1 2012-01-06 by luispedro
 	* Add ``descriptor_only`` argument to surf.descriptors
 	* Specify all function signatures on freeimage.py
 	* Check that convolution arguments have right dimensions (instead of
