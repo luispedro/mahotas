@@ -55,3 +55,34 @@ def test_get_axis_off():
     yield index, -67
     yield index, -len(f.shape)-1
     yield raises
+
+
+
+from mahotas.internal import _normalize_sequence
+def test_normalize():
+    f = np.arange(64)
+    assert len(_normalize_sequence(f, 1, 'test')) == f.ndim
+    f = f.reshape((2,2,2,-1))
+    assert len(_normalize_sequence(f, 1, 'test')) == f.ndim
+    f = f.reshape((2,2,2,1,1,-1))
+    assert len(_normalize_sequence(f, 1, 'test')) == f.ndim
+
+def test_normalize_sequence():
+    f = np.arange(64)
+    assert len(_normalize_sequence(f, [1], 'test')) == f.ndim
+    f = f.reshape((16,-1))
+    assert _normalize_sequence(f, [2,4], 'test') == [2,4]
+
+def test_normalize_wrong_size():
+    @raises(ValueError)
+    def check(ns, val):
+        _normalize_sequence(f.reshape(ns), val, 'test')
+    f = np.arange(64)
+
+    check((64,),[1,2])
+    check((64,),[1,1])
+    check((64,),[1,2,3,4])
+    check((4,-1),[1,2,3,4])
+    check((4,-1),[1])
+    check((4,2,-1),[1,2])
+

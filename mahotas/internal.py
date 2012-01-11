@@ -1,4 +1,4 @@
-# Copyright (C) 2011, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2011-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # This program is free software; you can redistribute it and/or modify
@@ -72,3 +72,29 @@ def _get_axis(array, axis, fname):
         raise ValueError('mahotas.%s: `axis` is out of bounds' % fname)
     return axis
 
+def _normalize_sequence(array, value, fname):
+    '''
+    values = _normalize_sequence(array, value, fname)
+
+    If `value` is a sequence, checks that it has an element for each dimension
+    of `array`. Otherwise, returns a sequence that repeats `value` once for
+    each dimension of array.
+
+    Parameters
+    ----------
+    array : ndarray
+    value : sequence or scalar
+    fname : str
+        Function name. Used in error messages
+
+    Returns
+    -------
+    values : sequence
+    '''
+    try:
+        value = list(value)
+    except TypeError:
+        return [value for s in array.shape]
+    if len(value) != array.ndim:
+        raise ValueError('mahotas.%s: argument is sequence, but has wrong size (%s for an array of %s dimensions' % (fname, len(value), array.ndim))
+    return value
