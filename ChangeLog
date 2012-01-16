@@ -1,3 +1,6 @@
+Version 0.7.1+
+	* Fix convolve1d
+
 Version 0.7.1 2012-01-06 by luispedro
 	* Add ``descriptor_only`` argument to surf.descriptors
 	* Specify all function signatures on freeimage.py

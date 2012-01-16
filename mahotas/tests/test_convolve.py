@@ -1,5 +1,6 @@
 import numpy as np
 import mahotas.convolve
+from mahotas.convolve import convolve1d
 import mahotas._filters
 from nose.tools import raises
 
@@ -35,3 +36,11 @@ def test_mismatched_dims():
     filter /= -16
     np.exp(filter,filter)
     mahotas.convolve(f,filter)
+
+def test_convolve1d():
+    f = np.arange(64*4).reshape((16,-1))
+    n = [.5,1.,.5]
+    for axis in (0,1):
+        g = convolve1d(f, n, axis)
+        assert g.shape == f.shape
+

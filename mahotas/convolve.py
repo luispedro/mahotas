@@ -208,10 +208,11 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., output=None):
     '''
 
     from sys import maxint
+    weights = np.asanyarray(weights)
     weights = weights.squeeze()
     if weights.ndim != 1:
         raise ValueError('mahotas.convolve1d: only 1-D sequences allowed')
-    index = [None] * weights.ndim
+    index = [None] * f.ndim
     index[axis] = slice(0, maxint)
     weights = weights[tuple(index)]
     return convolve(f, weights, mode=mode, cval=cval, output=output)
