@@ -144,9 +144,9 @@ PyObject* py_rank_filter(PyObject* self, PyObject* args) {
     int mode;
     PyArrayObject* output;
     if (!PyArg_ParseTuple(args, "OOOii", &array, &Bc, &output, &rank, &mode) ||
-        !PyArray_Check(array) || !PyArray_Check(output) || !PyArray_Check(output) ||
-        PyArray_TYPE(array) != PyArray_TYPE(output) ||
-        PyArray_TYPE(Bc) != PyArray_TYPE(array) ||
+        !PyArray_Check(array) || !PyArray_Check(Bc) || !PyArray_Check(output) ||
+        !PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(Bc)) ||
+        !PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(output)) ||
         !PyArray_ISCARRAY(output)) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
