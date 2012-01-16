@@ -1,12 +1,13 @@
 Version 0.7.1+
 	* Fix convolve1d
+	* Add Gaussian filtering (from scipy.ndimage)
 
 Version 0.7.1 2012-01-06 by luispedro
 	* Add ``descriptor_only`` argument to surf.descriptors
 	* Specify all function signatures on freeimage.py
 	* Check that convolution arguments have right dimensions (instead of
 	crashing)
-	* Add convolve1d
+	* Add convolve1d (from scipy.ndimage)
 	* Fix Compilation on Mac OS X
 
 Version 0.7 2011-12-05 by luispedro

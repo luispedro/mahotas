@@ -20,14 +20,17 @@ from __future__ import division
 import numpy as np
 from . import _convolve
 from . import morph
-from .internal import _get_output
+from .internal import _get_output, _normalize_sequence
 from ._filters import mode2int, modes, _check_mode
 
 __all__ = [
     'convolve',
+    'convolve1d',
     'median_filter',
     'rank_filter',
     'template_match',
+    'gaussian_filter1d',
+    'gaussian_filter',
     ]
 
 def convolve(f, weights, mode='reflect', cval=0.0, output=None):
@@ -216,3 +219,117 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., output=None):
     index[axis] = slice(0, maxint)
     weights = weights[tuple(index)]
     return convolve(f, weights, mode=mode, cval=cval, output=output)
+
+
+def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., output=None):
+    """
+    filtered = gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., output={np.empty_like(array)})
+
+    One-dimensional Gaussian filter.
+
+    Parameters
+    ----------
+    array : ndarray
+        input array
+    sigma : float
+        standard deviation for Gaussian kernel (in pixel units)
+    axis : int, optional
+        axis to operate on
+    order : {0, 1, 2, 3}, optional
+        An order of 0 corresponds to convolution with a Gaussian
+        kernel. An order of 1, 2, or 3 corresponds to convolution with
+        the first, second or third derivatives of a Gaussian. Higher
+        order derivatives are not implemented
+    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant'}
+        How to handle borders
+    cval : double, optional
+        If `mode` is constant, which constant to use (default: 0.0)
+    output : ndarray, optional
+        Output array. Must have same shape and dtype as `array` as well as be
+        C-contiguous.
+
+    Returns
+    -------
+    filtered : ndarray
+        Filtered version of `array`
+
+    """
+    sigma = float(sigma)
+    s2 = sigma*sigma
+    # make the length of the filter equal to 4 times the standard
+    # deviations:
+    lw = int(4.0 * sigma + 0.5)
+    x = np.arange(2*lw+1, dtype=float)
+    x -= lw
+    weights = np.exp(x*x/(-2.*s2))
+    weights /= np.sum(weights)
+    # implement first, second and third order derivatives:
+    if order == 0:
+        pass
+    elif order == 1 : # first derivative
+        weight *= -x/s2
+    elif order == 2: # second derivative
+        weight *= (x*x/s2-1.)/s2
+    elif order == 3: # third derivative
+        weight *= (3.0 - x*x/s2)*x/(s2*s2)
+    else:
+        raise ValueError('mahotas.convolve.gaussian_filter1d: Order outside 0..3 not implemented')
+    return convolve1d(array, weights, axis, mode, cval, output=output)
+
+
+def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., output=None):
+    """
+    filtered = gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., output={np.empty_like(array)})
+
+    Multi-dimensional Gaussian filter.
+
+    Parameters
+    ----------
+    array : ndarray
+        input. Any dimension is supported
+    sigma : scalar or sequence of scalars
+        standard deviation for Gaussian kernel. The standard
+        deviations of the Gaussian filter are given for each axis as a
+        sequence, or as a single number, in which case it is equal for
+        all axes.
+    order : {0, 1, 2, 3} or sequence from same set, optional
+        The order of the filter along each axis is given as a sequence
+        of integers, or as a single number.  An order of 0 corresponds
+        to convolution with a Gaussian kernel. An order of 1, 2, or 3
+        corresponds to convolution with the first, second or third
+        derivatives of a Gaussian. Higher order derivatives are not
+        implemented
+    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant'}
+        How to handle borders
+    cval : double, optional
+        If `mode` is constant, which constant to use (default: 0.0)
+    output : ndarray, optional
+        Output array. Must have same shape and dtype as `array` as well as be
+        C-contiguous.
+
+    Returns
+    -------
+    filtered : ndarray
+        Filtered version of `array`
+
+    Notes
+    -----
+    The multi-dimensional filter is implemented as a sequence of
+    one-dimensional convolution filters. The intermediate arrays are
+    stored in the same data type as the output. Therefore, for output
+    types with a limited precision, the results may be imprecise
+    because intermediate results may be stored with insufficient
+    precision.
+    """
+    array = np.asanyarray(array)
+    output = _get_output(array, output, 'gaussian_filter')
+    orders = _normalize_sequence(array, order, 'gaussian_filter')
+    sigmas = _normalize_sequence(array, sigma, 'gaussian_filter')
+    output[...] = array[...]
+    noutput = None
+    for axis in xrange(array.ndim):
+        sigma = sigmas[axis]
+        order = orders[axis]
+        noutput = gaussian_filter1d(output, sigma, axis, order, mode, cval, noutput)
+        output,noutput = noutput,output
+    return output
