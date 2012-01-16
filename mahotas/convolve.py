@@ -100,7 +100,7 @@ def median_filter(f, Bc=None, mode='reflect', cval=0.0, output=None):
     rank = Bc.sum()//2
     output = _get_output(f, output, 'median_filter')
     _check_mode(mode, cval, 'median_filter')
-    return _convolve.rank_filter(f, Bc, output, rank, mode2int[mode])
+    return _convolve.rank_filter(f, Bc, output, int(rank), mode2int[mode])
 
 def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, output=None):
     '''

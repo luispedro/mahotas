@@ -25,3 +25,9 @@ def test_rank_filter():
         B1 = rank_filter(A,Bc,r)
         B2 = _slow_rank_filter(A,r)
         assert np.all(B1[1:-1,1:-1] == B2)
+
+def test_uint8():
+    # This used to raise an exception in 0.7.1
+    f = np.arange(64*4).reshape((16,-1))
+    median_filter(f.astype(np.uint8), np.ones((5,5)))
+
