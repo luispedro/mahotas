@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2010, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2009-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,7 +23,7 @@
 from __future__ import division
 import numpy as np
 
-__all__ = ['stretch']
+__all__ = ['stretch', 'as_rgb']
 
 def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
     '''
@@ -74,4 +74,37 @@ def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
     img *= float(max - min)/ptp
     if min: img += min
     return img.astype(dtype)
+
+def as_rgb(r, g, b):
+    '''
+    rgb = as_rgb(r, g, b)
+
+    Returns an RGB image
+
+    If any of the channels is `None`, that channel is set to zero.
+
+    Parameters
+    ----------
+    r,g,b : array-like, optional
+        The channels can be of any type or None.
+        At least one must be not None and all must have the same shape.
+
+    Returns
+    -------
+    rgb : ndarray
+        RGB ndarray
+    '''
+    for c in (r,g,b):
+        if c is not None:
+            shape = c.shape
+            break
+    else:
+        raise ValueError('mahotas.as_rgb: Not all arguments can be None')
+    def s(c):
+        if c is None:
+            return np.zeros(shape, np.uint8)
+        if c.shape != shape:
+            raise ValueError('mahotas.as_rgb: Not all arguments have the same shape')
+        return stretch(np.asanyarray(c))
+    return np.dstack([s(r), s(g), s(b)])
 

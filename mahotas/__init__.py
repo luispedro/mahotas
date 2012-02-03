@@ -18,7 +18,7 @@ try:
     from .moments import moments
     from .morph import close_holes, get_structuring_elem, dilate, erode, cwatershed, majority_filter
     from .resize import imresize
-    from .stretch import stretch
+    from .stretch import stretch, as_rgb
     from .thin import thin
     from .thresholding import otsu, rc
 

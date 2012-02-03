@@ -1,4 +1,5 @@
 Version 0.7.1+
+	* Add as_rgb (especially useful for interactive use)
 	* Fix convolve1d
 	* Fix rank_filter
 	* Add Gaussian filtering (from scipy.ndimage)
