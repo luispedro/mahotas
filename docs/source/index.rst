@@ -13,6 +13,7 @@ Contents:
    distance
    labeled
    polygon
+   classification
    faq
    internals
    principles
