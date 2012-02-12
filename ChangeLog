@@ -1,4 +1,5 @@
 Version 0.7.1+
+	* Fix type bug in 32 bit machines (Bug report by Lech Wiktor Piotrowski)
 	* Add as_rgb (especially useful for interactive use)
 	* Fix convolve1d
 	* Fix rank_filter

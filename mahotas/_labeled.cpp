@@ -242,7 +242,7 @@ PyObject* py_labeled_sum(PyObject* self, PyObject* args) {
     PyArrayObject* output;
     if (!PyArg_ParseTuple(args,"OOO", &array, &labeled, &output)) return NULL;
     if (!PyArray_Check(array) || !PyArray_Check(labeled) || PyArray_NDIM(array) != PyArray_NDIM(labeled) ||
-         PyArray_TYPE(labeled) != NPY_INT ||
+        !PyArray_EquivTypenums(PyArray_TYPE(labeled), NPY_INT) ||
         !PyArray_Check(output) || PyArray_TYPE(output) != PyArray_TYPE(array) || !PyArray_ISCARRAY(output)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
