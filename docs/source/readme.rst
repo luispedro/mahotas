@@ -42,6 +42,20 @@ threshold).
 Recent Changes
 --------------
 
+0.7.2 (February 13 2012)
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+There were two minor additions:
+
+- Add as_rgb (especially useful for interactive use)
+- Add Gaussian filtering (from scipy.ndimage)
+
+And a few bugfixes:
+
+- Fix type bug in 32 bit machines (Bug report by Lech Wiktor Piotrowski)
+- Fix convolve1d
+- Fix rank_filter
+
 
 0.7.1 (January 6 2012)
 ~~~~~~~~~~~~~~~~~~~~~~
