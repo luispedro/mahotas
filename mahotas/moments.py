@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2010, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -36,9 +36,8 @@ def moments(img, p0, p1, cm=None, convert_to_float=True):
     np.float64, unlesss `convert_to_float` is False. The reason is that,
     otherwise, overflow is likely except for small images. Since this
     conversion takes longer than the computation, you can turn it off in case
-    where you are sure that your images are small enough for overflow to be an
-    issue. Note that no conversion is made if `img` is of any floating point
-    type.
+    you are sure that your images are small enough for overflow to be an issue.
+    Note that no conversion is made if `img` is of any floating point type.
 
     Parameters
     ----------
