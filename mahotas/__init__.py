@@ -9,12 +9,12 @@ try:
     from .bbox import bbox, croptobbox
     from .bwperim import bwperim
     from .center_of_mass import center_of_mass
-    from .convolve import convolve
+    from .convolve import convolve, convolve1d, median_filter, rank_filter, template_match, gaussian_filter1d, gaussian_filter
     from .distance import distance
     from .edge import sobel
     from .euler import euler
     from .histogram import fullhistogram
-    from .labeled import label
+    from .labeled import border, borders, label, labeled_sum
     from .moments import moments
     from .morph import close_holes, get_structuring_elem, dilate, erode, cwatershed, majority_filter
     from .resize import imresize
@@ -42,11 +42,15 @@ Try installing and then changing to another directory before importing mahotas.
 
 
 __all__ = [
+    'as_rgb',
     'bbox',
+    'border',
+    'borders',
     'bwperim',
     'center_of_mass',
     'close_holes',
     'convolve',
+    'convolve1d',
     'croptobbox',
     'cwatershed',
     'dilate',
@@ -54,18 +58,23 @@ __all__ = [
     'erode',
     'euler',
     'fullhistogram',
+    'gaussian_filter',
+    'gaussian_filter1d',
     'get_structuring_elem',
     'imresize',
     'label',
+    'labeled_sum',
     'majority_filter',
+    'median_filter',
     'moments',
     'morph',
     'otsu',
+    'rank_filter',
     'rc',
     'sobel',
     'stretch',
+    'template_match',
     'thin',
-
     'features',
     'morph',
     'segmentation',

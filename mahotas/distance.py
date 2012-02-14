@@ -1,4 +1,4 @@
-# Copyright (C) 2010, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -18,6 +18,10 @@
 
 from . import _distance
 import numpy as np
+
+__all__ = [
+    'distance',
+    ]
 
 def distance(bw, metric='euclidean2'):
     '''

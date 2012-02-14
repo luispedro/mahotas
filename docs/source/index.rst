@@ -2,6 +2,8 @@
 Mahotas: Image Processing for numpy
 ===================================
 
+Jump to full `API Documentation <api.html>`__
+
 Contents:
 
 .. toctree::
@@ -17,15 +19,13 @@ Contents:
    faq
    internals
    principles
+   api
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`search`
 
 .. include:: readme.rst
 
-.. automodule:: mahotas
-    :members: fullhistogram, otsu, rc, stretch, close_holes, get_structuring_elem, dilate, erode, cwatershed, majority_filter, thin, bwperim, center_of_mass, bbox, croptobbox, sobel, euler, moments, distance, imread, imsave, segmentation, features
+Indices and tables
+------------------
 
+* :ref:`genindex`
+* :ref:`search`
