@@ -8,4 +8,4 @@ include docs/source/*.rst
 include ChangeLog
 include COPYING
 include LICENSE.BOOST
-include mahotas/tests/data/*.png
+include mahotas/tests/data/*

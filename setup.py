@@ -63,7 +63,7 @@ package_dir = {
     'mahotas.tests': 'mahotas/tests',
     }
 package_data = {
-    'mahotas.tests': ['data/*.png'],
+    'mahotas.tests': ['data/*'],
     }
 
 classifiers = [
