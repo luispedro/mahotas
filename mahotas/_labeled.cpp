@@ -47,7 +47,7 @@ int label(numpy::aligned_array<int> labeled, numpy::aligned_array<int> Bc) {
     numpy::aligned_array<int>::iterator iter = labeled.begin();
     filter_iterator<int> filter(labeled.raw_array(), Bc.raw_array());
     const int N2 = filter.size();
-    for (int i = 0; i != N; ++i, filter.iterate_with(iter), ++iter) {
+    for (int i = 0; i != N; ++i, filter.iterate_both(iter)) {
         if (*iter != -1) {
             for (int j = 0; j != N2; ++j) {
                 int arr_val = false;
@@ -90,7 +90,7 @@ void borders(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, nump
     const int N2 = fiter.size();
     bool* out = result.data();
 
-    for (int i = 0; i != N; ++i, fiter.iterate_with(iter), ++iter, ++out) {
+    for (int i = 0; i != N; ++i, fiter.iterate_both(iter), ++out) {
         const T cur = *iter;
         for (int j = 0; j != N2; ++j) {
             T val ;
@@ -112,7 +112,7 @@ bool border(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, numpy
     bool* out = result.data();
     bool any = false;
 
-    for (int ii = 0; ii != N; ++ii, fiter.iterate_with(iter), ++iter, ++out) {
+    for (int ii = 0; ii != N; ++ii, fiter.iterate_both(iter), ++out) {
         const T cur = *iter;
         T other;
         if (cur == i) other = j;

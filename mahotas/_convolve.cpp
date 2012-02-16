@@ -47,7 +47,7 @@ void convolve(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, num
     const int N2 = fiter.size();
     T* out = result.data();
 
-    for (int i = 0; i != N; ++i, fiter.iterate_with(iter), ++iter, ++out) {
+    for (int i = 0; i != N; ++i, fiter.iterate_both(iter), ++out) {
         // The reasons for using double instead of T:
         //   (1) it is slightly faster (10%)
         //   (2) it handles over/underflow better

@@ -84,22 +84,18 @@ struct filter_iterator {
         if (own_filter_data_) delete [] filter_data_;
     }
     template <typename OtherIterator>
-    void iterate_with(const OtherIterator& iterator) {
+    void iterate_both(OtherIterator& iterator) {
         for (int i = nd_ - 1; i >= 0; --i) {
             npy_intp p = iterator.index(i);
             if (p < (iterator.dimension(i) - 1)) {
                 if (p < this->minbound_[i] || p >= this->maxbound_[i]) {
                     this->cur_offsets_ += this->strides_[i];
                 }
-                return;
+                break;
             }
             this->cur_offsets_ -= this->backstrides_[i];
             assert( (this->cur_offsets_ - this->offsets_) >= 0);
         }
-    }
-    template <typename OtherIterator>
-    void iterate_both(OtherIterator& iterator) {
-        this->iterate_with(iterator);
         ++iterator;
     }
 

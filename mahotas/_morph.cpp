@@ -66,7 +66,7 @@ void erode(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::al
     const int N2 = filter.size();
     T* rpos = res.data();
 
-    for (int i = 0; i != N; ++i, ++rpos, filter.iterate_with(iter), ++iter) {
+    for (int i = 0; i != N; ++i, ++rpos, filter.iterate_both(iter)) {
         for (int j = 0; j != N2; ++j) {
             T arr_val = false;
             filter.retrieve(iter, j, arr_val);
@@ -106,7 +106,7 @@ void dilate(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_a
     // T* is a fine iterator type.
     T* rpos = res.data();
 
-    for (int i = 0; i != N; ++i, ++rpos, filter.iterate_with(iter), ++iter) {
+    for (int i = 0; i != N; ++i, ++rpos, filter.iterate_both(iter)) {
         if (*iter) {
             for (int j = 0; j != N2; ++j) {
                 if (filter[j]) filter.set(rpos, j, true);
