@@ -156,7 +156,6 @@ def erode(A, Bc=None):
     --------
     dilate
     '''
-    _verify_is_bool(A,'dilate')
     _verify_is_integer_type(A,'erode')
     Bc=get_structuring_elem(A,Bc)
     return _morph.erode(A,Bc)

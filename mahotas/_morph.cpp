@@ -56,6 +56,16 @@ numpy::index_type margin_of(const numpy::position& position, const numpy::array_
    return margin;
 }
 
+template<typename T>
+T erode_sub(T a, T b) {
+    if (b == std::numeric_limits<T>::min() || (b > a)) return std::numeric_limits<T>::min();
+    return a - b;
+}
+
+template<>
+bool erode_sub<bool>(bool a, bool b) {
+    return a && b;
+}
 
 template<typename T>
 void erode(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc) {
@@ -67,13 +77,13 @@ void erode(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::al
     T* rpos = res.data();
 
     for (int i = 0; i != N; ++i, ++rpos, filter.iterate_both(iter)) {
+        T value = std::numeric_limits<T>::max();
         for (int j = 0; j != N2; ++j) {
-            T arr_val = false;
+            T arr_val = T();
             filter.retrieve(iter, j, arr_val);
-            if (filter[j] && !arr_val) goto skip_this_one;
+            value = std::min<T>(value, erode_sub(arr_val, filter[j]));
         }
-        *rpos = true;
-        skip_this_one: continue;
+        *rpos = value;
     }
 }
 
@@ -84,7 +94,6 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args,"OO", &array, &Bc)) return NULL;
     PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
     if (!res_a) return NULL;
-    PyArray_FILLWBYTE(res_a, 0);
 #define HANDLE(type) \
     erode<type>(numpy::aligned_array<type>(res_a), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));
     SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, false);
