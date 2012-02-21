@@ -58,7 +58,8 @@ numpy::index_type margin_of(const numpy::position& position, const numpy::array_
 
 template<typename T>
 T erode_sub(T a, T b) {
-    if (b == std::numeric_limits<T>::min() || (b > a)) return std::numeric_limits<T>::min();
+    if (b == std::numeric_limits<T>::min()) return std::numeric_limits<T>::max();
+    if (b > a) return std::numeric_limits<T>::min();
     return a - b;
 }
 
@@ -67,12 +68,15 @@ bool erode_sub<bool>(bool a, bool b) {
     return a && b;
 }
 
+template<typename T> bool is_bool(T) { return false; }
+template<> bool is_bool<bool>(bool) { return true; }
+
 template<typename T>
 void erode(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc) {
     gil_release nogil;
     const int N = res.size();
     typename numpy::aligned_array<T>::iterator iter = array.begin();
-    filter_iterator<T> filter(res.raw_array(), Bc.raw_array());
+    filter_iterator<T> filter(res.raw_array(), Bc.raw_array(), EXTEND_NEAREST, is_bool(T()));
     const int N2 = filter.size();
     T* rpos = res.data();
 
