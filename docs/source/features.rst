@@ -32,6 +32,10 @@ rotational invariance.
 They can be computed for 2-D or 3-D images and are available in the
 ``mahotas.features.haralick`` module.
 
+Only the first 13 features are implemented. The last (14th) feature is normally
+considered to be *unstable*, although it is not clear to me why this is.
+(`See this unanswered question on Cross-validated <http://stats.stackexchange.com/questions/9763/what-is-this-maximum-correlation-coefficient>`__).
+
 Local Binary Patterns
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -67,4 +71,6 @@ SURF: Speeded-Up Robust Features
 
 Speeded-Up Robust Features (SURF) have both a *location* (pixel coordinates)
 and a scale (natural size) as well as a descriptor (the local features).
+
+Read `more about SURF <surf.html>`__
 
