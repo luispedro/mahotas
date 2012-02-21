@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2011, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # License: GPL v2 or later
@@ -11,7 +11,7 @@ from . import _morph
 
 def _verify_types(A,allowed_types,function):
     if A.dtype not in allowed_types:
-        raise TypeError('%s: Type %s not allowed for this function.' % (function,A.dtype))
+        raise TypeError('mahotas.%s: Type %s not allowed for this function.' % (function,A.dtype))
 
 def _verify_is_integer_type(A,function):
     int_types=[
@@ -128,7 +128,6 @@ def dilate(A, Bc=None):
     --------
     erode
     '''
-    _verify_is_bool(A,'dilate')
     _verify_is_integer_type(A,'dilate')
     Bc=get_structuring_elem(A,Bc)
     return _morph.dilate(A,Bc)
