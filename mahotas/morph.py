@@ -109,7 +109,7 @@ def dilate(A, Bc=None):
     '''
     dilated = dilate(A, Bc={3x3 cross})
 
-    Morphological dilation. Only binary version is currently implemented.
+    Morphological dilation.
 
     Parameters
     ----------
@@ -136,7 +136,7 @@ def erode(A, Bc=None):
     '''
     eroded = erode(A, Bc={3x3 cross})
 
-    Morphological erosion. Only binary version is currently implemented.
+    Morphological erosion.
 
     Parameters
     ----------
