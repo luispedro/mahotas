@@ -11,6 +11,7 @@ def test_grey_erode():
         f *= 255
         f = f.astype(np.uint8)
         B = (np.random.random_sample((3,3))*255).astype(np.uint8)
+        B //= 4
         fast = mahotas.erode(f,B)
         slow = slow_erode(f,B)
         # mahotas & pymorph use different border conventions.
