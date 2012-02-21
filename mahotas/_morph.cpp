@@ -109,21 +109,39 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
     return PyArray_Return(res_a);
 }
 
+template <typename T>
+T dilate_add(T a, T b) {
+    if (a == std::numeric_limits<T>::min()) return a;
+    if (b == std::numeric_limits<T>::min()) return b;
+    const T r = a + b;
+    // if overflow, saturate
+    if (r < std::max<T>(a,b)) return std::numeric_limits<T>::max();
+    return r;
+}
+
+template<>
+bool dilate_add(bool a, bool b) {
+    return a && b;
+}
+
 template<typename T>
 void dilate(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_array<T> Bc) {
     gil_release nogil;
     const int N = res.size();
     typename numpy::array<T>::iterator iter = array.begin();
-    filter_iterator<T> filter(array.raw_array(), Bc.raw_array());
+    filter_iterator<T> filter(array.raw_array(), Bc.raw_array(), EXTEND_NEAREST, is_bool(T()));
     const int N2 = filter.size();
     // T* is a fine iterator type.
     T* rpos = res.data();
+    std::fill(rpos, rpos + res.size(), std::numeric_limits<T>::min());
 
     for (int i = 0; i != N; ++i, ++rpos, filter.iterate_both(iter)) {
-        if (*iter) {
-            for (int j = 0; j != N2; ++j) {
-                if (filter[j]) filter.set(rpos, j, true);
-            }
+        const T value = *iter;
+        for (int j = 0; j != N2; ++j) {
+            const T nval = dilate_add(value, filter[j]);
+            T arr_val = T();
+            filter.retrieve(rpos, j, arr_val);
+            if (nval > arr_val) filter.set(rpos, j, nval);
         }
     }
 }

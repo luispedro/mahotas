@@ -128,9 +128,9 @@ def dilate(A, Bc=None):
     --------
     erode
     '''
-    _verify_is_integer_type(A,'dilate')
-    Bc=get_structuring_elem(A,Bc)
-    return _morph.dilate(A,Bc)
+    _verify_is_integer_type(A, 'dilate')
+    Bc = get_structuring_elem(A,Bc)
+    return _morph.dilate(A, Bc)
 
 def erode(A, Bc=None):
     '''
