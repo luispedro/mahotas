@@ -83,6 +83,23 @@ def as_rgb(r, g, b):
 
     If any of the channels is `None`, that channel is set to zero.
 
+    Example
+    -------
+
+    This shows a nice looking picture::
+
+        z1 = np.linspace(0, np.pi)
+        X,Y = np.meshgrid(z1, z1)
+        red = np.sin(X)
+        green = np.cos(4*Y)
+        blue = X*Y
+
+        plt.imshow(mahotas.as_rgb(red, green, blue))
+
+    Notice that the scaling on the ``blue`` channel is so different from the
+    other channels (from 0..2500 compared with 0..1), but ``as_rgb`` stretches
+    each channel independently.
+
     Parameters
     ----------
     r,g,b : array-like, optional
