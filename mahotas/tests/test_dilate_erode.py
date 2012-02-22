@@ -49,3 +49,8 @@ def test_dilate_1():
     A[8,8] = 1
     D = mahotas.dilate(A, B)
     assert np.sum(D) == np.sum(B+(B>0))
+
+def test_signed():
+    A = np.array([0,0,1,1,1,0,0,0], dtype=np.int32)
+    B = np.array([0,1,0])
+    assert np.min(mahotas.erode(A,B)) == -1

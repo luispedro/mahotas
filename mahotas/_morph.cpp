@@ -59,8 +59,10 @@ numpy::index_type margin_of(const numpy::position& position, const numpy::array_
 template<typename T>
 T erode_sub(T a, T b) {
     if (b == std::numeric_limits<T>::min()) return std::numeric_limits<T>::max();
-    if (b > a) return std::numeric_limits<T>::min();
-    return a - b;
+    const T r = a - b;
+    if (!std::numeric_limits<T>::is_signed && (b > a)) return T(0);
+    if ( std::numeric_limits<T>::is_signed && (r > a)) return std::numeric_limits<T>::min();
+    return r;
 }
 
 template<>
