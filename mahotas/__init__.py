@@ -16,7 +16,7 @@ try:
     from .histogram import fullhistogram
     from .labeled import border, borders, label, labeled_sum
     from .moments import moments
-    from .morph import close_holes, get_structuring_elem, dilate, erode, cwatershed, majority_filter
+    from .morph import close_holes, get_structuring_elem, dilate, hitmiss, erode, cwatershed, majority_filter
     from .resize import imresize
     from .stretch import stretch, as_rgb
     from .thin import thin
@@ -61,6 +61,7 @@ __all__ = [
     'gaussian_filter',
     'gaussian_filter1d',
     'get_structuring_elem',
+    'hitmiss',
     'imresize',
     'label',
     'labeled_sum',
