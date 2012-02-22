@@ -111,6 +111,11 @@ def dilate(A, Bc=None):
 
     Morphological dilation.
 
+    The type of operation depends on the ``dtype`` of ``A``! If boolean, then
+    the dilation is binary, else it is greyscale dilation. In the case of
+    greyscale dilation, the smallest value in the domain of ``Bc`` is
+    interpreted as +Inf.
+
     Parameters
     ----------
     A : ndarray of bools
@@ -137,6 +142,11 @@ def erode(A, Bc=None):
     eroded = erode(A, Bc={3x3 cross})
 
     Morphological erosion.
+
+    The type of operation depends on the ``dtype`` of ``A``! If boolean, then
+    the erosion is binary, else it is greyscale erosion. In the case of
+    greyscale erosion, the smallest value in the domain of ``Bc`` is
+    interpreted as -Inf.
 
     Parameters
     ----------
@@ -194,11 +204,39 @@ def hitmiss(input, Bc, output=None):
     '''
     output = hitmiss(input, Bc, output=np.zeros_like(input))
 
-    Hit & Miss Transform
+    Hit & Miss transform
+
+    For a given pixel position, the hit&miss is ``True`` if, when ``Bc`` is
+    overlaid on ``input``, centered at that position, the ``1`` values line up
+    with ``1``s, while the ``0``s line up with ``0``s (``2``s correspond to
+    *don't care*).
+
+    Example
+    -------
+
+    ::
+
+    print hitmiss(np.array([
+                [0,0,0,0,0],
+                [0,1,1,1,1],
+                [0,0,1,1,1]]),
+            np.array([
+                [0,0,0],
+                [2,1,1],
+                [2,1,1]]))
+
+    prints::
+
+        [[0 0 0 0 0]
+         [0 0 1 1 0]
+         [0 0 0 0 0]]
+
+
 
     Parameters
     ----------
     input : input ndarray
+        This is interpreted as a binary array.
     Bc : ndarray
         hit & miss template, values must be one of (0, 1, 2)
     output : output array
