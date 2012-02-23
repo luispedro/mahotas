@@ -1,6 +1,6 @@
 import numpy as np
-from mahotas import freeimage
-from mahotas import imread,imsave
+from mahotas.io import freeimage
+from mahotas.io.freeimage import imread,imsave
 import os
 from os import path
 from nose.tools import with_setup
