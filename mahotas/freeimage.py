@@ -510,8 +510,8 @@ def write(array, filename, flags=0):
         else:
             can_write = _FI.FreeImage_FIFSupportsExportType(ftype, fi_type)
         if not can_write:
-            raise TypeError('mahotas.freeimage: cannot save image of this format '
-                            'to this file type')
+            raise TypeError('mahotas.freeimage: cannot save image of this type (%s) '
+                            'to this file type' % array.dtype)
         res = _FI.FreeImage_Save(ftype, bitmap, filename, flags)
         if not res:
             raise RuntimeError('mahotas.freeimage: could not save image properly.')
