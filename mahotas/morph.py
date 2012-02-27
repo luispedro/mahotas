@@ -105,9 +105,9 @@ def get_structuring_elem(A,Bc):
             Bc.flat[i] = 1
     return Bc
 
-def dilate(A, Bc=None):
+def dilate(A, Bc=None, output=None):
     '''
-    dilated = dilate(A, Bc={3x3 cross})
+    dilated = dilate(A, Bc={3x3 cross}, output={np.empty_like(A)})
 
     Morphological dilation.
 
@@ -135,11 +135,12 @@ def dilate(A, Bc=None):
     '''
     _verify_is_integer_type(A, 'dilate')
     Bc = get_structuring_elem(A,Bc)
-    return _morph.dilate(A, Bc)
+    output = _get_output(A, output, 'dilate')
+    return _morph.dilate(A, Bc, output)
 
-def erode(A, Bc=None):
+def erode(A, Bc=None, output=None):
     '''
-    eroded = erode(A, Bc={3x3 cross})
+    eroded = erode(A, Bc={3x3 cross}, output={np.empty_as(A)})
 
     Morphological erosion.
 
@@ -167,7 +168,8 @@ def erode(A, Bc=None):
     '''
     _verify_is_integer_type(A,'erode')
     Bc=get_structuring_elem(A,Bc)
-    return _morph.erode(A,Bc)
+    output = _get_output(A, output, 'erode')
+    return _morph.erode(A, Bc, output)
 
 def cwatershed(surface, markers, Bc=None, return_lines=False):
     '''

@@ -97,18 +97,25 @@ void erode(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::al
 PyObject* py_erode(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* Bc;
-    if (!PyArg_ParseTuple(args,"OO", &array, &Bc)) return NULL;
-    PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
-    if (!res_a) return NULL;
-#define HANDLE(type) \
-    erode<type>(numpy::aligned_array<type>(res_a), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));
-    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, false);
-#undef HANDLE
-    if (PyErr_Occurred()) {
-        Py_DECREF(res_a);
+    PyArrayObject* output;
+    if (!PyArg_ParseTuple(args, "OOO", &array, &Bc, &output)) return NULL;
+    if (!numpy::are_arrays(array, Bc, output) || !numpy::same_shape(array, output) ||
+        !PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(Bc)) ||
+        !PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(output)) ||
+        PyArray_NDIM(array) != PyArray_NDIM(Bc)
+    ) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
-    return PyArray_Return(res_a);
+    holdref r_o(output);
+
+#define HANDLE(type) \
+    erode<type>(numpy::aligned_array<type>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, true);
+#undef HANDLE
+
+    Py_XINCREF(output);
+    return PyArray_Return(output);
 }
 
 template <typename T>
@@ -148,22 +155,28 @@ void dilate(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_a
     }
 }
 
+
 PyObject* py_dilate(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* Bc;
-    if (!PyArg_ParseTuple(args,"OO", &array, &Bc)) return NULL;
-    PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
-    PyArray_FILLWBYTE(res_a, 0);
-    if (!res_a) return NULL;
-#define HANDLE(type) \
-    dilate<type>(numpy::aligned_array<type>(res_a),numpy::array<type>(array),numpy::aligned_array<type>(Bc));
-    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, false);
-#undef HANDLE
-    if (PyErr_Occurred()) {
-        Py_DECREF(res_a);
+    PyArrayObject* output;
+    if (!PyArg_ParseTuple(args,"OOO", &array, &Bc, &output)) return NULL;
+    if (!numpy::are_arrays(array, Bc, output) || !numpy::same_shape(array, output) ||
+        !PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(Bc)) ||
+        !PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(output)) ||
+        PyArray_NDIM(array) != PyArray_NDIM(Bc)
+    ) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
-    return PyArray_Return(res_a);
+    holdref r_o(output);
+#define HANDLE(type) \
+    dilate<type>(numpy::aligned_array<type>(output),numpy::array<type>(array),numpy::aligned_array<type>(Bc));
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, true);
+#undef HANDLE
+
+    Py_XINCREF(output);
+    return PyArray_Return(output);
 }
 
 void close_holes(numpy::aligned_array<bool> ref, numpy::aligned_array<bool> f, numpy::aligned_array<bool> Bc) {

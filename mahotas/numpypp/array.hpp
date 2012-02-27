@@ -1,6 +1,6 @@
 #ifndef MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_
 #define MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_
-/* Copyright 2008-2011 (C)
+/* Copyright 2008-2012 (C)
  * Luis Pedro Coelho <luis@luispedro.org>
  * License GPL Version 2, or later.
  */
@@ -496,6 +496,23 @@ aligned_array<BaseType> array_like(const array_base<BaseType>& orig) {
     PyArrayObject* array = orig.raw_array();
     return aligned_array<BaseType>((PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array)));
 }
+
+inline
+bool same_shape(PyArrayObject* a, PyArrayObject* b) {
+    if (PyArray_NDIM(a) != PyArray_NDIM(b)) return false;
+    const int n = PyArray_NDIM(a);
+    for (int i = 0; i != n; ++i) {
+        if (PyArray_DIM(a, i) != PyArray_DIM(b, i)) return false;
+    }
+    return true;
+}
+
+inline
+bool are_arrays(PyArrayObject* a) { return PyArray_Check(a); }
+inline
+bool are_arrays(PyArrayObject* a, PyArrayObject* b) { return PyArray_Check(a) && PyArray_Check(b); }
+inline
+bool are_arrays(PyArrayObject* a, PyArrayObject* b, PyArrayObject* c) { return PyArray_Check(a) && PyArray_Check(b) && PyArray_Check(c); }
 
 } // namespace numpy
 

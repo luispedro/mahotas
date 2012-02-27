@@ -2,6 +2,7 @@ Version 0.7.2+
 	* Fix installation of test data
 	* Greyscale erosion & dilation
 	* Use imread module (if available)
+	* Add output argument to erode() & dilate()
 
 Version 0.7.2 2012-02-13 by luispedro
 	* Fix type bug in 32 bit machines (Bug report by Lech Wiktor Piotrowski)
