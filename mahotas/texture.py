@@ -22,7 +22,7 @@ from . import _texture
 from .morph import _verify_is_integer_type
 import math
 
-__all__ = ['haralick', "haralick_lables"]
+__all__ = ['haralick', "haralick_labels"]
 
 def _entropy(p):
     p = p.ravel()
