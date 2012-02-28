@@ -45,11 +45,6 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     only reason why you'd want the buggy behaviour is if you want to match
     another implementation.
 
-    Bugs
-    ----
-    This implementation does not compute the 14-th feature described by
-    Haralick (a patch for it would be welcome).
-
     Parameters
     ----------
     f : ndarray of integer type
@@ -64,7 +59,7 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     Returns
     -------
     feats : ndarray of np.double
-        A 4x13 feature vector (one row per direction) if `f` is 2D, 13x13 if it
+        A 4x14 feature vector (one row per direction) if `f` is 2D, 13x14 if it
         is 3xD.
     '''
     _verify_is_integer_type(f, 'mahotas.haralick')
@@ -90,6 +85,8 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     i_j2_p1 = i_j2_p1.ravel()
     px_plus_y = np.empty(2*fm1, np.double)
     px_minus_y = np.empty(fm1, np.double)
+
+    # TODO: replace dir with name which does not clobber builtin function!
     for dir in xrange(nr_dirs):
         cooccurence(f, dir, cmat, symmetric=True)
         if ignore_zeros:
@@ -152,8 +149,10 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
         feats[dir, 12] = np.sqrt(1 - np.exp( -2. * (HXY2 - feats[dir,8])))
 
         # Square root of the second largest eigenvalue of the correlation matrix
-        nzero_rc = px<>0
-        nz_pmat = p[nzero_rc,:][:,nzero_rc]
+        # Probably the faster way to do this is just SVD the whole (likely rank deficient) matrix
+        # grab the second highest singular value . . . Instead, we just amputate the empty rows/cols and move on.
+        nzero_rc = px <> 0
+        nz_pmat = p[nzero_rc,:][:,nzero_rc] # Symmetric, so this is ok!
         ccm = np.corrcoef(nz_pmat)
         e_vals = np.linalg.eigvalsh(ccm)
         e_vals.sort()
