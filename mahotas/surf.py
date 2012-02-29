@@ -44,7 +44,7 @@ def integral(f, in_place=False, dtype=np.double):
         The integral image
     '''
     if len(f.shape) != 2:
-        raise ValueError('mahotas.surf.integral: Can only handle images with 2D (i.e., greyscale images).')
+        raise ValueError('mahotas.surf.integral: Can only handle 2D-images (i.e., greyscale images).')
     if not in_place:
         if dtype != f.dtype:
             f = f.astype(dtype)
