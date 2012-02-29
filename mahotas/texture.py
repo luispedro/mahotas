@@ -86,7 +86,6 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     px_plus_y = np.empty(2*fm1, np.double)
     px_minus_y = np.empty(fm1, np.double)
 
-    # TODO: replace dir with name which does not clobber builtin function!
     for dir in xrange(nr_dirs):
         cooccurence(f, dir, cmat, symmetric=True)
         if ignore_zeros:
@@ -134,13 +133,13 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
             feats[dir, 6] = np.dot(tk2, px_plus_y) - feats[dir, 5]**2
 
         feats[dir,  8] = _entropy(pravel)
-        feats[dir,  9] = px_minus_y.var() # This is wrongly implemented in ml_texture
+        feats[dir,  9] = px_minus_y.var()
         feats[dir, 10] = _entropy(px_minus_y)
 
         HX = _entropy(px)
         HY = _entropy(py)
         crosspxpy = np.outer(px,py)
-        crosspxpy += (crosspxpy == 0) # This makes log zero become log(1), and thus evaluate to zero, such that everything works below:
+        crosspxpy += (crosspxpy == 0) # This makes log(0) become log(1), and thus evaluate to zero, such that everything works below:
         crosspxpy = crosspxpy.ravel()
         HXY1 = -np.dot(pravel, np.log2(crosspxpy))
         HXY2 = _entropy(crosspxpy)
@@ -151,7 +150,7 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
         # Square root of the second largest eigenvalue of the correlation matrix
         # Probably the faster way to do this is just SVD the whole (likely rank deficient) matrix
         # grab the second highest singular value . . . Instead, we just amputate the empty rows/cols and move on.
-        nzero_rc = px <> 0
+        nzero_rc = px != 0
         nz_pmat = p[nzero_rc,:][:,nzero_rc] # Symmetric, so this is ok!
         ccm = np.corrcoef(nz_pmat)
         e_vals = np.linalg.eigvalsh(ccm)
