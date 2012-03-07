@@ -160,7 +160,7 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
     return feats
 
 
-_haralick_labels = ["Angular Second Moment",
+haralick_labels = ["Angular Second Moment",
                    "Contrast",
                    "Correlation",
                    "Sum of Squares: Variance",
@@ -175,25 +175,26 @@ _haralick_labels = ["Angular Second Moment",
                    "Information Measure of Correlation 2",
                    "Maximal Correlation Coefficient"]
 
-def haralick_labels(n=1):
-    if n == 1:
-        return _haralick_labels
-    if n == 2:
-        deltas = _2d_deltas
-    if n == 3:
-        deltas = _3d_deltas
+_2d_deltas= [
+    (0,1),
+    (1,1),
+    (1,0),
+    (1,-1)]
 
-    return_labels = []
-    for d in deltas:
-        for l in _haralick_labels:
-            return_labels.append( str(d) + " - " + l )
-
-    return return_labels
-
-_2d_deltas= [(0,1), (1,1), (1,0), (1,-1)]
-_3d_deltas = [(1,0,0), (1,1,0), (0,1,0), (1,-1,0), 
-              (0,0,1), (1,0,1), (0,1,1), (1,1,1), 
-              (1,-1,1), (1,0,-1), (0,1,-1), (1,1,-1), (1,-1,-1)]
+_3d_deltas = [
+    (1, 0, 0),
+    (1, 1, 0),
+    (0, 1, 0),
+    (1,-1, 0),
+    (0, 0, 1),
+    (1, 0, 1),
+    (0, 1, 1),
+    (1, 1, 1),
+    (1,-1, 1),
+    (1, 0,-1),
+    (0, 1,-1),
+    (1, 1,-1),
+    (1,-1,-1) ]
 
 def cooccurence(f, direction, output=None, symmetric=True):
     '''
