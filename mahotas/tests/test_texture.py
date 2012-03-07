@@ -128,3 +128,8 @@ def test_haralick3d():
     assert features.shape == (4,14)
 
 
+def test_zeros():
+    zeros = np.zeros((64,64), np.uint8)
+    feats = mahotas.texture.haralick(zeros)
+    assert not np.any(np.isnan(feats))
+
