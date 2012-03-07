@@ -98,3 +98,30 @@ def _normalize_sequence(array, value, fname):
     if len(value) != array.ndim:
         raise ValueError('mahotas.%s: argument is sequence, but has wrong size (%s for an array of %s dimensions' % (fname, len(value), array.ndim))
     return value
+
+def _verify_is_integer_type(A, function_name):
+    '''
+    _verify_is_integer_type(array, "function")
+
+    Checks that ``A`` is an integer array. If it is not, it raises
+    ``TypeError``.
+
+    Parameters
+    ----------
+    A : ndarray
+    function_name : str
+        Used for error messages
+    '''
+    int_types=[
+                np.bool,
+                np.uint8,
+                np.int8,
+                np.uint16,
+                np.int16,
+                np.uint32,
+                np.int32,
+                np.int64,
+                np.uint64,
+                ]
+    if A.dtype not in int_types:
+        raise TypeError('mahotas.%s: This function only accepts integer types (passed array of type %s)' % (function_name, A.dtype))

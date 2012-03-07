@@ -6,29 +6,12 @@
 from __future__ import division
 import numpy as np
 
-from .internal import _get_output
+from .internal import _get_output, _verify_is_integer_type
 from . import _morph
 
-def _verify_types(A,allowed_types,function):
-    if A.dtype not in allowed_types:
-        raise TypeError('mahotas.%s: Type %s not allowed for this function.' % (function,A.dtype))
-
-def _verify_is_integer_type(A,function):
-    int_types=[
-                np.bool,
-                np.uint8,
-                np.int8,
-                np.uint16,
-                np.int16,
-                np.uint32,
-                np.int32,
-                np.int64,
-                np.uint64,
-                ]
-    _verify_types(A,int_types,function)
-
 def _verify_is_bool(A,function):
-    _verify_types(A,[np.bool],function)
+    if A.dtype != np.bool:
+        raise TypeError('mahotas.%s: This function only works with boolean arrays (passed array of type %s)' % (function,A.dtype))
 
 __all__ = [
         'get_structuring_elem',

@@ -19,7 +19,7 @@
 from __future__ import division
 import numpy as np
 from . import _texture
-from .morph import _verify_is_integer_type
+from .internal import _verify_is_integer_type
 import math
 
 __all__ = ['haralick', "haralick_labels"]
