@@ -86,7 +86,7 @@ PyObject* py_bbox(PyObject* self, PyObject* args) {
             bbox<type>(numpy::aligned_array<type>(array), extrema_v); \
         }
 
-        HANDLE_INTEGER_TYPES();
+        HANDLE_TYPES();
 #undef HANDLE
         default:
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
