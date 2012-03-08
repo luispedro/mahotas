@@ -1,5 +1,5 @@
 import numpy as np
-from mahotas import zernike
+from mahotas.features import zernike_moments
 from mahotas.center_of_mass import center_of_mass
 from math import atan2
 from numpy import cos, sin, conjugate, pi, sqrt
@@ -25,7 +25,7 @@ def _slow_znl(Y,X,P,n,l):
     v *= (n+1)/pi
     return v 
 
-def _slow_zernike(img, D, radius):
+def _slow_zernike(img, radius, D):
     zvalues = []
 
     Y,X = np.where(img > 0)
@@ -49,7 +49,7 @@ def _slow_zernike(img, D, radius):
 
 def test_zernike():
     A = (np.arange(256) % 14).reshape((16, 16))
-    slow = _slow_zernike(A, 12, 8.)
-    fast = zernike.zernike(A, 12, 8.)
+    slow = _slow_zernike(A, 8., 12)
+    fast = zernike_moments(A, 8., 12)
     delta = np.array(slow) - fast
     assert np.abs(delta).max() < 0.001

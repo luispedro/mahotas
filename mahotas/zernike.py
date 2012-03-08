@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2011, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2006-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # This program is free software; you can redistribute it and/or modify
@@ -27,25 +27,33 @@ import numpy as np
 from center_of_mass import center_of_mass
 import _zernike
 
-__all__ = ['zernike']
+__all__ = ['zernike', 'zernike_moments']
 
-def zernike(img, degree, radius, cm=None):
+def zernike(im, degree, radius, cm=None):
     """
-    zvalues = zernike(img, degree, radius, cm={center_of_mass(img)})
+    zvalues = zernike(im, degree, radius, cm={center_of_mass(im)})
+    """
+    import warnings
+    warnings.warn('mahotas.zernike.zernike: This interface is deprecated. Switch your arguments and use ``zernike_moments``', DeprecationWarning)
+    return zernike_moments(im, radius, degree, cm)
+
+def zernike_moments(im, radius, degree=8, cm=None):
+    """
+    zvalues = zernike_moments(im, radius, degree=8, cm={center_of_mass(im)})
 
     Zernike moments through ``degree``
 
     Returns a vector of absolute Zernike moments through ``degree`` for the
-    image ``img``.
+    image ``im``.
 
     Parameters
     ----------
-    img : 2-ndarray
+    im : 2-ndarray
         input image
-    degree : integer
-        Maximum degree to use
     radius : integer
         the maximum radius for the Zernike polynomials, in pixels
+    degree : integer, optional
+        Maximum degree to use (default: 8)
     cm : pair of floats, optional
         the centre of mass to use. By default, uses the image's centre of mass.
 
@@ -61,12 +69,12 @@ def zernike(img, degree, radius, cm=None):
     """
     zvalues = []
     if cm is None:
-        c0,c1 = center_of_mass(img)
+        c0,c1 = center_of_mass(im)
     else:
         c0,c1 = cm
 
-    Y,X = np.mgrid[:img.shape[0],:img.shape[1]]
-    P = img.ravel()
+    Y,X = np.mgrid[:im.shape[0],:im.shape[1]]
+    P = im.ravel()
 
     def rescale(C, centre):
         Cn = C.astype(np.double)
