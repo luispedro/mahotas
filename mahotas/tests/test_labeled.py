@@ -76,3 +76,14 @@ def test_size_labeled():
         fast = mahotas.labeled.labeled_size(labeled)
         slow = slow_labeled_size(labeled)
         assert np.all(fast == slow)
+
+def test_remove_bordering():
+    np.random.seed(343)
+    for i in xrange(4):
+        labeled,_ = mahotas.label(np.random.random_sample((128,64)) > .7)
+        removed = mahotas.labeled.remove_bordering(labeled)
+        assert np.all(removed[0] == 0)
+        assert np.all(removed[-1] == 0)
+        assert np.all(removed[:,0] == 0)
+        assert np.all(removed[:,-1] == 0)
+

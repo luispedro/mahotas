@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2010, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # LICENSE: GPLv3
@@ -12,8 +12,10 @@ from .internal import _get_output
 __all__ = [
     'borders',
     'border',
+    'remove_bordering',
     'label',
     'labeled_sum',
+    'labeled_size',
     ]
 
 def label(array, Bc=None, output=None):
@@ -43,6 +45,50 @@ def label(array, Bc=None, output=None):
     Bc = get_structuring_elem(output, Bc)
     nr_objects = _labeled.label(output, Bc)
     return output, nr_objects
+
+def remove_bordering(im, rsize=1, output=None):
+    '''
+    slabeled = remove_bordering(labeled, rsize=1, output={np.empty_like(im)})
+
+    Remove objects that are touching the border.
+
+    Pass ``im`` as ``output`` to achieve in-place operation.
+
+    Parameters
+    ----------
+    labeled : ndarray
+        Labeled array
+    rsize : int, optional
+        Minimum distance to the border (in Manhatan distance) to allow an
+        object to survive.
+    output : ndarray, optional
+        If ``im`` is passed as ``output``, then it operates inline.
+
+    Returns
+    -------
+    slabeled : ndarray
+        Subset of ``labeled``
+    '''
+    invalid = set()
+    index = [slice(None,None,None) for _ in xrange(im.ndim)]
+    for dim in xrange(im.ndim):
+        for bordering in (
+                    slice(rsize),
+                    slice(-rsize, None)
+                        ):
+            index[dim] = bordering
+            for val in np.unique(im[tuple(index)].ravel()):
+                if val != 0:
+                    invalid.add(val)
+        index[dim] = slice(None,None,None)
+    if output is None:
+        output = im.copy()
+    elif output is not im:
+        output[:] = im
+    for val in invalid:
+        output *= (im != val)
+    return output
+
 
 def border(labeled, i, j, Bc=None, output=None, always_return=True):
     '''
@@ -156,5 +202,4 @@ def labeled_size(labeled):
     '''
     from .histogram import fullhistogram
     return fullhistogram(labeled.astype(np.uint32))
-
 
