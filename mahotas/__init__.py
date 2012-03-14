@@ -7,14 +7,13 @@ A package for computer vision in Python.
 '''
 try:
     from .bbox import bbox, croptobbox
-    from .bwperim import bwperim
     from .center_of_mass import center_of_mass
     from .convolve import convolve, convolve1d, median_filter, rank_filter, template_match, gaussian_filter1d, gaussian_filter
     from .distance import distance
     from .edge import sobel
     from .euler import euler
     from .histogram import fullhistogram
-    from .labeled import border, borders, label, labeled_sum
+    from .labeled import border, borders, bwperim, label, labeled_sum
     from .moments import moments
     from .morph import close_holes, get_structuring_elem, dilate, hitmiss, erode, cwatershed, majority_filter
     from .resize import imresize

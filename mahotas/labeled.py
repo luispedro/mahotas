@@ -12,6 +12,7 @@ from .internal import _get_output
 __all__ = [
     'borders',
     'border',
+    'bwperim',
     'remove_bordering',
     'label',
     'labeled_sum',
@@ -149,6 +150,38 @@ def borders(labeled, Bc=None, output=None):
     output = _get_output(labeled, output, 'labeled.borders', bool)
     output.fill(False)
     return _labeled.borders(labeled, Bc, output)
+
+def bwperim(bw, n=4):
+    '''
+    perim = bwperim(bw, n=4)
+
+    Find the perimeter of objects in binary images.
+
+    A pixel is part of an object perimeter if its value is one and there
+    is at least one zero-valued pixel in its neighborhood.
+
+    By default the neighborhood of a pixel is 4 nearest pixels, but
+    if `n` is set to 8 the 8 nearest pixels will be considered.
+
+    Parameters
+    ----------
+    bw : ndarray
+        A black-and-white image (any other image will be converted to black & white)
+    n : int, optional
+        Connectivity. Must be 4 or 8 (default: 4)
+
+    Returns
+    -------
+    perim : ndarray
+        A boolean image
+
+    See Also
+    --------
+    borders : function
+        This is a more generic function
+    '''
+    bw = (bw != 0)
+    return bw&borders(bw, n)
 
 def labeled_sum(array, labeled):
     '''
