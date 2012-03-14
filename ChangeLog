@@ -1,4 +1,4 @@
-Version 0.7.2+
+Version 0.7.3 2012-03-14 by luispedro
 	* Fix installation of test data
 	* Greyscale erosion & dilation
 	* Use imread module (if available)

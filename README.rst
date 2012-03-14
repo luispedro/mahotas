@@ -24,6 +24,19 @@ Notable algorithms:
 Recent Changes
 --------------
 
+0.7.3 (March 14 2012)
+~~~~~~~~~~~~~~~~~~~~~~~~
+- Fix installation of test data
+- Greyscale erosion & dilation
+- Use imread module (if available)
+- Add output argument to erode() & dilate()
+- Add 14th Haralick feature (patch by MattyG) --- currently off by default
+- Improved zernike interface (zernike_moments)
+- Add remove_bordering to labeled
+- Faster implementation of ``bwperim``
+- Add ``roundness`` shape feature
+
+
 0.7.2 (February 13 2012)
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
