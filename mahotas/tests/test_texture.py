@@ -122,10 +122,10 @@ def test_haralick3d():
     np.random.seed(22)
     img = mahotas.stretch(255*np.random.rand(20,20,4))
     features = mahotas.texture.haralick(img)
-    assert features.shape == (13,14)
+    assert features.shape == (13,13)
 
     features = mahotas.texture.haralick(img[:,:,0])
-    assert features.shape == (4,14)
+    assert features.shape == (4,13)
 
 
 def test_zeros():

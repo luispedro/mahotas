@@ -29,9 +29,9 @@ def _entropy(p):
     return -np.dot(np.log(p+(p==0)),p)/math.log(2.0)
 
 
-def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
+def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False):
     '''
-    feats = haralick(f, ignore_zeros=False, preserve_haralick_bug=False)
+    feats = haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False)
 
     Compute Haralick texture features
 
@@ -55,12 +55,15 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
         whether to replicate Haralick's typo (default: False).
         You probably want to always set this to ``False`` unless you want to
         replicate someone else's wrong implementation.
+    compute_14th_feature : bool, optional
+        whether to compute & return the 14-th feature
 
     Returns
     -------
     feats : ndarray of np.double
-        A 4x14 feature vector (one row per direction) if `f` is 2D, 13x14 if it
-        is 3xD.
+        A 4x13 or 4x14 feature vector (one row per direction) if `f` is 2D,
+        13x13 or 13x14 if it is 3D. The exact number of features depends on the
+        value of ``compute_14th_feature``
     '''
     _verify_is_integer_type(f, 'mahotas.haralick')
 
@@ -70,7 +73,7 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
         nr_dirs = len(_3d_deltas)
     else:
         raise ValueError('mahotas.texture.haralick: Can only handle 2D and 3D images.')
-    feats = np.zeros((nr_dirs, 14), np.double)
+    feats = np.zeros((nr_dirs, 13 + bool(compute_14th_feature)), np.double)
     fm1 = f.max() + 1
     cmat = np.empty((fm1, fm1), np.int32)
     k = np.arange(fm1)
@@ -113,7 +116,10 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
         feats[dir, 0] = np.dot(pravel, pravel)
         feats[dir, 1] = np.dot(k2, px_minus_y)
 
-        feats[dir, 2] = (1. / sx / sy) * (np.dot(ij.ravel(), pravel) - ux * uy)
+        if sx == 0. or sy == 0.:
+            feats[dir, 2] = 1.
+        else:
+            feats[dir, 2] = (1. / sx / sy) * (np.dot(ij.ravel(), pravel) - ux * uy)
 
         feats[dir, 3] = vx
         feats[dir, 4] = np.dot(i_j2_p1, pravel)
@@ -144,18 +150,22 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False):
         HXY1 = -np.dot(pravel, np.log2(crosspxpy))
         HXY2 = _entropy(crosspxpy)
 
-        feats[dir, 11] = (feats[dir,8]-HXY1)/max(HX,HY)
+        if max(HX, HY) == 0.:
+            feats[dir, 11] = (feats[dir,8]-HXY1)
+        else:
+            feats[dir, 11] = (feats[dir,8]-HXY1)/max(HX,HY)
         feats[dir, 12] = np.sqrt(1 - np.exp( -2. * (HXY2 - feats[dir,8])))
 
-        # Square root of the second largest eigenvalue of the correlation matrix
-        # Probably the faster way to do this is just SVD the whole (likely rank deficient) matrix
-        # grab the second highest singular value . . . Instead, we just amputate the empty rows/cols and move on.
-        nzero_rc = px != 0
-        nz_pmat = p[nzero_rc,:][:,nzero_rc] # Symmetric, so this is ok!
-        ccm = np.corrcoef(nz_pmat)
-        e_vals = np.linalg.eigvalsh(ccm)
-        e_vals.sort()
-        feats[dir, 13] = np.sqrt(e_vals[-2])
+        if compute_14th_feature:
+            # Square root of the second largest eigenvalue of the correlation matrix
+            # Probably the faster way to do this is just SVD the whole (likely rank deficient) matrix
+            # grab the second highest singular value . . . Instead, we just amputate the empty rows/cols and move on.
+            nzero_rc = px != 0
+            nz_pmat = p[nzero_rc,:][:,nzero_rc] # Symmetric, so this is ok!
+            ccm = np.corrcoef(nz_pmat)
+            e_vals = np.linalg.eigvalsh(ccm)
+            e_vals.sort()
+            feats[dir, 13] = np.sqrt(e_vals[-2])
 
     return feats
 

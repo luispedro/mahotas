@@ -3,7 +3,7 @@ Version 0.7.2+
 	* Greyscale erosion & dilation
 	* Use imread module (if available)
 	* Add output argument to erode() & dilate()
-	* Add 14th Haralick feature (patch by MattyG)
+	* Add 14th Haralick feature (patch by MattyG) --- currently off by default
 	* Improved zernike interface (zernike_moments)
 	* Add remove_bordering to labeled
 	* Faster implementation of ``bwperim``
