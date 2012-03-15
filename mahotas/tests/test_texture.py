@@ -1,10 +1,10 @@
 import numpy as np
-import mahotas.texture
-import mahotas._texture
+from mahotas.features import texture
+import mahotas.features._texture
 from nose.tools import raises
 
 def test__cooccurence():
-    cooccurence = mahotas._texture.cooccurence
+    cooccurence = mahotas.features._texture.cooccurence
     f = np.array([
           [0,1,1,1],
           [0,0,1,1],
@@ -68,68 +68,68 @@ def test_cooccurence():
     f = np.random.rand(32, 32)
     f = (f * 255).astype(np.int32)
 
-    assert np.all(mahotas.texture.cooccurence(f, 0, symmetric=False) == brute_force(f, 0, 1))
-    assert np.all(mahotas.texture.cooccurence(f, 1, symmetric=False) == brute_force(f, 1, 1))
-    assert np.all(mahotas.texture.cooccurence(f, 2, symmetric=False) == brute_force(f, 1, 0))
-    assert np.all(mahotas.texture.cooccurence(f, 3, symmetric=False) == brute_force(f, 1, -1))
+    assert np.all(texture.cooccurence(f, 0, symmetric=False) == brute_force(f, 0, 1))
+    assert np.all(texture.cooccurence(f, 1, symmetric=False) == brute_force(f, 1, 1))
+    assert np.all(texture.cooccurence(f, 2, symmetric=False) == brute_force(f, 1, 0))
+    assert np.all(texture.cooccurence(f, 3, symmetric=False) == brute_force(f, 1, -1))
 
-    assert np.all(mahotas.texture.cooccurence(f, 0, symmetric=1) == brute_force_sym(f, 0, 1))
-    assert np.all(mahotas.texture.cooccurence(f, 1, symmetric=1) == brute_force_sym(f, 1, 1))
-    assert np.all(mahotas.texture.cooccurence(f, 2, symmetric=1) == brute_force_sym(f, 1, 0))
-    assert np.all(mahotas.texture.cooccurence(f, 3, symmetric=1) == brute_force_sym(f, 1, -1))
+    assert np.all(texture.cooccurence(f, 0, symmetric=1) == brute_force_sym(f, 0, 1))
+    assert np.all(texture.cooccurence(f, 1, symmetric=1) == brute_force_sym(f, 1, 1))
+    assert np.all(texture.cooccurence(f, 2, symmetric=1) == brute_force_sym(f, 1, 0))
+    assert np.all(texture.cooccurence(f, 3, symmetric=1) == brute_force_sym(f, 1, -1))
 
 def test_cooccurence3():
     np.random.seed(222)
     f = np.random.rand(32, 32, 8)
     f = (f * 255).astype(np.int32)
 
-    for di, (d0,d1,d2) in enumerate(mahotas.texture._3d_deltas):
-        assert np.all(mahotas.texture.cooccurence(f, di, symmetric=False) == brute_force3(f, d0, d1, d2))
+    for di, (d0,d1,d2) in enumerate(texture._3d_deltas):
+        assert np.all(texture.cooccurence(f, di, symmetric=False) == brute_force3(f, d0, d1, d2))
 
 def test_haralick():
     np.random.seed(123)
     f = np.random.rand(1024, 1024)
     f = (f * 255).astype(np.int32)
-    feats = mahotas.texture.haralick(f)
+    feats = texture.haralick(f)
     assert not np.any(np.isnan(feats))
 
 def test_haralick3():
     np.random.seed(123)
     f = np.random.rand(34, 12, 8)
     f = (f * 255).astype(np.int32)
-    feats = mahotas.texture.haralick(f)
+    feats = texture.haralick(f)
     assert not np.any(np.isnan(feats))
 
 
 def test_single_point():
     A = np.zeros((5,5), np.uint8)
     A[2,2]=12
-    assert not np.any(np.isnan(mahotas.texture.cooccurence(A,0)))
+    assert not np.any(np.isnan(texture.cooccurence(A,0)))
 
 @raises(TypeError)
 def test_float_cooccurence():
     A = np.zeros((5,5), np.float32)
     A[2,2]=12
-    mahotas.texture.cooccurence(A,0)
+    texture.cooccurence(A,0)
 
 @raises(TypeError)
 def test_float_haralick():
     A = np.zeros((5,5), np.float32)
     A[2,2]=12
-    mahotas.texture.haralick(A)
+    texture.haralick(A)
 
 def test_haralick3d():
     np.random.seed(22)
     img = mahotas.stretch(255*np.random.rand(20,20,4))
-    features = mahotas.texture.haralick(img)
+    features = texture.haralick(img)
     assert features.shape == (13,13)
 
-    features = mahotas.texture.haralick(img[:,:,0])
+    features = texture.haralick(img[:,:,0])
     assert features.shape == (4,13)
 
 
 def test_zeros():
     zeros = np.zeros((64,64), np.uint8)
-    feats = mahotas.texture.haralick(zeros)
+    feats = texture.haralick(zeros)
     assert not np.any(np.isnan(feats))
 

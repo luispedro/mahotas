@@ -9,9 +9,9 @@
 // Copyright (C) 2010 Luis Pedro Coelho (luis@luispedro.org)
 // License: GPLv3 or later
 
-#include "numpypp/array.hpp"
-#include "numpypp/dispatch.hpp"
-#include "utils.hpp"
+#include "../numpypp/array.hpp"
+#include "../numpypp/dispatch.hpp"
+#include "../utils.hpp"
 
 #include <vector>
 #include <algorithm>

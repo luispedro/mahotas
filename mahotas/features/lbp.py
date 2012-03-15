@@ -19,7 +19,7 @@
 #
 
 import numpy as np
-from histogram import fullhistogram
+from ..histogram import fullhistogram
 
 __all__ = [
     'lbp',
@@ -53,9 +53,8 @@ def lbp(image, radius, points, ignore_zeros=False):
         Ojala, T. Pietikainen, M. Maenpaa, T. LECTURE NOTES IN COMPUTER SCIENCE (Springer)
         2000, ISSU 1842, pages 404-420
     '''
-    from .interpolate import shift
-    import mahotas._lbp
-    from mahotas.histogram import fullhistogram
+    from ..interpolate import shift
+    from mahotas.features import _lbp
     if ignore_zeros:
         Y,X = np.nonzero(image)
         def select(im):
@@ -74,12 +73,12 @@ def lbp(image, radius, points, ignore_zeros=False):
     codes = (data > pixels).astype(np.int32)
     codes *= (2**np.arange(points)[:,np.newaxis])
     codes = codes.sum(0)
-    codes = mahotas._lbp.map(codes.astype(np.uint32), points)
+    codes = _lbp.map(codes.astype(np.uint32), points)
     final = fullhistogram(codes.astype(np.uint32))
 
     codes = np.arange(2**points, dtype=np.uint32)
     iters = codes.copy()
-    codes = mahotas._lbp.map(codes.astype(np.uint32), points)
+    codes = _lbp.map(codes.astype(np.uint32), points)
     pivots = (codes == iters)
     npivots = np.sum(pivots)
     compressed = final[pivots[:len(final)]]

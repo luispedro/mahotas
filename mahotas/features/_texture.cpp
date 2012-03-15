@@ -3,14 +3,13 @@
 #include <vector>
 #include <cstdio>
 #include <limits>
-#include <iostream>
 #include <cstring>
 #include <signal.h>
 
-#include "numpypp/array.hpp"
-#include "numpypp/dispatch.hpp"
-#include "utils.hpp"
-#include "_filters.h"
+#include "../numpypp/array.hpp"
+#include "../numpypp/dispatch.hpp"
+#include "../utils.hpp"
+#include "../_filters.h"
 
 extern "C" {
     #include <Python.h>

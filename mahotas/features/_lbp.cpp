@@ -1,5 +1,6 @@
-#include <iostream>
-#include "utils.hpp"
+// Part of mahotas. See LICENSE file for License
+// Copyright 2008-2012 Luis Pedro Coelho <luis@luispedro.org>
+#include "../utils.hpp"
 
 extern "C" {
     #include <Python.h>

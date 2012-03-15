@@ -22,8 +22,8 @@
 
 from __future__ import division
 import numpy as np
-from .convolve import convolve
-from .thresholding import otsu
+from ..convolve import convolve
+from ..thresholding import otsu
 
 __all__ = ['pftas', 'tas']
 

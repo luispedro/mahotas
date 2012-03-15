@@ -1,3 +1,6 @@
+Version 0.7.3+
+	* Move features to submodule
+
 Version 0.7.3 2012-03-14 by luispedro
 	* Fix installation of test data
 	* Greyscale erosion & dilation

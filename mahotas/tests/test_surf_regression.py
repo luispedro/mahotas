@@ -1,6 +1,6 @@
 import mahotas
 import numpy as np
-import mahotas.surf
+from mahotas.features.surf import surf
 from os import path
 
 # Originally, the file `determinant_zero.png` contained a PNG which FreeImage
@@ -22,11 +22,11 @@ def test_determinant_zero():
         path.abspath(path.dirname(__file__)),
                     'data',
                     'determinant_zero.png'))
-    points = mahotas.surf.surf(img, threshold=.0)
+    points = surf(img, threshold=.0)
     assert type(points) == np.ndarray
 
 def test_determinant_zero2():
     img = np.zeros((128,28), np.uint8)
-    points = mahotas.surf.surf(img, threshold=.0)
+    points = surf(img, threshold=.0)
     assert type(points) == np.ndarray
 

@@ -47,12 +47,13 @@ extensions = {
     'mahotas._histogram': ['mahotas/_histogram.cpp'],
     'mahotas._interpolate': ['mahotas/_interpolate.cpp', 'mahotas/_filters.cpp'],
     'mahotas._labeled': ['mahotas/_labeled.cpp', 'mahotas/_filters.cpp'],
-    'mahotas._lbp': ['mahotas/_lbp.cpp'],
     'mahotas._morph': ['mahotas/_morph.cpp', 'mahotas/_filters.cpp'],
-    'mahotas._surf': ['mahotas/_surf.cpp'],
-    'mahotas._texture': ['mahotas/_texture.cpp', 'mahotas/_filters.cpp'],
     'mahotas._thin': ['mahotas/_thin.cpp'],
-    'mahotas._zernike': ['mahotas/_zernike.cpp'],
+
+    'mahotas.features._lbp': ['mahotas/features/_lbp.cpp'],
+    'mahotas.features._surf': ['mahotas/features/_surf.cpp'],
+    'mahotas.features._texture': ['mahotas/features/_texture.cpp', 'mahotas/_filters.cpp'],
+    'mahotas.features._zernike': ['mahotas/features/_zernike.cpp'],
 }
 
 ext_modules = [numpyutils.Extension(key, sources=sources, undef_macros=undef_macros) for key,sources in extensions.iteritems()]
