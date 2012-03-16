@@ -162,10 +162,13 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_fe
             # grab the second highest singular value . . . Instead, we just amputate the empty rows/cols and move on.
             nzero_rc = px != 0
             nz_pmat = p[nzero_rc,:][:,nzero_rc] # Symmetric, so this is ok!
-            ccm = np.corrcoef(nz_pmat)
-            e_vals = np.linalg.eigvalsh(ccm)
-            e_vals.sort()
-            feats[dir, 13] = np.sqrt(e_vals[-2])
+            if nz_pmat.shape[0] > 2:
+                ccm = np.corrcoef(nz_pmat)
+                e_vals = np.linalg.eigvalsh(ccm)
+                e_vals.sort()
+                feats[dir, 13] = np.sqrt(e_vals[-2])
+            else:
+                feats[dir, 13] = 0
 
     return feats
 
