@@ -1,5 +1,5 @@
 import numpy as np
-from mahotas.moments import moments
+from mahotas.features.moments import moments
 
 def _slow(A, p0, p1, cm):
     c0,c1 = cm
