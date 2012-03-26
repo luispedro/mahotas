@@ -20,6 +20,14 @@ Notable algorithms:
  - Sobel edge detection.
  - spline interpolation
 
+Contacts
+--------
+
+For bugfixes, feel free to use my email: luis@luispedro.org
+
+For more general with achieving certain tasks in Python, the `pythonvision
+mailing list <http://groups.google.com/group/pythonvision?pli=1>`__ is a much
+better venue and generates a public discussion log for others in the future.
 
 Recent Changes
 --------------
