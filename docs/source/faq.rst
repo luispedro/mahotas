@@ -25,3 +25,8 @@ In any case, we all use the same data format: numpy arrays. It is very easy
 you want from each. All the packages use function based interfaces which make
 it easy to mix-and-match.
 
+What are the parameters to Local Binary Patterns?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Checkout the documentation on `local binary patterns <lbp.html>`__.
+

@@ -10,6 +10,7 @@ Contents:
    :maxdepth: 2
 
    features
+   lbp
    surf
    thresholding
    distance
