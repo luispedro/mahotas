@@ -18,3 +18,9 @@ def test_get_structuring_elem():
     assert np.all(get_structuring_elem(A, Bc.astype(np.float).T).flags['C_CONTIGUOUS'])
     assert np.all(get_structuring_elem(A, Bc.astype(np.float).T) == Bc.T)
 
+def test_open():
+    from mahotas.morph import open
+    np.random.seed(123)
+    A = np.random.rand((16,16)) > .345
+    assert open(A).shape == (16,16)
+

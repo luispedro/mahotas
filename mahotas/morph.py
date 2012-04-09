@@ -253,6 +253,41 @@ def hitmiss(input, Bc, output=None):
                 raise TypeError('mahotas.hitmiss: output must be of same type as input')
     return _morph.hitmiss(input, Bc, output)
 
+
+def open(f, Bc=None, output=None):
+    """
+    y = open(f, Bc={3x3 cross}, output={np.empty_like(f)})
+
+    Morphological opening.
+
+    `open` creates the image y by the morphological opening of the
+    image `f` by the structuring element `Bc`.
+
+    In the binary case, the opening by the structuring element `Bc` may be
+    interpreted as the union of translations of `b` included in `f`. In the
+    gray-scale case, there is a similar interpretation taking the functions
+    umbra.
+
+    Parameters
+    ----------
+    f : ndarray
+        Gray-scale (uint8 or uint16) or binary image.
+    Bc : ndarray, optional
+        Structuring element (default: 3x3 elementary cross).
+    output : ndarray, optional
+        Output array
+
+    Returns
+    -------
+    y : ndarray
+    """
+    _verify_is_integer_type(f, 'open')
+    Bc = get_structuring_elem(f, Bc)
+    eroded = erode(f, Bc, output=output)
+    # We need to copy for the simple reason that otherwise, the image will be
+    # modified in place, which can mess up the implementation
+    return dilate(eroded.copy(), Bc, output=eroded)
+
 def close_holes(ref, Bc=None):
     '''
     closed = close_holes(ref, Bc=None):
