@@ -118,6 +118,58 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
     return PyArray_Return(output);
 }
 
+template<typename T>
+void regmin_max(numpy::aligned_array<bool> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc, bool is_min) {
+    gil_release nogil;
+    const int N = res.size();
+    typename numpy::aligned_array<T>::iterator iter = array.begin();
+    filter_iterator<T> filter(res.raw_array(), Bc.raw_array(), EXTEND_NEAREST, true);
+    const int N2 = filter.size();
+    bool* rpos = res.data();
+
+    for (int i = 0; i != N; ++i, ++rpos, filter.iterate_both(iter)) {
+        T cur = *iter;
+        for (int j = 0; j != N2; ++j) {
+            T arr_val = T();
+            filter.retrieve(iter, j, arr_val);
+            if (( is_min && (arr_val < cur)) ||
+                (!is_min && (arr_val > cur))) {
+                    goto skip_to_next;
+                }
+        }
+        *rpos = true;
+        skip_to_next:
+            ;
+    }
+}
+
+PyObject* py_regminmax(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* Bc;
+    PyArrayObject* output;
+    int is_min;
+    if (!PyArg_ParseTuple(args, "OOOi", &array, &Bc, &output, &is_min)) return NULL;
+    if (!numpy::are_arrays(array, Bc, output) || !numpy::same_shape(array, output) ||
+        !PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(Bc)) ||
+        !PyArray_EquivTypenums(NPY_BOOL, PyArray_TYPE(output)) ||
+        PyArray_NDIM(array) != PyArray_NDIM(Bc) ||
+        !PyArray_ISCARRAY(output)
+    ) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    holdref r_o(output);
+    PyArray_FILLWBYTE(output, 0);
+
+#define HANDLE(type) \
+    regmin_max<type>(numpy::aligned_array<bool>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc), bool(is_min));
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, true);
+#undef HANDLE
+
+    Py_XINCREF(output);
+    return PyArray_Return(output);
+}
+
 template <typename T>
 T dilate_add(T a, T b) {
     if (a == std::numeric_limits<T>::min()) return a;
@@ -531,6 +583,7 @@ PyMethodDef methods[] = {
   {"erode",(PyCFunction)py_erode, METH_VARARGS, NULL},
   {"close_holes",(PyCFunction)py_close_holes, METH_VARARGS, NULL},
   {"cwatershed",(PyCFunction)py_cwatershed, METH_VARARGS, NULL},
+  {"regmin_max",(PyCFunction)py_regminmax, METH_VARARGS, NULL},
   {"hitmiss",(PyCFunction)py_hitmiss, METH_VARARGS, NULL},
   {"majority_filter",(PyCFunction)py_majority_filter, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},

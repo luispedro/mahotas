@@ -14,12 +14,16 @@ def _verify_is_bool(A,function):
         raise TypeError('mahotas.%s: This function only works with boolean arrays (passed array of type %s)' % (function,A.dtype))
 
 __all__ = [
-        'get_structuring_elem',
+        'close_holes',
+        'cwatershed',
         'dilate',
         'erode',
-        'cwatershed',
-        'close_holes',
+        'get_structuring_elem',
         'hitmiss',
+        'majority_filter'
+        'open',
+        'regmax',
+        'regmin',
         ]
 
 def get_structuring_elem(A,Bc):
@@ -350,3 +354,67 @@ def majority_filter(img, N=3, output=None):
         N += 1
     return _morph.majority_filter(img, N, output)
 
+
+def _remove_centre(Bc):
+    index = [s//2 for s in Bc.shape]
+    Bc[tuple(index)] = False
+    return Bc
+
+def regmax(f, Bc=None, output=None):
+    '''
+    filtered = regmax(f, Bc={3x3 cross}, output={np.empty(f.shape, bool)})
+
+    Regional maxima
+
+    Parameters
+    ----------
+    f : ndarray
+    Bc : ndarray, optional
+        structuring element
+    output : ndarray, optional
+        Used for output. Must be Boolean ndarray of same size as `f`
+
+    Returns
+    -------
+    filtered : ndarray
+        boolean image of same size as f.
+
+    See Also
+    --------
+    regmin : function
+        Regional minima
+    '''
+    Bc = get_structuring_elem(f, Bc)
+    output = _get_output(f, output, 'regmax', np.bool_)
+    Bc = _remove_centre(Bc.copy())
+    return _morph.regmin_max(f, Bc, output, False)
+
+
+def regmin(f, Bc=None, output=None):
+    '''
+    filtered = regmin(f, Bc={3x3 cross}, output={np.empty(f.shape, bool)})
+
+    Regional maxima
+
+    Parameters
+    ----------
+    f : ndarray
+    Bc : ndarray, optional
+        structuring element
+    output : ndarray, optional
+        Used for output. Must be Boolean ndarray of same size as `f`
+
+    Returns
+    -------
+    filtered : ndarray
+        boolean image of same size as f.
+
+    See Also
+    --------
+    regmax : function
+        Regional maxima
+    '''
+    Bc = get_structuring_elem(f, Bc)
+    Bc = _remove_centre(Bc.copy())
+    output = _get_output(f, output, 'regmin', np.bool_)
+    return _morph.regmin_max(f, Bc, output, True)

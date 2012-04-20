@@ -21,6 +21,41 @@ def test_get_structuring_elem():
 def test_open():
     from mahotas.morph import open
     np.random.seed(123)
-    A = np.random.rand((16,16)) > .345
+    A = np.random.random_sample((16,16)) > .345
     assert open(A).shape == (16,16)
+
+
+def slow_reg(A, agg):
+    def get(i, j):
+        vals = []
+        def try_this(i,j):
+            if 0 <= i < A.shape[0] and \
+                0 <= j < A.shape[1]:
+                    vals.append( A[i,j] )
+        try_this(i,j)
+        try_this(i-1,j)
+        try_this(i+1,j)
+        try_this(i,j-1)
+        try_this(i,j+1)
+        return vals
+
+
+    res = np.zeros(A.shape, bool)
+    for i in xrange(A.shape[0]):
+        for j in xrange(A.shape[0]):
+            res[i,j] = (A[i,j] == agg(get(i,j)))
+    return res
+
+def test_regmin_max():
+    from mahotas.morph import regmax, regmin
+    np.random.seed(123)
+    for i in xrange(4):
+        A = np.random.random_sample((64,64))
+        A *= 255
+        A = A.astype(np.uint8)
+        fast = regmax(A)
+        assert np.all(fast == slow_reg(A, max))
+
+        fast = regmin(A)
+        assert np.all(fast == slow_reg(A, min))
 
