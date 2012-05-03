@@ -14,6 +14,7 @@ def _verify_is_bool(A,function):
         raise TypeError('mahotas.%s: This function only works with boolean arrays (passed array of type %s)' % (function,A.dtype))
 
 __all__ = [
+        'close',
         'close_holes',
         'cwatershed',
         'dilate',
@@ -284,6 +285,10 @@ def open(f, Bc=None, output=None):
     Returns
     -------
     y : ndarray
+
+    See Also
+    --------
+    open : function
     """
     _verify_is_integer_type(f, 'open')
     Bc = get_structuring_elem(f, Bc)
@@ -291,6 +296,46 @@ def open(f, Bc=None, output=None):
     # We need to copy for the simple reason that otherwise, the image will be
     # modified in place, which can mess up the implementation
     return dilate(eroded.copy(), Bc, output=eroded)
+
+
+def close(f, Bc=None, output=None):
+    """
+    y = close(f, Bc={3x3 cross}, output={np.empty_like(f)})
+
+    Morphological closing.
+
+    `close` creates the image `y` by the morphological closing of the
+    image `f` by the structuring element `Bc`. In the binary case, the
+    closing by a structuring element `Bc` may be interpreted as the
+    intersection of all the binary images that contain the image `f`
+    and have a hole equal to a translation of `Bc`. In the gray-scale
+    case, there is a similar interpretation taking the functions
+    umbra.
+
+    Parameters
+    ----------
+    f : ndarray
+        Gray-scale (uint8 or uint16) or binary image.
+    Bc : ndarray, optional
+        Structuring element. (Default: 3x3 elementary cross).
+    output : ndarray, optional
+        Output array
+
+    Returns
+    -------
+    y : ndarray
+
+    See Also
+    --------
+    open : function
+    """
+    _verify_is_integer_type(f, 'close')
+    Bc = get_structuring_elem(f, Bc)
+    dilated = dilate(f, Bc, output=output)
+    # We need to copy for the simple reason that otherwise, the image will be
+    # modified in place, which can mess up the implementation
+    return erode(dilated.copy(), Bc, output=dilated)
+
 
 def close_holes(ref, Bc=None):
     '''

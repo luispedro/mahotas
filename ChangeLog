@@ -2,6 +2,7 @@ Version 0.7.3+
 	* Move features to submodule
 	* Add morph.open function
 	* Add morph.regmax & morph.regmin functions
+	* Add morph.close function
 
 Version 0.7.3 2012-03-14 by luispedro
 	* Fix installation of test data

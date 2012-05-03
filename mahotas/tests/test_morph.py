@@ -24,6 +24,12 @@ def test_open():
     A = np.random.random_sample((16,16)) > .345
     assert open(A).shape == (16,16)
 
+def test_close():
+    from mahotas.morph import close
+    np.random.seed(123)
+    A = np.random.random_sample((16,16)) > .345
+    assert close(A).shape == (16,16)
+
 
 def slow_reg(A, agg):
     def get(i, j):
