@@ -1,3 +1,4 @@
+#include <vector>
 #include <assert.h>
 #include "numpypp/array.hpp"
 
@@ -26,8 +27,8 @@ npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len, cons
 
 int init_filter_offsets(PyArrayObject *array, bool *footprint,
          const npy_intp * const fshape, npy_intp* origins,
-         const ExtendMode mode, npy_intp **offsets, npy_intp *border_flag_value,
-         npy_intp **coordinate_offsets);
+         const ExtendMode mode, std::vector<npy_intp>& offsets, npy_intp *border_flag_value,
+         std::vector<npy_intp>* coordinate_offsets);
 void init_filter_iterator(const int rank, const npy_intp *fshape,
                     const npy_intp filter_size, const npy_intp *ashape,
                     const npy_intp *origins,
@@ -43,8 +44,6 @@ struct filter_iterator {
         :filter_data_(reinterpret_cast<const T* const>(PyArray_DATA(filter)))
         ,own_filter_data_(false)
         ,nd_(PyArray_NDIM(array))
-        ,offsets_(0)
-        ,coordinate_offsets_(0)
     {
         numpy::aligned_array<T> filter_array(filter);
         const npy_intp filter_size = filter_array.size();
@@ -57,7 +56,7 @@ struct filter_iterator {
             }
         }
         size_ = init_filter_offsets(array, footprint, PyArray_DIMS(filter), 0,
-                    mode, &offsets_, &border_flag_value_, 0);
+                    mode, offsets_, &border_flag_value_, 0);
         if (compress) {
             int j = 0;
             T* new_filter_data = new T[size_];
@@ -72,15 +71,13 @@ struct filter_iterator {
             delete [] footprint;
         }
 
-        cur_offsets_ = offsets_;
+        cur_offsets_idx_ = 0;
         init_filter_iterator(PyArray_NDIM(filter), PyArray_DIMS(filter), size_,
             PyArray_DIMS(array), /*origins*/0,
             this->strides_, this->backstrides_,
             this->minbound_, this->maxbound_);
     }
     ~filter_iterator() {
-        delete [] offsets_;
-        if (coordinate_offsets_) delete coordinate_offsets_;
         if (own_filter_data_) delete [] filter_data_;
     }
     template <typename OtherIterator>
@@ -89,26 +86,28 @@ struct filter_iterator {
             npy_intp p = iterator.index(i);
             if (p < (iterator.dimension(i) - 1)) {
                 if (p < this->minbound_[i] || p >= this->maxbound_[i]) {
-                    this->cur_offsets_ += this->strides_[i];
+                    this->cur_offsets_idx_ += this->strides_[i];
                 }
                 break;
             }
-            this->cur_offsets_ -= this->backstrides_[i];
-            assert( (this->cur_offsets_ - this->offsets_) >= 0);
+            this->cur_offsets_idx_ -= this->backstrides_[i];
+            assert( this->cur_offsets_idx_ >= 0 );
+            assert( this->cur_offsets_idx_ < this->offsets_.size() );
         }
         ++iterator;
     }
 
     template <typename OtherIterator>
     bool retrieve(const OtherIterator& iterator, const npy_intp j, T& array_val) {
-        if (this->cur_offsets_[j] == border_flag_value_) return false;
+        if (this->offsets_[cur_offsets_idx_+j] == border_flag_value_) return false;
         assert((j >= 0) && (j < size_));
-        array_val = *( (&*iterator) + this->cur_offsets_[j]);
+        array_val = *( (&*iterator) + this->offsets_[cur_offsets_idx_+j]);
         return true;
     }
     template <typename OtherIterator>
     void set(const OtherIterator& iterator, npy_intp j, const T& val) {
-        *( (&*iterator) + this->cur_offsets_[j]) = val;
+        assert(this->offsets_[cur_offsets_idx_+j] != border_flag_value_);
+        *( (&*iterator) + this->offsets_[cur_offsets_idx_+j]) = val;
     }
 
     const T& operator [] (const npy_intp j) const { assert(j < size_); return filter_data_[j]; }
@@ -116,11 +115,10 @@ struct filter_iterator {
     private:
         const T* filter_data_;
         bool own_filter_data_;
-        npy_intp* cur_offsets_;
+        unsigned cur_offsets_idx_;
         npy_intp size_;
         const npy_intp nd_;
-        npy_intp* offsets_;
-        npy_intp* coordinate_offsets_;
+        std::vector<npy_intp> offsets_;
         npy_intp strides_[NPY_MAXDIMS];
         npy_intp backstrides_[NPY_MAXDIMS];
         npy_intp minbound_[NPY_MAXDIMS];

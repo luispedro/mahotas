@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2005 Peter J. Verveer
- * Copyright (C) 2010-2011 Luis Pedro Coelho
+ * Copyright (C) 2010-2012 Luis Pedro Coelho
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,8 +124,8 @@ npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len, cons
      the interior of the array: */
 int init_filter_offsets(PyArrayObject *array, bool *footprint,
          const npy_intp * const fshape, npy_intp* origins,
-         const ExtendMode mode, npy_intp **offsets, npy_intp *border_flag_value,
-         npy_intp **coordinate_offsets)
+         const ExtendMode mode, std::vector<npy_intp>& offsets, npy_intp *border_flag_value,
+         std::vector<npy_intp>* coordinate_offsets)
 {
     npy_intp coordinates[NPY_MAXDIMS], position[NPY_MAXDIMS];
     npy_intp forigins[NPY_MAXDIMS];
@@ -152,17 +152,8 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
     if (int(mode) < 0 || int(mode) > EXTEND_LAST) {
         throw PythonException(PyExc_RuntimeError, "boundary mode not supported");
     }
-    try {
-        *offsets = 0;
-        if (coordinate_offsets) *coordinate_offsets = 0;
-        *offsets = new npy_intp[offsets_size * footprint_size];
-        if (coordinate_offsets) {
-            *coordinate_offsets = new npy_intp[offsets_size * rank * footprint_size];
-        }
-    } catch (std::bad_alloc&) {
-        if (*offsets) delete [] offsets;
-        throw;
-    }
+    offsets.resize(offsets_size * footprint_size);
+    if (coordinate_offsets) coordinate_offsets->resize(offsets_size * footprint_size);
     // from here on, we cannot fail anymore:
 
     for(int ii = 0; ii < rank; ii++) {
@@ -191,8 +182,8 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
     /* calculate all possible offsets to elements in the filter kernel,
          for all regions in the array (interior and border regions): */
 
-    npy_intp* po = *offsets;
-    npy_intp* pc = coordinate_offsets ? *coordinate_offsets : 0;
+    unsigned poi = 0;
+    npy_intp* pc = coordinate_offsets ? &(*coordinate_offsets)[0] : 0;
 
     /* iterate over all regions: */
     for(int ll = 0; ll < offsets_size; ll++) {
@@ -224,7 +215,7 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
                 }
                 if (offset != *border_flag_value) offset /= sizeof_element;
                 /* store the offset */
-                *po++ = offset;
+                offsets[poi++] = offset;
                 if (coordinate_offsets)
                     pc += rank;
             }
@@ -256,6 +247,7 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
             }
         }
     }
+    assert(poi <= offsets.size());
 
     return footprint_size;
 }
