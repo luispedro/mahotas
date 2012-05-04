@@ -1,5 +1,6 @@
 import numpy as np
-import mahotas.surf
+import mahotas
+from mahotas.features import surf
 from pylab import *
 
 from os import path
@@ -11,7 +12,7 @@ luispedro_image = path.join(
 
 f = mahotas.imread(luispedro_image, as_grey=True)
 f = f.astype(np.uint8)
-spoints = mahotas.surf.surf(f, 4, 6, 2)
+spoints = surf.surf(f, 4, 6, 2)
 print "Nr points:", len(spoints)
 
 try:
@@ -24,6 +25,6 @@ except:
     values = np.zeros(100)
     colors = np.array([(255,0,0)])
 
-f2 = mahotas.surf.show_surf(f, spoints[:100], values, colors)
+f2 = surf.show_surf(f, spoints[:100], values, colors)
 imshow(f2)
 show()
