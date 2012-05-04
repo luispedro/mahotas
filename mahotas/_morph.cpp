@@ -190,7 +190,7 @@ void dilate(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_a
     gil_release nogil;
     const int N = res.size();
     typename numpy::array<T>::iterator iter = array.begin();
-    filter_iterator<T> filter(array.raw_array(), Bc.raw_array(), EXTEND_NEAREST, is_bool(T()));
+    filter_iterator<T> filter(res.raw_array(), Bc.raw_array(), EXTEND_NEAREST, is_bool(T()));
     const int N2 = filter.size();
     // T* is a fine iterator type.
     T* rpos = res.data();
