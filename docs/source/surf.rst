@@ -56,7 +56,7 @@ interest points::
 
 Running the above on a photo of luispedro, the author of mahotas yields:
 
-.. plot:: mahotas/demos/surf_luispedro.py
+.. plot:: ../../mahotas/demos/surf_luispedro.py
     :include-source:
 
 API Documentation

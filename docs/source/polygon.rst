@@ -33,7 +33,7 @@ image.
 API Documentation
 -----------------
 
-.. automodule:: mahotas
-    :members: polygon
+.. automodule:: mahotas.polygon
+    :members:
     :noindex:
 

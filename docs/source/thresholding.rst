@@ -8,7 +8,7 @@ The example in this section is present in the source under
 We start with an image, a grey-scale image::
 
 
-    luispedro_image = 'mahotas/demos/data/luispedro.jpg'
+    luispedro_image = '../../mahotas/demos/data/luispedro.jpg'
     photo = mahotas.imread(luispedro_image, as_grey=True)
     photo = photo.astype(np.uint8)
 
@@ -22,7 +22,7 @@ point images (there are good reasons for this and good reasons against it).
     from pylab import imshow, gray, show
     from os import path
 
-    luispedro_image = 'mahotas/demos/data/luispedro.jpg'
+    luispedro_image = '../../mahotas/demos/data/luispedro.jpg'
     photo = mahotas.imread(luispedro_image, as_grey=True)
     photo = photo.astype(np.uint8)
 
@@ -47,7 +47,7 @@ prints ``115``.
     from pylab import imshow, gray, show
     from os import path
 
-    luispedro_image = 'mahotas/demos/data/luispedro.jpg'
+    luispedro_image = '../../mahotas/demos/data/luispedro.jpg'
     photo = mahotas.imread(luispedro_image, as_grey=True)
     photo = photo.astype(np.uint8)
 
@@ -75,7 +75,7 @@ image is exactly the same:
     from pylab import imshow, gray, show
     from os import path
 
-    luispedro_image = 'mahotas/demos/data/luispedro.jpg'
+    luispedro_image = '../../mahotas/demos/data/luispedro.jpg'
     photo = mahotas.imread(luispedro_image, as_grey=True)
     photo = photo.astype(np.uint8)
 

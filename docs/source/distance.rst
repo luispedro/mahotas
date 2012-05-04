@@ -38,7 +38,7 @@ Now ``dmap[y,x]`` contains the squared euclidean distance of the pixel *(y,x)*
 to the nearest black pixel in ``f``. If ``f[y,x] == True``, then ``dmap[y,x] ==
 0``.
 
-.. plot:: mahotas/demos/distance.py
+.. plot:: ../../mahotas/demos/distance.py
     :include-source:
 
 API Documentation

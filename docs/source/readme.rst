@@ -109,7 +109,7 @@ For version **0.6.6 (August 8 2011)**:
 - Fix fill_polygon bug (fix by joferkington)
 - Fix Haralick feature 6 (fix by Rita Simões)
 - Implement ``morph.get_structuring_element`` for ndim > 2. This implies that
-  functions such as ``label()`` now also work in multiple dimensions
+functions such as ``label()`` now also work in multiple dimensions
 - Add median filter & ``rank_filter`` functions
 - Add template_match function
 - Refactor by use of mahotas.internal
