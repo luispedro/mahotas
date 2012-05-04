@@ -65,3 +65,11 @@ def test_regmin_max():
         fast = regmin(A)
         assert np.all(fast == slow_reg(A, min))
 
+
+def test_dilate_crash():
+    # There was a major bug in dilate, that caused this to crash
+    from mahotas.morph import dilate
+    large = np.random.random_sample((512,512)) > .5
+    small = large[128:256,128:256]
+    dilate(small)
+
