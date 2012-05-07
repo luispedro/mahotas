@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2010, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,7 @@ __all__ = ['sobel']
 
 def sobel(img, just_filter=False):
     '''
-    edges = sobel(img, just_filter=Filter)
+    edges = sobel(img, just_filter=False)
 
     Compute edges using Sobel's algorithm
 
