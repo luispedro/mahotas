@@ -32,8 +32,16 @@ better venue and generates a public discussion log for others in the future.
 Recent Changes
 --------------
 
+0.8 (May 7 2012)
+~~~~~~~~~~~~~~~~
+- Move features to submodule
+- Add morph.open function
+- Add morph.regmax & morph.regmin functions
+- Add morph.close function
+- Fix morph.dilate crash
+
 0.7.3 (March 14 2012)
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 - Fix installation of test data
 - Greyscale erosion & dilation
 - Use imread module (if available)

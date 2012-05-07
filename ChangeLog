@@ -1,4 +1,4 @@
-Version 0.7.3+
+Version 0.8 2012-05-07 by luispedro
 	* Move features to submodule
 	* Add morph.open function
 	* Add morph.regmax & morph.regmin functions
