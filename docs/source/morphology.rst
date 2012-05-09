@@ -1,6 +1,8 @@
 =======================
 Morphological Operators
 =======================
+.. versionadded:: 0.8
+    open() & close() were only added in version 0.8
 
 Morphological operators were the first operations in mahotas (back then, it was
 even, briefly, just a single C++ module called ``morph``).
