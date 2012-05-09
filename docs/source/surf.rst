@@ -6,6 +6,10 @@ Speeded-Up Robust Features
    SURF is only available starting in version 0.6.1, with an important bugfix
    in version 0.6.2.
 
+.. versionadded:: 0.8
+   In version 0.8, some of the inner functions are now in mahotas.features.surf
+   instead of mahotas.surf
+
 
 Speeded-Up Robust Features (SURF) are a recent innnovation in the *local
 features* family. There are two steps to this algorithm:
@@ -16,10 +20,10 @@ features* family. There are two steps to this algorithm:
 The function ``mahotas.surf.surf`` combines the two steps::
 
     import numpy as np
-    import mahotas.surf
+    from mahotas.features import surf
 
     f = ... # input image
-    spoints = mahotas.surf.surf(f)
+    spoints = surf.surf(f)
     print "Nr points:", len(spoints)
 
 Given the results, we can perform a simple clustering using, for example, `milk
@@ -46,10 +50,10 @@ of course; having written milk, I am most familiar with it)::
 
 So we are assigning different colours to each of the possible 
 
-The helper ``mahotas.surf.show_surf`` draws coloured polygons around the
+The helper ``surf.show_surf`` draws coloured polygons around the
 interest points::
 
-    f2 = mahotas.surf.show_surf(f, spoints[:100], values, colors)
+    f2 = surf.show_surf(f, spoints[:100], values, colors)
     imshow(f2)
     show()
 
@@ -62,10 +66,10 @@ Running the above on a photo of luispedro, the author of mahotas yields:
 API Documentation
 -----------------
 
-The ``mahotas.surf`` module contains separate functions for all the steps in
+The ``mahotas.features.surf`` module contains separate functions for all the steps in
 the SURF pipeline.
 
-.. automodule:: mahotas.surf
+.. automodule:: mahotas.features.surf
     :members:
     :noindex:
 
