@@ -267,11 +267,11 @@ def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., o
     if order == 0:
         pass
     elif order == 1 : # first derivative
-        weight *= -x/s2
+        weights *= -x/s2
     elif order == 2: # second derivative
-        weight *= (x*x/s2-1.)/s2
+        weights *= (x*x/s2-1.)/s2
     elif order == 3: # third derivative
-        weight *= (3.0 - x*x/s2)*x/(s2*s2)
+        weights *= (3.0 - x*x/s2)*x/(s2*s2)
     else:
         raise ValueError('mahotas.convolve.gaussian_filter1d: Order outside 0..3 not implemented')
     return convolve1d(array, weights, axis, mode, cval, output=output)
