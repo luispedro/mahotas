@@ -54,3 +54,6 @@ def test_gaussian_filter():
         n = ndimage.gaussian_filter(f, s)
         assert np.max(np.abs(n - g)) < 1.e-5
 
+def test_gaussian_order():
+    im = np.arange(64*64).reshape((64,64))
+    g_mat = mahotas.gaussian_filter(im, 8, order=1)
