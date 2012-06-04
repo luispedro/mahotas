@@ -26,6 +26,8 @@ __all__ = [
         'locmin',
         'majority_filter'
         'open',
+        'regmax',
+        'regmin',
         ]
 
 def get_structuring_elem(A,Bc):
@@ -196,10 +198,10 @@ def cerode(f, g, Bc=None, output=None):
     '''
     f = np.maximum(f, g)
     _verify_is_integer_type(f, 'cerode')
-    Bc = get_structuring_elem(f,Bc)
-    output = _get_output(f, output, 'erode')
-    eroded = _morph.erode(f, Bc, output)
-    return np.maximum(eroded, g, out=eroded)
+    Bc = get_structuring_elem(f, Bc)
+    output = _get_output(f, output, 'cerode')
+    f = _morph.erode(f, Bc, output)
+    return np.maximum(f, g, out=f)
 
 def cwatershed(surface, markers, Bc=None, return_lines=False):
     '''
@@ -481,7 +483,7 @@ def locmin(f, Bc=None, output=None):
     '''
     filtered = locmin(f, Bc={3x3 cross}, output={np.empty(f.shape, bool)})
 
-    Regional maxima
+    Local minima
 
     Parameters
     ----------
@@ -505,3 +507,63 @@ def locmin(f, Bc=None, output=None):
     Bc = _remove_centre(Bc.copy())
     output = _get_output(f, output, 'locmin', np.bool_)
     return _morph.locmin_max(f, Bc, output, True)
+
+
+def regmin(f, Bc=None, output=None):
+    '''
+    filtered = regmin(f, Bc={3x3 cross}, output={np.empty(f.shape, bool)})
+
+    Regional minima
+
+    Parameters
+    ----------
+    f : ndarray
+    Bc : ndarray, optional
+        structuring element
+    output : ndarray, optional
+        Used for output. Must be Boolean ndarray of same size as `f`
+
+    Returns
+    -------
+    filtered : ndarray
+        boolean image of same size as f.
+
+    See Also
+    --------
+    locmin : function
+        Local minima
+    '''
+    Bc = get_structuring_elem(f, Bc)
+    Bc = _remove_centre(Bc.copy())
+    output = _get_output(f, output, 'regmin', np.bool_)
+    return _morph.regmin_max(f, Bc, output, True)
+
+
+def regmax(f, Bc=None, output=None):
+    '''
+    filtered = regmax(f, Bc={3x3 cross}, output={np.empty(f.shape, bool)})
+
+    Regional maxima
+
+    Parameters
+    ----------
+    f : ndarray
+    Bc : ndarray, optional
+        structuring element
+    output : ndarray, optional
+        Used for output. Must be Boolean ndarray of same size as `f`
+
+    Returns
+    -------
+    filtered : ndarray
+        boolean image of same size as f.
+
+    See Also
+    --------
+    locmax : function
+        Local maxima
+    '''
+    Bc = get_structuring_elem(f, Bc)
+    Bc = _remove_centre(Bc.copy())
+    output = _get_output(f, output, 'regmax', np.bool_)
+    return _morph.regmin_max(f, Bc, output, False)

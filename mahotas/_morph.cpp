@@ -171,6 +171,78 @@ PyObject* py_locminmax(PyObject* self, PyObject* args) {
 }
 
 template <typename T>
+void remove_fake_regmin_max(numpy::aligned_array<bool> regmin, numpy::aligned_array<T> f, numpy::aligned_array<T> Bc, bool is_min) {
+    const int N = f.size();
+    numpy::aligned_array<bool>::iterator riter = regmin.begin();
+    const std::vector<numpy::position> Bc_neighbours = neighbours(Bc);
+    typedef std::vector<numpy::position>::const_iterator Bc_iter;
+    const int N2 = Bc_neighbours.size();
+
+    for (int i = 0; i != N; ++i, ++riter) {
+        if (!*riter) continue;
+        const numpy::position pos = riter.position();
+        const T val = f.at(pos);
+        for (int j = 0; j != N2; ++j) {
+            numpy::position npos = pos + Bc_neighbours[j];
+            if (f.validposition(npos) &&
+                    !regmin.at(npos) &&
+                            (   (is_min && f.at(npos) <= val) ||
+                                (!is_min && f.at(npos) >= val)
+                            )) {
+                std::vector<numpy::position> queue;
+                queue.push_back(riter.position());
+                while (!queue.empty()) {
+                    numpy::position p = queue.back();
+                    queue.pop_back();
+                    if (regmin.at(p)) {
+                        regmin.at(p) = false;
+                        for (Bc_iter first = Bc_neighbours.begin(), past = Bc_neighbours.end();
+                                    first != past;
+                                    ++first) {
+                            numpy::position npos = p + *first;
+                            if (regmin.validposition(npos)) {
+                                queue.push_back(npos);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+PyObject* py_regminmax(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* Bc;
+    PyArrayObject* output;
+    int is_min;
+    if (!PyArg_ParseTuple(args, "OOOi", &array, &Bc, &output, &is_min)) return NULL;
+    if (!numpy::are_arrays(array, Bc, output) || !numpy::same_shape(array, output) ||
+        !PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(Bc)) ||
+        !PyArray_EquivTypenums(NPY_BOOL, PyArray_TYPE(output)) ||
+        PyArray_NDIM(array) != PyArray_NDIM(Bc) ||
+        !PyArray_ISCARRAY(output)
+    ) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    holdref r_o(output);
+    PyArray_FILLWBYTE(output, 0);
+
+#define HANDLE(type) \
+    locmin_max<type>(numpy::aligned_array<bool>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc), bool(is_min)); \
+    remove_fake_regmin_max<type>(numpy::aligned_array<bool>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc), bool(is_min));
+
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, true);
+#undef HANDLE
+
+    Py_XINCREF(output);
+    return PyArray_Return(output);
+}
+
+
+
+template <typename T>
 T dilate_add(T a, T b) {
     if (a == std::numeric_limits<T>::min()) return a;
     if (b == std::numeric_limits<T>::min()) return b;
@@ -584,6 +656,7 @@ PyMethodDef methods[] = {
   {"close_holes",(PyCFunction)py_close_holes, METH_VARARGS, NULL},
   {"cwatershed",(PyCFunction)py_cwatershed, METH_VARARGS, NULL},
   {"locmin_max",(PyCFunction)py_locminmax, METH_VARARGS, NULL},
+  {"regmin_max",(PyCFunction)py_regminmax, METH_VARARGS, NULL},
   {"hitmiss",(PyCFunction)py_hitmiss, METH_VARARGS, NULL},
   {"majority_filter",(PyCFunction)py_majority_filter, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
