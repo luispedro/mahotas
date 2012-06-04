@@ -22,10 +22,10 @@ __all__ = [
         'erode',
         'get_structuring_elem',
         'hitmiss',
+        'locmax',
+        'locmin',
         'majority_filter'
         'open',
-        'regmax',
-        'regmin',
         ]
 
 def get_structuring_elem(A,Bc):
@@ -447,11 +447,11 @@ def _remove_centre(Bc):
     Bc[tuple(index)] = False
     return Bc
 
-def regmax(f, Bc=None, output=None):
+def locmax(f, Bc=None, output=None):
     '''
-    filtered = regmax(f, Bc={3x3 cross}, output={np.empty(f.shape, bool)})
+    filtered = locmax(f, Bc={3x3 cross}, output={np.empty(f.shape, bool)})
 
-    Regional maxima
+    Local maxima
 
     Parameters
     ----------
@@ -468,18 +468,18 @@ def regmax(f, Bc=None, output=None):
 
     See Also
     --------
-    regmin : function
+    locmin : function
         Regional minima
     '''
     Bc = get_structuring_elem(f, Bc)
-    output = _get_output(f, output, 'regmax', np.bool_)
+    output = _get_output(f, output, 'locmax', np.bool_)
     Bc = _remove_centre(Bc.copy())
-    return _morph.regmin_max(f, Bc, output, False)
+    return _morph.locmin_max(f, Bc, output, False)
 
 
-def regmin(f, Bc=None, output=None):
+def locmin(f, Bc=None, output=None):
     '''
-    filtered = regmin(f, Bc={3x3 cross}, output={np.empty(f.shape, bool)})
+    filtered = locmin(f, Bc={3x3 cross}, output={np.empty(f.shape, bool)})
 
     Regional maxima
 
@@ -498,10 +498,10 @@ def regmin(f, Bc=None, output=None):
 
     See Also
     --------
-    regmax : function
+    locmax : function
         Regional maxima
     '''
     Bc = get_structuring_elem(f, Bc)
     Bc = _remove_centre(Bc.copy())
-    output = _get_output(f, output, 'regmin', np.bool_)
-    return _morph.regmin_max(f, Bc, output, True)
+    output = _get_output(f, output, 'locmin', np.bool_)
+    return _morph.locmin_max(f, Bc, output, True)

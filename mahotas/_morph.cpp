@@ -119,7 +119,7 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
 }
 
 template<typename T>
-void regmin_max(numpy::aligned_array<bool> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc, bool is_min) {
+void locmin_max(numpy::aligned_array<bool> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc, bool is_min) {
     gil_release nogil;
     const int N = res.size();
     typename numpy::aligned_array<T>::iterator iter = array.begin();
@@ -143,7 +143,7 @@ void regmin_max(numpy::aligned_array<bool> res, numpy::aligned_array<T> array, n
     }
 }
 
-PyObject* py_regminmax(PyObject* self, PyObject* args) {
+PyObject* py_locminmax(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* Bc;
     PyArrayObject* output;
@@ -162,7 +162,7 @@ PyObject* py_regminmax(PyObject* self, PyObject* args) {
     PyArray_FILLWBYTE(output, 0);
 
 #define HANDLE(type) \
-    regmin_max<type>(numpy::aligned_array<bool>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc), bool(is_min));
+    locmin_max<type>(numpy::aligned_array<bool>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc), bool(is_min));
     SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, true);
 #undef HANDLE
 
@@ -583,7 +583,7 @@ PyMethodDef methods[] = {
   {"erode",(PyCFunction)py_erode, METH_VARARGS, NULL},
   {"close_holes",(PyCFunction)py_close_holes, METH_VARARGS, NULL},
   {"cwatershed",(PyCFunction)py_cwatershed, METH_VARARGS, NULL},
-  {"regmin_max",(PyCFunction)py_regminmax, METH_VARARGS, NULL},
+  {"locmin_max",(PyCFunction)py_locminmax, METH_VARARGS, NULL},
   {"hitmiss",(PyCFunction)py_hitmiss, METH_VARARGS, NULL},
   {"majority_filter",(PyCFunction)py_majority_filter, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
