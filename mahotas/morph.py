@@ -17,6 +17,7 @@ __all__ = [
         'close',
         'close_holes',
         'cwatershed',
+        'cerode',
         'dilate',
         'erode',
         'get_structuring_elem',
@@ -126,6 +127,7 @@ def dilate(A, Bc=None, output=None):
     output = _get_output(A, output, 'dilate')
     return _morph.dilate(A, Bc, output)
 
+
 def erode(A, Bc=None, output=None):
     '''
     eroded = erode(A, Bc={3x3 cross}, output={np.empty_as(A)})
@@ -139,8 +141,8 @@ def erode(A, Bc=None, output=None):
 
     Parameters
     ----------
-    A : ndarray of bools
-        input array
+    A : ndarray
+        input image
     Bc : ndarray, optional
         Structuring element. By default, use a cross (see
         ``get_structuring_elem`` for details on the default).
@@ -158,6 +160,46 @@ def erode(A, Bc=None, output=None):
     Bc=get_structuring_elem(A,Bc)
     output = _get_output(A, output, 'erode')
     return _morph.erode(A, Bc, output)
+
+
+def cerode(f, g, Bc=None, output=None):
+    '''
+    conditionally_eroded = erode(f, g, Bc={3x3 cross}, output={np.empty_as(A)})
+
+    Conditional morphological erosion.
+
+    The type of operation depends on the ``dtype`` of ``A``! If boolean, then
+    the erosion is binary, else it is greyscale erosion. In the case of
+    greyscale erosion, the smallest value in the domain of ``Bc`` is
+    interpreted as -Inf.
+
+    Parameters
+    ----------
+    f : ndarray
+        input image
+    g : ndarray
+        conditional image
+    Bc : ndarray, optional
+        Structuring element. By default, use a cross (see
+        ``get_structuring_elem`` for details on the default).
+
+    Returns
+    -------
+    conditionally_eroded : ndarray
+        eroded version of ``f`` conditioned on ``g``
+
+    See Also
+    --------
+    erode : function
+        Unconditional version of this function
+    dilate
+    '''
+    f = np.maximum(f, g)
+    _verify_is_integer_type(f, 'cerode')
+    Bc = get_structuring_elem(f,Bc)
+    output = _get_output(f, output, 'erode')
+    eroded = _morph.erode(f, Bc, output)
+    return np.maximum(eroded, g, out=eroded)
 
 def cwatershed(surface, markers, Bc=None, return_lines=False):
     '''

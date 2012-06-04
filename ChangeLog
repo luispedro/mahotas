@@ -1,6 +1,7 @@
 Version 0.8+
 	* Fix gaussian_filter bug when order argument was used (reported by John
 	Mark Agosta)
+	* Add morph.cerode
 
 Version 0.8 2012-05-07 by luispedro
 	* Move features to submodule

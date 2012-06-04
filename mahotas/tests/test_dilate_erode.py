@@ -2,7 +2,6 @@ import numpy as np
 import mahotas
 
 
-
 def test_grey_erode():
     from mahotas.tests.pymorph_copy import erode as slow_erode
     from mahotas.tests.pymorph_copy import dilate as slow_dilate
@@ -40,6 +39,7 @@ def test_dilate_erode():
         assert np.all(A == origs[-i-1])
 
 
+
 def test_dilate_1():
     A = np.zeros((16,16), dtype=np.uint8)
     B = np.array([
@@ -54,3 +54,12 @@ def test_signed():
     A = np.array([0,0,1,1,1,0,0,0], dtype=np.int32)
     B = np.array([0,1,0])
     assert np.min(mahotas.erode(A,B)) == -1
+
+
+def test_cerode():
+    from mahotas.tests.pymorph_copy import erode as slow_erode
+    from mahotas.tests.pymorph_copy import dilate as slow_dilate
+    np.random.seed(334)
+    f = np.random.random_sample((128,128))
+    f = (f > .9)
+    assert np.all(mahotas.erode(f) == mahotas.cerode(f, np.zeros_like(f)))
