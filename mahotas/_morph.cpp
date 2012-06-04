@@ -78,7 +78,7 @@ void erode(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::al
     gil_release nogil;
     const int N = res.size();
     typename numpy::aligned_array<T>::iterator iter = array.begin();
-    filter_iterator<T> filter(res.raw_array(), Bc.raw_array(), EXTEND_NEAREST, is_bool(T()));
+    filter_iterator<T> filter(array.raw_array(), Bc.raw_array(), EXTEND_NEAREST, is_bool(T()));
     const int N2 = filter.size();
     T* rpos = res.data();
 

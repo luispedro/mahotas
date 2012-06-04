@@ -4,6 +4,7 @@ Version 0.8+
 	* Add morph.cerode
 	* Improve regmax() & regmin(). Rename previous implementations to locmax()
 	& locmin()
+	* Fix erode() on non-contiguous arrays
 
 Version 0.8 2012-05-07 by luispedro
 	* Move features to submodule

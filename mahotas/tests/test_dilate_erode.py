@@ -63,3 +63,16 @@ def test_cerode():
     f = np.random.random_sample((128,128))
     f = (f > .9)
     assert np.all(mahotas.erode(f) == mahotas.cerode(f, np.zeros_like(f)))
+
+
+def test_erode_slice():
+    np.random.seed(30)
+    for i in xrange(16):
+        f = (np.random.random_sample((256,256))*255).astype(np.uint8)
+        assert np.all(mahotas.erode(f[:3,:3]) == mahotas.erode(f[:3,:3].copy()))
+
+def test_dilate_slice():
+    np.random.seed(30)
+    for i in xrange(16):
+        f = (np.random.random_sample((256,256))*255).astype(np.uint8)
+        assert np.all(mahotas.dilate(f[:3,:3]) == mahotas.dilate(f[:3,:3].copy()))
