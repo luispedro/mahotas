@@ -1,4 +1,4 @@
-Version 0.8+
+Version 0.8.1 2012-06-06 by luispedro
 	* Fix gaussian_filter bug when order argument was used (reported by John
 	Mark Agosta)
 	* Add morph.cerode
