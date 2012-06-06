@@ -1,3 +1,8 @@
+// Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
+// vim: set ts=4 sts=4 sw=4 expandtab smartindent:
+// 
+// License: MIT
+
 #include <algorithm>
 #include <queue>
 #include <vector>
