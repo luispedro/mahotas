@@ -14,7 +14,7 @@ try:
     from .euler import euler
     from .histogram import fullhistogram
     from .labeled import border, borders, bwperim, label, labeled_sum
-    from .moments import moments
+    from .features.moments import moments
     from .morph import cerode, close, close_holes, get_structuring_elem, dilate, hitmiss, erode, cwatershed, majority_filter, open, regmin, regmax
     from .resize import imresize
     from .stretch import stretch, as_rgb
