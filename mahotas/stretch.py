@@ -121,7 +121,8 @@ def as_rgb(r, g, b):
         if c is None:
             return np.zeros(shape, np.uint8)
         if c.shape != shape:
-            raise ValueError('mahotas.as_rgb: Not all arguments have the same shape')
+            sh = lambda c : (c.shape if c is not None else ' . ')
+            raise ValueError('mahotas.as_rgb: Not all arguments have the same shape. Shapes were : %s' % [sh(r), sh(g), sh(b)])
         return stretch(np.asanyarray(c))
     return np.dstack([s(r), s(g), s(b)])
 
