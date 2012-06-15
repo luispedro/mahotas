@@ -473,6 +473,7 @@ def locmax(f, Bc=None, output=None):
     locmin : function
         Regional minima
     '''
+    _verify_is_integer_type(f, 'locmax')
     Bc = get_structuring_elem(f, Bc)
     output = _get_output(f, output, 'locmax', np.bool_)
     Bc = _remove_centre(Bc.copy())
@@ -503,6 +504,7 @@ def locmin(f, Bc=None, output=None):
     locmax : function
         Regional maxima
     '''
+    _verify_is_integer_type(f, 'locmin')
     Bc = get_structuring_elem(f, Bc)
     Bc = _remove_centre(Bc.copy())
     output = _get_output(f, output, 'locmin', np.bool_)
@@ -533,6 +535,7 @@ def regmin(f, Bc=None, output=None):
     locmin : function
         Local minima
     '''
+    _verify_is_integer_type(f, 'regmin')
     Bc = get_structuring_elem(f, Bc)
     Bc = _remove_centre(Bc.copy())
     output = _get_output(f, output, 'regmin', np.bool_)
@@ -563,6 +566,7 @@ def regmax(f, Bc=None, output=None):
     locmax : function
         Local maxima
     '''
+    _verify_is_integer_type(f, 'regmax')
     Bc = get_structuring_elem(f, Bc)
     Bc = _remove_centre(Bc.copy())
     output = _get_output(f, output, 'regmax', np.bool_)
