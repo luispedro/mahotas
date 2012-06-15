@@ -99,6 +99,22 @@ def _normalize_sequence(array, value, fname):
         raise ValueError('mahotas.%s: argument is sequence, but has wrong size (%s for an array of %s dimensions' % (fname, len(value), array.ndim))
     return value
 
+def _verify_is_floatingpoint_type(A, function_name):
+    '''
+    _verify_is_integer_type(array, "function")
+
+    Checks that ``A`` is a floating-point array. If it is not, it raises
+    ``TypeError``.
+
+    Parameters
+    ----------
+    A : ndarray
+    function_name : str
+        Used for error messages
+    '''
+    if not np.issubdtype(A.dtype, np.float):
+        raise TypeError('mahotas.%s: This function only accepts floating-point types (passed array of type %s)' % (function_name, A.dtype))
+
 def _verify_is_integer_type(A, function_name):
     '''
     _verify_is_integer_type(array, "function")

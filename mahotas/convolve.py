@@ -20,7 +20,7 @@ from __future__ import division
 import numpy as np
 from . import _convolve
 from . import morph
-from .internal import _get_output, _normalize_sequence
+from .internal import _get_output, _normalize_sequence, _verify_is_floatingpoint_type
 from ._filters import mode2int, modes, _check_mode
 
 __all__ = [
@@ -230,7 +230,8 @@ def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., o
     Parameters
     ----------
     array : ndarray
-        input array
+        input array of a floating-point type
+
     sigma : float
         standard deviation for Gaussian kernel (in pixel units)
     axis : int, optional
@@ -254,6 +255,7 @@ def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., o
         Filtered version of `array`
 
     """
+    _verify_is_floatingpoint_type(array, 'gaussian_filter1d')
     sigma = float(sigma)
     s2 = sigma*sigma
     # make the length of the filter equal to 4 times the standard
@@ -286,7 +288,8 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., output=None)
     Parameters
     ----------
     array : ndarray
-        input. Any dimension is supported
+        input array, any dimension is supported. If the array is an integer
+        array, it will be converted to a double array.
     sigma : scalar or sequence of scalars
         standard deviation for Gaussian kernel. The standard
         deviations of the Gaussian filter are given for each axis as a
@@ -304,8 +307,9 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., output=None)
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
     output : ndarray, optional
-        Output array. Must have same shape and dtype as `array` as well as be
-        C-contiguous.
+        Output array. Must have same shape as `array` as well as be
+        C-contiguous. If `array` is an integer array, this must be a double
+        array; otherwise, it must have the same type as `array`.
 
     Returns
     -------
@@ -322,6 +326,8 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., output=None)
     precision.
     """
     array = np.asanyarray(array)
+    if not np.issubdtype(array.dtype, np.float_):
+        array = array.astype(np.double)
     output = _get_output(array, output, 'gaussian_filter')
     orders = _normalize_sequence(array, order, 'gaussian_filter')
     sigmas = _normalize_sequence(array, sigma, 'gaussian_filter')

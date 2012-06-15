@@ -1,5 +1,6 @@
 import numpy as np
 from mahotas.internal import _get_output, _get_axis
+from mahotas.internal import _normalize_sequence, _verify_is_integer_type, _verify_is_floatingpoint_type
 from nose.tools import raises
 
 def test_get_output():
@@ -58,7 +59,6 @@ def test_get_axis_off():
 
 
 
-from mahotas.internal import _normalize_sequence
 def test_normalize():
     f = np.arange(64)
     assert len(_normalize_sequence(f, 1, 'test')) == f.ndim
@@ -85,4 +85,36 @@ def test_normalize_wrong_size():
     check((4,-1),[1,2,3,4])
     check((4,-1),[1])
     check((4,2,-1),[1,2])
+
+def test_verify_int():
+    @raises(TypeError)
+    def check_fp(arr):
+        _verify_is_integer_type(arr, 'test')
+
+    def check_int(arr):
+        _verify_is_integer_type(arr, 'test')
+
+    yield check_fp, np.arange(1., dtype=np.float)
+    yield check_fp, np.arange(1., dtype=np.float32)
+    yield check_fp, np.arange(1., dtype=np.float64)
+
+    yield check_int, np.arange(1, dtype=np.int32)
+    yield check_int, np.arange(1, dtype=np.uint16)
+    yield check_int, np.arange(1, dtype=np.int64)
+
+def test_verify_fp():
+    def check_fp(arr):
+        _verify_is_floatingpoint_type(arr, 'test')
+
+    @raises(TypeError)
+    def check_int(arr):
+        _verify_is_floatingpoint_type(arr, 'test')
+
+    yield check_fp, np.arange(1., dtype=np.float)
+    yield check_fp, np.arange(1., dtype=np.float32)
+    yield check_fp, np.arange(1., dtype=np.float64)
+
+    yield check_int, np.arange(1, dtype=np.int32)
+    yield check_int, np.arange(1, dtype=np.uint16)
+    yield check_int, np.arange(1, dtype=np.int64)
 
