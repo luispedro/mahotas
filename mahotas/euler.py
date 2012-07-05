@@ -1,6 +1,6 @@
 # Copyright (C) 2008-2010, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
-# License: GPL v2, or later
+# License: MIT
 
 import numpy as np
 from .convolve import convolve
