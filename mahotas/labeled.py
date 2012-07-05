@@ -19,9 +19,9 @@ __all__ = [
     'labeled_size',
     ]
 
-def label(array, Bc=None, output=None):
+def label(array, Bc=None, out=None, output=None):
     '''
-    labeled, nr_objects = label(array, Bc={3x3 cross}, output=None)
+    labeled, nr_objects = label(array, Bc={3x3 cross}, out=None)
 
     Label the array
 
@@ -31,7 +31,7 @@ def label(array, Bc=None, output=None):
         This will be interpreted as an integer array
     Bc : ndarray, optional
         This is the structuring element to use
-    output : ndarray, optional
+    out : ndarray, optional
         Output array. Must be a C-array, of type np.int32
 
     Returns
@@ -41,19 +41,19 @@ def label(array, Bc=None, output=None):
     nr_objects : int
         Number of objects
     '''
-    output = _get_output(array, output, 'labeled.label', np.int32)
+    output = _get_output(array, out, 'labeled.label', np.int32, output=output)
     output[:] = (array != 0)
     Bc = get_structuring_elem(output, Bc)
     nr_objects = _labeled.label(output, Bc)
     return output, nr_objects
 
-def remove_bordering(im, rsize=1, output=None):
+def remove_bordering(im, rsize=1, out=None, output=None):
     '''
-    slabeled = remove_bordering(labeled, rsize=1, output={np.empty_like(im)})
+    slabeled = remove_bordering(labeled, rsize=1, out={np.empty_like(im)})
 
     Remove objects that are touching the border.
 
-    Pass ``im`` as ``output`` to achieve in-place operation.
+    Pass ``im`` as ``out`` to achieve in-place operation.
 
     Parameters
     ----------
@@ -62,8 +62,8 @@ def remove_bordering(im, rsize=1, output=None):
     rsize : int, optional
         Minimum distance to the border (in Manhatan distance) to allow an
         object to survive.
-    output : ndarray, optional
-        If ``im`` is passed as ``output``, then it operates inline.
+    out : ndarray, optional
+        If ``im`` is passed as ``out``, then it operates inline.
 
     Returns
     -------
@@ -82,18 +82,20 @@ def remove_bordering(im, rsize=1, output=None):
                 if val != 0:
                     invalid.add(val)
         index[dim] = slice(None,None,None)
-    if output is None:
-        output = im.copy()
-    elif output is not im:
-        output[:] = im
+    if out is None and output is not None:
+        out = output 
+    if out is None:
+        out = im.copy()
+    elif out is not im:
+        out[:] = im
     for val in invalid:
-        output *= (im != val)
-    return output
+        out *= (im != val)
+    return out
 
 
-def border(labeled, i, j, Bc=None, output=None, always_return=True):
+def border(labeled, i, j, Bc=None, out=None, always_return=True, output=None):
     '''
-    border_img = border(labeled, i, j, Bc={3x3 cross}, output={np.zeros(labeled.shape, bool)}, always_return=True)
+    border_img = border(labeled, i, j, Bc={3x3 cross}, out={np.zeros(labeled.shape, bool)}, always_return=True)
 
     Compute the border region between `i` and `j` regions.
 
@@ -107,7 +109,7 @@ def border(labeled, i, j, Bc=None, output=None, always_return=True):
     i : integer
     j : integer
     Bc : structure element, optional
-    output : ndarray of same shape as `labeled`, dtype=bool, optional
+    out : ndarray of same shape as `labeled`, dtype=bool, optional
         where to store the output. If ``None``, a new array is allocated
     always_return : bool, optional
         if false, then, in the case where there is no pixel on the border,
@@ -120,13 +122,13 @@ def border(labeled, i, j, Bc=None, output=None, always_return=True):
         Pixels are True exactly where there is a border between `i` and `j` in `labeled`
     '''
     Bc = get_structuring_elem(labeled, Bc)
-    output = _get_output(labeled, output, 'labeled.border', bool)
+    output = _get_output(labeled, out, 'labeled.border', bool, output=output)
     output.fill(False)
     return _labeled.border(labeled, Bc, output, i, j, bool(always_return))
 
-def borders(labeled, Bc=None, output=None):
+def borders(labeled, Bc=None, out=None, output=None):
     '''
-    border_img = borders(labeled, Bc={3x3 cross}, output={np.zeros(labeled.shape, bool)})
+    border_img = borders(labeled, Bc={3x3 cross}, out={np.zeros(labeled.shape, bool)})
 
     Compute border pixels
 
@@ -138,7 +140,7 @@ def borders(labeled, Bc=None, output=None):
     labeled : ndarray of integer type
         input labeled array
     Bc : structure element, optional
-    output : ndarray of same shape as `labeled`, dtype=bool, optional
+    out : ndarray of same shape as `labeled`, dtype=bool, optional
         where to store the output. If ``None``, a new array is allocated
 
     Returns
@@ -147,7 +149,7 @@ def borders(labeled, Bc=None, output=None):
         Pixels are True exactly where there is a border in `labeled`
     '''
     Bc = get_structuring_elem(labeled, Bc)
-    output = _get_output(labeled, output, 'labeled.borders', bool)
+    output = _get_output(labeled, out, 'labeled.borders', bool, output=output)
     output.fill(False)
     return _labeled.borders(labeled, Bc, output)
 

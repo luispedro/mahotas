@@ -1,6 +1,6 @@
 # This module was adapted from scipy.ndimage and retains its license
 # Copyright (C) 2003-2005 Peter J. Verveer
-# Copyright (C) 2011 Luis Pedro Coelho
+# Copyright (C) 2011-2012 Luis Pedro Coelho
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ from . import internal
 from . import _interpolate
 from ._filters import mode2int, modes, _check_mode
 
-def spline_filter1d(array, order=3, axis=-1, output=None, dtype=np.float64):
+def spline_filter1d(array, order=3, axis=-1, out=None, dtype=np.float64, output=None):
     """
     Calculates a one-dimensional spline filter along the given axis.
 
@@ -57,7 +57,7 @@ def spline_filter1d(array, order=3, axis=-1, output=None, dtype=np.float64):
     axis : int, optional
         The axis along which the spline filter is applied. Default is the last
         axis.
-    output : ndarray, optional
+    out : ndarray, optional
         The array in which to place the output
     dtype : dtype, optional
         The dtype to use for computation (default: np.float64)
@@ -76,17 +76,20 @@ def spline_filter1d(array, order=3, axis=-1, output=None, dtype=np.float64):
     array = np.asarray(array)
     if np.iscomplexobj(array):
         raise TypeError('mahotas.interpolate.spline_filter1d: Complex type not supported')
+    if isinstance(out, type):
+        dtype = out
+        out = None
     if isinstance(output, type):
         dtype = output
         output = None
-    output = internal._get_output(array, output, 'interpolate.spline_filter1d', dtype=dtype)
+    output = internal._get_output(array, out, 'interpolate.spline_filter1d', dtype=dtype, output=output)
     output[...] = array
     axis = internal._get_axis(array, axis, 'interpolate.spline_filter1d')
     _interpolate.spline_filter1d(output, order, axis)
     return output
 
 
-def spline_filter(array, order=3, output=None, dtype=np.float64):
+def spline_filter(array, order=3, out=None, dtype=np.float64, output=None):
     """
     Multi-dimensional spline filter.
 
@@ -97,14 +100,14 @@ def spline_filter(array, order=3, output=None, dtype=np.float64):
     order : int, optional
         The order of the spline, default is 3.
         axis.
-    output : ndarray, optional
+    out : ndarray, optional
         The array in which to place the output
     dtype : dtype, optional
         The dtype to use for computation (default: np.float64)
 
     For compatibility with scipy.ndimage, you can pass a dtype as the
-    ``output`` argument. This will work as having passed it as a dtype.
-    However, this is deprecated and should not be used in new code.
+    ``out`` argument. This will work as having passed it as a dtype.  However,
+    this is deprecated and should not be used in new code.
 
     Returns
     -------
@@ -129,10 +132,13 @@ def spline_filter(array, order=3, output=None, dtype=np.float64):
         raise RuntimeError('mahotas.interpolation.spline_filter: spline order not supported')
     if np.iscomplexobj(array):
         raise TypeError('mahotas.interpolation.spline_filter: Complex type not supported')
+    if isinstance(out, type):
+        dtype = out
+        out = None
     if isinstance(output, type):
         dtype = output
         output = None
-    output = internal._get_output(array, output, 'interpolate.spline_filter', dtype=dtype)
+    output = internal._get_output(array, out, 'interpolate.spline_filter', dtype=dtype, output=output)
     output[...] = array
     for axis in range(array.ndim):
         _interpolate.spline_filter1d(output, order, axis)
@@ -153,7 +159,7 @@ def _maybe_filter(array, order, func, prefilter, dtype):
     else:
         return array
 
-def zoom(array, zoom, output=None, order=3, mode='constant', cval=0.0, prefilter=True):
+def zoom(array, zoom, out=None, order=3, mode='constant', cval=0.0, prefilter=True, output=None):
     """
     Zoom an array.
 
@@ -166,7 +172,7 @@ def zoom(array, zoom, output=None, order=3, mode='constant', cval=0.0, prefilter
     zoom : float or sequence, optional
         The zoom factor along the axes. If a float, `zoom` is the same for each
         axis. If a sequence, `zoom` should contain one value for each axis.
-    output : ndarray or dtype, optional
+    out : ndarray or dtype, optional
         The array in which to place the output, or the dtype of the returned
         array.
     order : int, optional
@@ -187,10 +193,7 @@ def zoom(array, zoom, output=None, order=3, mode='constant', cval=0.0, prefilter
 
     Returns
     -------
-    return_value : ndarray or None
-        The zoomed input. If `output` is given as a parameter, None is
-        returned.
-
+    return_value : ndarray
     """
     array = _maybe_filter(array, order, 'interpolate.zoom', prefilter, dtype=np.float64)
     zoom = np.array(zoom)
@@ -201,10 +204,13 @@ def zoom(array, zoom, output=None, order=3, mode='constant', cval=0.0, prefilter
     if len(zoom) != array.ndim:
         raise ValueError('mahotas.interpolation.zoom: zoom should have one element for each dimension of array')
 
-    if output is None:
+    if out is None and output is not None:
+        out = output
+
+    if out is None:
         output_shape = tuple([int(s * z) for s,z in zip(array.shape, zoom)])
-        output = np.empty(output_shape, dtype=array.dtype)
-    zoom_div = np.array(output.shape, float) - 1
+        out = np.empty(output_shape, dtype=array.dtype)
+    zoom_div = np.array(out.shape, float) - 1
     zoom = (np.array(array.shape) - 1) / zoom_div
     zoom = np.ascontiguousarray(zoom)
 
@@ -213,12 +219,12 @@ def zoom(array, zoom, output=None, order=3, mode='constant', cval=0.0, prefilter
     zoom[np.isinf(zoom)] = 1
 
     _check_mode(mode, cval, 'interpolation.zoom')
-    _interpolate.zoom_shift(array, zoom, None, output, order, mode2int[mode], cval)
-    return output
+    _interpolate.zoom_shift(array, zoom, None, out, order, mode2int[mode], cval)
+    return out
 
 
-def shift(array, shift, output=None, order=3, mode='constant', cval=0.0,
-          prefilter=True):
+def shift(array, shift, out=None, order=3, mode='constant', cval=0.0,
+          prefilter=True, output=None):
     """
     Shift an array.
 
@@ -233,7 +239,7 @@ def shift(array, shift, output=None, order=3, mode='constant', cval=0.0,
     shift : float or sequence, optional
         The shift along the axes. If a float, `shift` is the same for each
         axis. If a sequence, `shift` should contain one value for each axis.
-    output : ndarray or dtype, optional
+    out : ndarray or dtype, optional
         The array in which to place the output, or the dtype of the returned
         array.
     order : int, optional
@@ -260,7 +266,7 @@ def shift(array, shift, output=None, order=3, mode='constant', cval=0.0,
     """
     array = _maybe_filter(array, order, 'interpolate.shift', prefilter, dtype=np.float64)
     _check_mode(mode, cval, 'interpolation.shift')
-    output = internal._get_output(array, output, 'interpolate.shift', dtype=np.float64)
+    output = internal._get_output(array, out, 'interpolate.shift', dtype=np.float64, output=output)
     shift = np.ascontiguousarray(shift, dtype=np.float64)
     shift *= -1
     _interpolate.zoom_shift(array, None, shift, output, order, mode2int[mode], cval)

@@ -96,9 +96,9 @@ def get_structuring_elem(A,Bc):
             Bc.flat[i] = 1
     return Bc
 
-def dilate(A, Bc=None, output=None):
+def dilate(A, Bc=None, out=None, output=None):
     '''
-    dilated = dilate(A, Bc={3x3 cross}, output={np.empty_like(A)})
+    dilated = dilate(A, Bc={3x3 cross}, out={np.empty_like(A)})
 
     Morphological dilation.
 
@@ -126,13 +126,12 @@ def dilate(A, Bc=None, output=None):
     '''
     _verify_is_integer_type(A, 'dilate')
     Bc = get_structuring_elem(A,Bc)
-    output = _get_output(A, output, 'dilate')
+    output = _get_output(A, out, 'dilate', output=output)
     return _morph.dilate(A, Bc, output)
 
-
-def erode(A, Bc=None, output=None):
+def erode(A, Bc=None, out=None, output=None):
     '''
-    eroded = erode(A, Bc={3x3 cross}, output={np.empty_as(A)})
+    eroded = erode(A, Bc={3x3 cross}, out={np.empty_as(A)})
 
     Morphological erosion.
 
@@ -159,8 +158,8 @@ def erode(A, Bc=None, output=None):
     dilate
     '''
     _verify_is_integer_type(A,'erode')
-    Bc=get_structuring_elem(A,Bc)
-    output = _get_output(A, output, 'erode')
+    Bc = get_structuring_elem(A,Bc)
+    output = _get_output(A, out, 'erode', output=output)
     return _morph.erode(A, Bc, output)
 
 
@@ -234,9 +233,9 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
     Bc = get_structuring_elem(surface, Bc)
     return _morph.cwatershed(surface, markers, Bc, bool(return_lines))
 
-def hitmiss(input, Bc, output=None):
+def hitmiss(input, Bc, out=None, output=None):
     '''
-    output = hitmiss(input, Bc, output=np.zeros_like(input))
+    filtered = hitmiss(input, Bc, out=np.zeros_like(input))
 
     Hit & Miss transform
 
@@ -273,11 +272,11 @@ def hitmiss(input, Bc, output=None):
         This is interpreted as a binary array.
     Bc : ndarray
         hit & miss template, values must be one of (0, 1, 2)
-    output : output array
+    out : output array
 
     Returns
     -------
-    output : ndarray
+    filtered : ndarray
     '''
     _verify_is_integer_type(input, 'hitmiss')
     _verify_is_integer_type(Bc, 'hitmiss')
@@ -290,22 +289,26 @@ def hitmiss(input, Bc, output=None):
                 Bc = Bc.astype(np.uint8)
         else:
             Bc = Bc.astype(input.dtype)
-    if output is None:
-        output = np.empty_like(input)
+    
+    if out is None and output is not None:
+        out = output
+
+    if out is None:
+        out = np.empty_like(input)
     else:
-        if output.shape != input.shape:
-            raise ValueError('mahotas.hitmiss: output must be of same shape as input')
-        if output.dtype != input.dtype:
-            if output.dtype == np.bool_ and input.dtype == np.uint8:
-                output = output.view(np.uint8)
+        if out.shape != input.shape:
+            raise ValueError('mahotas.hitmiss: out must be of same shape as input')
+        if out.dtype != input.dtype:
+            if out.dtype == np.bool_ and input.dtype == np.uint8:
+                out = out.view(np.uint8)
             else:
-                raise TypeError('mahotas.hitmiss: output must be of same type as input')
-    return _morph.hitmiss(input, Bc, output)
+                raise TypeError('mahotas.hitmiss: out must be of same type as input')
+    return _morph.hitmiss(input, Bc, out)
 
 
-def open(f, Bc=None, output=None):
+def open(f, Bc=None, out=None, output=None):
     """
-    y = open(f, Bc={3x3 cross}, output={np.empty_like(f)})
+    y = open(f, Bc={3x3 cross}, out={np.empty_like(f)})
 
     Morphological opening.
 
@@ -323,7 +326,7 @@ def open(f, Bc=None, output=None):
         Gray-scale (uint8 or uint16) or binary image.
     Bc : ndarray, optional
         Structuring element (default: 3x3 elementary cross).
-    output : ndarray, optional
+    out : ndarray, optional
         Output array
 
     Returns
@@ -336,15 +339,15 @@ def open(f, Bc=None, output=None):
     """
     _verify_is_integer_type(f, 'open')
     Bc = get_structuring_elem(f, Bc)
-    eroded = erode(f, Bc, output=output)
+    eroded = erode(f, Bc, out=out)
     # We need to copy for the simple reason that otherwise, the image will be
     # modified in place, which can mess up the implementation
-    return dilate(eroded.copy(), Bc, output=eroded)
+    return dilate(eroded.copy(), Bc, out=eroded)
 
 
-def close(f, Bc=None, output=None):
+def close(f, Bc=None, out=None, output=None):
     """
-    y = close(f, Bc={3x3 cross}, output={np.empty_like(f)})
+    y = close(f, Bc={3x3 cross}, out={np.empty_like(f)})
 
     Morphological closing.
 
@@ -362,7 +365,7 @@ def close(f, Bc=None, output=None):
         Gray-scale (uint8 or uint16) or binary image.
     Bc : ndarray, optional
         Structuring element. (Default: 3x3 elementary cross).
-    output : ndarray, optional
+    out : ndarray, optional
         Output array
 
     Returns
@@ -375,10 +378,10 @@ def close(f, Bc=None, output=None):
     """
     _verify_is_integer_type(f, 'close')
     Bc = get_structuring_elem(f, Bc)
-    dilated = dilate(f, Bc, output=output)
+    dilated = dilate(f, Bc, out=out)
     # We need to copy for the simple reason that otherwise, the image will be
     # modified in place, which can mess up the implementation
-    return erode(dilated.copy(), Bc, output=dilated)
+    return erode(dilated.copy(), Bc, out=dilated)
 
 
 def close_holes(ref, Bc=None):
@@ -409,9 +412,9 @@ def close_holes(ref, Bc=None):
     return _morph.close_holes(ref, Bc)
 
 
-def majority_filter(img, N=3, output=None):
+def majority_filter(img, N=3, out=None, output=None):
     '''
-    filtered = majority_filter(img, N=3, output={np.empty(img.shape, np.bool)})
+    filtered = majority_filter(img, N=3, out={np.empty(img.shape, np.bool)})
 
     Majority filter
 
@@ -424,7 +427,7 @@ def majority_filter(img, N=3, output=None):
         input img (currently only 2-D images accepted)
     N : int, optional
         size of filter (must be odd integer), defaults to 3.
-    output : ndarray, optional
+    out : ndarray, optional
         Used for output. Must be Boolean ndarray of same size as `img`
 
     Returns
@@ -434,7 +437,7 @@ def majority_filter(img, N=3, output=None):
     '''
     if img.dtype != np.bool_:
         img = img.astype(bool)
-    output = _get_output(img, output, 'majority_filter', np.bool_)
+    output = _get_output(img, out, 'majority_filter', np.bool_, output=output)
     if N <= 1:
         raise ValueError('mahotas.majority_filter: filter size must be positive')
     if not N&1:
@@ -449,9 +452,9 @@ def _remove_centre(Bc):
     Bc[tuple(index)] = False
     return Bc
 
-def locmax(f, Bc=None, output=None):
+def locmax(f, Bc=None, out=None, output=None):
     '''
-    filtered = locmax(f, Bc={3x3 cross}, output={np.empty(f.shape, bool)})
+    filtered = locmax(f, Bc={3x3 cross}, out={np.empty(f.shape, bool)})
 
     Local maxima
 
@@ -460,7 +463,7 @@ def locmax(f, Bc=None, output=None):
     f : ndarray
     Bc : ndarray, optional
         structuring element
-    output : ndarray, optional
+    out : ndarray, optional
         Used for output. Must be Boolean ndarray of same size as `f`
 
     Returns
@@ -475,7 +478,7 @@ def locmax(f, Bc=None, output=None):
     '''
     _verify_is_integer_type(f, 'locmax')
     Bc = get_structuring_elem(f, Bc)
-    output = _get_output(f, output, 'locmax', np.bool_)
+    output = _get_output(f, out, 'locmax', np.bool_, output=output)
     Bc = _remove_centre(Bc.copy())
     return _morph.locmin_max(f, Bc, output, False)
 
@@ -511,9 +514,9 @@ def locmin(f, Bc=None, output=None):
     return _morph.locmin_max(f, Bc, output, True)
 
 
-def regmin(f, Bc=None, output=None):
+def regmin(f, Bc=None, out=None, output=None):
     '''
-    filtered = regmin(f, Bc={3x3 cross}, output={np.empty(f.shape, bool)})
+    filtered = regmin(f, Bc={3x3 cross}, out={np.empty(f.shape, bool)})
 
     Regional minima
 
@@ -522,7 +525,7 @@ def regmin(f, Bc=None, output=None):
     f : ndarray
     Bc : ndarray, optional
         structuring element
-    output : ndarray, optional
+    out : ndarray, optional
         Used for output. Must be Boolean ndarray of same size as `f`
 
     Returns
@@ -538,13 +541,13 @@ def regmin(f, Bc=None, output=None):
     _verify_is_integer_type(f, 'regmin')
     Bc = get_structuring_elem(f, Bc)
     Bc = _remove_centre(Bc.copy())
-    output = _get_output(f, output, 'regmin', np.bool_)
+    output = _get_output(f, out, 'regmin', np.bool_, output=output)
     return _morph.regmin_max(f, Bc, output, True)
 
 
-def regmax(f, Bc=None, output=None):
+def regmax(f, Bc=None, out=None, output=None):
     '''
-    filtered = regmax(f, Bc={3x3 cross}, output={np.empty(f.shape, bool)})
+    filtered = regmax(f, Bc={3x3 cross}, out={np.empty(f.shape, bool)})
 
     Regional maxima
 
@@ -553,7 +556,7 @@ def regmax(f, Bc=None, output=None):
     f : ndarray
     Bc : ndarray, optional
         structuring element
-    output : ndarray, optional
+    out : ndarray, optional
         Used for output. Must be Boolean ndarray of same size as `f`
 
     Returns
@@ -569,5 +572,5 @@ def regmax(f, Bc=None, output=None):
     _verify_is_integer_type(f, 'regmax')
     Bc = get_structuring_elem(f, Bc)
     Bc = _remove_centre(Bc.copy())
-    output = _get_output(f, output, 'regmax', np.bool_)
+    output = _get_output(f, out, 'regmax', np.bool_, output=output)
     return _morph.regmin_max(f, Bc, output, False)

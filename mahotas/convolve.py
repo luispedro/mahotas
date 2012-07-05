@@ -33,9 +33,9 @@ __all__ = [
     'gaussian_filter',
     ]
 
-def convolve(f, weights, mode='reflect', cval=0.0, output=None):
+def convolve(f, weights, mode='reflect', cval=0.0, out=None, output=None):
     '''
-    convolved = convolve(f, weights, mode='reflect', cval=0.0, output={new array})
+    convolved = convolve(f, weights, mode='reflect', cval=0.0, out={new array})
 
     Convolution of `f` and `weights`
 
@@ -52,7 +52,7 @@ def convolve(f, weights, mode='reflect', cval=0.0, output=None):
         How to handle borders
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
-    output : ndarray, optional
+    out : ndarray, optional
         Output array. Must have same shape and dtype as `f` as well as be
         C-contiguous.
 
@@ -64,13 +64,13 @@ def convolve(f, weights, mode='reflect', cval=0.0, output=None):
         weights = weights.astype(f.dtype)
     if f.ndim != weights.ndim:
         raise ValueError('mahotas.convolve: `f` and `weights` must have the same dimensions')
-    output = _get_output(f, output, 'convolve')
+    output = _get_output(f, out, 'convolve', output=output)
     _check_mode(mode, cval, 'convolve')
     return _convolve.convolve(f, weights, output, mode2int[mode])
 
-def median_filter(f, Bc=None, mode='reflect', cval=0.0, output=None):
+def median_filter(f, Bc=None, mode='reflect', cval=0.0, out=None, output=None):
     '''
-    median = median_filter(f, Bc={square}, mode='reflect', cval=0.0, output=None)
+    median = median_filter(f, Bc={square}, mode='reflect', cval=0.0, out={np.empty(f.shape, f.dtype})
 
     Median filter
 
@@ -84,7 +84,7 @@ def median_filter(f, Bc=None, mode='reflect', cval=0.0, output=None):
         How to handle borders
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
-    output : ndarray, optional
+    out : ndarray, optional
         Output array. Must have same shape and dtype as `f` as well as be
         C-contiguous.
 
@@ -98,13 +98,13 @@ def median_filter(f, Bc=None, mode='reflect', cval=0.0, output=None):
     elif f.dtype != Bc.dtype:
         Bc = Bc.astype(f.dtype)
     rank = Bc.sum()//2
-    output = _get_output(f, output, 'median_filter')
+    output = _get_output(f, out, 'median_filter', output=output)
     _check_mode(mode, cval, 'median_filter')
     return _convolve.rank_filter(f, Bc, output, int(rank), mode2int[mode])
 
-def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, output=None):
+def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None, output=None):
     '''
-    ranked = rank_filter(f, Bc, rank, mode='reflect', cval=0.0, output=None)
+    ranked = rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None)
 
     Rank filter. The value at ``ranked[i,j]`` will be the ``rank``th largest in
     the neighbourhood defined by ``Bc``.
@@ -120,7 +120,7 @@ def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, output=None):
         How to handle borders
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
-    output : ndarray, optional
+    out : ndarray, optional
         Output array. Must have same shape and dtype as `f` as well as be
         C-contiguous.
 
@@ -134,14 +134,14 @@ def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, output=None):
     median_filter : A special case of rank_filter
     '''
     Bc = morph.get_structuring_elem(f, Bc)
-    output = _get_output(f, output, 'rank_filter')
+    output = _get_output(f, out, 'rank_filter', output=output)
     _check_mode(mode, cval, 'rank_filter')
     return _convolve.rank_filter(f, Bc, output, rank, mode2int[mode])
 
 
-def template_match(f, template, mode='reflect', cval=0., output=None):
+def template_match(f, template, mode='reflect', cval=0., out=None, output=None):
     '''
-    match = template_match(f, template, mode='reflect', cval=0., output={np.empty_like(f)})
+    match = template_match(f, template, mode='reflect', cval=0., out={np.empty_like(f)})
 
     Match template.
 
@@ -159,7 +159,7 @@ def template_match(f, template, mode='reflect', cval=0., output=None):
         How to handle borders
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
-    output : ndarray, optional
+    out : ndarray, optional
         Output array. Must have same shape and dtype as `f` as well as be
         C-contiguous.
 
@@ -171,13 +171,13 @@ def template_match(f, template, mode='reflect', cval=0., output=None):
         ``s0`` and ``s1``).
     '''
     template = template.astype(f.dtype)
-    output = _get_output(f, output, 'template_match')
+    output = _get_output(f, out, 'template_match', output=output)
     _check_mode(mode, cval, 'template_match')
     return _convolve.template_match(f, template, output, mode2int[mode])
 
-def convolve1d(f, weights, axis, mode='reflect', cval=0., output=None):
+def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None, output=None):
     '''
-    convolved = convolve1d(f, weights, axis, mode='reflect', cval=0.0, output={new array})
+    convolved = convolve1d(f, weights, axis, mode='reflect', cval=0.0, out={new array})
 
     Convolution of `f` and `weights` along axis `axis`.
 
@@ -196,7 +196,7 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., output=None):
         How to handle borders
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
-    output : ndarray, optional
+    out : ndarray, optional
         Output array. Must have same shape and dtype as `f` as well as be
         C-contiguous.
 
@@ -221,9 +221,9 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., output=None):
     return convolve(f, weights, mode=mode, cval=cval, output=output)
 
 
-def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., output=None):
+def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., out=None, output=None):
     """
-    filtered = gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., output={np.empty_like(array)})
+    filtered = gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., out={np.empty_like(array)})
 
     One-dimensional Gaussian filter.
 
@@ -245,7 +245,7 @@ def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., o
         How to handle borders
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
-    output : ndarray, optional
+    out : ndarray, optional
         Output array. Must have same shape and dtype as `array` as well as be
         C-contiguous.
 
@@ -276,12 +276,12 @@ def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., o
         weights *= (3.0 - x*x/s2)*x/(s2*s2)
     else:
         raise ValueError('mahotas.convolve.gaussian_filter1d: Order outside 0..3 not implemented')
-    return convolve1d(array, weights, axis, mode, cval, output=output)
+    return convolve1d(array, weights, axis, mode, cval, out=output)
 
 
-def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., output=None):
+def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out=None, output=None):
     """
-    filtered = gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., output={np.empty_like(array)})
+    filtered = gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out={np.empty_like(array)})
 
     Multi-dimensional Gaussian filter.
 
@@ -306,7 +306,7 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., output=None)
         How to handle borders
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
-    output : ndarray, optional
+    out : ndarray, optional
         Output array. Must have same shape as `array` as well as be
         C-contiguous. If `array` is an integer array, this must be a double
         array; otherwise, it must have the same type as `array`.
@@ -328,7 +328,7 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., output=None)
     array = np.asanyarray(array)
     if not np.issubdtype(array.dtype, np.float_):
         array = array.astype(np.double)
-    output = _get_output(array, output, 'gaussian_filter')
+    output = _get_output(array, out, 'gaussian_filter', output=output)
     orders = _normalize_sequence(array, order, 'gaussian_filter')
     sigmas = _normalize_sequence(array, sigma, 'gaussian_filter')
     output[...] = array[...]

@@ -17,18 +17,18 @@
 # 02110-1301, USA.
 import numpy as np
 
-def _get_output(array, output, fname, dtype=None):
+def _get_output(array, out, fname, dtype=None, output=None):
     '''
-    output = _get_output(array, output, fname)
+    output = _get_output(array, out, fname, dtype=None, output=None)
 
     Implements the mahotas output convention:
-        (1) if `output` is None, return np.empty(array.shape, array.dtype)
+        (1) if `out` is None, return np.empty(array.shape, array.dtype)
         (2) else verify that output is of right size, shape, and contiguous
 
     Parameters
     ----------
     array : ndarray
-    output : ndarray or None
+    out : ndarray or None
     fname : str
         Function name. Used in error messages
 
@@ -38,15 +38,22 @@ def _get_output(array, output, fname, dtype=None):
     '''
     if dtype is None:
         dtype = array.dtype
-    if output is None:
+    if output is not None:
+        import warnings
+        warnings.warn('Using deprecated `output` argument in function `%s`. Please use `out` in the future.' % fname)
+        if out is not None:
+            warnings.warn('Using both `out` and `output` in function `%s`' % fname)
+        else:
+            out = output
+    if out is None:
         return np.empty(array.shape, dtype)
-    if output.dtype != dtype:
-        raise ValueError('mahotas.%s: `output` has wrong type' % fname)
-    if output.shape != array.shape:
-        raise ValueError('mahotas.%s: `output` has wrong shape' % fname)
-    if not output.flags.contiguous:
-        raise ValueError('mahotas.%s: `output` is not c-array' % fname)
-    return output
+    if out.dtype != dtype:
+        raise ValueError('mahotas.%s: `out` has wrong type' % fname)
+    if out.shape != array.shape:
+        raise ValueError('mahotas.%s: `out` has wrong shape' % fname)
+    if not out.flags.contiguous:
+        raise ValueError('mahotas.%s: `out` is not c-array' % fname)
+    return out
 
 def _get_axis(array, axis, fname):
     '''
