@@ -77,9 +77,13 @@ def spline_filter1d(array, order=3, axis=-1, out=None, dtype=np.float64, output=
     if np.iscomplexobj(array):
         raise TypeError('mahotas.interpolate.spline_filter1d: Complex type not supported')
     if isinstance(out, type):
+        import warnings
+        warnings.warn('mahotas.interpolate.spline_filter1d: Use `dtype` for type instead of `out`', DeprecationWarning)
         dtype = out
         out = None
     if isinstance(output, type):
+        import warnings
+        warnings.warn('mahotas.interpolate.spline_filter1d: Use `dtype` for type instead of `output`', DeprecationWarning)
         dtype = output
         output = None
     output = internal._get_output(array, out, 'interpolate.spline_filter1d', dtype=dtype, output=output)
