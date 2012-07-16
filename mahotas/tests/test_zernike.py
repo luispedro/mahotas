@@ -25,12 +25,15 @@ def _slow_znl(Y,X,P,n,l):
     v *= (n+1)/pi
     return v 
 
-def _slow_zernike(img, radius, D):
+def _slow_zernike(img, radius, D, cof=None):
     zvalues = []
 
     Y,X = np.where(img > 0)
     P = img[Y,X].ravel()
-    cofy,cofx = center_of_mass(img)
+    if cof is None:
+        cofy,cofx = center_of_mass(img)
+    else:
+        cofy,cofx = cof
     Yn = ( (Y -cofy)/radius).ravel()
     Xn = ( (X -cofx)/radius).ravel()
     k = (np.sqrt(Xn**2 + Yn**2) <= 1.)
@@ -53,3 +56,12 @@ def test_zernike():
     fast = zernike_moments(A, 8., 12)
     delta = np.array(slow) - fast
     assert np.abs(delta).max() < 0.001
+
+def test_zernike_cm():
+    A = (np.arange(256) % 14).reshape((16, 16))
+    cm = (8.9,12.4)
+    slow = _slow_zernike(A, 8., 12, cm)
+    fast = zernike_moments(A, 8., 12, cm=cm)
+    delta = np.array(slow) - fast
+    assert np.abs(delta).max() < 0.001
+

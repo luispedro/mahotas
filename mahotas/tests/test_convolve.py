@@ -46,6 +46,12 @@ def test_convolve1d():
         g = convolve1d(f, n, axis)
         assert g.shape == f.shape
 
+@raises(ValueError)
+def test_convolve1d_2d():
+    f = np.arange(64*4).reshape((16,-1))
+    n = np.array([[.5,1.,.5],[0.,2.,0.]])
+    convolve1d(f, n, 0)
+
 
 def test_gaussian_filter():
     from scipy import ndimage
@@ -64,3 +70,14 @@ def test_gaussian_order():
     im = np.arange(64*64).reshape((64,64))
     for order in (1,2,3):
         g_mat = mahotas.gaussian_filter(im, 2., order=order)
+
+def test_gaussian_order_high():
+    im = np.arange(64*64).reshape((64,64))
+    @raises(ValueError)
+    def gaussian_order(order):
+        mahotas.gaussian_filter(im, 2., order=order)
+    yield gaussian_order, 4
+    yield gaussian_order, 5
+    yield gaussian_order, -3
+    yield gaussian_order, -1
+    yield gaussian_order, 1.5

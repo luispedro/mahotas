@@ -1,5 +1,8 @@
 from mahotas.stretch import stretch
+import mahotas
+from nose.tools import raises
 import numpy as np
+
 def test_stretch():
     np.random.seed(2323)
     A = np.random.random_integers(12, 120, size=(100,100))
@@ -19,4 +22,20 @@ def test_neg_numbers():
     assert scaled.shape == A.shape
     assert scaled.min() <= 1
     assert scaled.max() >= 254
+
+
+
+def test_as_rgb():
+    np.random.seed(2323)
+    r = np.random.random_integers(12, 120, size=(8,8))
+    g = np.random.random_integers(12, 120, size=(8,8))
+    b = np.random.random_integers(12, 120, size=(8,8))
+    assert mahotas.as_rgb(r,g,b).max() >= 254
+    assert mahotas.as_rgb(r,None,b).shape == (8,8,3)
+    assert mahotas.as_rgb(r,None,b)[:,:,1].sum() == 0
+
+
+@raises(ValueError)
+def test_as_rgb_Nones():
+    mahotas.as_rgb(None,None,None)
 

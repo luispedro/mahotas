@@ -127,9 +127,16 @@ def test_haralick3d():
     features = texture.haralick(img[:,:,0])
     assert features.shape == (4,13)
 
+    features = texture.haralick(img.max(0), ignore_zeros=True, preserve_haralick_bug=True, compute_14th_feature=True)
+    assert features.shape == (4,14)
+
 
 def test_zeros():
     zeros = np.zeros((64,64), np.uint8)
     feats = texture.haralick(zeros)
     assert not np.any(np.isnan(feats))
+
+@raises(ValueError)
+def test_4d_image():
+    texture.haralick(np.arange(4**5).reshape((4,4,4,4,4)))
 

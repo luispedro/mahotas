@@ -63,3 +63,10 @@ def test_interest_points_descriptors():
         assert np.all(descs[:len(spoints)] == spoints)
 
 
+def test_show_surf():
+    np.random.seed(22)
+    f = np.random.rand(256,256)*230
+    f = f.astype(np.uint8)
+    spoints = surf.surf(f, 6, 24, 1)
+    f2 = surf.show_surf(f, spoints)
+    assert f2.shape == (f.shape + (3,))
