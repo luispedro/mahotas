@@ -1,4 +1,4 @@
-Version 0.8.1+
+Version 0.9 2012-07-16 by luispedro
 	* Auto-convert integer to double on gaussian_filter (previously, integer
 	values would result in zero-valued outputs).
 	* Check for integer types in (reg|loc)(max|min)
