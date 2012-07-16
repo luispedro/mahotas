@@ -65,9 +65,11 @@ packages = setuptools.find_packages()
 
 package_dir = {
     'mahotas.tests': 'mahotas/tests',
+    'mahotas.demos': 'mahotas/demos',
     }
 package_data = {
     'mahotas.tests': ['data/*'],
+    'mahotas.demos': ['data/*'],
     }
 
 classifiers = [

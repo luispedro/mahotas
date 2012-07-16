@@ -3,6 +3,7 @@ import mahotas
 import mahotas.convolve
 from mahotas.convolve import convolve1d, gaussian_filter
 import mahotas._filters
+from os import path
 from nose.tools import raises
 
 def test_compare_w_ndimage():
@@ -48,7 +49,12 @@ def test_convolve1d():
 
 def test_gaussian_filter():
     from scipy import ndimage
-    f = mahotas.imread('mahotas/demos/data/luispedro.jpg', 1)
+    f = mahotas.imread(path.join(
+        path.abspath(path.dirname(__file__)),
+                    '..',
+                    'demos',
+                    'data',
+                    'luispedro.jpg'), 1)
     for s in (4.,8.,12.):
         g = gaussian_filter(f, s)
         n = ndimage.gaussian_filter(f, s)
