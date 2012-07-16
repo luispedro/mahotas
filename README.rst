@@ -32,6 +32,15 @@ better venue and generates a public discussion log for others in the future.
 Recent Changes
 --------------
 
+0.9 (July 16 2012)
+~~~~~~~~~~~~~~~~~~
+- Auto-convert integer to double on gaussian_filter (previously, integer
+values would result in zero-valued outputs).
+- Check for integer types in (reg|loc)(max|min)
+- Use name `out` instead of `output` for output arguments. This matches
+Numpy better
+- Switched to MIT License
+
 0.8.1 (June 6 2012)
 ~~~~~~~~~~~~~~~~~~~
 - Fix gaussian_filter bug when order argument was used (reported by John Mark
