@@ -136,6 +136,9 @@ def test_zeros():
     feats = texture.haralick(zeros)
     assert not np.any(np.isnan(feats))
 
+    feats = texture.haralick(zeros, ignore_zeros=True)
+    assert not np.any(np.isnan(feats))
+
 @raises(ValueError)
 def test_4d_image():
     texture.haralick(np.arange(4**5).reshape((4,4,4,4,4)))

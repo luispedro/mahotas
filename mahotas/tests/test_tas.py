@@ -1,5 +1,6 @@
 import numpy as np
 from mahotas.features import tas, pftas
+from nose.tools import raises
 
 def test_tas():
     np.random.seed(22)
@@ -26,3 +27,10 @@ def test_regression():
 def test_zero_image():
     features = pftas(np.zeros((64,64), np.uint8))
     assert not np.any(np.isnan(features))
+
+@raises(ValueError)
+def test_4d():
+    np.random.seed(22)
+    f = np.random.rand(16,16,16,16)
+    f = (f * 255).astype(np.uint8)
+    tas(f)

@@ -39,3 +39,12 @@ def test_as_rgb():
 def test_as_rgb_Nones():
     mahotas.as_rgb(None,None,None)
 
+@raises(ValueError)
+def test_as_rgb_shape_mismatch():
+    np.random.seed(2323)
+    r = np.random.random_integers(12, 120, size=(8,8))
+    g = np.random.random_integers(12, 120, size=(8,8))
+    b = np.random.random_integers(12, 120, size=(8,6))
+    mahotas.as_rgb(r,g,b)
+
+
