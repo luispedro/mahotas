@@ -1,5 +1,5 @@
 Version 0.9+
-	* Haar wavelets
+	* Haar wavelets (forward and inverse transform)
 
 Version 0.9 2012-07-16 by luispedro
 	* Auto-convert integer to double on gaussian_filter (previously, integer

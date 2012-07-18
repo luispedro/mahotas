@@ -8,7 +8,7 @@ A package for computer vision in Python.
 try:
     from .bbox import bbox, croptobbox
     from .center_of_mass import center_of_mass
-    from .convolve import convolve, convolve1d, haar, median_filter, rank_filter, template_match, gaussian_filter1d, gaussian_filter
+    from .convolve import convolve, convolve1d, haar, ihaar, median_filter, rank_filter, template_match, gaussian_filter1d, gaussian_filter
     from .distance import distance
     from .edge import sobel
     from .euler import euler

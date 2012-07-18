@@ -99,3 +99,15 @@ def test_haar():
     wav =  mahotas.haar(image, inline=True)
     assert id(image) == id(wav)
 
+def test_ihaar():
+    image = luispedro_jpg()
+    image = image[:256,:256]
+    wav = mahotas.haar(image)
+    iwav = mahotas.ihaar(wav)
+    assert np.allclose(image, iwav)
+    iwav = mahotas.ihaar(wav, preserve_energy=False)
+    assert not np.allclose(wav, iwav)
+    iwav =  mahotas.ihaar(wav, inline=True)
+    assert id(iwav) == id(wav)
+
+

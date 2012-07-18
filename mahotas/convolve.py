@@ -13,6 +13,8 @@ from ._filters import mode2int, modes, _check_mode
 __all__ = [
     'convolve',
     'convolve1d',
+    'haar',
+    'ihaar',
     'median_filter',
     'rank_filter',
     'template_match',
@@ -332,18 +334,24 @@ def haar(f, preserve_energy=True, inline=False):
     '''
     t = haar(f, preserve_energy=True, inline=False)
 
+    Haar transform
+
     Parameters
     ----------
     f : 2-D ndarray
         Input image
     preserve_energy : bool, optional
         Whether to normalise the result so that energy is preserved (the
-        default). This will cause integer images to become floating point
-        images, which may be undesirable.
+        default).
     inline : bool, optional
         Whether to write the results to the input image. By default, a new
         image is returned. Integer images are always converted to floating
         point and copied.
+
+    See Also
+    --------
+    ihaar : function
+        Reverse Haar transform
     '''
     f = np.asanyarray(f)
     if f.ndim != 2:
@@ -356,4 +364,49 @@ def haar(f, preserve_energy=True, inline=False):
     _convolve.haar(f.T)
     if preserve_energy:
         f /= 2.0
+    return f
+
+
+def ihaar(f, preserve_energy=True, inline=False):
+    '''
+    t = ihaar(f, preserve_energy=True, inline=False)
+
+    Reverse Haar transform
+
+    ``ihaar(haar(f))`` is more or less equal to ``f`` (equal, except for
+    possible rounding issues).
+
+    Parameters
+    ----------
+    f : 2-D ndarray
+        Input image. If it is an integer image, it is converted to floating
+        point (double).
+    preserve_energy : bool, optional
+        Whether to normalise the result so that energy is preserved (the
+        default).
+    inline : bool, optional
+        Whether to write the results to the input image. By default, a new
+        image is returned. Integer images are always converted to floating
+        point and copied.
+
+    Returns
+    -------
+    f : ndarray
+
+    See Also
+    --------
+    haar : function
+        Forward Haar transform
+    '''
+    f = np.asanyarray(f)
+    if f.ndim != 2:
+        raise ValueError('mahotas.wavelet.ihaar: Only works for 2D images')
+    if not np.issubdtype(f.dtype, np.float_):
+        f = f.astype(np.double)
+    elif not inline:
+        f = f.copy() # The _wavelet functions are inline.
+    _convolve.ihaar(f)
+    _convolve.ihaar(f.T)
+    if preserve_energy:
+        f *= 2.0
     return f

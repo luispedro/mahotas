@@ -138,6 +138,52 @@ PyObject* py_haar(PyObject* self, PyObject* args) {
     return PyArray_Return(array);
 }
 
+template <typename T>
+void ihaar(numpy::aligned_array<T> array) {
+    gil_release nogil;
+    const int N0 = array.dim(0);
+    const int N1 = array.dim(1);
+    const int step = array.stride(1);
+
+    std::vector<T> bufdata;
+    bufdata.resize(N1);
+    T* buffer = &bufdata[0];
+
+    for (int y = 0; y != N0; ++y) {
+        T* data = array.data(y);
+        T* low = data;
+        T* high = data + step*N1/2;
+        for (int x = 0; x != (N1/2); ++x) {
+            const T h = high[x*step];
+            const T l = low[x*step];
+            buffer[2*x] = (l-h)/2;
+            buffer[(2*x+1)] = (h + l)/2;
+        }
+        for (int x = 0; x != N1; ++x) {
+            data[step*x] = buffer[x];
+        }
+    }
+}
+
+
+PyObject* py_ihaar(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    if (!PyArg_ParseTuple(args, "O", &array) ||
+        !PyArray_Check(array) || PyArray_NDIM(array) != 2) {
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
+    }
+    Py_INCREF(array);
+
+#define HANDLE(type) \
+        ihaar<type>(numpy::aligned_array<type>(array));
+
+    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
+#undef HANDLE
+
+    return PyArray_Return(array);
+}
+
 template<typename T>
 void rank_filter(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc, const int rank, const int mode) {
     gil_release nogil;
@@ -243,6 +289,7 @@ PyObject* py_template_match(PyObject* self, PyObject* args) {
 PyMethodDef methods[] = {
   {"convolve",(PyCFunction)py_convolve, METH_VARARGS, NULL},
   {"haar",(PyCFunction)py_haar, METH_VARARGS, NULL},
+  {"ihaar",(PyCFunction)py_ihaar, METH_VARARGS, NULL},
   {"rank_filter",(PyCFunction)py_rank_filter, METH_VARARGS, NULL},
   {"template_match",(PyCFunction)py_template_match, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
