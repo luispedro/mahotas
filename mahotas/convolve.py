@@ -326,3 +326,34 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out=None, ou
         noutput = gaussian_filter1d(output, sigma, axis, order, mode, cval, noutput)
         output,noutput = noutput,output
     return output
+
+
+def haar(f, preserve_energy=True, inline=False):
+    '''
+    t = haar(f, preserve_energy=True, inline=False)
+
+    Parameters
+    ----------
+    f : 2-D ndarray
+        Input image
+    preserve_energy : bool, optional
+        Whether to normalise the result so that energy is preserved (the
+        default). This will cause integer images to become floating point
+        images, which may be undesirable.
+    inline : bool, optional
+        Whether to write the results to the input image. By default, a new
+        image is returned. Integer images are always converted to floating
+        point and copied.
+    '''
+    f = np.asanyarray(f)
+    if f.ndim != 2:
+        raise ValueError('mahotas.wavelet.haar: Only works for 2D images')
+    if not np.issubdtype(f.dtype, np.float_):
+        f = f.astype(np.double)
+    elif not inline:
+        f = f.copy() # The _wavelet functions are inline.
+    _convolve.haar(f)
+    _convolve.haar(f.T)
+    if preserve_energy:
+        f /= 2.0
+    return f

@@ -52,15 +52,17 @@ def test_convolve1d_2d():
     n = np.array([[.5,1.,.5],[0.,2.,0.]])
     convolve1d(f, n, 0)
 
+luispedro_jpg = lambda: mahotas.imread(path.join(
+    path.abspath(path.dirname(__file__)),
+                '..',
+                'demos',
+                'data',
+                'luispedro.jpg'), 1)
+
 
 def test_gaussian_filter():
     from scipy import ndimage
-    f = mahotas.imread(path.join(
-        path.abspath(path.dirname(__file__)),
-                    '..',
-                    'demos',
-                    'data',
-                    'luispedro.jpg'), 1)
+    f = luispedro_jpg()
     for s in (4.,8.,12.):
         g = gaussian_filter(f, s)
         n = ndimage.gaussian_filter(f, s)
@@ -81,3 +83,19 @@ def test_gaussian_order_high():
     yield gaussian_order, -3
     yield gaussian_order, -1
     yield gaussian_order, 1.5
+
+def test_haar():
+    image = luispedro_jpg()
+    image = image[:256,:256]
+    wav = mahotas.haar(image)
+
+    assert wav.shape == wav.shape
+    assert np.allclose((image[0].reshape((-1,2)).mean(1)+image[1].reshape((-1,2)).mean(1))/2, wav[0,:128]/2.)
+    assert np.abs(np.mean(image**2) - np.mean(wav**2)) < 1.
+
+    image = luispedro_jpg()
+    wav =  mahotas.haar(image, preserve_energy=False)
+    assert np.abs(np.mean(image**2) - np.mean(wav**2)) > 16.
+    wav =  mahotas.haar(image, inline=True)
+    assert id(image) == id(wav)
+
