@@ -514,6 +514,13 @@ bool are_arrays(PyArrayObject* a, PyArrayObject* b) { return PyArray_Check(a) &&
 inline
 bool are_arrays(PyArrayObject* a, PyArrayObject* b, PyArrayObject* c) { return PyArray_Check(a) && PyArray_Check(b) && PyArray_Check(c); }
 
+
+inline
+bool arrays_of_same_shape_type(PyArrayObject* a, PyArrayObject* b) {
+    return are_arrays(a,b) &&
+            PyArray_EquivTypenums(PyArray_TYPE(a), PyArray_TYPE(b)) &&
+            same_shape(a,b);
+}
 } // namespace numpy
 
 #endif // MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_
