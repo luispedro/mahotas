@@ -24,3 +24,20 @@ def test_nozeros():
     assert rc(A) > 200
     assert otsu(A) > 200
 
+def test_ignore_zeros():
+    np.seterr(all='raise')
+    np.random.seed(22)
+    A = np.zeros((1024,24), np.uint8)
+    A[:24,:24] = np.random.random_integers(100, 200, size=(24,24))
+    assert rc(A) < 100
+    assert otsu(A) < 100
+    assert rc(A, ignore_zeros=1) > 100
+    assert otsu(A, ignore_zeros=1) > 100
+
+def test_zero_image():
+    A = np.zeros((16,16), np.uint8)
+    def tm(method):
+        assert method(A, ignore_zeros=0) == 0
+        assert method(A, ignore_zeros=1) == 0
+    yield tm, rc
+    yield tm, otsu
