@@ -1,9 +1,10 @@
+// Copyright (C) 2008-2012  Luis Pedro Coelho <luis@luispedro.org>
+//
+// License: MIT (see COPYING file)
+
 #include <algorithm>
-#include <queue>
 #include <vector>
-#include <cstdio>
 #include <limits>
-#include <iostream>
 
 #include "numpypp/array.hpp"
 #include "numpypp/dispatch.hpp"
@@ -102,6 +103,7 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
             HANDLE_TYPES();
 #undef HANDLE
             default: {
+                if (labels) delete [] totals;
                 nogil.restore();
                 PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
                 return NULL;
