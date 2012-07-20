@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2010, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -110,10 +110,11 @@ def rc(img, ignore_zeros=False):
     N = hist.size
 
     # Precompute most of what we need:
-    sum1 = np.cumsum(np.arange(N) * hist)
-    sum2 = np.cumsum(hist)
-    sum3 = np.flipud(np.cumsum(np.flipud(np.arange(N) * hist)))
-    sum4 = np.flipud(np.cumsum(np.flipud(hist)))
+    first_moment = np.cumsum(np.arange(N) * hist)
+    cumsum = np.cumsum(hist)
+
+    r_first_moment = np.flipud(np.cumsum(np.flipud(np.arange(N) * hist)))
+    r_cumsum = np.flipud(np.cumsum(np.flipud(hist)))
 
     maxt = N-1
     while hist[maxt] == 0:
@@ -122,8 +123,8 @@ def rc(img, ignore_zeros=False):
     res = maxt
     t = 0
     while t < min(maxt, res):
-        if sum2[t] and sum4[t+1]:
-            res = (sum1[t]/sum2[t] + sum3[t+1]/sum4[t+1])/2
+        if cumsum[t] and r_cumsum[t+1]:
+            res = (first_moment[t]/cumsum[t] + r_first_moment[t+1]/r_cumsum[t+1])/2
         t += 1
     return res
 
