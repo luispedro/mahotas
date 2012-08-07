@@ -62,13 +62,16 @@ def otsu(img, ignore_zeros=False):
 # http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/MORSE/threshold.pdf
     hist = fullhistogram(img)
     hist = hist.astype(np.double)
+    Hsum = img.size - hist[0]
+    if Hsum == 0:
+        return 0
     if ignore_zeros:
         hist[0] = 0
     Ng = len(hist)
     nB = np.cumsum(hist)
     nO = nB[-1]-nB
     mu_B = 0
-    mu_O = (np.arange(1, Ng)*hist[1:]).sum()/hist[1:].sum()
+    mu_O = (np.arange(1, Ng)*hist[1:]).sum()/Hsum
     best = nB[0]*nO[0]*(mu_B-mu_O)*(mu_B-mu_O)
     bestT = 0
 
