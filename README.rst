@@ -20,6 +20,26 @@ Notable algorithms:
  - Sobel edge detection.
  - spline interpolation
 
+Install
+-------
+
+You will need python (naturally), numpy, and a C++ compiler. Then you should be
+able to either
+
+Download the source and then run::
+
+    python setup.py install
+
+or use one of::
+
+    pip install mahotas
+    easy_install mahotas
+
+You can test your instalation by running::
+
+    python -c "import mahotas; mahotas.test()"
+
+
 Contacts
 --------
 

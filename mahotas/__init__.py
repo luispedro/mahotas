@@ -22,6 +22,8 @@ try:
     from .thresholding import otsu, rc
     from .io import imread, imsave
 
+    from .tests import run as test
+
     from mahotas_version import __version__
 
     import features
@@ -39,6 +41,7 @@ mahotas **without changing the current directory**.
 
 Try installing and then changing to another directory before importing mahotas.
 ''' % e
+
 
 
 __all__ = [
@@ -83,6 +86,8 @@ __all__ = [
 
     'imread',
     'imsave',
+
+    'test',
 
     '__version__',
     ]
