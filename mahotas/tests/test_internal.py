@@ -1,6 +1,6 @@
 import numpy as np
 from mahotas.internal import _get_output, _get_axis
-from mahotas.internal import _normalize_sequence, _verify_is_integer_type, _verify_is_floatingpoint_type
+from mahotas.internal import _normalize_sequence, _verify_is_integer_type, _verify_is_floatingpoint_type, _as_floating_point_array
 from nose.tools import raises
 
 def test_get_output():
@@ -117,4 +117,18 @@ def test_verify_fp():
     yield check_int, np.arange(1, dtype=np.int32)
     yield check_int, np.arange(1, dtype=np.uint16)
     yield check_int, np.arange(1, dtype=np.int64)
+
+def test_as_floating_point_array():
+    def check_arr(data):
+        array = _as_floating_point_array(data)
+        assert np.issubdtype(array.dtype, np.float_)
+
+    yield check_arr, np.arange(8, dtype=np.int8)
+    yield check_arr, np.arange(8, dtype=np.int16)
+    yield check_arr, np.arange(8, dtype=np.uint32)
+    yield check_arr, np.arange(8, dtype=np.double)
+    yield check_arr, np.arange(8, dtype=np.float32)
+    yield check_arr, [1,2,3]
+    yield check_arr, [[1,2],[2,3],[3,4]]
+    yield check_arr, [[1.,2.],[2.,3.],[3.,4.]]
 

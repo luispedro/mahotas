@@ -7,7 +7,7 @@ from __future__ import division
 import numpy as np
 from . import _convolve
 from . import morph
-from .internal import _get_output, _normalize_sequence, _verify_is_floatingpoint_type
+from .internal import _get_output, _normalize_sequence, _verify_is_floatingpoint_type, _as_floating_point_array
 from ._filters import mode2int, modes, _check_mode
 
 __all__ = [
@@ -314,9 +314,7 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out=None, ou
     because intermediate results may be stored with insufficient
     precision.
     """
-    array = np.asanyarray(array)
-    if not np.issubdtype(array.dtype, np.float_):
-        array = array.astype(np.double)
+    array = _as_floating_point_array(array)
     output = _get_output(array, out, 'gaussian_filter', output=output)
     orders = _normalize_sequence(array, order, 'gaussian_filter')
     sigmas = _normalize_sequence(array, sigma, 'gaussian_filter')
@@ -353,11 +351,9 @@ def haar(f, preserve_energy=True, inline=False):
     ihaar : function
         Reverse Haar transform
     '''
-    f = np.asanyarray(f)
+    f = _as_floating_point_array(f)
     if f.ndim != 2:
         raise ValueError('mahotas.wavelet.haar: Only works for 2D images')
-    if not np.issubdtype(f.dtype, np.float_):
-        f = f.astype(np.double)
     elif not inline:
         f = f.copy() # The _wavelet functions are inline.
     _convolve.haar(f)
@@ -398,11 +394,9 @@ def ihaar(f, preserve_energy=True, inline=False):
     haar : function
         Forward Haar transform
     '''
-    f = np.asanyarray(f)
+    f = _as_floating_point_array(f)
     if f.ndim != 2:
         raise ValueError('mahotas.wavelet.ihaar: Only works for 2D images')
-    if not np.issubdtype(f.dtype, np.float_):
-        f = f.astype(np.double)
     elif not inline:
         f = f.copy() # The _wavelet functions are inline.
     _convolve.ihaar(f)

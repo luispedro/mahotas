@@ -135,3 +135,15 @@ def _verify_is_integer_type(A, function_name):
                 ]
     if A.dtype not in int_types:
         raise TypeError('mahotas.%s: This function only accepts integer types (passed array of type %s)' % (function_name, A.dtype))
+
+
+def _as_floating_point_array(array):
+    '''
+    array = _as_floating_point_array(array)
+
+    Returns (possibly a copy) of array as a floating-point array
+    '''
+    array = np.asanyarray(array)
+    if not np.issubdtype(array.dtype, np.float_):
+        return array.astype(np.double)
+    return array
