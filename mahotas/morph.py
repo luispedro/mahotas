@@ -9,10 +9,6 @@ import numpy as np
 from .internal import _get_output, _verify_is_integer_type
 from . import _morph
 
-def _verify_is_bool(A,function):
-    if A.dtype != np.bool:
-        raise TypeError('mahotas.%s: This function only works with boolean arrays (passed array of type %s)' % (function,A.dtype))
-
 __all__ = [
         'close',
         'close_holes',
@@ -402,12 +398,7 @@ def close_holes(ref, Bc=None):
     closed : ndarray
         superset of `ref` (i.e. with closed holes)
     '''
-    if ref.dtype != np.bool:
-        if ((ref== 0)|(ref==1)).sum() != ref.size:
-            raise ValueError,'morph.close_holes: passed array is not boolean.'
-        ref = ref.astype(bool)
-    if not ref.flags['C_CONTIGUOUS']:
-        ref = ref.copy()
+    ref = np.ascontiguousarray(ref, dtype=np.bool_)
     Bc = get_structuring_elem(ref, Bc)
     return _morph.close_holes(ref, Bc)
 
@@ -435,8 +426,7 @@ def majority_filter(img, N=3, out=None, output=None):
     filtered : ndarray
         boolean image of same size as img.
     '''
-    if img.dtype != np.bool_:
-        img = img.astype(bool)
+    img = img.astype(np.bool_)
     output = _get_output(img, out, 'majority_filter', np.bool_, output=output)
     if N <= 1:
         raise ValueError('mahotas.majority_filter: filter size must be positive')
