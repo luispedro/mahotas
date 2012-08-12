@@ -41,6 +41,15 @@ from . import internal
 from . import _interpolate
 from ._filters import mode2int, modes, _check_mode
 
+def _check_interpolate(array, order, funcname):
+    if not (0 < order < 5):
+        raise ValueError('mahotas.interpolate.%s: spline order not supported' % funcname)
+
+    array = np.asarray(array)
+    if np.iscomplexobj(array):
+        raise TypeError('mahotas.interpolate.%s: Complex type not supported' % funcname)
+    return array
+
 def spline_filter1d(array, order=3, axis=-1, out=None, dtype=np.float64, output=None):
     """
     Calculates a one-dimensional spline filter along the given axis.
@@ -71,11 +80,7 @@ def spline_filter1d(array, order=3, axis=-1, out=None, dtype=np.float64, output=
     return_value : ndarray or None
         The filtered input.
     """
-    if order < 0 or order > 5:
-        raise RuntimeError('mahotas.interpolate.spline_filter1d: spline order not supported')
-    array = np.asarray(array)
-    if np.iscomplexobj(array):
-        raise TypeError('mahotas.interpolate.spline_filter1d: Complex type not supported')
+    array = _check_interpolate(array, order, 'spline_filter1d')
     if isinstance(out, type):
         import warnings
         warnings.warn('mahotas.interpolate.spline_filter1d: Use `dtype` for type instead of `out`', DeprecationWarning)
@@ -131,11 +136,7 @@ def spline_filter(array, order=3, out=None, dtype=np.float64, output=None):
     intermediate results may be stored with insufficient precision.
 
     """
-    array = np.asanyarray(array)
-    if not (2 < order < 5):
-        raise RuntimeError('mahotas.interpolation.spline_filter: spline order not supported')
-    if np.iscomplexobj(array):
-        raise TypeError('mahotas.interpolation.spline_filter: Complex type not supported')
+    array = _check_interpolate(array, order, 'spline_filter')
     if isinstance(out, type):
         dtype = out
         out = None
@@ -151,13 +152,9 @@ def spline_filter(array, order=3, out=None, dtype=np.float64, output=None):
 
 
 def _maybe_filter(array, order, func, prefilter, dtype):
-    if order < 0 or order > 5:
-        raise RuntimeError(func+': spline order not supported')
-    array = np.asanyarray(array)
-    if np.iscomplexobj(array):
-        raise TypeError(func+': Complex type not supported')
+    array = _check_interpolate(array, order, func)
     if array.ndim < 1:
-        raise RuntimeError(func+': array rank must be > 0')
+        raise ValueError(func+': array rank must be > 0')
     if prefilter and order > 1:
         return spline_filter(array, order, dtype=dtype)
     else:
