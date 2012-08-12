@@ -30,7 +30,7 @@ def integral(f, in_place=False, dtype=np.double):
     fi : ndarray of `dtype` of same shape as `f`
         The integral image
     '''
-    if len(f.shape) != 2:
+    if f.ndim != 2:
         raise ValueError('mahotas.surf.integral: Can only handle 2D-images (i.e., greyscale images).')
     if not in_place:
         if dtype != f.dtype:
@@ -170,6 +170,11 @@ def show_surf(f, spoints, values=None, colors=None):
     '''
     f2 = show_surf(f, spoints, values=None, colors={[(255,0,0)]}):
 
+    Note that this function does not actually display anything, it just builds
+    a colour image for you. In order to visualise the image, you will need to
+    use another tool such as ``matplotlib``. Alternatively, you can use
+    ``mahotas.imsave`` to save it to a file.
+
     Parameters
     ----------
     f : image
@@ -182,6 +187,11 @@ def show_surf(f, spoints, values=None, colors=None):
         ``values=np.zeros(len(spoints))``).
     colors : ndarray, length must be same as ``values.max()``, optional
         points with values ``vi`` will have colour ``colors[vi]``.
+
+    Returns
+    -------
+    f2 : ndarray
+        Colour (Height x Width x 3-Colours) image
     '''
     import mahotas.polygon
     if values is None:
