@@ -1,6 +1,8 @@
 import numpy as np
 import mahotas.features.surf as surf
 from mahotas.features import _surf
+from nose.tools import raises
+
 def test_integral():
     f = np.arange(8*16).reshape((8,16)) % 8
     fi = surf.integral(f.copy())
@@ -70,3 +72,16 @@ def test_show_surf():
     spoints = surf.surf(f, 6, 24, 1)
     f2 = surf.show_surf(f, spoints)
     assert f2.shape == (f.shape + (3,))
+
+
+def test_interest_points_descriptors():
+    np.random.seed(22)
+    f = np.random.rand(256,256)*230
+    f = f.astype(np.uint8)
+    full = surf.surf(f, 6, 24, 1)
+    only = surf.surf(f, 6, 24, 1, descriptor_only=True)
+    assert full.size > only.size
+
+@raises(ValueError)
+def test_3d_image():
+    surf.surf(np.arange(8*8*16).reshape((16,8,8)), 6, 24, 1)
