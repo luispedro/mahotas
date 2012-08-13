@@ -27,7 +27,7 @@ def _get_output(array, out, fname, dtype=None, output=None):
         dtype = array.dtype
     if output is not None:
         import warnings
-        warnings.warn('Using deprecated `output` argument in function `%s`. Please use `out` in the future.' % fname)
+        warnings.warn('Using deprecated `output` argument in function `%s`. Please use `out` in the future.' % fname, DeprecationWarning)
         if out is not None:
             warnings.warn('Using both `out` and `output` in function `%s`' % fname)
         else:
