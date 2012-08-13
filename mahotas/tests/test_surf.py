@@ -74,7 +74,7 @@ def test_show_surf():
     assert f2.shape == (f.shape + (3,))
 
 
-def test_interest_points_descriptors():
+def test_interest_points_descriptor_only():
     np.random.seed(22)
     f = np.random.rand(256,256)*230
     f = f.astype(np.uint8)
