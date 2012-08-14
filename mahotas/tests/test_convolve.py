@@ -89,7 +89,7 @@ def test_haar():
     image = image[:256,:256]
     wav = mahotas.haar(image)
 
-    assert wav.shape == wav.shape
+    assert wav.shape == image.shape
     assert np.allclose((image[0].reshape((-1,2)).mean(1)+image[1].reshape((-1,2)).mean(1))/2, wav[0,:128]/2.)
     assert np.abs(np.mean(image**2) - np.mean(wav**2)) < 1.
 
@@ -111,3 +111,11 @@ def test_ihaar():
     assert id(iwav) == id(wav)
 
 
+def test_daubechies():
+    image = luispedro_jpg()
+    image = image[:256,:256]
+    wav = mahotas.haar(image, preserve_energy=False)
+    dau = mahotas.daubechies(image, 'D2')
+
+    assert wav.shape == dau.shape
+    assert np.allclose(dau, wav)

@@ -13,6 +13,7 @@ from ._filters import mode2int, modes, _check_mode
 __all__ = [
     'convolve',
     'convolve1d',
+    'daubechies',
     'haar',
     'ihaar',
     'median_filter',
@@ -362,6 +363,38 @@ def haar(f, preserve_energy=True, inline=False):
         f /= 2.0
     return f
 
+_daubechies_codes = [('D%s' % ci) for ci in xrange(2,21,2)]
+def daubechies(f, code, inline=False):
+    '''
+    filtered = daubechies(f, code, inline=False)
+
+    Daubechies wavelet transform
+
+    Parameters
+    ----------
+    f : ndarray
+        2-D image
+    code : str
+        One of 'D2', 'D4', ... 'D20'
+    inline : bool, optional
+        Whether to write the results to the input image. By default, a new
+        image is returned. Integer images are always converted to floating
+        point and copied.
+
+    See Also
+    --------
+    haar : function
+        Haar transform (equivalent to D2)
+    '''
+    f = _as_floating_point_array(f)
+    if f.ndim != 2:
+        raise ValueError('mahotas.convolve.daubechies: Only works for 2D images')
+    elif not inline:
+        f = f.copy()
+    code = _daubechies_codes.index(code)
+    _convolve.daubechies(f, code)
+    _convolve.daubechies(f.T, code)
+    return f
 
 def ihaar(f, preserve_energy=True, inline=False):
     '''

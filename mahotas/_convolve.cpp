@@ -111,7 +111,7 @@ void haar(numpy::aligned_array<T> array) {
             const T di = data[2*x*step];
             const T di1 = data[(2*x + 1)*step];
             low[x] = di + di1;
-            high[x] = di1 - di;
+            high[x] = di - di1;
         }
         for (int x = 0; x != N1; ++x) {
             data[step*x] = buffer[x];
@@ -119,6 +119,49 @@ void haar(numpy::aligned_array<T> array) {
     }
 }
 
+template<typename T>
+T _access(const T* data, const int N, const int p, const int step) {
+    if (p >= N) return T();
+    return data[p*step];
+}
+
+template <typename T>
+void wavelet(numpy::aligned_array<T> array, const float coeffs[], const int ncoeffs) {
+    gil_release nogil;
+    const int N0 = array.dim(0);
+    const int N1 = array.dim(1);
+    const int step = array.stride(1);
+
+    std::vector<T> bufdata;
+    bufdata.resize(N1);
+    T* buffer = &bufdata[0];
+    T* low = buffer;
+    T* high = buffer + N1/2;
+
+    for (int y = 0; y != N0; ++y) {
+        T* data = array.data(y);
+        for (int x = 0; x < (N1/2); ++x) {
+            T l = T();
+            T h = T();
+            bool even = true;
+            for (int ci = 0; ci != ncoeffs; ++ci) {
+                T val = _access(data, N1, 2*x+ci, step);
+                val *= coeffs[ci];
+                l += val;
+                if (even) h += val;
+                else h -= val;
+                even = !even;
+            }
+
+            low[x] = l;
+            high[x] = h;
+        }
+
+        for (int x = 0; x != N1; ++x) {
+            data[step*x] = buffer[x];
+        }
+    }
+}
 
 PyObject* py_haar(PyObject* self, PyObject* args) {
     PyArrayObject* array;
@@ -131,6 +174,105 @@ PyObject* py_haar(PyObject* self, PyObject* args) {
 
 #define HANDLE(type) \
         haar<type>(numpy::aligned_array<type>(array));
+
+    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
+#undef HANDLE
+
+    return PyArray_Return(array);
+}
+
+
+const float D2[] = { 1.,  1. };
+const float D4[] = { 0.6830127,  1.1830127,  0.3169873, -0.1830127 };
+const float D6[] = { 0.47046721,  1.14111692,  0.650365  , -0.19093442, -0.12083221,
+                        0.0498175  };
+const float D8[] = { 0.32580343,  1.01094572,  0.8922014 , -0.03957503, -0.26450717,
+                    0.0436163 ,  0.0465036 , -0.01498699 };
+const float D10[] = { 0.22641898,  0.85394354,  1.02432694,  0.19576696, -0.34265671,
+                    -0.04560113,  0.10970265, -0.0088268 , -0.01779187,  0.00471743 };
+const float D12[] = {  1.57742430e-01,   6.99503810e-01,   1.06226376e+00,
+                     4.45831320e-01,  -3.19986600e-01,  -1.83518060e-01,
+                     1.37888090e-01,   3.89232100e-02,  -4.46637500e-02,
+                     7.83251152e-04,   6.75606236e-03,  -1.52353381e-03 };
+const float D14[] = {  1.10099430e-01,   5.60791280e-01,   1.03114849e+00,
+                     6.64372480e-01,  -2.03513820e-01,  -3.16835010e-01,
+                     1.00846700e-01,   1.14003450e-01,  -5.37824500e-02,
+                    -2.34399400e-02,   1.77497900e-02,   6.07514995e-04,
+                    -2.54790472e-03,   5.00226853e-04 };
+const float D16[] = {  7.69556200e-02,   4.42467250e-01,   9.55486150e-01,
+                     8.27816530e-01,  -2.23857400e-02,  -4.01658630e-01,
+                     6.68194092e-04,   1.82076360e-01,  -2.45639000e-02,
+                    -6.23502100e-02,   1.97721600e-02,   1.23688400e-02,
+                    -6.88771926e-03,  -5.54004549e-04,   9.55229711e-04,
+                    -1.66137261e-04 };
+const float D18[] = {  5.38503500e-02,   3.44834300e-01,   8.55349060e-01,
+                     9.29545710e-01,   1.88369550e-01,  -4.14751760e-01,
+                    -1.36953550e-01,   2.10068340e-01,   4.34526750e-02,
+                    -9.56472600e-02,   3.54892813e-04,   3.16241700e-02,
+                    -6.67962023e-03,  -6.05496058e-03,   2.61296728e-03,
+                     3.25814671e-04,  -3.56329759e-04,   5.56455140e-05 };
+const float D20[] = {  3.77171600e-02,   2.66122180e-01,   7.45575070e-01,
+                     9.73628110e-01,   3.97637740e-01,  -3.53336200e-01,
+                    -2.77109880e-01,   1.80127450e-01,   1.31602990e-01,
+                    -1.00966570e-01,  -4.16592500e-02,   4.69698100e-02,
+                     5.10043697e-03,  -1.51790000e-02,   1.97332536e-03,
+                     2.81768659e-03,  -9.69947840e-04,  -1.64709006e-04,
+                     1.32354367e-04,  -1.87584100e-05 };
+
+
+PyObject* py_wavelet(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* coeffs;
+    if (!PyArg_ParseTuple(args, "OO", &array, &coeffs) ||
+        !numpy::are_arrays(array, coeffs) ||
+        PyArray_NDIM(array) != 2 ||
+        PyArray_TYPE(coeffs) != NPY_FLOAT ||
+        !PyArray_ISCARRAY(coeffs)) {
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
+    }
+    Py_INCREF(array);
+    numpy::aligned_array<float> acoeffs(coeffs);
+
+#define HANDLE(type) \
+        wavelet<type>(numpy::aligned_array<type>(array), acoeffs.data(), acoeffs.dim(0));
+
+    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
+#undef HANDLE
+
+    return PyArray_Return(array);
+}
+
+PyObject* py_daubechies(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    int code;
+    if (!PyArg_ParseTuple(args, "Oi", &array, &code) ||
+        !numpy::are_arrays(array) ||
+        PyArray_NDIM(array) != 2) {
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
+    }
+    const float* coeffs;
+    int ncoeffs = 2*(code + 1);
+    switch (code) {
+        case 0: coeffs = D2; break;
+        case 1: coeffs = D4; break;
+        case 2: coeffs = D6; break;
+        case 3: coeffs = D8; break;
+        case 4: coeffs = D10; break;
+        case 5: coeffs = D12; break;
+        case 6: coeffs = D14; break;
+        case 7: coeffs = D16; break;
+        case 8: coeffs = D18; break;
+        case 9: coeffs = D20; break;
+        default:
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
+    }
+
+    Py_INCREF(array);
+#define HANDLE(type) \
+        wavelet<type>(numpy::aligned_array<type>(array), coeffs, ncoeffs);
 
     SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
 #undef HANDLE
@@ -156,8 +298,8 @@ void ihaar(numpy::aligned_array<T> array) {
         for (int x = 0; x != (N1/2); ++x) {
             const T h = high[x*step];
             const T l = low[x*step];
-            buffer[2*x] = (l-h)/2;
-            buffer[(2*x+1)] = (h + l)/2;
+            buffer[2*x] = (h + l)/2;
+            buffer[2*x+1] = (l-h)/2;
         }
         for (int x = 0; x != N1; ++x) {
             data[step*x] = buffer[x];
@@ -288,6 +430,8 @@ PyObject* py_template_match(PyObject* self, PyObject* args) {
 
 PyMethodDef methods[] = {
   {"convolve",(PyCFunction)py_convolve, METH_VARARGS, NULL},
+  {"wavelet",(PyCFunction)py_wavelet, METH_VARARGS, NULL},
+  {"daubechies",(PyCFunction)py_daubechies, METH_VARARGS, NULL},
   {"haar",(PyCFunction)py_haar, METH_VARARGS, NULL},
   {"ihaar",(PyCFunction)py_ihaar, METH_VARARGS, NULL},
   {"rank_filter",(PyCFunction)py_rank_filter, METH_VARARGS, NULL},
