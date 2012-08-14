@@ -119,3 +119,22 @@ def test_daubechies():
 
     assert wav.shape == dau.shape
     assert np.allclose(dau, wav)
+
+def test_3d_wavelets_error():
+    @raises(ValueError)
+    def call_f(f):
+        f(np.arange(4*4*4).reshape((4,4,4)))
+
+    yield call_f, mahotas.haar
+    yield call_f, mahotas.ihaar
+    yield call_f, lambda im: mahotas.daubechies(im, 'D4')
+
+def test_wavelets_inline():
+    def inline(f):
+        im = np.arange(16, dtype=float).reshape((4,4))
+        t = f(im, inline=True)
+        assert id(im) == id(t)
+
+    yield inline, mahotas.haar
+    yield inline, lambda im,inline: mahotas.daubechies(im, 'D4', inline=inline)
+
