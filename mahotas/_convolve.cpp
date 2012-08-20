@@ -121,6 +121,7 @@ void haar(numpy::aligned_array<T> array) {
 
 template<typename T>
 T _access(const T* data, const int N, const int p, const int step) {
+    if (p < 0) return T();
     if (p >= N) return T();
     return data[p*step];
 }
@@ -146,15 +147,52 @@ void wavelet(numpy::aligned_array<T> array, const float coeffs[], const int ncoe
             bool even = true;
             for (int ci = 0; ci != ncoeffs; ++ci) {
                 T val = _access(data, N1, 2*x+ci, step);
-                val *= coeffs[ci];
-                l += val;
-                if (even) h += val;
-                else h -= val;
+                const float cl = coeffs[ci];
+                const float ch = (even ? 1 : -1) * coeffs[ncoeffs-ci-1];
+                l += cl*val;
+                h += ch*val;
                 even = !even;
             }
 
             low[x] = l;
             high[x] = h;
+        }
+
+        for (int x = 0; x != N1; ++x) {
+            data[step*x] = buffer[x];
+        }
+    }
+}
+
+template <typename T>
+void iwavelet(numpy::aligned_array<T> array, const float coeffs[], const int ncoeffs) {
+    gil_release nogil;
+    const int N0 = array.dim(0);
+    const int N1 = array.dim(1);
+    const int step = array.stride(1);
+
+    std::vector<T> bufdata;
+    bufdata.resize(N1);
+    T* buffer = &bufdata[0];
+    for (int y = 0; y != N0; ++y) {
+        T* data = array.data(y);
+        T* low = data;
+        T* high = data + step*N1/2;
+        for (int x = 0; x < (N1/2); ++x) {
+            T l = T();
+            T h = T();
+            bool even = true;
+            for (int ci = 0; ci != ncoeffs; ++ci) {
+                const float cl = coeffs[ncoeffs-ci-1];
+                const float ch = (even ? 1 : -1) * coeffs[ci];
+                l += cl*_access( low, N1/2, x-ncoeffs+ci, step);
+                h += ch*_access(high, N1/2, x-ncoeffs+ci, step);
+                even = !even;
+            }
+
+            buffer[2*x] = (l-h)/2.;
+            buffer[2*x+1] = (l+h)/2.;
+            
         }
 
         for (int x = 0; x != N1; ++x) {
@@ -236,6 +274,29 @@ PyObject* py_wavelet(PyObject* self, PyObject* args) {
 
 #define HANDLE(type) \
         wavelet<type>(numpy::aligned_array<type>(array), acoeffs.data(), acoeffs.dim(0));
+
+    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
+#undef HANDLE
+
+    return PyArray_Return(array);
+}
+
+PyObject* py_iwavelet(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* coeffs;
+    if (!PyArg_ParseTuple(args, "OO", &array, &coeffs) ||
+        !numpy::are_arrays(array, coeffs) ||
+        PyArray_NDIM(array) != 2 ||
+        PyArray_TYPE(coeffs) != NPY_FLOAT ||
+        !PyArray_ISCARRAY(coeffs)) {
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
+    }
+    Py_INCREF(array);
+    numpy::aligned_array<float> acoeffs(coeffs);
+
+#define HANDLE(type) \
+        iwavelet<type>(numpy::aligned_array<type>(array), acoeffs.data(), acoeffs.dim(0));
 
     SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
 #undef HANDLE
@@ -431,6 +492,7 @@ PyObject* py_template_match(PyObject* self, PyObject* args) {
 PyMethodDef methods[] = {
   {"convolve",(PyCFunction)py_convolve, METH_VARARGS, NULL},
   {"wavelet",(PyCFunction)py_wavelet, METH_VARARGS, NULL},
+  {"iwavelet",(PyCFunction)py_iwavelet, METH_VARARGS, NULL},
   {"daubechies",(PyCFunction)py_daubechies, METH_VARARGS, NULL},
   {"haar",(PyCFunction)py_haar, METH_VARARGS, NULL},
   {"ihaar",(PyCFunction)py_ihaar, METH_VARARGS, NULL},
