@@ -219,7 +219,9 @@ PyObject* py_haar(PyObject* self, PyObject* args) {
     return PyArray_Return(array);
 }
 
-
+// These are the Daubechie coefficients
+// This is the scaling function, the wavelet is multiplication with (-1)^k
+// These values were copy&pasted from wikipedia
 const float D2[] = { 1.,  1. };
 const float D4[] = { 0.6830127,  1.1830127,  0.3169873, -0.1830127 };
 const float D6[] = { 0.47046721,  1.14111692,  0.650365  , -0.19093442, -0.12083221,
