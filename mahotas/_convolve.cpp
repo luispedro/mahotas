@@ -343,6 +343,43 @@ PyObject* py_daubechies(PyObject* self, PyObject* args) {
     return PyArray_Return(array);
 }
 
+PyObject* py_idaubechies(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    int code;
+    if (!PyArg_ParseTuple(args, "Oi", &array, &code) ||
+        !numpy::are_arrays(array) ||
+        PyArray_NDIM(array) != 2) {
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
+    }
+    const float* coeffs;
+    int ncoeffs = 2*(code + 1);
+    switch (code) {
+        case 0: coeffs = D2; break;
+        case 1: coeffs = D4; break;
+        case 2: coeffs = D6; break;
+        case 3: coeffs = D8; break;
+        case 4: coeffs = D10; break;
+        case 5: coeffs = D12; break;
+        case 6: coeffs = D14; break;
+        case 7: coeffs = D16; break;
+        case 8: coeffs = D18; break;
+        case 9: coeffs = D20; break;
+        default:
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
+    }
+
+    Py_INCREF(array);
+#define HANDLE(type) \
+        iwavelet<type>(numpy::aligned_array<type>(array), coeffs, ncoeffs);
+
+    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
+#undef HANDLE
+
+    return PyArray_Return(array);
+}
+
 template <typename T>
 void ihaar(numpy::aligned_array<T> array) {
     gil_release nogil;
@@ -496,6 +533,7 @@ PyMethodDef methods[] = {
   {"wavelet",(PyCFunction)py_wavelet, METH_VARARGS, NULL},
   {"iwavelet",(PyCFunction)py_iwavelet, METH_VARARGS, NULL},
   {"daubechies",(PyCFunction)py_daubechies, METH_VARARGS, NULL},
+  {"idaubechies",(PyCFunction)py_idaubechies, METH_VARARGS, NULL},
   {"haar",(PyCFunction)py_haar, METH_VARARGS, NULL},
   {"ihaar",(PyCFunction)py_ihaar, METH_VARARGS, NULL},
   {"rank_filter",(PyCFunction)py_rank_filter, METH_VARARGS, NULL},

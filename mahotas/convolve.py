@@ -14,6 +14,7 @@ __all__ = [
     'convolve',
     'convolve1d',
     'daubechies',
+    'idaubechies',
     'haar',
     'ihaar',
     'median_filter',
@@ -328,6 +329,13 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out=None, ou
         output,noutput = noutput,output
     return output
 
+def _wavelet_array(f, inline, func):
+    f = _as_floating_point_array(f)
+    if f.ndim != 2:
+        raise ValueError('mahotas.convolve.%s: Only works for 2D images' % func)
+    if not inline:
+        return f.copy()
+    return f
 
 def haar(f, preserve_energy=True, inline=False):
     '''
@@ -352,11 +360,7 @@ def haar(f, preserve_energy=True, inline=False):
     ihaar : function
         Reverse Haar transform
     '''
-    f = _as_floating_point_array(f)
-    if f.ndim != 2:
-        raise ValueError('mahotas.wavelet.haar: Only works for 2D images')
-    elif not inline:
-        f = f.copy() # The _wavelet functions are inline.
+    f = _wavelet_array(f, inline, 'haar')
     _convolve.haar(f)
     _convolve.haar(f.T)
     if preserve_energy:
@@ -386,15 +390,41 @@ def daubechies(f, code, inline=False):
     haar : function
         Haar transform (equivalent to D2)
     '''
-    f = _as_floating_point_array(f)
-    if f.ndim != 2:
-        raise ValueError('mahotas.convolve.daubechies: Only works for 2D images')
-    elif not inline:
-        f = f.copy()
+    f = _wavelet_array(f, inline, 'daubechies')
     code = _daubechies_codes.index(code)
     _convolve.daubechies(f, code)
     _convolve.daubechies(f.T, code)
     return f
+
+
+def idaubechies(f, code, inline=False):
+    '''
+    rfiltered = idaubechies(f, code, inline=False)
+
+    Daubechies wavelet inverse transform
+
+    Parameters
+    ----------
+    f : ndarray
+        2-D image
+    code : str
+        One of 'D2', 'D4', ... 'D20'
+    inline : bool, optional
+        Whether to write the results to the input image. By default, a new
+        image is returned. Integer images are always converted to floating
+        point and copied.
+
+    See Also
+    --------
+    haar : function
+        Haar transform (equivalent to D2)
+    '''
+    f = _wavelet_array(f, inline, 'idaubechies')
+    code = _daubechies_codes.index(code)
+    _convolve.idaubechies(f.T, code)
+    _convolve.idaubechies(f, code)
+    return f
+
 
 def ihaar(f, preserve_energy=True, inline=False):
     '''
@@ -427,11 +457,7 @@ def ihaar(f, preserve_energy=True, inline=False):
     haar : function
         Forward Haar transform
     '''
-    f = _as_floating_point_array(f)
-    if f.ndim != 2:
-        raise ValueError('mahotas.wavelet.ihaar: Only works for 2D images')
-    elif not inline:
-        f = f.copy() # The _wavelet functions are inline.
+    f = _wavelet_array(f, inline, 'ihaar')
     _convolve.ihaar(f)
     _convolve.ihaar(f.T)
     if preserve_energy:
