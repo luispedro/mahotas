@@ -170,4 +170,4 @@ def test_daubechies_idaubechies():
 
     d = mahotas.daubechies(f, 'D8')
     r = mahotas.idaubechies(d, 'D8')
-    assert np.mean( (r[4:-4,4:-4] - fo[4:-4, 4:-4])**2) < 1.
+    assert np.mean( (r[2:-6,2:-6] - fo[4:-4, 4:-4])**2) < 1.

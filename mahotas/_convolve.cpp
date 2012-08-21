@@ -185,8 +185,8 @@ void iwavelet(numpy::aligned_array<T> array, const float coeffs[], const int nco
             T l = T();
             T h = T();
             for (int ci = 0; ci != ncoeffs; ++ci) {
-                if (!_is_even(x+ci)) {
-                    const int xmap = (x+ci) / 2;
+                if (!_is_even(x+ci-ncoeffs/2)) {
+                    const int xmap = (x+ci-ncoeffs/2) / 2;
                     const float cl = coeffs[ci];
                     const float ch = (_is_even(ci) ? +1 : -1) * coeffs[ncoeffs-ci-1];
                     l += cl*_access( low, N1/2, xmap, step);
@@ -307,6 +307,23 @@ PyObject* py_iwavelet(PyObject* self, PyObject* args) {
     return PyArray_Return(array);
 }
 
+const float* dcoeffs(const int code) {
+    switch (code) {
+        case 0: return D2;
+        case 1: return D4;
+        case 2: return D6;
+        case 3: return D8;
+        case 4: return D10;
+        case 5: return D12;
+        case 6: return D14;
+        case 7: return D16;
+        case 8: return D18;
+        case 9: return D20;
+        default:
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
+    }
+}
 PyObject* py_daubechies(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     int code;
@@ -316,23 +333,9 @@ PyObject* py_daubechies(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
-    const float* coeffs;
+    const float* coeffs = dcoeffs(code);
     int ncoeffs = 2*(code + 1);
-    switch (code) {
-        case 0: coeffs = D2; break;
-        case 1: coeffs = D4; break;
-        case 2: coeffs = D6; break;
-        case 3: coeffs = D8; break;
-        case 4: coeffs = D10; break;
-        case 5: coeffs = D12; break;
-        case 6: coeffs = D14; break;
-        case 7: coeffs = D16; break;
-        case 8: coeffs = D18; break;
-        case 9: coeffs = D20; break;
-        default:
-        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
-        return NULL;
-    }
+    if (!coeffs) return NULL;
 
     Py_INCREF(array);
 #define HANDLE(type) \
@@ -353,23 +356,9 @@ PyObject* py_idaubechies(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
-    const float* coeffs;
+    const float* coeffs = dcoeffs(code);
     int ncoeffs = 2*(code + 1);
-    switch (code) {
-        case 0: coeffs = D2; break;
-        case 1: coeffs = D4; break;
-        case 2: coeffs = D6; break;
-        case 3: coeffs = D8; break;
-        case 4: coeffs = D10; break;
-        case 5: coeffs = D12; break;
-        case 6: coeffs = D14; break;
-        case 7: coeffs = D16; break;
-        case 8: coeffs = D18; break;
-        case 9: coeffs = D20; break;
-        default:
-        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
-        return NULL;
-    }
+    if (!coeffs) return NULL;
 
     Py_INCREF(array);
 #define HANDLE(type) \

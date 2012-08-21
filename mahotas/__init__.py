@@ -8,7 +8,7 @@ A package for computer vision in Python.
 try:
     from .bbox import bbox, croptobbox
     from .center_of_mass import center_of_mass
-    from .convolve import convolve, convolve1d, haar, ihaar, daubechies, median_filter, rank_filter, template_match, gaussian_filter1d, gaussian_filter
+    from .convolve import convolve, convolve1d, haar, ihaar, daubechies, idaubechies, median_filter, rank_filter, template_match, gaussian_filter1d, gaussian_filter
     from .distance import distance
     from .edge import sobel
     from .euler import euler
@@ -56,6 +56,8 @@ __all__ = [
     'convolve1d',
     'croptobbox',
     'cwatershed',
+    'daubechies',
+    'idaubechies',
     'dilate',
     'distance',
     'erode',
@@ -65,6 +67,7 @@ __all__ = [
     'gaussian_filter1d',
     'get_structuring_elem',
     'haar',
+    'ihaar',
     'hitmiss',
     'imresize',
     'label',
