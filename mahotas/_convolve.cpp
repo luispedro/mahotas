@@ -147,8 +147,8 @@ void wavelet(numpy::aligned_array<T> array, const float coeffs[], const int ncoe
             bool even = true;
             for (int ci = 0; ci != ncoeffs; ++ci) {
                 T val = _access(data, N1, 2*x+ci, step);
-                const float cl = coeffs[ci];
-                const float ch = (even ? 1 : -1) * coeffs[ncoeffs-ci-1];
+                const float cl = coeffs[ncoeffs-ci-1];
+                const float ch = (even ? -1 : +1) * coeffs[ci];
                 l += cl*val;
                 h += ch*val;
                 even = !even;
@@ -164,6 +164,9 @@ void wavelet(numpy::aligned_array<T> array, const float coeffs[], const int ncoe
     }
 }
 
+inline
+bool _is_even(int x) { return (x & 1) == 0; }
+
 template <typename T>
 void iwavelet(numpy::aligned_array<T> array, const float coeffs[], const int ncoeffs) {
     gil_release nogil;
@@ -178,21 +181,19 @@ void iwavelet(numpy::aligned_array<T> array, const float coeffs[], const int nco
         T* data = array.data(y);
         T* low = data;
         T* high = data + step*N1/2;
-        for (int x = 0; x < (N1/2); ++x) {
+        for (int x = 0; x < N1; ++x) {
             T l = T();
             T h = T();
-            bool even = true;
             for (int ci = 0; ci != ncoeffs; ++ci) {
-                const float cl = coeffs[ncoeffs-ci-1];
-                const float ch = (even ? 1 : -1) * coeffs[ci];
-                l += cl*_access( low, N1/2, x-ncoeffs+ci, step);
-                h += ch*_access(high, N1/2, x-ncoeffs+ci, step);
-                even = !even;
+                if (!_is_even(x+ci)) {
+                    const int xmap = (x+ci) / 2;
+                    const float cl = coeffs[ci];
+                    const float ch = (_is_even(ci) ? +1 : -1) * coeffs[ncoeffs-ci-1];
+                    l += cl*_access( low, N1/2, xmap, step);
+                    h += ch*_access(high, N1/2, xmap, step);
+                }
             }
-
-            buffer[2*x] = (l-h)/2.;
-            buffer[2*x+1] = (l+h)/2.;
-            
+            buffer[x] = (l+h)/2.;
         }
 
         for (int x = 0; x != N1; ++x) {
