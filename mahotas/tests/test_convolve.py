@@ -111,7 +111,7 @@ def test_ihaar():
     assert id(iwav) == id(wav)
 
 
-def test_daubechies():
+def test_daubechies_D2_haar():
     image = luispedro_jpg()
     image = image[:256,:256]
     wav = mahotas.haar(image, preserve_energy=False)
@@ -138,3 +138,36 @@ def test_wavelets_inline():
     yield inline, mahotas.haar
     yield inline, lambda im,inline: mahotas.daubechies(im, 'D4', inline=inline)
 
+def test_wavelet_iwavelet():
+    f = luispedro_jpg()
+    f = f[:256,:256]
+    fo = f.copy()
+    D4 = np.array([0.6830127,  1.1830127,  0.3169873, -0.1830127], dtype=np.float32)
+    D4_high = D4[::-1].copy()
+    D4_high[1::2] *= -1
+    f = f[34]
+    low = np.convolve(f, D4)
+    high = np.convolve(f,D4_high)
+    low[::2] = 0
+    high[::2] = 0
+    rec = (np.convolve(high, D4_high[::-1])+np.convolve(low, D4[::-1]))
+    rec /= 2
+    f2 = np.array([f])
+    mahotas._convolve.wavelet(f2,D4)
+
+    hand = np.concatenate((low[3::2],high[3::2]))
+    wav = f2.ravel()
+    assert np.allclose(hand,wav)
+    mahotas._convolve.iwavelet(f2,D4)
+    assert np.allclose(rec[3:-3],f)
+    assert np.allclose(f2.ravel()[3:-3],f[3:-3])
+
+    
+def test_daubechies_idaubechies():
+    f = luispedro_jpg()
+    f = f[:256,:256]
+    fo = f.copy()
+
+    d = mahotas.daubechies(f, 'D8')
+    r = mahotas.idaubechies(d, 'D8')
+    assert np.mean( (r[4:-4,4:-4] - fo[4:-4, 4:-4])**2) < 1.
