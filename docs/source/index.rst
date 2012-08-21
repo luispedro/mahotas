@@ -17,6 +17,7 @@ Contents:
    distance
    labeled
    polygon
+   wavelets
    classification
    faq
    internals
