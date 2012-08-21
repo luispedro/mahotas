@@ -111,7 +111,7 @@ void haar(numpy::aligned_array<T> array) {
             const T di = data[2*x*step];
             const T di1 = data[(2*x + 1)*step];
             low[x] = di + di1;
-            high[x] = di - di1;
+            high[x] = di1 - di;
         }
         for (int x = 0; x != N1; ++x) {
             data[step*x] = buffer[x];
@@ -399,8 +399,8 @@ void ihaar(numpy::aligned_array<T> array) {
         for (int x = 0; x != (N1/2); ++x) {
             const T h = high[x*step];
             const T l = low[x*step];
-            buffer[2*x] = (h + l)/2;
-            buffer[2*x+1] = (l-h)/2;
+            buffer[2*x]   = (l-h)/2;
+            buffer[2*x+1] = (l+h)/2;
         }
         for (int x = 0; x != N1; ++x) {
             data[step*x] = buffer[x];
