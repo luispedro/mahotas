@@ -131,3 +131,37 @@ def rc(img, ignore_zeros=False):
         t += 1
     return res
 
+def soft_threshold(f, tval):
+    '''
+    thresholded = soft_threshold(f, tval)
+
+    Soft threshold function
+
+                         ^           /
+                         |          /
+                         |         /
+                         |        /
+                         |       /
+     - - - - - - - - - - - - - - - - - ->
+                  /      |
+                 /       |
+                /        |
+               /         |
+              /          |
+             /           |
+
+    Parameters
+    ----------
+    f : ndarray
+    tval : scalar
+
+    Returns
+    -------
+    thresholded : ndarray
+    '''
+   
+    f = f * (np.abs(f) > tval)
+    f -= tval * (f > tval)
+    f += tval * (f < -tval)
+    return f
+

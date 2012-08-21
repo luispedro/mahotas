@@ -41,3 +41,18 @@ def test_zero_image():
         assert method(A, ignore_zeros=1) == 0
     yield tm, rc
     yield tm, otsu
+
+def test_soft_threhold():
+    from mahotas.thresholding import soft_threshold
+
+    np.random.seed(223)
+    for i in xrange(4):
+        f = np.random.randint(-256,256, size=(128,128,4))
+        fo = f.copy()
+        t = soft_threshold(f, 16)
+
+        assert not np.all(fo == t)
+        assert np.all(t[np.abs(f) < 16] == 0)
+        assert t.max() == f.max()-16
+        assert t.min() == f.min()+16
+        assert np.all( (np.abs(f) <= 16) | (np.abs(f)-16 == np.abs(t)))
