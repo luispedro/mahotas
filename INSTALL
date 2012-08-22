@@ -23,7 +23,7 @@ following should work::
     pip install mahotas
     easy_install mahotas
 
-
+You will need to have numpy installed as well as a C++ compiler.
 
 From source
 -----------
