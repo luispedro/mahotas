@@ -195,22 +195,25 @@ void remove_fake_regmin_max(numpy::aligned_array<bool> regmin, numpy::aligned_ar
                                 (!is_min && f.at(npos) >= val)
                             )) {
                 std::vector<numpy::position> queue;
-                queue.push_back(riter.position());
+                assert(regmin.at(pos));
+                regmin.at(pos) = false;
+                queue.push_back(pos);
                 while (!queue.empty()) {
                     numpy::position p = queue.back();
                     queue.pop_back();
-                    if (regmin.at(p)) {
-                        regmin.at(p) = false;
-                        for (Bc_iter first = Bc_neighbours.begin(), past = Bc_neighbours.end();
-                                    first != past;
-                                    ++first) {
-                            numpy::position npos = p + *first;
-                            if (regmin.validposition(npos)) {
-                                queue.push_back(npos);
-                            }
+                    for (Bc_iter first = Bc_neighbours.begin(), past = Bc_neighbours.end();
+                                first != past;
+                                ++first) {
+                        numpy::position npos = p + *first;
+                        if (regmin.validposition(npos) && regmin.at(npos)) {
+                            regmin.at(npos) = false;
+                            assert(!regmin.at(npos));
+                            queue.push_back(npos);
                         }
                     }
                 }
+                // we are done with this position
+                break;
             }
         }
     }
