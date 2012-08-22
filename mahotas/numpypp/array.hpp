@@ -273,6 +273,7 @@ class array_base {
         index_type size(index_type i) const {
             return this->dim(i);
         }
+        index_type ndim() const { return PyArray_NDIM(array_); }
         index_type ndims() const { return PyArray_NDIM(array_); }
         index_type dim(index_type i) const {
             assert(i < this->ndims());

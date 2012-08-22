@@ -313,7 +313,7 @@ PyObject* py_dilate(PyObject* self, PyObject* args) {
 void close_holes(numpy::aligned_array<bool> ref, numpy::aligned_array<bool> f, numpy::aligned_array<bool> Bc) {
     std::fill_n(f.data(),f. size(), false);
 
-    std::vector<numpy::position> stack;
+    numpy::position_stack stack(ref.ndim());
     const int N = ref.size();
     const std::vector<numpy::position> Bc_neighbours = neighbours(Bc);
     const int N2 = Bc_neighbours.size();
@@ -327,12 +327,12 @@ void close_holes(numpy::aligned_array<bool> ref, numpy::aligned_array<bool> f, n
             pos.position_[d] = 0;
             if (!ref.at(pos) && !f.at(pos)) {
                 f.at(pos) = true;
-                stack.push_back(pos);
+                stack.push(pos);
             }
             pos.position_[d] = ref.dim(d) - 1;
             if (!ref.at(pos) && !f.at(pos)) {
                 f.at(pos) = true;
-                stack.push_back(pos);
+                stack.push(pos);
             }
 
             for (int j = 0; j != ref.ndims() - 1; ++j) {
@@ -346,14 +346,13 @@ void close_holes(numpy::aligned_array<bool> ref, numpy::aligned_array<bool> f, n
         }
     }
     while (!stack.empty()) {
-        numpy::position pos = stack.back();
-        stack.pop_back();
+        numpy::position pos = stack.top_pop();
         std::vector<numpy::position>::const_iterator startc = Bc_neighbours.begin();
         for (int j = 0; j != N2; ++j, ++startc) {
             numpy::position npos = pos + *startc;
             if (ref.validposition(npos) && !ref.at(npos) && !f.at(npos)) {
                 f.at(npos) = true;
-                stack.push_back(npos);
+                stack.push(npos);
             }
         }
     }
