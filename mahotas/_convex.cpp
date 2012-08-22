@@ -1,11 +1,15 @@
-// Copyright (C) 2008-2010  Luis Pedro Coelho <luis@luispedro.org>
+// Copyright (C) 2008-2012  Luis Pedro Coelho <luis@luispedro.org>
 //
 // License: MIT (see COPYING file)
 
 #include <algorithm>
 #include <vector>
 #include "utils.hpp"
-#include <Python.h>
+
+extern "C" {
+    #include <Python.h>
+    #include <numpy/ndarrayobject.h>
+}
 
 namespace {
 struct Point {
@@ -80,20 +84,18 @@ convexhull(PyObject* self, PyObject* args) {
         gil_release nogil;
         h = inPlaceGraham(P,N);
     }
-	PyObject* output = PyList_New(h);
+    npy_intp dims[2];
+    dims[0] = h;
+    dims[1] = 2;
+    PyObject* output = PyArray_SimpleNew(2, dims, NPY_INTP);
 	if (!output) {
 		PyErr_NoMemory();
 		return 0;
 	}
+    npy_intp* oiter = static_cast<npy_intp*>(PyArray_DATA(output));
 	for (unsigned i = 0; i != h; ++i) {
-		PyObject* tup = PyTuple_New(2);
-        if (!tup) {
-            PyErr_NoMemory();
-            return 0;
-        }
-		PyTuple_SetItem(tup,0,PyInt_FromLong(P[i].y));
-		PyTuple_SetItem(tup,1,PyInt_FromLong(P[i].x));
-		PyList_SetItem(output,i,tup);
+        *oiter++ = P[i].y;
+        *oiter++ = P[i].x;
 	}
 	return output;
 }
@@ -109,6 +111,7 @@ PyMethodDef methods[] = {
 extern "C"
 void init_convex()
   {
+    import_array();
     (void)Py_InitModule("_convex", methods);
   }
 

@@ -78,7 +78,7 @@ def fill_polygon(polygon, canvas, color=1):
         which colour to use (default: 1)
     '''
 # algorithm adapted from: http://www.alienryderflex.com/polygon_fill/
-    if not polygon:
+    if not len(polygon):
         return
     min_y = min(y for y,x in polygon)
     max_y = max(y for y,x in polygon)
@@ -112,7 +112,8 @@ def convexhull(bwimg):
 
     Returns
     -------
-    hull : Set of (y,x) coordinates of hull corners
+    hull : ndarray
+        Set of (y,x) coordinates of hull corners
     '''
     Y,X = np.where(bwimg)
     P = list(zip(Y,X))
