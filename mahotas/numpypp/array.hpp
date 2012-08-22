@@ -2,7 +2,7 @@
 #define MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_
 /* Copyright 2008-2012 (C)
  * Luis Pedro Coelho <luis@luispedro.org>
- * License GPL Version 2, or later.
+ * License: MIT
  */
 
 

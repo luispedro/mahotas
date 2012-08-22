@@ -4,7 +4,7 @@ Mahotas Internals
 
 This section is of interest if you are trying to understand how mahotas works
 in order to fix something, extend it (patches are always welcome), or use some
-of its technology in your projects (as long as you abide by the GPL).
+of its technology in your projects.
 
 C++/Python Division
 -------------------
