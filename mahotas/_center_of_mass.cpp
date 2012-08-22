@@ -63,7 +63,7 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
     if (labels_obj != Py_None) {
         if (!PyArray_Check(labels_obj) ||
             !PyArray_ISCARRAY_RO(labels_obj) ||
-            PyArray_TYPE(labels_obj) != NPY_INT32) {
+            !PyArray_EquivTypenums(PyArray_TYPE(labels_obj), NPY_INT32)) {
             PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
             return NULL;
         }
