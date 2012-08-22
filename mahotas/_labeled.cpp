@@ -1,3 +1,6 @@
+// Copyright (C) 2010-2012  Luis Pedro Coelho <luis@luispedro.org>
+//
+// License: MIT (see COPYING file)
 #include <map>
 
 #include "numpypp/array.hpp"
@@ -267,8 +270,7 @@ PyObject* py_labeled_sum(PyObject* self, PyObject* args) {
     SAFE_SWITCH_ON_TYPES_OF(array, true);
 #undef HANDLE
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 PyMethodDef methods[] = {
