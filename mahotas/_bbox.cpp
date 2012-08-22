@@ -1,5 +1,8 @@
+// Copyright (C) 2010-2012  Luis Pedro Coelho <luis@luispedro.org>
+//
+// License: MIT (see COPYING file)
+
 #include <algorithm>
-#include <queue>
 #include <vector>
 #include <cstdio>
 #include <limits>
