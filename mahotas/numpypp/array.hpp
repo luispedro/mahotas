@@ -11,6 +11,7 @@
 #include <cstring>
 #include <ostream>
 #include <iostream>
+#include <vector>
 #include <cassert>
 
 extern "C" {
@@ -41,6 +42,8 @@ struct position {
         :nd_(nd)
         { for (int i = 0; i != nd_; ++i) position_[i]=pos[i]; }
     npy_intp operator [] (unsigned pos) const { return this->position_[pos]; }
+    int ndim() const { return nd_; }
+
     int nd_;
     npy_intp position_[NPY_MAXDIMS];
     bool operator == (const position& other) { return !std::memcmp(this->position_,other.position_,sizeof(this->position_[0])*this->nd_); }
@@ -106,6 +109,35 @@ T& operator << (T& out, const numpy::position& p) {
     out << "]";
     return out;
 }
+
+struct position_stack {
+    // The reason for this structure is very simple:
+    // Using a std::vector<position> would lead to a full position object for
+    // each entry, but typically, most of the NPY_MAXDIMS entries are
+    // meaningless.
+    // Therefore, we want to only store the correct number of dimensions. This
+    // structure manages this.
+    public:
+        position_stack(const int s)
+            :size_(s)
+            { }
+
+        position top_pop() {
+            assert(!empty());
+            position res(&store_[store_.size()-size_], size_);
+            store_.erase(store_.end()-size_, store_.end());
+            return res;
+        }
+        void push(const position& p) {
+            assert(p.ndim() == size_);
+            for (int d = 0; d != size_; ++d) store_.push_back(p[d]);
+        }
+        bool empty() const { return store_.empty(); }
+    private:
+        const int size_;
+        std::vector<npy_intp> store_;
+};
+
 
 
 template <typename BaseType>

@@ -194,13 +194,12 @@ void remove_fake_regmin_max(numpy::aligned_array<bool> regmin, numpy::aligned_ar
                             (   (is_min && f.at(npos) <= val) ||
                                 (!is_min && f.at(npos) >= val)
                             )) {
-                std::vector<numpy::position> queue;
+                numpy::position_stack stack(f.ndims());
                 assert(regmin.at(pos));
                 regmin.at(pos) = false;
-                queue.push_back(pos);
-                while (!queue.empty()) {
-                    numpy::position p = queue.back();
-                    queue.pop_back();
+                stack.push(pos);
+                while (!stack.empty()) {
+                    numpy::position p = stack.top_pop();
                     for (Bc_iter first = Bc_neighbours.begin(), past = Bc_neighbours.end();
                                 first != past;
                                 ++first) {
@@ -208,7 +207,7 @@ void remove_fake_regmin_max(numpy::aligned_array<bool> regmin, numpy::aligned_ar
                         if (regmin.validposition(npos) && regmin.at(npos)) {
                             regmin.at(npos) = false;
                             assert(!regmin.at(npos));
-                            queue.push_back(npos);
+                            stack.push(npos);
                         }
                     }
                 }
