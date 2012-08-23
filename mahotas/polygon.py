@@ -108,7 +108,8 @@ def convexhull(bwimg):
 
     Parameters
     ----------
-    bwimg : input image (interpreted as boolean)
+    bwimg : ndarray
+        input image (interpreted as boolean). Only 2D arrays are supported.
 
     Returns
     -------
@@ -116,6 +117,8 @@ def convexhull(bwimg):
         Set of (y,x) coordinates of hull corners
     '''
     bwimg = np.ascontiguousarray(bwimg, dtype=np.bool_)
+    if bwimg.ndim != 2:
+        raise ValueError('mahotas.polygon.convexhull: Only two-dimensional images supported')
     return _convex.convexhull(bwimg)
 
 def fill_convexhull(bwimg):

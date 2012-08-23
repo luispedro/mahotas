@@ -1,6 +1,7 @@
 import numpy as np
 import mahotas.polygon
 from mahotas.polygon import fill_polygon, fill_convexhull
+from nose.tools import raises
 
 def test_polygon():
     polygon = [(10,10), (10,20), (20,20)]
@@ -61,3 +62,11 @@ def test_fill_line():
             ( 0,10)]
     fill_polygon(poly, canvas)
     assert np.all(canvas[10,1:10])
+
+@raises(ValueError)
+def test_convex_in_3d():
+    canvas = np.zeros((12,8,8))
+    canvas[3,4,2] = 1
+    canvas[5,4,2] = 1
+    canvas[3,6,2] = 1
+    mahotas.polygon.fill_convexhull(canvas)
