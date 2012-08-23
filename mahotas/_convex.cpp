@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <vector>
 #include "utils.hpp"
+#include "numpypp/array.hpp"
 
 extern "C" {
     #include <Python.h>
@@ -13,7 +14,8 @@ extern "C" {
 
 namespace {
 struct Point {
-	long x, y;
+    Point(int y_, int x_):y(y_), x(x_) { }
+	long y, x;
 };
 
 inline
@@ -34,9 +36,9 @@ double isLeft(Point p0, Point p1, Point p2) {
 
 unsigned inPlaceScan(Point* P, unsigned N, bool reverse) {
 	if (reverse) {
-		std::sort(P,P+N,reverse_cmp);
+		std::sort(P, P+N, reverse_cmp);
 	} else {
-		std::sort(P,P+N,forward_cmp);
+		std::sort(P, P+N, forward_cmp);
 	}
 	int h = 1;
 	for (int i = 1; i != int(N); ++i) {
@@ -49,7 +51,10 @@ unsigned inPlaceScan(Point* P, unsigned N, bool reverse) {
 	return h;
 }
 
-unsigned inPlaceGraham(Point* P, unsigned N) {
+unsigned inPlaceGraham(std::vector<Point>& Pv) {
+    const int N = Pv.size();
+    if (N <= 3) return N;
+    Point* P = &Pv[0];
 	int h = inPlaceScan(P,N,false);
 	for (int i = 0; i != h - 1; ++i) {
 		std::swap(P[i],P[i+1]);
@@ -60,29 +65,28 @@ unsigned inPlaceGraham(Point* P, unsigned N) {
 
 PyObject*
 convexhull(PyObject* self, PyObject* args) {
-	PyObject* input;
-	if (!PyArg_ParseTuple(args,"O",&input)) return 0;
-	const Py_ssize_t N = PyList_Size(input);
-    if (N <= 3) {
-        // The python wrapper should have stopped this from happening
-        Py_RETURN_NONE;
-        //    Py_INCREF(input);
-        //    return input;
-    }
-    std::vector<Point> Pv;
-    Pv.resize(N);
-    Point* P = &Pv[0];
-	for (Py_ssize_t i = 0; i != N; ++i) {
-		PyObject* tup = PyList_GetItem(input,i);
-		long y = PyInt_AsLong(PyTuple_GetItem(tup,0));
-		long x = PyInt_AsLong(PyTuple_GetItem(tup,1));
-		P[i].y=y;
-		P[i].x=x;
-	}
+	PyArrayObject* array;
+	if (!PyArg_ParseTuple(args,"O", &array) ||
+           !PyArray_ISCARRAY(array) ||
+           !PyArray_EquivTypenums(PyArray_TYPE(array), NPY_BOOL)) return 0;
+
+    holdref r(array);
 	unsigned h;
-    { // Release GIL
+    std::vector<Point> Pv;
+    try { // Release GIL
         gil_release nogil;
-        h = inPlaceGraham(P,N);
+        numpy::aligned_array<bool> barray(array);
+        const int N0 = barray.dim(0);
+        const int N1 = barray.dim(1);
+        for (int y = 0; y != N0; ++y) {
+            for (int x = 0; x != N1; ++x) {
+                if (barray.at(y,x)) Pv.push_back(Point(y,x));
+            }
+        }
+        h = inPlaceGraham(Pv);
+    } catch (const std::bad_alloc&) {
+        PyErr_NoMemory();
+        return NULL;
     }
     npy_intp dims[2];
     dims[0] = h;
@@ -94,8 +98,8 @@ convexhull(PyObject* self, PyObject* args) {
 	}
     npy_intp* oiter = static_cast<npy_intp*>(PyArray_DATA(output));
 	for (unsigned i = 0; i != h; ++i) {
-        *oiter++ = P[i].y;
-        *oiter++ = P[i].x;
+        *oiter++ = Pv[i].y;
+        *oiter++ = Pv[i].x;
 	}
 	return output;
 }

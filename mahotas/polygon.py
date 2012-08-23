@@ -115,11 +115,8 @@ def convexhull(bwimg):
     hull : ndarray
         Set of (y,x) coordinates of hull corners
     '''
-    Y,X = np.where(bwimg)
-    P = list(zip(Y,X))
-    if len(P) <= 3:
-        return P
-    return _convex.convexhull(P)
+    bwimg = np.ascontiguousarray(bwimg, dtype=np.bool_)
+    return _convex.convexhull(bwimg)
 
 def fill_convexhull(bwimg):
     '''
