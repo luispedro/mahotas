@@ -209,7 +209,6 @@ PyObject* py_haar(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
-    Py_INCREF(array);
 
 #define HANDLE(type) \
         haar<type>(numpy::aligned_array<type>(array));
@@ -217,6 +216,7 @@ PyObject* py_haar(PyObject* self, PyObject* args) {
     SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
 #undef HANDLE
 
+    Py_INCREF(array);
     return PyArray_Return(array);
 }
 
@@ -272,7 +272,6 @@ PyObject* py_wavelet(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
-    Py_INCREF(array);
     numpy::aligned_array<float> acoeffs(coeffs);
 
 #define HANDLE(type) \
@@ -281,6 +280,7 @@ PyObject* py_wavelet(PyObject* self, PyObject* args) {
     SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
 #undef HANDLE
 
+    Py_INCREF(array);
     return PyArray_Return(array);
 }
 
@@ -295,7 +295,6 @@ PyObject* py_iwavelet(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
-    Py_INCREF(array);
     numpy::aligned_array<float> acoeffs(coeffs);
 
 #define HANDLE(type) \
@@ -304,6 +303,7 @@ PyObject* py_iwavelet(PyObject* self, PyObject* args) {
     SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
 #undef HANDLE
 
+    Py_INCREF(array);
     return PyArray_Return(array);
 }
 
@@ -337,13 +337,13 @@ PyObject* py_daubechies(PyObject* self, PyObject* args) {
     int ncoeffs = 2*(code + 1);
     if (!coeffs) return NULL;
 
-    Py_INCREF(array);
 #define HANDLE(type) \
         wavelet<type>(numpy::aligned_array<type>(array), coeffs, ncoeffs);
 
     SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
 #undef HANDLE
 
+    Py_INCREF(array);
     return PyArray_Return(array);
 }
 
@@ -405,7 +405,6 @@ PyObject* py_ihaar(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
-    Py_INCREF(array);
 
 #define HANDLE(type) \
         ihaar<type>(numpy::aligned_array<type>(array));
@@ -413,6 +412,7 @@ PyObject* py_ihaar(PyObject* self, PyObject* args) {
     SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
 #undef HANDLE
 
+    Py_INCREF(array);
     return PyArray_Return(array);
 }
 
