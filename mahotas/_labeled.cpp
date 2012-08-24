@@ -157,10 +157,7 @@ PyObject* py_label(PyObject* self, PyObject* args) {
         return NULL;
     }
     int n = label(numpy::aligned_array<int>(array), numpy::aligned_array<int>(filter));
-    PyObject* no = PyLong_FromLong(n);
-
-    Py_INCREF(no);
-    return no;
+    return PyLong_FromLong(n);
 }
 
 PyObject* py_borders(PyObject* self, PyObject* args) {
@@ -179,8 +176,7 @@ PyObject* py_borders(PyObject* self, PyObject* args) {
             return NULL;
         }
     }
-    Py_INCREF(output);
-
+    holdref ro(output);
 
 #define HANDLE(type) \
     borders<type>( \
@@ -190,9 +186,9 @@ PyObject* py_borders(PyObject* self, PyObject* args) {
     SAFE_SWITCH_ON_TYPES_OF(array, false)
 #undef HANDLE
     if (PyErr_Occurred()) {
-        Py_DECREF(output);
         return NULL;
     }
+    Py_INCREF(output);
     return PyArray_Return(output);
 }
 
@@ -236,8 +232,7 @@ PyObject* py_border(PyObject* self, PyObject* args) {
     }
 
     Py_DECREF(output);
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 PyObject* py_labeled_sum(PyObject* self, PyObject* args) {
