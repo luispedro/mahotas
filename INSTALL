@@ -35,3 +35,11 @@ You can use the simple::
 
 You need the numpy headers and a C++ compiler.
 
+Dependencies
+------------
+
+numpy
+
+If you are running tests, ``scipy`` is sometimes used (as a comparison). It is
+otherwise not used in mahotas (since version 0.7).
+
