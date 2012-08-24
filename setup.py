@@ -24,18 +24,20 @@ from __future__ import division
 try:
     import setuptools
 except:
-    print '''
+    print('''
 setuptools not found.
 
-On linux, the package is often called python-setuptools'''
+On linux, the package is often called python-setuptools''')
     from sys import exit
     exit(1)
 import os
 import numpy.distutils.core as numpyutils
 
 
-execfile('mahotas/mahotas_version.py')
-long_description = file('docs/source/readme.rst').read()
+exec(compile(open('mahotas/mahotas_version.py').read(),
+             'mahotas/mahotas_version.py', 'exec'))
+
+long_description = open('docs/source/readme.rst').read()
 
 undef_macros=[]
 if os.environ.get('DEBUG'):
@@ -59,7 +61,7 @@ extensions = {
     'mahotas.features._zernike': ['mahotas/features/_zernike.cpp'],
 }
 
-ext_modules = [numpyutils.Extension(key, sources=sources, undef_macros=undef_macros) for key,sources in extensions.iteritems()]
+ext_modules = [numpyutils.Extension(key, sources=sources, undef_macros=undef_macros) for key,sources in extensions.items()]
 
 packages = setuptools.find_packages()
 

@@ -109,10 +109,6 @@ PyMethodDef methods[] = {
 };
 
 } // namespace
-extern "C"
-void init_texture()
-  {
-    import_array();
-    (void)Py_InitModule("_texture", methods);
-  }
+
+DECLARE_MODULE(_texture)
 

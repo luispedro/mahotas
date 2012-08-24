@@ -5,7 +5,7 @@
 
 from __future__ import division
 
-import _bbox
+from . import _bbox
 import numpy as np
 
 def bbox(img):

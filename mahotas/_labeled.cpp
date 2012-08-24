@@ -157,7 +157,8 @@ PyObject* py_label(PyObject* self, PyObject* args) {
         return NULL;
     }
     int n = label(numpy::aligned_array<int>(array), numpy::aligned_array<int>(filter));
-    PyObject* no = PyInt_FromLong(n);
+    PyObject* no = PyLong_FromLong(n);
+
     Py_INCREF(no);
     return no;
 }
@@ -282,10 +283,4 @@ PyMethodDef methods[] = {
 };
 
 } // namespace
-extern "C"
-void init_labeled()
-  {
-    import_array();
-    (void)Py_InitModule("_labeled", methods);
-  }
-
+DECLARE_MODULE(_labeled)

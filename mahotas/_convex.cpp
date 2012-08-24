@@ -112,10 +112,4 @@ PyMethodDef methods[] = {
   {NULL, NULL,0,NULL},
 };
 
-extern "C"
-void init_convex()
-  {
-    import_array();
-    (void)Py_InitModule("_convex", methods);
-  }
-
+DECLARE_MODULE(_convex)

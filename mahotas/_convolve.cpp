@@ -532,10 +532,6 @@ PyMethodDef methods[] = {
 };
 
 } // namespace
-extern "C"
-void init_convolve()
-  {
-    import_array();
-    (void)Py_InitModule("_convolve", methods);
-  }
+
+DECLARE_MODULE(_convolve)
 

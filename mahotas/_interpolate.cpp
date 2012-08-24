@@ -428,9 +428,6 @@ PyMethodDef methods[] = {
 };
 
 } // namespace
-extern "C"
-void init_interpolate()
-  {
-    import_array();
-    (void)Py_InitModule("_interpolate", methods);
-  }
+
+DECLARE_MODULE(_interpolate)
+

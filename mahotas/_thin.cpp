@@ -141,10 +141,4 @@ PyMethodDef methods[] = {
 };
 
 } // namespace
-extern "C"
-void init_thin()
-  {
-    import_array();
-    (void)Py_InitModule("_thin", methods);
-  }
-
+DECLARE_MODULE(_thin)

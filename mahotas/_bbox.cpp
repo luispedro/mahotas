@@ -108,10 +108,5 @@ PyMethodDef methods[] = {
 };
 
 } // namespace
-extern "C"
-void init_bbox()
-  {
-    import_array();
-    (void)Py_InitModule("_bbox", methods);
-  }
+DECLARE_MODULE(_bbox)
 

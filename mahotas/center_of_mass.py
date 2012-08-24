@@ -1,11 +1,11 @@
-# Copyright (C) 2008-2010, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # License: MIT (see COPYING file)
 
 from __future__ import division
 import numpy as np
-import _center_of_mass
+from . import _center_of_mass
 
 def center_of_mass(img, labels=None):
     '''

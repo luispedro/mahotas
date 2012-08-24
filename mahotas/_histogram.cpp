@@ -1,7 +1,9 @@
-// Copyright (C) 2008 Luis Pedro Coelho <luis@luispedro.org>
+// Copyright (C) 2008-2012 Luis Pedro Coelho <luis@luispedro.org>
 // Carnegie Mellon University
 // 
 // License: MIT (see COPYING file)
+
+#include "utils.hpp"
 
 extern "C" {
     #include <Python.h>
@@ -56,17 +58,13 @@ PyObject* py_histogram(PyObject* self, PyObject* args) {
 }
     
 
-}
 
 PyMethodDef methods[] = {
   {"histogram", (PyCFunction)py_histogram, METH_VARARGS, "Internal function. DO NOT CALL DIRECTLY!"},
   {NULL, NULL,0,NULL},
 };
+}
 
-extern "C"
-void init_histogram()
-  {
-    import_array();
-    (void)Py_InitModule3("_histogram", methods, "INTERNAL MODULE. DO NOT CALL DIRECTLY!");
-  }
+DECLARE_MODULE(_histogram)
+
 

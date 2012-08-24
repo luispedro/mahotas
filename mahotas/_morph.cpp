@@ -669,10 +669,5 @@ PyMethodDef methods[] = {
 };
 
 } // namespace
-extern "C"
-void init_morph()
-  {
-    import_array();
-    (void)Py_InitModule("_morph", methods);
-  }
 
+DECLARE_MODULE(_morph)

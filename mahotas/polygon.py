@@ -1,11 +1,11 @@
-# Copyright (C) 2010-2011, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # License: MIT (see COPYING file)
 
 from __future__ import division
 import numpy as np
-import _convex
+from . import _convex
 
 __all__ = [
     'line',

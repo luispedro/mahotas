@@ -1,4 +1,4 @@
-// Copyright (C) 2010 Luis Pedro Coelho <luis@luispedro.org>
+// Copyright (C) 2010-2012 Luis Pedro Coelho <luis@luispedro.org>
 //
 // License: MIT (see COPYING file)
 
@@ -9,6 +9,7 @@
 
 #include "numpypp/array.hpp"
 #include "numpypp/dispatch.hpp"
+#include "utils.hpp"
 
 extern "C" {
     #include <Python.h>
@@ -145,9 +146,5 @@ PyMethodDef methods[] = {
 
 } // namespace
 
-extern "C"
-void init_distance() {
-    import_array();
-    (void)Py_InitModule3("_distance", methods, "INTERNAL MODULE. DO NOT CALL DIRECTLY!");
-}
+DECLARE_MODULE(_distance)
 

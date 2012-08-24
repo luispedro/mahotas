@@ -53,10 +53,6 @@ PyMethodDef methods[] = {
 };
 
 } // namespace
-extern "C"
-void init_lbp()
-  {
-    import_array();
-    (void)Py_InitModule("_lbp", methods);
-  }
+
+DECLARE_MODULE(_lbp)
 

@@ -89,10 +89,5 @@ PyMethodDef methods[] = {
 };
 
 } // namespace
-extern "C"
-void init_zernike()
-  {
-    import_array();
-    (void)Py_InitModule("_zernike", methods);
-  }
+DECLARE_MODULE(_zernike)
 

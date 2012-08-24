@@ -3,7 +3,7 @@
 #
 # License: MIT (see COPYING file)
 
-from __future__ import division
+
 import numpy as np
 from . import _convolve
 from . import morph
@@ -201,13 +201,13 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None, output=None)
         generic convolution
     '''
 
-    from sys import maxint
+    from sys import maxsize
     weights = np.asanyarray(weights)
     weights = weights.squeeze()
     if weights.ndim != 1:
         raise ValueError('mahotas.convolve1d: only 1-D sequences allowed')
     index = [None] * f.ndim
-    index[axis] = slice(0, maxint)
+    index[axis] = slice(0, None)
     weights = weights[tuple(index)]
     return convolve(f, weights, mode=mode, cval=cval, output=output)
 

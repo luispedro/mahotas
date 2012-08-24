@@ -6,6 +6,7 @@ Version 0.9+
 	* Memory usage improvements in regmin/regmax/close_holes (first reported
 	as issue #9 by thanasi)
 	* Have polygon.convexhull return an ndarray (instead of a list)
+	* Python 3 support
 
 Version 0.9 2012-07-16 by luispedro
 	* Auto-convert integer to double on gaussian_filter (previously, integer

@@ -908,10 +908,4 @@ PyMethodDef methods[] = {
 };
 
 } // namespace
-extern "C"
-void init_surf()
-  {
-    import_array();
-    (void)Py_InitModule("_surf", methods);
-  }
-
+DECLARE_MODULE(_surf)

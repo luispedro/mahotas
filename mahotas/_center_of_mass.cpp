@@ -130,10 +130,5 @@ PyMethodDef methods[] = {
 };
 
 } // namespace
-extern "C"
-void init_center_of_mass()
-  {
-    import_array();
-    (void)Py_InitModule("_center_of_mass", methods);
-  }
 
+DECLARE_MODULE(_center_of_mass)
