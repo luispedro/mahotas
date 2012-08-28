@@ -345,6 +345,7 @@ def _wavelet_center_compute(oshape, border=0, dtype=None, cval=0.0):
     for c in xrange(1, 16+border):
         nshape = 2**(np.floor(np.log2(oshape))+c)
         delta = nshape - oshape
+        delta //= 2
         if np.min(delta) <= border:
             continue
         position = []

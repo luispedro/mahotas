@@ -186,3 +186,15 @@ def test_center_decenter():
 
         assert fd.shape == f.shape
         assert np.all(fd == f)
+
+
+def test_center_border():
+    from mahotas import wavelet_center
+    np.random.seed(12)
+    for border in (16, 24):
+        f = np.random.rand(51,100)
+        fc = wavelet_center(f, border=border)
+        assert np.all(fc[:border] == 0)
+        assert np.all(fc[-border:] == 0)
+        assert np.all(fc.T[:border] == 0)
+        assert np.all(fc.T[-border:] == 0)
