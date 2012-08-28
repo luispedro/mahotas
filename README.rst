@@ -20,6 +20,45 @@ Notable algorithms:
  - Sobel edge detection.
  - spline interpolation
 
+Examples
+--------
+
+Here is a very simple example of using ``mahotas.distance`` (which computes a
+distance map)::
+
+    import pylab as p
+    import numpy as np
+    import mahotas
+
+    f = np.ones((256,256), bool)
+    f[200:,240:] = False
+    f[128:144,32:48] = False
+    # f is basically True with the exception of two islands: one in the lower-right
+    # corner, another, middle-left
+
+    dmap = mahotas.distance(f)
+    p.imshow(dmap)
+    p.show()
+
+(This is under ``mahotas/demos/distance.py``).
+
+How to invoke thresholding functions::
+
+    import mahotas
+    import numpy as np
+    from pylab import imshow, gray, show, subplot
+    from os import path
+
+    photo = mahotas.imread('luispedro.org', as_grey=True)
+    photo = photo.astype(np.uint8)
+
+    T_otsu = mahotas.otsu(photo)
+    thresholded_otsu = (photo > T_otsu)
+
+    T_rc = mahotas.rc(photo)
+    thresholded_rc = (photo > T_rc)
+
+
 Install
 -------
 
