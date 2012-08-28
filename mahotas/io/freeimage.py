@@ -700,6 +700,6 @@ def imsave(filename, img):
 
 
 if sys.version_info[0] > 2:
-    _bytestr = lambda x: x.encode('utf-8')
+    _bytestr = lambda x: x.encode('cp1252')
 else:
     _bytestr = str
