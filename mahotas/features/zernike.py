@@ -8,7 +8,7 @@ from __future__ import division
 import numpy as np
 
 from ..center_of_mass import center_of_mass
-import _zernike
+from . import _zernike
 
 __all__ = ['zernike', 'zernike_moments']
 
