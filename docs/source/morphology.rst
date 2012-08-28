@@ -40,6 +40,9 @@ can define the erosion as dilation of the negative or vice-versa).
 
     mahotas.morph.dilate(eye)
 
+
+Dilation is, intuitively, making positive areas "fatter":
+
 .. plot::
     :context:
 
@@ -49,6 +52,8 @@ can define the erosion as dilation of the negative or vice-versa).
 ::
 
     mahotas.morph.erode(eye)
+
+Erosion, by contrast, thins them out:
 
 .. plot::
     :context:
