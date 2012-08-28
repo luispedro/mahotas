@@ -1,3 +1,4 @@
+from __future__ import print_function
 import mahotas
 from pylab import gray, imshow, show
 import numpy as np

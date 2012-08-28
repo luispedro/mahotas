@@ -1,3 +1,4 @@
+from __future__ import print_function
 import mahotas.polygon
 from pylab import imshow, show
 import numpy as np
