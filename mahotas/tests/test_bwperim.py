@@ -13,8 +13,8 @@ def _neighbours(bwimg, y, x, n):
 def _slow_bwperim(bwimg, n=4):
     r,c = bwimg.shape
     res = np.zeros_like(bwimg)
-    for y in xrange(r):
-        for x in xrange(c):
+    for y in range(r):
+        for x in range(c):
             res[y,x] = bwimg[y,x] and np.any(~_neighbours(bwimg,y,x,n))
     return res
 

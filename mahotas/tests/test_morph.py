@@ -47,15 +47,15 @@ def slow_reg(A, agg):
 
 
     res = np.zeros(A.shape, bool)
-    for i in xrange(A.shape[0]):
-        for j in xrange(A.shape[0]):
+    for i in range(A.shape[0]):
+        for j in range(A.shape[0]):
             res[i,j] = (A[i,j] == agg(get(i,j)))
     return res
 
 def test_locmin_max():
     from mahotas.morph import locmax, locmin
     np.random.seed(123)
-    for i in xrange(4):
+    for i in range(4):
         A = np.random.random_sample((64,64))
         A *= 255
         A = A.astype(np.uint8)
@@ -69,7 +69,7 @@ def test_locmin_max():
 def test_regmax_min():
     from mahotas.morph import locmax, locmin, regmax, regmin
     np.random.seed(123)
-    for i in xrange(4):
+    for i in range(4):
         A = np.random.random_sample((64,64))
         A *= 255
         A = A.astype(np.uint8)

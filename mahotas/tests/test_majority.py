@@ -7,11 +7,11 @@ def slow_majority(img, N):
     img = (img > 0)
     r,c = img.shape
     output = np.zeros_like(img)
-    for y in xrange(r-N):
-        for x in xrange(c-N):
+    for y in range(r-N):
+        for x in range(c-N):
             count = 0
-            for dy in xrange(N):
-                for dx in xrange(N):
+            for dy in range(N):
+                for dx in range(N):
                     count += img[y+dy, x+dx]
             if count >= (N*N)//2:
                 output[y+dy//2,x+dx//2] = 1

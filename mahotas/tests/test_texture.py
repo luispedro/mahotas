@@ -40,8 +40,8 @@ def test__cooccurence():
 
 def brute_force(f, dy, dx):
     res = np.zeros((f.max()+1, f.max() + 1), np.double)
-    for y in xrange(f.shape[0]):
-        for x in xrange(f.shape[1]):
+    for y in range(f.shape[0]):
+        for x in range(f.shape[1]):
             if 0 <= y + dy < f.shape[0] and \
                 0 <= x + dx < f.shape[1]:
                 res[f[y,x], f[y +dy,x+dx]] += 1
@@ -49,9 +49,9 @@ def brute_force(f, dy, dx):
 
 def brute_force3(f, dy, dx, dz):
     res = np.zeros((f.max()+1, f.max() + 1), np.double)
-    for y in xrange(f.shape[0]):
-        for x in xrange(f.shape[1]):
-            for z in xrange(f.shape[2]):
+    for y in range(f.shape[0]):
+        for x in range(f.shape[1]):
+            for z in range(f.shape[2]):
                 if 0 <= y + dy < f.shape[0] and \
                     0 <= x + dx < f.shape[1] and \
                     0 <= z + dz < f.shape[2]:

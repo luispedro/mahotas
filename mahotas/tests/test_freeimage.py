@@ -72,7 +72,7 @@ _testtif = '/tmp/mahotas_test.tif'
 def test_multi():
     f = np.zeros((16,16), np.uint8)
     fs = []
-    for t in xrange(8):
+    for t in range(8):
       f[:t,:t] = t
       fs.append(f.copy())
     freeimage.write_multipage(fs, _testtif)

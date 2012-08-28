@@ -21,13 +21,13 @@ def test_fullhistogram_random():
     A = np.random.rand(12,3,44,33)*1000
     A = A.astype(np.uint16)
     hist = fullhistogram(A)
-    for i in xrange(len(hist)):
+    for i in range(len(hist)):
         assert hist[i] == (A == i).sum()
     assert len(hist.shape) == 1
 
     A = A[::2,:,2::3,1:-2:2]
     hist = fullhistogram(A)
-    for i in xrange(len(hist)):
+    for i in range(len(hist)):
         assert hist[i] == (A == i).sum()
     assert hist.sum() == A.size
     assert len(hist.shape) == 1

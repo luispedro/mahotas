@@ -39,9 +39,9 @@ def test_get_output_explicit_dtype():
 
 def test_get_axis_good():
     f = np.zeros((3,4,5,3,2,2,5,3,2,4,1))
-    for i in xrange(len(f.shape)):
+    for i in range(len(f.shape)):
         assert i == _get_axis(f, i, 'test')
-    for i in xrange(len(f.shape)):
+    for i in range(len(f.shape)):
         assert len(f.shape)-1-i == _get_axis(f, -1-i, 'test')
 
 def test_get_axis_off():

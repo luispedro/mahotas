@@ -37,8 +37,8 @@ def test_borders():
     _included(mahotas.labeled.border(labeled,2,3), borders)
 
     union = np.zeros_like(borders)
-    for i in xrange(4):
-        for j in xrange(4):
+    for i in range(4):
+        for j in range(4):
             if i != j:
                 union |= mahotas.labeled.border(labeled, i, j)
 
@@ -48,12 +48,12 @@ def test_borders():
 def slow_labeled_sum(array, labeled):
     return np.array([
             np.sum(array * (labeled == i))
-            for i in xrange(labeled.max()+1)
+            for i in range(labeled.max()+1)
         ])
 
 def test_sum_labeled():
     np.random.seed(334)
-    for i in xrange(16):
+    for i in range(16):
         f = np.random.random_sample((64,128))
         labeled = np.zeros(f.shape, dtype=np.intc)
         labeled += 8 * np.random.random_sample(labeled.shape)
@@ -64,13 +64,13 @@ def test_sum_labeled():
 def slow_labeled_size(labeled):
     return np.array([
             np.sum(labeled == i)
-            for i in xrange(labeled.max()+1)
+            for i in range(labeled.max()+1)
         ])
 
 
 def test_size_labeled():
     np.random.seed(334)
-    for i in xrange(16):
+    for i in range(16):
         labeled = np.zeros((64,125), dtype=np.intc)
         labeled += 8 * np.random.random_sample(labeled.shape)
         fast = mahotas.labeled.labeled_size(labeled)
@@ -79,7 +79,7 @@ def test_size_labeled():
 
 def test_remove_bordering():
     np.random.seed(343)
-    for i in xrange(4):
+    for i in range(4):
         labeled,_ = mahotas.label(np.random.random_sample((128,64)) > .7)
         removed = mahotas.labeled.remove_bordering(labeled)
         assert np.all(removed[0] == 0)

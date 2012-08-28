@@ -4,8 +4,8 @@ import numpy as np
 
 def slow_hitmiss(A, Bc):
     res = np.zeros_like(A)
-    for y in xrange(1,A.shape[0]-1):
-        for x in xrange(1,A.shape[1]-1):
+    for y in range(1,A.shape[0]-1):
+        for x in range(1,A.shape[1]-1):
             value = 1
             for dy in (-1,0,1):
                 for dx in (-1,0,1):
@@ -35,7 +35,7 @@ def test_hitmiss():
 
 def test_hitmiss_against_slow():
     np.random.seed(222)
-    for i in xrange(4):
+    for i in range(4):
         A = np.random.rand(100,100)
         A = (A > .3)
         Bc = np.array([

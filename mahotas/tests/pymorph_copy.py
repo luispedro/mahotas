@@ -30,7 +30,7 @@ def dilate(f, B):
     x,v = mat2set(B)
     mh,mw = max(abs(x)[:,0]),max(abs(x)[:,1])
     y = (ones((h+2*mh,w+2*mw),int32) * limits(f)[0]).astype(f.dtype)
-    for i in xrange(x.shape[0]):
+    for i in range(x.shape[0]):
         if v[i] > -2147483647:
             y[mh+x[i,0]:mh+x[i,0]+h, mw+x[i,1]:mw+x[i,1]+w] = maximum(
                 y[mh+x[i,0]:mh+x[i,0]+h, mw+x[i,1]:mw+x[i,1]+w], add4dilate(f,v[i]))

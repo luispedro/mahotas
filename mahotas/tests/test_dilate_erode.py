@@ -6,7 +6,7 @@ def test_grey_erode():
     from mahotas.tests.pymorph_copy import erode as slow_erode
     from mahotas.tests.pymorph_copy import dilate as slow_dilate
     np.random.seed(334)
-    for i in xrange(8):
+    for i in range(8):
         f = np.random.random_sample((128,128))
         f *= 255
         f = f.astype(np.uint8)
@@ -31,10 +31,10 @@ def test_dilate_erode():
         [0, 1, 0]], bool)
     A[32,32] = True
     origs = []
-    for i in xrange(12):
+    for i in range(12):
         origs.append(A.copy())
         A = mahotas.dilate(A, Bc)
-    for i in xrange(12):
+    for i in range(12):
         A = mahotas.erode(A, Bc)
         assert np.all(A == origs[-i-1])
 
@@ -67,12 +67,12 @@ def test_cerode():
 
 def test_erode_slice():
     np.random.seed(30)
-    for i in xrange(16):
+    for i in range(16):
         f = (np.random.random_sample((256,256))*255).astype(np.uint8)
         assert np.all(mahotas.erode(f[:3,:3]) == mahotas.erode(f[:3,:3].copy()))
 
 def test_dilate_slice():
     np.random.seed(30)
-    for i in xrange(16):
+    for i in range(16):
         f = (np.random.random_sample((256,256))*255).astype(np.uint8)
         assert np.all(mahotas.dilate(f[:3,:3]) == mahotas.dilate(f[:3,:3].copy()))

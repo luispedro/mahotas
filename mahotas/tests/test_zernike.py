@@ -17,7 +17,7 @@ def _slow_znl(Y,X,P,n,l):
     y,x = Y[0],X[0]
     for x,y,p in zip(X,Y,P):
         Vnl = 0.
-        for m in xrange( int( (n-l)//2 ) + 1 ):
+        for m in range( int( (n-l)//2 ) + 1 ):
             Vnl += (-1.)**m * _factorial(n-m) /  \
                 ( _factorial(m) * _factorial((n - 2*m + l) // 2) * _factorial((n - 2*m - l) // 2) ) * \
                 ( sqrt(x*x + y*y)**(n - 2*m) * _polar(1.0, l*atan2(y,x)) )
@@ -43,8 +43,8 @@ def _slow_zernike(img, radius, D, cof=None):
     Xn = Xn[k]
     frac_center = frac_center.ravel()
 
-    for n in xrange(D+1):
-        for l in xrange(n+1):
+    for n in range(D+1):
+        for l in range(n+1):
             if (n-l)%2 == 0:
                 z = _slow_znl(Yn, Xn, frac_center, float(n), float(l))
                 zvalues.append(abs(z))

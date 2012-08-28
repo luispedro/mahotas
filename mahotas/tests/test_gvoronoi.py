@@ -9,9 +9,9 @@ def scipy_gvoronoi(labeled):
 
 def test_compare_w_scipy():
     np.random.seed(2322)
-    for i in xrange(8):
+    for i in range(8):
         labeled = np.zeros((128,128))
-        for p in xrange(16):
+        for p in range(16):
             y = np.random.randint(128)
             x = np.random.randint(128)
             labeled[y,x] = p+1

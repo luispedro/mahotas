@@ -23,7 +23,7 @@ def test_sum_rect():
     fi = surf.integral(f.copy()) 
 
     np.random.seed(22)
-    for i in xrange(100):
+    for i in range(100):
         y0 = np.random.randint(1,780)
         y1 = np.random.randint(y0+1,799)
         x0 = np.random.randint(1,150)

@@ -10,7 +10,7 @@ def test_template_match():
 
     assert m[10,10] == 16
     # I had tried testing over the whole image, but that took too long.
-    for i in xrange(100):
+    for i in range(100):
         y = np.random.randint(m.shape[0]-4)
         x = np.random.randint(m.shape[1]-4)
         assert np.allclose(m[y+2,x+2], np.sum( (A[y:y+4, x:x+4] - t) ** 2))

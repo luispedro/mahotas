@@ -46,7 +46,7 @@ def test_soft_threhold():
     from mahotas.thresholding import soft_threshold
 
     np.random.seed(223)
-    for i in xrange(4):
+    for i in range(4):
         f = np.random.randint(-256,256, size=(128,128,4))
         fo = f.copy()
         t = soft_threshold(f, 16)
