@@ -1,4 +1,4 @@
-Version 0.9+
+Version 0.9.1 2012-08-28 by luispedro
 	* Haar wavelets (forward and inverse transform)
 	* Daubechies wavelets (forward and inverse transform)
 	* Corner case fix in Otsu thresholding

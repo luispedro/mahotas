@@ -23,6 +23,22 @@ Notable algorithms:
 Examples
 --------
 
+This is a simple example of loading a file (called `test.jpeg`) and calling
+`watershed` using above threshold regions as a seed (we use Otsu to define
+threshold).
+
+::
+
+    import numpy as np
+    from scipy import ndimage
+    import mahotas
+    import pylab
+
+    img = mahotas.imread('test.jpeg')
+    T_otsu = mahotas.thresholding.otsu(img)
+    seeds,_ = ndimage.label(img > T_otsu)
+    labeled = mahotas.cwatershed(img.max() - img, seeds)
+
 Here is a very simple example of using ``mahotas.distance`` (which computes a
 distance map)::
 
@@ -90,6 +106,19 @@ better venue and generates a public discussion log for others in the future.
 
 Recent Changes
 --------------
+
+0.9.1 (August 28 2012)
+~~~~~~~~~~~~~~~~~~~~~~
+
+- Python 3 support (you need to use ``2to3``)
+- Haar wavelets (forward and inverse transform)
+- Daubechies wavelets (forward and inverse transform)
+- Corner case fix in Otsu thresholding
+- Add soft_threshold function
+- Have polygon.convexhull return an ndarray (instead of a list)
+- Memory usage improvements in regmin/regmax/close_holes (first reported
+  as issue #9 by thanasi)
+
 
 0.9 (July 16 2012)
 ~~~~~~~~~~~~~~~~~~

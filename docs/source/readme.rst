@@ -41,13 +41,27 @@ threshold).
 
 Recent Changes
 --------------
+
+
+0.9.1 (August 28 2012)
+~~~~~~~~~~~~~~~~~~~~~~
+
+- Python 3 support (you need to use ``2to3``)
+- Haar wavelets (forward and inverse transform)
+- Daubechies wavelets (forward and inverse transform)
+- Corner case fix in Otsu thresholding
+- Add soft_threshold function
+- Have polygon.convexhull return an ndarray (instead of a list)
+- Memory usage improvements in regmin/regmax/close_holes (first reported
+  as issue #9 by thanasi)
+
 0.9 (July 16 2012)
 ~~~~~~~~~~~~~~~~~~
 - Auto-convert integer to double on gaussian_filter (previously, integer
-values would result in zero-valued outputs).
+  values would result in zero-valued outputs).
 - Check for integer types in (reg|loc)(max|min)
 - Use name `out` instead of `output` for output arguments. This matches
-Numpy better
+  Numpy better
 - Switched to MIT License
 
 0.8.1 (June 6 2012)
