@@ -98,7 +98,7 @@ class _ctypes_wrapper(object):
 # Albert's ctypes pattern
 def _register_api(lib, api):
     nlib = _ctypes_wrapper()
-    for f, (restype, argtypes) in api.iteritems():
+    for f, (restype, argtypes) in api.items():
         try:
             func = getattr(lib, f)
             func.restype = restype
@@ -116,7 +116,7 @@ if libname:
 else:
     _FI = None
     _lib_dirs = os.environ.get('LD_LIBRARY_PATH','').split(':')
-    _lib_dirs = filter(None, _lib_dirs)
+    _lib_dirs = [_f for _f in _lib_dirs if _f]
     _lib_dirs.extend([
         os.path.dirname(__file__),
         '/lib',
@@ -388,13 +388,13 @@ def read_multipage(filename, flags=0):
     (nchannels, width, height) for RGB or RGBA images.
 
     """
-    ftype = _FI.FreeImage_GetFileType(filename, 0)
+    ftype = _FI.FreeImage_GetFileType(_bytestr(filename), 0)
     if ftype == -1:
         raise ValueError('mahotas.freeimage: cannot determine type of file %s'%filename)
     create_new = False
     read_only = True
     keep_cache_in_memory = True
-    multibitmap = _FI.FreeImage_OpenMultiBitmap(ftype, filename, create_new,
+    multibitmap = _FI.FreeImage_OpenMultiBitmap(ftype, _bytestr(filename), create_new,
                                                 read_only, keep_cache_in_memory,
                                                 flags)
     if not multibitmap:
@@ -414,10 +414,10 @@ def read_multipage(filename, flags=0):
 
 def _read_bitmap(filename, flags):
     """Load a file to a FreeImage bitmap pointer"""
-    ftype = _FI.FreeImage_GetFileType(str(filename), 0)
+    ftype = _FI.FreeImage_GetFileType(_bytestr(filename), 0)
     if ftype == -1:
         raise ValueError('mahotas.freeimage: cannot determine type of file %s'%filename)
-    bitmap = _FI.FreeImage_Load(ftype, filename, flags)
+    bitmap = _FI.FreeImage_Load(ftype, _bytestr(filename), flags)
     if not bitmap:
         raise ValueError('mahotas.freeimage: could not load file %s'%filename)
     return bitmap
@@ -486,7 +486,7 @@ def string_tag(bitmap, key, model=METADATA_MODELS.FIMD_EXIF_MAIN):
     """Retrieve the value of a metadata tag with the given string key as a
     string."""
     tag = ctypes.c_int()
-    if not _FI.FreeImage_GetMetadata(model, bitmap, str(key),
+    if not _FI.FreeImage_GetMetadata(model, bitmap, _bytestr(key),
                                      ctypes.byref(tag)):
         return
     char_ptr = ctypes.c_char * _FI.FreeImage_GetTagLength(tag)
@@ -498,7 +498,7 @@ def write(array, filename, flags=0):
     filename.
 
     """
-    filename = str(filename)
+    filename = _bytestr(filename)
     ftype = _FI.FreeImage_GetFIFFromFilename(filename)
     if ftype == -1:
         raise ValueError('mahotas.freeimage: cannot determine type for %s'%filename)
@@ -524,13 +524,13 @@ def write_multipage(arrays, filename, flags=0):
     deduced from the filename.
 
     """
-    ftype = _FI.FreeImage_GetFIFFromFilename(filename)
+    ftype = _FI.FreeImage_GetFIFFromFilename(_bytestr(filename))
     if ftype == -1:
         raise ValueError('mahotas.freeimage: cannot determine type of file %s'%filename)
     create_new = True
     read_only = False
     keep_cache_in_memory = True
-    multibitmap = _FI.FreeImage_OpenMultiBitmap(ftype, filename, create_new,
+    multibitmap = _FI.FreeImage_OpenMultiBitmap(ftype, _bytestr(filename), create_new,
                                                 read_only, keep_cache_in_memory,
                                                 0)
     if not multibitmap:
@@ -611,7 +611,7 @@ def imsavetoblob(img, filetype, flags=0):
         byte representation of `img` in format `filetype`
     '''
     if type(filetype) == str:
-        ftype = _FI.FreeImage_GetFIFFromFilename(filetype)
+        ftype = _FI.FreeImage_GetFIFFromFilename(_bytestr(filetype))
     else:
         ftype = filetype
     try:
@@ -697,3 +697,9 @@ def imsave(filename, img):
       img : image to be saved as nd array
     '''
     write(img, filename)
+
+
+if sys.version_info[0] > 2:
+    _bytestr = lambda x: x.encode('utf-8')
+else:
+    _bytestr = str
