@@ -185,8 +185,9 @@ void iwavelet(numpy::aligned_array<T> array, const float coeffs[], const int nco
             T l = T();
             T h = T();
             for (int ci = 0; ci != ncoeffs; ++ci) {
-                if (!_is_even(x+ci-ncoeffs/2)) {
-                    const int xmap = (x+ci-ncoeffs/2) / 2;
+                const int xmap2 = x+ci-ncoeffs+2;
+                if (!_is_even(xmap2)) {
+                    const int xmap = xmap2 / 2;
                     const float cl = coeffs[ci];
                     const float ch = (_is_even(ci) ? +1 : -1) * coeffs[ncoeffs-ci-1];
                     l += cl*_access( low, N1/2, xmap, step);

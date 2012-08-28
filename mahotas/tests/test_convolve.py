@@ -170,7 +170,7 @@ def test_daubechies_idaubechies():
 
     d = mahotas.daubechies(f, 'D8')
     r = mahotas.idaubechies(d, 'D8')
-    assert np.mean( (r[2:-6,2:-6] - fo[4:-4, 4:-4])**2) < 1.
+    assert np.mean( (r[4:-4,4:-4] - fo[4:-4,4:-4])**2) < 1.
 
 def test_center_decenter():
     from mahotas import wavelet_decenter
@@ -198,3 +198,20 @@ def test_center_border():
         assert np.all(fc[-border:] == 0)
         assert np.all(fc.T[:border] == 0)
         assert np.all(fc.T[-border:] == 0)
+
+def test_center_wavelet_iwavelet_decenter():
+    from mahotas import wavelet_center, wavelet_decenter
+    import mahotas
+    import numpy as np
+
+    f = luispedro_jpg()
+    f = f[:100,:250]
+    fo = f.copy()
+
+    for wav in ('D2', 'D4', 'D6', 'D8', 'D10', 'D12', 'D16'):
+        fc = mahotas.wavelet_center(fo, border=24)
+        t = mahotas.daubechies(fc, wav)
+        r = mahotas.idaubechies(t, wav)
+        rd = mahotas.wavelet_decenter(r, fo.shape, border=24)
+        assert np.allclose(fo, rd)
+
