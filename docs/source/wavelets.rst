@@ -99,6 +99,20 @@ keeping every fourth pixel and low-order bits.
     plt.imshow(rt)
 
 
+What About the Borders?
+-----------------------
+
+In this example, we can see some artifacts at the border. We can use
+``wavelet_center`` and ``wavelet_decenter`` to handle borders to correctly::
+
+    
+    fc = mahotas.wavelet_center(f)
+    t = mahotas.daubechies(fc, 'D8')
+    r = mahotas.idaubechies(fc, 'D8')
+    rd = mahotas.wavelet_decenter(r, fc.shape)
+
+Now, ``rd`` is equal (except for rounding) to ``fc`` **without any border effects**.
+
 API Documentation
 -----------------
 
