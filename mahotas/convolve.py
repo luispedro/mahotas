@@ -22,6 +22,8 @@ __all__ = [
     'template_match',
     'gaussian_filter1d',
     'gaussian_filter',
+    'wavelet_center',
+    'wavelet_decenter',
     ]
 
 def convolve(f, weights, mode='reflect', cval=0.0, out=None, output=None):
@@ -337,6 +339,84 @@ def _wavelet_array(f, inline, func):
         return f.copy()
     return f
 
+
+
+def _wavelet_center_compute(oshape, border=0, dtype=None, cval=0.0):
+    for c in xrange(1, 16+border):
+        nshape = 2**(np.floor(np.log2(oshape))+c)
+        delta = nshape - oshape
+        if np.min(delta) <= border:
+            continue
+        position = []
+        for d,e in zip(delta, oshape):
+            position.append( slice(d, d + e) )
+        return nshape, position
+
+def wavelet_center(f, border=0, dtype=float, cval=0.0):
+    '''
+    fc = wavelet_center(f, border=0, dtype=float, cval=0.0)
+
+    ``fc`` is a centered version of ``f`` with a shape that is composed of
+    powers of 2.
+
+    Parameters
+    ----------
+    f : ndarray
+        input image
+    border : int, optional
+        The border to use (default is no border)
+    dtype : type, optional
+        Type of ``fc``
+    cval : float, optional
+        Which value to fill the border with (default is 0)
+
+    Returns
+    -------
+    fc : ndarray
+
+    See Also
+    --------
+    wavelet_decenter : function
+        Reverse function
+    '''
+    nshape, position = _wavelet_center_compute(f.shape, border)
+    nimage = np.zeros(nshape, dtype=dtype)
+    nimage += cval
+    nimage[position] = f
+    return nimage
+
+
+def wavelet_decenter(w, oshape, border=0):
+    '''
+    f = wavelet_decenter(w, oshape, border=0)
+
+    Undoes the effect of ``wavelet_center``
+
+    Parameters
+    ----------
+    w : ndarray
+        Wavelet array
+    oshape : tuple
+        Desired shape
+    border : int, optional
+        The desired border. This **must** be the same value as was used for
+        ``wavelet_center`` 
+
+    Returns
+    -------
+    f : ndarray
+        This will have shape ``oshape``
+
+    See Also
+    --------
+    wavelet_center : function
+        Forward function
+    '''
+    nshape, position = _wavelet_center_compute(oshape, border)
+    return w[position]
+
+
+
 def haar(f, preserve_energy=True, inline=False):
     '''
     t = haar(f, preserve_energy=True, inline=False)
@@ -373,6 +453,8 @@ def daubechies(f, code, inline=False):
     filtered = daubechies(f, code, inline=False)
 
     Daubechies wavelet transform
+
+    This function works best if the image sizes are powers of 2!
 
     Parameters
     ----------

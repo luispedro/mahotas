@@ -171,3 +171,18 @@ def test_daubechies_idaubechies():
     d = mahotas.daubechies(f, 'D8')
     r = mahotas.idaubechies(d, 'D8')
     assert np.mean( (r[2:-6,2:-6] - fo[4:-4, 4:-4])**2) < 1.
+
+def test_center_decenter():
+    from mahotas import wavelet_decenter
+    from mahotas import wavelet_center
+    np.random.seed(12)
+    for border in (0, 1, 17):
+        f = np.random.rand(51,100)
+        fc = wavelet_center(f, border=border)
+        log2fc_shape = np.log2(fc.shape)
+        assert np.all(log2fc_shape == np.floor(log2fc_shape))
+        
+        fd = wavelet_decenter(fc, f.shape, border=border)
+
+        assert fd.shape == f.shape
+        assert np.all(fd == f)
