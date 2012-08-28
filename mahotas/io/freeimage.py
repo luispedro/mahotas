@@ -110,7 +110,7 @@ def _register_api(lib, api):
             setattr(nlib, f, error_raise)
     return nlib
 
-libname = ctypes.util.find_library('freeimage-')
+libname = ctypes.util.find_library('freeimage')
 if libname:
     _FI = ctypes.CDLL(libname)
 else:
