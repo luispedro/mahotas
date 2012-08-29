@@ -38,6 +38,22 @@ This results in an image with 3 values:
 There is an extra argument to ``label``: the structuring element, which
 defaults to a 3x3 cross (or, 4-neighbourhood).
 
+We can now collect a few statistics on the labeled regions. For example, how
+big are they?
+
+::
+
+    sizes = mahotas.labeled_size(labeled)
+    print 'Background size', sizes[0]
+    print 'Size of first region', sizes[1]
+
+This size is measured simply as the number of pixels in each region. We can
+instead measure the total weight in each area::
+
+    array = np.random.random_sample(regions.shape)
+    sums = mahotas.labeled_sum(array, labeled)
+    print 'Sum of first region', sums[1]
+
 Borders
 -------
 
