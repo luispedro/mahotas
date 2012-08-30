@@ -141,31 +141,61 @@ def _register_api(lib, api):
             setattr(nlib, f, error_raise)
     return nlib
 
-libname = ctypes.util.find_library('freeimage')
-if libname:
-    _FI = ctypes.CDLL(libname)
+if sys.platform == 'win32':
+
+    def _load_library(dllname, loadfunction, dllpaths=('', )):
+        """Load a DLL via ctypes load function. Return None on failure.
+
+        Try loading the DLL from the current package directory first,
+        then from the Windows DLL search path.
+
+        """
+        try:
+            dllpaths = (os.path.abspath(os.path.dirname(__file__)),
+                        ) + dllpaths
+        except NameError:
+            pass  # no __file__ attribute on PyPy and some frozen distributions
+        for path in dllpaths:
+            if path:
+                # temporarily add the path to the PATH environment variable
+                # so Windows can find additional DLL dependencies.
+                try:
+                    oldenv = os.environ['PATH']
+                    os.environ['PATH'] = path + ';' + oldenv
+                except KeyError:
+                    oldenv = None
+            try:
+                return loadfunction(os.path.join(path, dllname))
+            except (WindowsError, OSError):
+                pass
+            finally:
+                if path and oldenv is not None:
+                    os.environ['PATH'] = oldenv
+        return None
+
+    _FI = _load_library('FreeImage.dll', ctypes.windll.LoadLibrary)
+    if not _FI:
+        raise OSError("mahotas.freeimage: could not find FreeImage.dll")
+
 else:
-    _FI = None
-    _lib_dirs = os.environ.get('LD_LIBRARY_PATH', '').split(':')
-    _lib_dirs = [_f for _f in _lib_dirs if _f]
-    _lib_dirs.extend([
-        os.path.dirname(__file__),
-        '/lib',
-        '/usr/lib',
-        '/usr/local/lib',
-        '/opt/local/lib',
-        ])
-    _possible_filenames = (
-        'libfreeimage',
-        'libFreeImage',
-        )
-    if sys.platform == 'win32':
-        _FI = ctypes.windll.LoadLibrary(
-            os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                         'FreeImage.dll'))
-        if not _FI:
-            raise OSError('mahotas.freeimage: could not find FreeImage.dll')
+    libname = ctypes.util.find_library('freeimage')
+    if libname:
+        _FI = ctypes.CDLL(libname)
     else:
+        _FI = None
+        _lib_dirs = os.environ.get('LD_LIBRARY_PATH', '').split(':')
+        _lib_dirs = [_f for _f in _lib_dirs if _f]
+        _lib_dirs.extend([
+            os.path.dirname(__file__),
+            '/lib',
+            '/usr/lib',
+            '/usr/local/lib',
+            '/opt/local/lib',
+            ])
+        _possible_filenames = (
+            'libfreeimage',
+            'libFreeImage',
+            )
         for d in _lib_dirs:
             for libname in _possible_filenames:
                 try:
@@ -174,10 +204,8 @@ else:
                     pass
                 else:
                     break
-
             if _FI is not None:
                 break
-
         if not _FI:
             raise OSError(
                 'mahotas.freeimage: could not find libFreeImage in any of the'
