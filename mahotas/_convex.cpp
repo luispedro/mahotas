@@ -4,8 +4,8 @@
 
 #include <algorithm>
 #include <vector>
-#include "utils.hpp"
 #include "numpypp/array.hpp"
+#include "utils.hpp"
 
 extern "C" {
     #include <Python.h>
