@@ -795,6 +795,10 @@ def imsave(filename, img):
 
 
 if sys.version_info[0] > 2:
-    _bytestr = lambda x: x.encode('utf-8')
+    import locale
+    _, _encoding = locale.getdefaultlocale()
+    if _encoding is None:
+        _encoding = 'UTF-8'
+    _bytestr = lambda x: x.encode(_encoding)
 else:
     _bytestr = str
