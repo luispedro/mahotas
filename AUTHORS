@@ -2,3 +2,4 @@ Luis Pedro Coelho
 Zachary Pincus [code from from scikits.image]
 Peter J. Verveer [code from scipy.ndimage]
 Davis King [code from dlib]
+Christoph Gohlke [many Windows fixes]
