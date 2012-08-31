@@ -1,12 +1,11 @@
+// Copyright (C) 2003-2005 Peter J. Verveer
+// Copyright (C) 2010-2012 Luis Pedro Coelho
+// LICENSE: MIT
+
 #include <vector>
-#include <assert.h>
+#include <cassert>
+#include <limits>
 #include "numpypp/array.hpp"
-
-extern "C" {
-    #include <Python.h>
-    #include <numpy/ndarrayobject.h>
-}
-
 
 
 /* The different boundary conditions. The mirror condition is not used
@@ -23,11 +22,13 @@ typedef enum {
     EXTEND_DEFAULT = EXTEND_MIRROR
 } ExtendMode;
 
-npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len, const npy_intp border_flag_value);
+const npy_intp border_flag_value = std::numeric_limits<npy_intp>::max();
+
+npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len);
 
 int init_filter_offsets(PyArrayObject *array, bool *footprint,
          const npy_intp * const fshape, npy_intp* origins,
-         const ExtendMode mode, std::vector<npy_intp>& offsets, npy_intp *border_flag_value,
+         const ExtendMode mode, std::vector<npy_intp>& offsets,
          std::vector<npy_intp>* coordinate_offsets);
 void init_filter_iterator(const int rank, const npy_intp *fshape,
                     const npy_intp filter_size, const npy_intp *ashape,
@@ -56,7 +57,7 @@ struct filter_iterator {
             }
         }
         size_ = init_filter_offsets(array, footprint, PyArray_DIMS(filter), 0,
-                    mode, offsets_, &border_flag_value_, 0);
+                    mode, offsets_, 0);
         if (compress) {
             int j = 0;
             T* new_filter_data = new T[size_];
@@ -99,14 +100,14 @@ struct filter_iterator {
 
     template <typename OtherIterator>
     bool retrieve(const OtherIterator& iterator, const npy_intp j, T& array_val) {
-        if (this->offsets_[cur_offsets_idx_+j] == border_flag_value_) return false;
+        if (this->offsets_[cur_offsets_idx_+j] == border_flag_value) return false;
         assert((j >= 0) && (j < size_));
         array_val = *( (&*iterator) + this->offsets_[cur_offsets_idx_+j]);
         return true;
     }
     template <typename OtherIterator>
     void set(const OtherIterator& iterator, npy_intp j, const T& val) {
-        assert(this->offsets_[cur_offsets_idx_+j] != border_flag_value_);
+        assert(this->offsets_[cur_offsets_idx_+j] != border_flag_value);
         *( (&*iterator) + this->offsets_[cur_offsets_idx_+j]) = val;
     }
 
@@ -123,6 +124,5 @@ struct filter_iterator {
         npy_intp backstrides_[NPY_MAXDIMS];
         npy_intp minbound_[NPY_MAXDIMS];
         npy_intp maxbound_[NPY_MAXDIMS];
-        npy_intp border_flag_value_;
 };
 

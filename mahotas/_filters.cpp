@@ -40,7 +40,7 @@ extern "C" {
     #include <numpy/ndarrayobject.h>
 }
 
-npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len, const npy_intp border_flag_value) {
+npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len) {
     /* apply boundary conditions, if necessary: */
     switch (mode) {
     case EXTEND_MIRROR:
@@ -124,7 +124,7 @@ npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len, cons
      the interior of the array: */
 int init_filter_offsets(PyArrayObject *array, bool *footprint,
          const npy_intp * const fshape, npy_intp* origins,
-         const ExtendMode mode, std::vector<npy_intp>& offsets, npy_intp *border_flag_value,
+         const ExtendMode mode, std::vector<npy_intp>& offsets,
          std::vector<npy_intp>* coordinate_offsets)
 {
     npy_intp coordinates[NPY_MAXDIMS], position[NPY_MAXDIMS];
@@ -176,9 +176,6 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
     }
 
 
-    /* the flag to indicate that we are outside the border must have a
-         value that is larger than any possible offset: */
-    *border_flag_value = max_size * max_stride + 1;
     /* calculate all possible offsets to elements in the filter kernel,
          for all regions in the array (interior and border regions): */
 
@@ -196,12 +193,12 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
                 for(int ii = 0; ii < rank; ii++) {
                     const npy_intp orgn = forigins[ii];
                     npy_intp cc = coordinates[ii] - orgn + position[ii];
-                    cc = fix_offset(mode, cc, ashape[ii], *border_flag_value);
+                    cc = fix_offset(mode, cc, ashape[ii]);
 
                     /* calculate offset along current axis: */
-                    if (cc == *border_flag_value) {
+                    if (cc == border_flag_value) {
                         /* just flag that we are outside the border */
-                        offset = *border_flag_value;
+                        offset = border_flag_value;
                         if (coordinate_offsets)
                             pc[ii] = 0;
                         break;
@@ -213,7 +210,7 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
                             pc[ii] = cc;
                     }
                 }
-                if (offset != *border_flag_value) offset /= sizeof_element;
+                if (offset != border_flag_value) offset /= sizeof_element;
                 /* store the offset */
                 offsets[poi++] = offset;
                 if (coordinate_offsets)

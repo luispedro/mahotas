@@ -251,7 +251,7 @@ void zoom_shift(numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
             FT cc = kk;
             if (shifts) cc += shift;
             if (zooms) cc *= zoom;
-            cc = fix_offset(ExtendMode(mode), cc, array.dim(r), -1);
+            cc = fix_offset(ExtendMode(mode), cc, array.dim(r));
             if (cc != -1) {
                 const int start = int(floor(cc + 0.5*(order & 1)) - order / 2);
                 offsets[r][kk] = array.stride(r) * start;
