@@ -35,7 +35,9 @@ def _get_output(array, out, fname, dtype=None, output=None):
     if out is None:
         return np.empty(array.shape, dtype)
     if out.dtype != dtype:
-        raise ValueError('mahotas.%s: `out` has wrong type' % fname)
+        raise ValueError(
+            'mahotas.%s: `out` has wrong type (out.dtype is %s; expected %s)' %
+                (fname, out.dtype, dtype))
     if out.shape != array.shape:
         raise ValueError('mahotas.%s: `out` has wrong shape' % fname)
     if not out.flags.contiguous:
