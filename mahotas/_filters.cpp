@@ -131,8 +131,9 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
     npy_intp forigins[NPY_MAXDIMS];
     const int rank = array->nd;
     const npy_intp* const ashape = array->dimensions;
-    const npy_intp* const astrides = array->strides;
-    const npy_intp sizeof_element = PyArray_ITEMSIZE(array);
+
+    npy_intp astrides[NPY_MAXDIMS];
+    for (int d = 0; d != rank; ++d) astrides[d] = array->strides[d]/PyArray_ITEMSIZE(array);
 
     /* calculate how many sets of offsets must be stored: */
     npy_intp offsets_size = 1;
@@ -160,20 +161,8 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
         forigins[ii] = fshape[ii]/2 + (origins ? *origins++ : 0);
     }
 
-    npy_intp max_size = 0; // maximum ashape[i]
-    npy_intp max_stride = 0; // maximum abs( astrides[i] )
-    for(int ii = 0; ii < rank; ii++) {
-        const npy_intp stride = astrides[ii] < 0 ? -astrides[ii] : astrides[ii];
-        if (stride > max_stride)
-            max_stride = stride;
-        if (ashape[ii] > max_size)
-            max_size = ashape[ii];
-
-        /* coordinates for iterating over the kernel elements: */
-        coordinates[ii] = 0;
-        /* keep track of the kernel position: */
-        position[ii] = 0;
-    }
+    std::fill(coordinates, coordinates + rank, 0);
+    std::fill(position, position + rank, 0);
 
 
     /* calculate all possible offsets to elements in the filter kernel,
@@ -210,7 +199,6 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
                             pc[ii] = cc;
                     }
                 }
-                if (offset != border_flag_value) offset /= sizeof_element;
                 /* store the offset */
                 offsets[poi++] = offset;
                 if (coordinate_offsets)
