@@ -83,15 +83,15 @@ struct filter_iterator {
     }
     template <typename OtherIterator>
     void iterate_both(OtherIterator& iterator) {
-        for (int i = nd_ - 1; i >= 0; --i) {
-            npy_intp p = iterator.index(i);
-            if (p < (iterator.dimension(i) - 1)) {
-                if (p < this->minbound_[i] || p >= this->maxbound_[i]) {
-                    this->cur_offsets_idx_ += this->strides_[i];
+        for (int d = 0; d < nd_; ++d) {
+            npy_intp p = iterator.index_rev(d);
+            if (p < (iterator.dimension_rev(d) - 1)) {
+                if (p < this->minbound_[d] || p >= this->maxbound_[d]) {
+                    this->cur_offsets_idx_ += this->strides_[d];
                 }
                 break;
             }
-            this->cur_offsets_idx_ -= this->backstrides_[i];
+            this->cur_offsets_idx_ -= this->backstrides_[d];
             assert( this->cur_offsets_idx_ >= 0 );
             assert( this->cur_offsets_idx_ < this->offsets_.size() );
         }

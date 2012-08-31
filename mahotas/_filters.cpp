@@ -273,5 +273,9 @@ void init_filter_iterator(const int rank, const npy_intp *fshape,
         minbound[ii] = orgn;
         maxbound[ii] = ashape[ii] - fshape[ii] + orgn;
     }
+    std::reverse(strides, strides + rank);
+    std::reverse(backstrides, backstrides + rank);
+    std::reverse(minbound, minbound + rank);
+    std::reverse(maxbound, maxbound + rank);
 }
 

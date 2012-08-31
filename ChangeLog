@@ -1,6 +1,7 @@
 Version 0.9.1+
 	* Fix compilation on Mac OS X 10.8 (reported by Davide Cittaro)
 	* Freeimage fixes on Windows by Christoph Gohlke
+	* Slightly faster _filter implementaiton
 
 Version 0.9.1 2012-08-28 by luispedro
 	* Haar wavelets (forward and inverse transform)
