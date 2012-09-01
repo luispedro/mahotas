@@ -244,15 +244,12 @@ void zoom_shift(numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
 
     /* precalculate offsets, and offsets at the edge: */
     for(int r = 0; r < rank; r++) {
-        double shift = 0.0, zoom = 0.0;
-        if (shifts) shift = shifts[r];
-        if (zooms) zoom = zooms[r];
         for(int kk = 0; kk < output.dim(r); ++kk) {
             FT cc = kk;
-            if (shifts) cc += shift;
-            if (zooms) cc *= zoom;
+            if (shifts) cc += shifts[r];
+            if (zooms) cc *= zooms[r];
             cc = fix_offset(ExtendMode(mode), cc, array.dim(r));
-            if (cc != -1) {
+            if (cc != border_flag_value) {
                 const int start = int(floor(cc + 0.5*(order & 1)) - order / 2);
                 offsets[r][kk] = array.stride(r) * start;
                 if (start < 0 || start + order >= array.dim(r)) {
@@ -282,6 +279,7 @@ void zoom_shift(numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
                     spline_coefficients(cc, order, splvals[r][kk]);
                 }
             } else {
+                assert(!zeros.empty());
                 zeros[r][kk] = true;
             }
         }
