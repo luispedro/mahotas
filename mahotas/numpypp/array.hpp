@@ -144,6 +144,9 @@ template <typename BaseType>
 struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
     friend class ::filter_iterator<BaseType>;
     protected:
+#ifdef _GLIBCXX_DEBUG
+        const PyArrayObject* base;
+#endif
         BaseType* data_;
         // steps is similar to strides, but more useful for iteration, see implementation of operator ++
         // Also, I divide by sizeof(BaseType)
@@ -154,6 +157,9 @@ struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
 
     public:
         iterator_base(PyArrayObject* array) {
+#ifdef _GLIBCXX_DEBUG
+            base = array;
+#endif
             int nd = array->nd;
             position_.nd_=nd;
             data_=reinterpret_cast<BaseType*>(array->data);
@@ -196,6 +202,17 @@ struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
         std::ostream& operator << (std::ostream& out, const iterator_base& iter) {
             return out << "I {" << iter.position_ << "}";
         }
+
+        bool is_valid() const {
+#ifdef _GLIBCXX_DEBUG
+            ::numpy::position p = this->position();
+            for (int r = 0; r != p.ndim(); ++r) {
+                if (p[r] < 0 || p[r] >= PyArray_DIM(base, r)) return false;
+            }
+#endif
+            return true;
+        }
+
 };
 
 
@@ -207,6 +224,7 @@ class iterator_type : public iterator_base<BaseType> {
             :iterator_base<BaseType>(array) {
             }
         BaseType operator * () const {
+            assert(this->is_valid());
             BaseType res;
             std::memcpy(&res,this->data_,sizeof(res));
             return res;
@@ -221,6 +239,7 @@ class aligned_iterator_type : public iterator_base<BaseType> {
                 assert(PyArray_ISALIGNED(array));
             }
         BaseType& operator * () const {
+            assert(this->is_valid());
             return *this->data_;
         }
 };
