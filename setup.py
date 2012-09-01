@@ -39,9 +39,13 @@ exec(compile(open('mahotas/mahotas_version.py').read(),
 
 long_description = open('docs/source/readme.rst').read()
 
-undef_macros=[]
+undef_macros = []
+define_macros = []
 if os.environ.get('DEBUG'):
-    undef_macros=['NDEBUG']
+    undef_macros = ['NDEBUG']
+    if os.environ.get('DEBUG') == '2':
+        define_macros = [('_GLIBCXX_DEBUG','1')]
+
 
 extensions = {
     'mahotas._bbox': ['mahotas/_bbox.cpp'],
@@ -61,7 +65,7 @@ extensions = {
     'mahotas.features._zernike': ['mahotas/features/_zernike.cpp'],
 }
 
-ext_modules = [numpyutils.Extension(key, sources=sources, undef_macros=undef_macros) for key,sources in extensions.items()]
+ext_modules = [numpyutils.Extension(key, sources=sources, undef_macros=undef_macros, define_macros=define_macros) for key,sources in extensions.items()]
 
 packages = setuptools.find_packages()
 

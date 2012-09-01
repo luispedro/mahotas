@@ -94,6 +94,16 @@ You can test your instalation by running::
 
     python -c "import mahotas; mahotas.test()"
 
+Development
+-----------
+
+Development happens on github (`http://github.com/luispedro/mahotas <https://github.com/luispedro/mahotas`__).
+
+You can set the ``DEBUG`` environment variable before compilation to get a
+debug compile. You can set it to the value ``2`` to get extra (slow) checks::
+
+    export DEBUG=2
+    python setup.py test
 
 Contacts
 --------
