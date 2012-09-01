@@ -554,6 +554,17 @@ bool arrays_of_same_shape_type(PyArrayObject* a, PyArrayObject* b) {
             PyArray_EquivTypenums(PyArray_TYPE(a), PyArray_TYPE(b)) &&
             same_shape(a,b);
 }
+
+inline
+bool equiv_typenums(PyArrayObject* a, PyArrayObject* b) { return PyArray_EquivTypenums(PyArray_TYPE(a), PyArray_TYPE(b)); }
+
+inline
+bool equiv_typenums(PyArrayObject* a, PyArrayObject* b, PyArrayObject* c) { return equiv_typenums(a, b) && equiv_typenums(a, c); }
+
+inline
+bool equiv_typenums(PyArrayObject* a, PyArrayObject* b, PyArrayObject* c, PyArrayObject* d) {
+    return equiv_typenums(a, b) && equiv_typenums(a, c) && equiv_typenums(a, d);
+}
 } // namespace numpy
 
 #endif // MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_

@@ -105,8 +105,7 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
     PyArrayObject* output;
     if (!PyArg_ParseTuple(args, "OOO", &array, &Bc, &output)) return NULL;
     if (!numpy::are_arrays(array, Bc, output) || !numpy::same_shape(array, output) ||
-        !PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(Bc)) ||
-        !PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(output)) ||
+        !numpy::equiv_typenums(array, Bc, output) ||
         PyArray_NDIM(array) != PyArray_NDIM(Bc)
     ) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
