@@ -118,6 +118,9 @@ def pftas(img, T=None):
     if T is None:
         T = otsu(img)
     pixels = img[img > T].ravel()
-    std = pixels.std()
+    try:
+        std = pixels.std()
+    except FloatingPointError:
+        std = 0
     return _tas(img, T, std)
 
