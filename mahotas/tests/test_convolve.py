@@ -172,6 +172,12 @@ def test_daubechies_idaubechies():
     r = mahotas.idaubechies(d, 'D8')
     assert np.mean( (r[4:-4,4:-4] - fo[4:-4,4:-4])**2) < 1.
 
+
+def _is_power2(x):
+    if x in (0,1,2,4,8,16,32,64,128): return True
+    if (x & 1) != 0: return False
+    return _is_power2(x // 2)
+
 def test_center_decenter():
     from mahotas import wavelet_decenter
     from mahotas import wavelet_center
@@ -179,8 +185,7 @@ def test_center_decenter():
     for border in (0, 1, 17):
         f = np.random.rand(51,100)
         fc = wavelet_center(f, border=border)
-        log2fc_shape = np.log2(fc.shape)
-        assert np.all(log2fc_shape == np.floor(log2fc_shape))
+        assert all(map(_is_power2, fc.shape))
         
         fd = wavelet_decenter(fc, f.shape, border=border)
 
