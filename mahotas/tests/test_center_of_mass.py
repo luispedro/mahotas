@@ -23,7 +23,7 @@ def slow_center_of_mass(img):
 
 def test_cmp_ndimage():
     R = (255*np.random.rand(128,256)).astype(np.uint16)
-    R += np.arange(256)
+    R += np.arange(256, dtype=np.uint16)
     m0,m1 = mahotas.center_of_mass(R)
     n0,n1 = ndimage.center_of_mass(R)
     assert np.abs(n0 - m0) < 1.
@@ -31,7 +31,7 @@ def test_cmp_ndimage():
 
 def test_cmp_ndimage3():
     R = (255*np.random.rand(32,128,8,16)).astype(np.uint16)
-    R += np.arange(16)
+    R += np.arange(16, dtype=np.uint16)
     m = mahotas.center_of_mass(R)
     n = ndimage.center_of_mass(R)
     p = slow_center_of_mass(R)
@@ -40,7 +40,7 @@ def test_cmp_ndimage3():
 
 def test_simple():
     R = (255*np.random.rand(128,256)).astype(np.uint16)
-    R += np.arange(256)
+    R += np.arange(256, dtype=np.uint16)
     m0,m1 = mahotas.center_of_mass(R)
 
     assert 0 < m0 < 128

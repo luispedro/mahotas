@@ -56,7 +56,7 @@ def test_sum_labeled():
     for i in range(16):
         f = np.random.random_sample((64,128))
         labeled = np.zeros(f.shape, dtype=np.intc)
-        labeled += 8 * np.random.random_sample(labeled.shape)
+        labeled += 8 * np.random.random_sample(labeled.shape).astype(np.intc)
         fast = mahotas.labeled.labeled_sum(f, labeled)
         slow = slow_labeled_sum(f, labeled)
         assert np.allclose(fast, slow)
@@ -72,7 +72,7 @@ def test_size_labeled():
     np.random.seed(334)
     for i in range(16):
         labeled = np.zeros((64,125), dtype=np.intc)
-        labeled += 8 * np.random.random_sample(labeled.shape)
+        labeled += 8 * np.random.random_sample(labeled.shape).astype(np.intc)
         fast = mahotas.labeled.labeled_size(labeled)
         slow = slow_labeled_size(labeled)
         assert np.all(fast == slow)
