@@ -276,6 +276,7 @@ void dilate(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_a
 
     for (int i = 0; i != N; ++i, ++rpos, filter.iterate_both(iter)) {
         const T value = *iter;
+        if (value == std::numeric_limits<T>::min()) continue;
         for (int j = 0; j != N2; ++j) {
             const T nval = dilate_add(value, filter[j]);
             T arr_val = T();
