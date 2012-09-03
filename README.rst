@@ -97,7 +97,7 @@ You can test your instalation by running::
 Development
 -----------
 
-Development happens on github (`http://github.com/luispedro/mahotas <https://github.com/luispedro/mahotas`__).
+Development happens on github (`http://github.com/luispedro/mahotas <https://github.com/luispedro/mahotas>`__).
 
 You can set the ``DEBUG`` environment variable before compilation to get a
 debug compile. You can set it to the value ``2`` to get extra (slow) checks::
@@ -118,7 +118,7 @@ Recent Changes
 --------------
 
 0.9.2 (September 1 2012)
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 - Fix compilation on Mac OS X 10.8 (reported by Davide Cittaro)
 - Freeimage fixes on Windows by Christoph Gohlke
 - Slightly faster _filter implementaiton
