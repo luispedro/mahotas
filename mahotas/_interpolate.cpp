@@ -86,7 +86,7 @@ template<typename FT>
 void spline_filter1d(numpy::aligned_array<FT> array, const int order, const int axis) {
     gil_release nogil;
     const FT log_tolerance = -16.;
-    if (axis > array.ndims()) {
+    if (axis >= array.ndims()) {
         throw PythonException(PyExc_RuntimeError, "Unexpected state.");
     }
     const int len = array.dim(axis);
@@ -215,7 +215,7 @@ int int_pow(const int x, const int p) {
 template <typename FT>
 void zoom_shift(numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
                                  PyArrayObject* shift_ar, numpy::aligned_array<FT> output,
-                                 int order, int mode, FT cval) {
+                                 const int order, const int mode, const FT cval) {
     gil_release nogil;
     typename numpy::aligned_array<FT>::iterator io = output.begin();
     const FT *zooms = zoom_ar ? static_cast<const FT*>(PyArray_DATA(zoom_ar)) : NULL;
@@ -256,7 +256,7 @@ void zoom_shift(numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
                     edge_offsets[r][kk].resize(order + 1);
                     for(int hh = 0; hh <= order; hh++) {
                         int idx = start + hh;
-                         int len = array.dim(r);
+                        const int len = array.dim(r);
                         if (len <= 1) {
                             idx = 0;
                         } else {
