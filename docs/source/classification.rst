@@ -1,6 +1,8 @@
 ============================
 Classification Using Mahotas
 ============================
+.. versionadded:: 0.8
+    Before version 0.8, texture was under mahotas, not under mahotas.features
 
 Here is an example of using mahotas and `milk <http://luispedro.org/software/milk>`_
 for image classification.  I assume that there are three important directories:
@@ -15,7 +17,9 @@ Here is the simple algorithm:
 
 In the code below I used `jug <http://luispedro.org/software/jug>`_ to give you
 the possibility of running it on multiple processors, but the code also works
-if you remove every line which mentions ``TaskGenerator``::
+if you remove every line which mentions ``TaskGenerator``.
+
+We start with a bunch of imports::
 
     from glob import glob
     import mahotas
@@ -23,11 +27,19 @@ if you remove every line which mentions ``TaskGenerator``::
     import milk
     from jug import TaskGenerator
 
+Now, we define a function which computes features. In general, texture features
+are very fast and give very decent results::
 
     @TaskGenerator
     def features_for(imname):
         img = mahotas.imread(imname)
         return mahotas.features.haralick(img).mean(0)
+
+``mahotas.features.haralick`` returns features in 4 directions. We just take
+the mean (sometimes you use the spread ``ptp()`` too).
+
+Now a pair of functions to learn a classifier and apply it. These are just
+``milk`` functions::
 
     @TaskGenerator
     def learn_model(features, labels):
@@ -38,10 +50,16 @@ if you remove every line which mentions ``TaskGenerator``::
     def classify(model, features):
          return model.apply(features)
 
+We assume we have three pre-prepared directories with the images in jpeg
+format. This bit you will have to adapt for your own settings::
+
     positives = glob('positives/*.jpg')
     negatives = glob('negatives/*.jpg')
     unlabeled = glob('unlabeled/*.jpg')
 
+
+Finally, the actual computation. Get features for all training data and learn a
+model::
 
     features = map(features_for, negatives + positives)
     labels = [0] * len(negatives) + [1] * len(positives)
@@ -52,9 +70,7 @@ if you remove every line which mentions ``TaskGenerator``::
 
 This uses texture features, which is probably good enough, but you can play
 with other features in ``mahotas.features`` if you'd like (or try
-``mahotas.surf``, but that gets more complicated). In general, I have found it
-hard to do classification with the sort of hard thresholds you are looking for
-unless the scanning is very controlled.
+``mahotas.surf``, but that gets more complicated).
 
 (This was motivated by `a question on Stackoverflow <http://stackoverflow.com/questions/5426482/using-pil-to-detect-a-scan-of-a-blank-page/5505754>`__).
 
