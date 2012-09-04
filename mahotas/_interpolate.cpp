@@ -217,7 +217,6 @@ void zoom_shift(numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
                                  PyArrayObject* shift_ar, numpy::aligned_array<FT> output,
                                  const int order, const int mode, const FT cval) {
     gil_release nogil;
-    typename numpy::aligned_array<FT>::iterator io = output.begin();
     const FT *zooms = zoom_ar ? static_cast<const FT*>(PyArray_DATA(zoom_ar)) : NULL;
     const FT *shifts = shift_ar ? static_cast<const FT*>(PyArray_DATA(shift_ar)) : NULL;
     const int rank = array.ndims();
@@ -308,6 +307,7 @@ void zoom_shift(numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
         }
     }
     const npy_intp size = output.size();
+    typename numpy::aligned_array<FT>::iterator io = output.begin();
     for(int i = 0; i < size; ++i, ++io) {
         int oo = 0;
         bool on_edge = false;
@@ -389,21 +389,22 @@ PyObject* py_zoom_shift(PyObject* self, PyObject* args) {
     int mode;
     double cval;
     if (!PyArg_ParseTuple(args,"OOOOiif", &array, &zooms, &shifts, &output, &order, &mode, &cval)) return NULL;
-    if (!PyArray_Check(array) || !PyArray_ISCARRAY(array) ||
-        !PyArray_Check(output) || !PyArray_ISCARRAY(output)) {
+    if (!numpy::are_arrays(array, output) ||
+        !PyArray_ISCARRAY(array) || !PyArray_ISCARRAY(output) ||
+        !numpy::equiv_typenums(array, output)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
     if (!PyArray_Check(zooms)) {
         zooms = 0;
-    } else if (!PyArray_ISCARRAY(zooms)) {
+    } else if (!PyArray_ISCARRAY(zooms) || !numpy::equiv_typenums(zooms, array)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
 
     if (!PyArray_Check(shifts)) {
         shifts = 0;
-    } else if (!PyArray_ISCARRAY(shifts)) {
+    } else if (!PyArray_ISCARRAY(shifts) || !numpy::equiv_typenums(shifts, array)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
