@@ -11,7 +11,6 @@ Contents:
 
    morphology
    features
-   lbp
    surf
    thresholding
    distance
@@ -19,13 +18,12 @@ Contents:
    polygon
    wavelets
    classification
+   lbp
    faq
    internals
    principles
+   readme
    api
-
-
-.. include:: readme.rst
 
 Indices and tables
 ------------------

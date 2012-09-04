@@ -16,6 +16,9 @@ local
 
 Mahotas supports both types.
 
+The `classification tutorial <classification.html>`__ illustrates the
+usefulness of feature computation.
+
 Global features
 ---------------
 

@@ -13,7 +13,8 @@ We start with an image, a grey-scale image::
     photo = photo.astype(np.uint8)
 
 The reason we convert to ``np.uint8`` is because ``as_grey`` returns floating
-point images (there are good reasons for this and good reasons against it).
+point images (there are good reasons for this and good reasons against it,
+since it's easier to truncate than to go back, it returns ``np.uint8``).
 
 .. plot::
 
