@@ -388,7 +388,7 @@ PyObject* py_zoom_shift(PyObject* self, PyObject* args) {
     int order;
     int mode;
     double cval;
-    if (!PyArg_ParseTuple(args,"OOOOiif", &array, &zooms, &shifts, &output, &order, &mode, &cval)) return NULL;
+    if (!PyArg_ParseTuple(args,"OOOOiid", &array, &zooms, &shifts, &output, &order, &mode, &cval)) return NULL;
     if (!numpy::are_arrays(array, output) ||
         !PyArray_ISCARRAY(array) || !PyArray_ISCARRAY(output) ||
         !numpy::equiv_typenums(array, output)) {
