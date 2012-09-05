@@ -43,7 +43,7 @@ void bbox(numpy::aligned_array<T> array, numpy::index_type* extrema) {
 
 
 template<typename T>
-void carray2_bbox(const T* array, int N0, int N1, numpy::index_type* extrema) {
+void carray2_bbox(const T* array, const int N0, const int N1, numpy::index_type* extrema) {
     gil_release nogil;
     for (int y = 0; y != N0; ++y) {
         for (int x = 0; x < N1; ++x, ++array)
@@ -53,7 +53,9 @@ void carray2_bbox(const T* array, int N0, int N1, numpy::index_type* extrema) {
                 extrema[2] = std::min<numpy::index_type>(extrema[2], x);
 
                 if (static_cast<numpy::index_type>(x+1) < extrema[3]) {
-                    int step = extrema[3]-x-1;
+                    // We can skip ahead and go to the end. In a dense array,
+                    // we end up skipping most of it.
+                    const int step = extrema[3]-x-1;
                     x += step;
                     array += step;
                 } else {
@@ -92,11 +94,12 @@ PyObject* py_bbox(PyObject* self, PyObject* args) {
         HANDLE_TYPES();
 #undef HANDLE
         default:
+        Py_DECREF(extrema);
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
     if (extrema_v[1] == 0) {
-        for (int j = 0; j != 2 * array->nd; ++j) extrema_v[j] = 0;
+        PyArray_FILLWBYTE(extrema, 0);
     }
     return PyArray_Return(extrema);
 }
