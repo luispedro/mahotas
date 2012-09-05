@@ -85,3 +85,23 @@ def test_interest_points_descriptor_only():
 @raises(ValueError)
 def test_3d_image():
     surf.surf(np.arange(8*8*16).reshape((16,8,8)), 6, 24, 1)
+
+@raises(TypeError)
+def test_integral_intested_points():
+    np.random.seed(22)
+    f = np.random.rand(16,16)*230
+    f = f.astype(np.uint8)
+    f = surf.integral(f)
+    surf.interest_points(f.astype(np.int32), is_integral=True)
+
+
+@raises(TypeError)
+def test_integral_descriptors():
+    np.random.seed(22)
+    f = np.random.rand(16,16)*230
+    f = f.astype(np.uint8)
+    f = surf.integral(f)
+    points = surf.interest_points(f, is_integral=True)
+    surf.descriptors(f.astype(np.int32), points, is_integral=True)
+
+
