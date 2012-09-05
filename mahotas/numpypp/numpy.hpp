@@ -27,6 +27,10 @@ npy_intp dtype_code<float>() { return NPY_FLOAT; }
 
 template <>
 inline
+npy_intp dtype_code<int>() { return NPY_INT; }
+
+template <>
+inline
 npy_intp dtype_code<double>() { return NPY_DOUBLE; }
 
 template<typename T>
