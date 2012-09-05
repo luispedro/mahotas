@@ -4,6 +4,7 @@
 #include <map>
 
 #include "numpypp/array.hpp"
+#include "numpypp/numpy.hpp"
 #include "numpypp/dispatch.hpp"
 #include "utils.hpp"
 #include "_filters.h"
@@ -151,7 +152,8 @@ PyObject* py_label(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* filter;
     if (!PyArg_ParseTuple(args,"OO", &array, &filter)) return NULL;
-    if (!PyArray_Check(array) || !PyArray_Check(filter) || PyArray_TYPE(array) != PyArray_TYPE(filter) ||
+    if (!numpy::are_arrays(array, filter) ||
+        !numpy::equiv_typenums(array, filter) ||
         !PyArray_ISCARRAY(array) || !PyArray_EquivTypenums(PyArray_TYPE(array), NPY_INT)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
@@ -165,8 +167,10 @@ PyObject* py_borders(PyObject* self, PyObject* args) {
     PyArrayObject* filter;
     PyArrayObject* output;
     if (!PyArg_ParseTuple(args,"OOO", &array, &filter, &output)) return NULL;
-    if (!PyArray_Check(array) || !PyArray_Check(filter) || PyArray_TYPE(array) != PyArray_TYPE(filter) ||
-        !PyArray_Check(output) || PyArray_TYPE(output) != NPY_BOOL || !PyArray_ISCARRAY(output)) {
+    if (!numpy::are_arrays(array, filter, output) ||
+        !numpy::equiv_typenums(array, filter) ||
+        !numpy::check_type<bool>(output) ||
+        !PyArray_ISCARRAY(output)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
@@ -240,17 +244,13 @@ PyObject* py_labeled_sum(PyObject* self, PyObject* args) {
     PyArrayObject* labeled;
     PyArrayObject* output;
     if (!PyArg_ParseTuple(args,"OOO", &array, &labeled, &output)) return NULL;
-    if (!PyArray_Check(array) || !PyArray_Check(labeled) || PyArray_NDIM(array) != PyArray_NDIM(labeled) ||
+    if (!numpy::are_arrays(array, labeled, output) ||
+        !numpy::same_shape(array, labeled) ||
+        !numpy::equiv_typenums(array, output) ||
         !PyArray_EquivTypenums(PyArray_TYPE(labeled), NPY_INT) ||
-        !PyArray_Check(output) || PyArray_TYPE(output) != PyArray_TYPE(array) || !PyArray_ISCARRAY(output)) {
+        !PyArray_ISCARRAY(output)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
-    }
-    for (int d = 0; d != PyArray_NDIM(array); ++d) {
-        if (PyArray_DIM(array, d) != PyArray_DIM(labeled, d)) {
-            PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
-            return NULL;
-        }
     }
     const int maxi = PyArray_DIM(output, 0);
 
