@@ -168,7 +168,8 @@ PyObject* py_label(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args,"OO", &array, &filter)) return NULL;
     if (!numpy::are_arrays(array, filter) ||
         !numpy::equiv_typenums(array, filter) ||
-        !PyArray_ISCARRAY(array) || !PyArray_EquivTypenums(PyArray_TYPE(array), NPY_INT)) {
+        !numpy::check_type<int>(array) ||
+        !PyArray_ISCARRAY(array)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
@@ -184,15 +185,10 @@ PyObject* py_borders(PyObject* self, PyObject* args) {
     if (!numpy::are_arrays(array, filter, output) ||
         !numpy::equiv_typenums(array, filter) ||
         !numpy::check_type<bool>(output) ||
+        !numpy::same_shape(array, output) ||
         !PyArray_ISCARRAY(output)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
-    }
-    for (int d = 0; d != PyArray_NDIM(array); ++d) {
-        if (PyArray_DIM(array, d) != PyArray_DIM(output, d)) {
-            PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
-            return NULL;
-        }
     }
     holdref ro(output);
 
@@ -218,18 +214,15 @@ PyObject* py_border(PyObject* self, PyObject* args) {
     int j;
     int always_return;
     if (!PyArg_ParseTuple(args,"OOOiii", &array, &filter, &output, &i, &j, &always_return)) return NULL;
-    if (!PyArray_Check(array) || !PyArray_Check(filter) || PyArray_TYPE(array) != PyArray_TYPE(filter) ||
-        !PyArray_Check(output) || PyArray_TYPE(output) != NPY_BOOL || !PyArray_ISCARRAY(output)) {
+    if (!numpy::are_arrays(array, filter, output) ||
+        !numpy::equiv_typenums(array, filter) ||
+        !numpy::check_type<bool>(output) ||
+        !numpy::same_shape(array, output) ||
+        !PyArray_ISCARRAY(output)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
-    for (int d = 0; d != PyArray_NDIM(array); ++d) {
-        if (PyArray_DIM(array, d) != PyArray_DIM(output, d)) {
-            PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
-            return NULL;
-        }
-    }
-    Py_INCREF(output);
+    holdref ro(output);
 
     bool has_any;
 #define HANDLE(type) \
@@ -242,14 +235,13 @@ PyObject* py_border(PyObject* self, PyObject* args) {
     SAFE_SWITCH_ON_TYPES_OF(array, false);
 #undef HANDLE
     if (PyErr_Occurred()) {
-        Py_DECREF(output);
         return NULL;
     }
     if (always_return || has_any) {
+        Py_INCREF(output);
         return PyArray_Return(output);
     }
 
-    Py_DECREF(output);
     Py_RETURN_NONE;
 }
 
@@ -261,7 +253,7 @@ PyObject* py_labeled_sum(PyObject* self, PyObject* args) {
     if (!numpy::are_arrays(array, labeled, output) ||
         !numpy::same_shape(array, labeled) ||
         !numpy::equiv_typenums(array, output) ||
-        !PyArray_EquivTypenums(PyArray_TYPE(labeled), NPY_INT) ||
+        !numpy::check_type<int>(labeled) ||
         !PyArray_ISCARRAY(output)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
