@@ -28,24 +28,15 @@ void center_of_mass(const numpy::aligned_array<T> array, npy_double* centers, co
     const unsigned N = array.size();
     const int nd = array.ndims();
     typename numpy::aligned_array<T>::const_iterator pos = array.begin();
-    double total = 0;
     for (unsigned i = 0; i != N; ++i, ++pos) {
-        double val = *pos;
-        if (labels) {
-                int label = labels[i];
-                totals[label] += val;
-                for (int j = 0; j != nd; ++j) {
-                    int idx = label*nd + j;
-                    centers[idx] += val * pos.index_rev(j);
-                }
-        } else {
-            total += val;
-            for (int j = 0; j != nd; ++j) {
-                centers[j] += val * pos.index_rev(j);
-            }
+        const double val = *pos;
+        const int label = (labels ? labels[i] : 0);
+        totals[label] += val;
+        npy_double* centers_label = centers + label*nd;
+        for (int j = 0; j != nd; ++j) {
+            centers_label[j] += val * pos.index_rev(j);
         }
     }
-    if (!labels) *totals = total;
 }
 
 PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
@@ -84,7 +75,7 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
             PyErr_NoMemory();
             return NULL;
         }
-        for (int label = 0; label != max_label+1; ++label) totals[label] = 0.0;
+        std::fill(totals, totals + max_label + 1, 0.0);
     }
     npy_intp dims[1];
     dims[0] = array->nd * (max_label+1);
@@ -93,9 +84,7 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
     { // DROP THE GIL
         gil_release nogil;
         npy_double* centers_v = static_cast<npy_double*>(PyArray_DATA(centers));
-        for (int j = 0; j != dims[0]; ++j) {
-            centers_v[j] = 0;
-        }
+        std::fill(centers_v, centers_v + dims[0], 0);
         switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
             center_of_mass<type>(numpy::aligned_array<type>(array), centers_v, labels, totals); \
@@ -109,14 +98,12 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
                 return NULL;
             }
         }
-        int nd = array->nd;
+        const int nd = PyArray_NDIM(array);
         for (int label = 0; label != (max_label+1); ++label) {
             for (int j = 0; j != nd; ++j) {
                 centers_v[label*nd+j] /= totals[label];
             }
-            for (int j = 0; j != nd/2; ++j) {
-                std::swap(centers_v[label*nd + j], centers_v[(label+1) * nd - j - 1]);
-            }
+            std::reverse(centers_v + label*nd, centers_v + (label+1)*nd);
         }
         if (labels) delete [] totals;
     }
