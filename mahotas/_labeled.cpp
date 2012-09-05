@@ -134,15 +134,29 @@ bool border(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, numpy
 }
 
 template <typename T>
-void labeled_sum(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, int max) {
+void labeled_sum(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
     gil_release nogil;
     typename numpy::aligned_array<T>::iterator iterator = array.begin();
     numpy::aligned_array<int>::iterator literator = labeled.begin();
     const int N = array.size();
-    for (int i = 0; i != max; ++i) result[i] = 0;
+    std::fill(result, result + maxlabel, 0);
     for (int i = 0; i != N; ++i, ++iterator, ++literator) {
-        if ((*literator >= 0) && (*literator < max)) {
+        if ((*literator >= 0) && (*literator < maxlabel)) {
             result[*literator] += *iterator;
+        }
+    }
+}
+
+template <typename T>
+void labeled_max(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
+    gil_release nogil;
+    typename numpy::aligned_array<T>::iterator iterator = array.begin();
+    numpy::aligned_array<int>::iterator literator = labeled.begin();
+    const int N = array.size();
+    std::fill(result, result + maxlabel, std::numeric_limits<T>::min());
+    for (int i = 0; i != N; ++i, ++iterator, ++literator) {
+        if ((*literator >= 0) && (*literator < maxlabel)) {
+            result[*literator] = std::max<T>(*iterator, result[*literator]);
         }
     }
 }
@@ -268,12 +282,42 @@ PyObject* py_labeled_sum(PyObject* self, PyObject* args) {
 
     Py_RETURN_NONE;
 }
+PyObject* py_labeled_max(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* labeled;
+    PyArrayObject* output;
+    if (!PyArg_ParseTuple(args,"OOO", &array, &labeled, &output)) return NULL;
+    if (!numpy::are_arrays(array, labeled, output) ||
+        !numpy::same_shape(array, labeled) ||
+        !numpy::equiv_typenums(array, output) ||
+        !numpy::check_type<int>(labeled) ||
+        !PyArray_ISCARRAY(output)) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    const int maxi = PyArray_DIM(output, 0);
+
+#define HANDLE(type) \
+    { \
+        type* odata = static_cast<type*>(PyArray_DATA(output)); \
+        labeled_max<type>( \
+                numpy::aligned_array<type>(array), \
+                numpy::aligned_array<int>(labeled), \
+                odata, \
+                maxi); \
+    }
+    SAFE_SWITCH_ON_TYPES_OF(array, true);
+#undef HANDLE
+
+    Py_RETURN_NONE;
+}
 
 PyMethodDef methods[] = {
   {"label",(PyCFunction)py_label, METH_VARARGS, NULL},
   {"borders",(PyCFunction)py_borders, METH_VARARGS, NULL},
   {"border",(PyCFunction)py_border, METH_VARARGS, NULL},
   {"labeled_sum",(PyCFunction)py_labeled_sum, METH_VARARGS, NULL},
+  {"labeled_max",(PyCFunction)py_labeled_max, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 

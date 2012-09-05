@@ -51,6 +51,12 @@ def slow_labeled_sum(array, labeled):
             for i in range(labeled.max()+1)
         ])
 
+def slow_labeled_max(array, labeled):
+    return np.array([
+            np.max(array * (labeled == i))
+            for i in range(labeled.max()+1)
+        ])
+
 def test_sum_labeled():
     np.random.seed(334)
     for i in range(16):
@@ -59,6 +65,16 @@ def test_sum_labeled():
         labeled += 8 * np.random.random_sample(labeled.shape).astype(np.intc)
         fast = mahotas.labeled.labeled_sum(f, labeled)
         slow = slow_labeled_sum(f, labeled)
+        assert np.allclose(fast, slow)
+
+def test_max_labeled():
+    np.random.seed(334)
+    for i in range(16):
+        f = np.random.random_sample((64,128))
+        labeled = np.zeros(f.shape, dtype=np.intc)
+        labeled += 8 * np.random.random_sample(labeled.shape).astype(np.intc)
+        fast = mahotas.labeled.labeled_max(f, labeled)
+        slow = slow_labeled_max(f, labeled)
         assert np.allclose(fast, slow)
 
 def slow_labeled_size(labeled):
