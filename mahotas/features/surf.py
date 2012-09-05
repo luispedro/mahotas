@@ -160,6 +160,7 @@ def descriptors(f, interest_points, is_integral=False, descriptor_only=False):
     else:
         if f.dtype != np.double:
             raise TypeError('mahotas.surf: integral image must be of dtype double')
+    interest_points = np.ascontiguousarray(interest_points, dtype=np.float64)
     surfs = _surf.descriptors(f, interest_points)
     if descriptor_only:
         surfs = surfs[:,6:]
