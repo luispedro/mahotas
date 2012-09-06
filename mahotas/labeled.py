@@ -188,6 +188,12 @@ def bwperim(bw, n=4):
     bw = (bw != 0)
     return bw&borders(bw, n)
 
+def _check_array_labeled(array, labeled, funcname):
+    if labeled.dtype != np.intc or not labeled.flags.carray:
+        raise ValueError('mahotas.labeled.%s: labeled is not as expected' % funcname)
+    if array.shape != labeled.shape:
+        raise ValueError('mahotas.labeled.%s: `array` is not the same size as `labeled`' % funcname)
+
 def labeled_sum(array, labeled):
     '''
     sums = labeled_sum(array, labeled)
@@ -205,10 +211,7 @@ def labeled_sum(array, labeled):
     -------
     sums : 1-d ndarray of ``array.dtype``
     '''
-    if labeled.dtype != np.intc or not labeled.flags.carray:
-        raise ValueError('mahotas.labeled.labeled_sum: labeled is not as expected')
-    if array.shape != labeled.shape:
-        raise ValueError('mahotas.labeled.labeled_sum: `array` is not the same size as `labeled`')
+    _check_array_labeled(array, labeled, 'labeled_sum')
     maxv = labeled.max() + 1
     output = np.empty(maxv, dtype=array.dtype)
     _labeled.labeled_sum(array, labeled, output)
@@ -217,7 +220,31 @@ def labeled_sum(array, labeled):
 
 def labeled_max(array, labeled):
     '''
-    maxs = labeled_max(array, labeled)
+    mins = labeled_max(array, labeled)
+
+    Labeled minimum. ``mins`` will be an array of size ``labeled.max() + 1``, where
+    ``mins[i]`` is equal to ``np.min(array[labeled == i])``.
+
+    Parameters
+    ----------
+    array : ndarray of any type
+    labeled : int ndarray
+        Label map. This is the same type as returned from ``mahotas.label()``
+
+    Returns
+    -------
+    mins : 1-d ndarray of ``array.dtype``
+    '''
+    _check_array_labeled(array, labeled, 'labeled_max')
+    maxv = labeled.max() + 1
+    output = np.empty(maxv, dtype=array.dtype)
+    _labeled.labeled_max_min(array, labeled, output, True)
+    return output
+
+
+def labeled_min(array, labeled):
+    '''
+    maxs = labeled_min(array, labeled)
 
     Labeled maximum. ``maxs`` will be an array of size ``labeled.max() + 1``, where
     ``maxs[i]`` is equal to ``np.max(array[labeled == i])``.
@@ -232,13 +259,10 @@ def labeled_max(array, labeled):
     -------
     maxs : 1-d ndarray of ``array.dtype``
     '''
-    if labeled.dtype != np.intc or not labeled.flags.carray:
-        raise ValueError('mahotas.labeled.labeled_max: labeled is not as expected')
-    if array.shape != labeled.shape:
-        raise ValueError('mahotas.labeled.labeled_max: `array` is not the same size as `labeled`')
+    _check_array_labeled(array, labeled, 'labeled_min')
     maxv = labeled.max() + 1
     output = np.empty(maxv, dtype=array.dtype)
-    _labeled.labeled_max(array, labeled, output)
+    _labeled.labeled_max_min(array, labeled, output, False)
     return output
 
 def labeled_size(labeled):

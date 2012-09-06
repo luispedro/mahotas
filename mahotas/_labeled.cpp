@@ -2,6 +2,7 @@
 //
 // License: MIT (see COPYING file)
 #include <map>
+#include <functional>
 
 #include "numpypp/array.hpp"
 #include "numpypp/numpy.hpp"
@@ -133,32 +134,37 @@ bool border(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, numpy
     return any;
 }
 
-template <typename T>
-void labeled_sum(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
+template <typename T, typename F>
+void labeled_foldl(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, const int maxlabel, const T start, F f) {
     gil_release nogil;
     typename numpy::aligned_array<T>::iterator iterator = array.begin();
     numpy::aligned_array<int>::iterator literator = labeled.begin();
     const int N = array.size();
-    std::fill(result, result + maxlabel, 0);
+    std::fill(result, result + maxlabel, start);
     for (int i = 0; i != N; ++i, ++iterator, ++literator) {
         if ((*literator >= 0) && (*literator < maxlabel)) {
-            result[*literator] += *iterator;
+            result[*literator] = f(*iterator, result[*literator]);
         }
     }
 }
 
 template <typename T>
+void labeled_sum(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
+    labeled_foldl(array, labeled, result, maxlabel, T(), std::plus<T>());
+}
+template <>
+void labeled_sum<bool>(numpy::aligned_array<bool> array, numpy::aligned_array<int> labeled, bool* result, const int maxlabel) {
+    labeled_foldl(array, labeled, result, maxlabel, false, std::logical_or<bool>());
+}
+
+template <typename T>
 void labeled_max(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
-    gil_release nogil;
-    typename numpy::aligned_array<T>::iterator iterator = array.begin();
-    numpy::aligned_array<int>::iterator literator = labeled.begin();
-    const int N = array.size();
-    std::fill(result, result + maxlabel, std::numeric_limits<T>::min());
-    for (int i = 0; i != N; ++i, ++iterator, ++literator) {
-        if ((*literator >= 0) && (*literator < maxlabel)) {
-            result[*literator] = std::max<T>(*iterator, result[*literator]);
-        }
-    }
+    labeled_foldl(array, labeled, result, maxlabel,std::numeric_limits<T>::min(), std::max<T>);
+}
+
+template <typename T>
+void labeled_min(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
+    labeled_foldl(array, labeled, result, maxlabel,std::numeric_limits<T>::max(), std::min<T>);
 }
 
 
@@ -274,11 +280,12 @@ PyObject* py_labeled_sum(PyObject* self, PyObject* args) {
 
     Py_RETURN_NONE;
 }
-PyObject* py_labeled_max(PyObject* self, PyObject* args) {
+PyObject* py_labeled_max_min(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* labeled;
     PyArrayObject* output;
-    if (!PyArg_ParseTuple(args,"OOO", &array, &labeled, &output)) return NULL;
+    int is_max;
+    if (!PyArg_ParseTuple(args,"OOOi", &array, &labeled, &output, &is_max)) return NULL;
     if (!numpy::are_arrays(array, labeled, output) ||
         !numpy::same_shape(array, labeled) ||
         !numpy::equiv_typenums(array, output) ||
@@ -292,11 +299,19 @@ PyObject* py_labeled_max(PyObject* self, PyObject* args) {
 #define HANDLE(type) \
     { \
         type* odata = static_cast<type*>(PyArray_DATA(output)); \
-        labeled_max<type>( \
+        if (is_max) { \
+            labeled_max<type>( \
                 numpy::aligned_array<type>(array), \
                 numpy::aligned_array<int>(labeled), \
                 odata, \
                 maxi); \
+        } else { \
+            labeled_min<type>( \
+                numpy::aligned_array<type>(array), \
+                numpy::aligned_array<int>(labeled), \
+                odata, \
+                maxi); \
+        } \
     }
     SAFE_SWITCH_ON_TYPES_OF(array, true);
 #undef HANDLE
@@ -309,7 +324,7 @@ PyMethodDef methods[] = {
   {"borders",(PyCFunction)py_borders, METH_VARARGS, NULL},
   {"border",(PyCFunction)py_border, METH_VARARGS, NULL},
   {"labeled_sum",(PyCFunction)py_labeled_sum, METH_VARARGS, NULL},
-  {"labeled_max",(PyCFunction)py_labeled_max, METH_VARARGS, NULL},
+  {"labeled_max_min",(PyCFunction)py_labeled_max_min, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 

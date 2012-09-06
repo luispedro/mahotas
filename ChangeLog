@@ -4,7 +4,8 @@ Version 0.9.2+
 	* Update tests to newer numpy
 	* Enhanced debug mode (compile with DEBUG=2 in environment)
 	* Faster morph.dilate()
-	* Add labeled.labeled_max
+	* Add labeled.labeled_max & labeled.labeled_min (This also led to a
+	refactoring of the labeled_* code)
 
 Version 0.9.2 2012-09-01 by luispedro
 	* Fix compilation on Mac OS X 10.8 (reported by Davide Cittaro)

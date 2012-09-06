@@ -57,6 +57,12 @@ def slow_labeled_max(array, labeled):
             for i in range(labeled.max()+1)
         ])
 
+def slow_labeled_min(array, labeled):
+    return np.array([
+            np.min(array * (labeled == i))
+            for i in range(labeled.max()+1)
+        ])
+
 def test_sum_labeled():
     np.random.seed(334)
     for i in range(16):
@@ -75,6 +81,16 @@ def test_max_labeled():
         labeled += 8 * np.random.random_sample(labeled.shape).astype(np.intc)
         fast = mahotas.labeled.labeled_max(f, labeled)
         slow = slow_labeled_max(f, labeled)
+        assert np.allclose(fast, slow)
+
+def test_min_labeled():
+    np.random.seed(334)
+    for i in range(16):
+        f = np.random.random_sample((64,128))
+        labeled = np.zeros(f.shape, dtype=np.intc)
+        labeled += 8 * np.random.random_sample(labeled.shape).astype(np.intc)
+        fast = mahotas.labeled.labeled_min(f, labeled)
+        slow = slow_labeled_min(f, labeled)
         assert np.allclose(fast, slow)
 
 def slow_labeled_size(labeled):
