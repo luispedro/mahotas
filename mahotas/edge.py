@@ -35,7 +35,7 @@ def sobel(img, just_filter=False):
     img : Any 2D-ndarray
     just_filter : boolean, optional
         If true, then return the result of filtering the image with the sobel
-        filters, but do not threashold.
+        filters, but do not threashold (default is False).
 
     Returns
     -------
@@ -54,7 +54,10 @@ def sobel(img, just_filter=False):
     # Using 'nearest' seems to be MATLAB's implementation
     vfiltered = convolve(img, _vsobel_filter, mode='nearest')
     hfiltered = convolve(img, _hsobel_filter, mode='nearest')
-    filtered = vfiltered**2 + hfiltered**2
+    vfiltered **= 2
+    hfiltered **= 2
+    filtered = vfiltered
+    filtered += hfiltered
     if just_filter:
         return filtered
     thresh = 2*np.sqrt(filtered.mean())
