@@ -72,11 +72,11 @@ struct filter_iterator {
             delete [] footprint;
         }
 
-        cur_offsets_idx_ = 0;
         init_filter_iterator(PyArray_NDIM(filter), PyArray_DIMS(filter), size_,
             PyArray_DIMS(array), /*origins*/0,
             this->strides_, this->backstrides_,
             this->minbound_, this->maxbound_);
+        cur_offsets_idx_ = this->offsets_.begin();
     }
     ~filter_iterator() {
         if (own_filter_data_) delete [] filter_data_;
@@ -84,7 +84,7 @@ struct filter_iterator {
     template <typename OtherIterator>
     void iterate_both(OtherIterator& iterator) {
         for (int d = 0; d < nd_; ++d) {
-            npy_intp p = iterator.index_rev(d);
+            const npy_intp p = iterator.index_rev(d);
             if (p < (iterator.dimension_rev(d) - 1)) {
                 if (p < this->minbound_[d] || p >= this->maxbound_[d]) {
                     this->cur_offsets_idx_ += this->strides_[d];
@@ -92,23 +92,23 @@ struct filter_iterator {
                 break;
             }
             this->cur_offsets_idx_ -= this->backstrides_[d];
-            assert( this->cur_offsets_idx_ >= 0 );
-            assert( this->cur_offsets_idx_ < this->offsets_.size() );
+            assert(this->cur_offsets_idx_ >= this->offsets_.begin());
+            assert(this->cur_offsets_idx_ < this->offsets_.end());
         }
         ++iterator;
     }
 
     template <typename OtherIterator>
     bool retrieve(const OtherIterator& iterator, const npy_intp j, T& array_val) {
-        if (this->offsets_[cur_offsets_idx_+j] == border_flag_value) return false;
+        if (this->cur_offsets_idx_[j] == border_flag_value) return false;
         assert((j >= 0) && (j < size_));
-        array_val = *( (&*iterator) + this->offsets_[cur_offsets_idx_+j]);
+        array_val = *( (&*iterator) + this->cur_offsets_idx_[j]);
         return true;
     }
     template <typename OtherIterator>
     void set(const OtherIterator& iterator, npy_intp j, const T& val) {
-        assert(this->offsets_[cur_offsets_idx_+j] != border_flag_value);
-        *( (&*iterator) + this->offsets_[cur_offsets_idx_+j]) = val;
+        assert(this->cur_offsets_idx_[j] != border_flag_value);
+        *( (&*iterator) + this->cur_offsets_idx_[j]) = val;
     }
 
     const T& operator [] (const npy_intp j) const { assert(j < size_); return filter_data_[j]; }
@@ -116,7 +116,7 @@ struct filter_iterator {
     private:
         const T* filter_data_;
         bool own_filter_data_;
-        unsigned cur_offsets_idx_;
+        std::vector<npy_intp>::const_iterator cur_offsets_idx_;
         npy_intp size_;
         const npy_intp nd_;
         std::vector<npy_intp> offsets_;
