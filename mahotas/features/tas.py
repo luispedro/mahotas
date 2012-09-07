@@ -1,10 +1,9 @@
-# Copyright (C) 2008-2010, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # Carnegie Mellon University
 #
 # License: MIT (see COPYING file)
 
-from __future__ import division
 import numpy as np
 from ..convolve import convolve
 from ..thresholding import otsu
@@ -37,7 +36,7 @@ def _tas(img, thresh, margin):
         values = values[:saved]
         s = values.sum()
         if s > 0:
-            return values/s
+            return values/float(s)
         return values
 
     def _compute(bimg):
