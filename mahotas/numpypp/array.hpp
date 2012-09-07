@@ -163,7 +163,8 @@ struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
             int nd = array->nd;
             position_.nd_=nd;
             data_=reinterpret_cast<BaseType*>(array->data);
-            for (int i = 0; i != position_.nd_; ++i) position_.position_[i]=0;
+            std::fill(position_.position_, position_.position_ + nd, 0);
+
             unsigned cummul = 0;
             for (int i = 0; i != position_.nd_; ++i) {
                 dimensions_[i] = array->dimensions[nd-i-1];
