@@ -53,9 +53,10 @@ std::vector<numpy::position> neighbours(const numpy::aligned_array<T>& Bc, bool 
 template<typename T>
 numpy::index_type margin_of(const numpy::position& position, const numpy::array_base<T>& ref) {
     numpy::index_type margin = std::numeric_limits<numpy::index_type>::max();
-    for (int d = 0; d != ref.ndims(); ++d) {
+    const int nd = ref.ndims();
+    for (int d = 0; d != nd; ++d) {
         if (position[d] < margin) margin = position[d];
-        int rmargin = ref.dim(d) - position[d] - 1;
+        const int rmargin = ref.dim(d) - position[d] - 1;
         if (rmargin < margin) margin = rmargin;
    }
    return margin;
@@ -292,9 +293,9 @@ PyObject* py_dilate(PyObject* self, PyObject* args) {
     PyArrayObject* Bc;
     PyArrayObject* output;
     if (!PyArg_ParseTuple(args,"OOO", &array, &Bc, &output)) return NULL;
-    if (!numpy::are_arrays(array, Bc, output) || !numpy::same_shape(array, output) ||
-        !PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(Bc)) ||
-        !PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(output)) ||
+    if (!numpy::are_arrays(array, Bc, output) ||
+        !numpy::same_shape(array, output) ||
+        !numpy::equiv_typenums(array, Bc, output) ||
         PyArray_NDIM(array) != PyArray_NDIM(Bc)
     ) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
@@ -311,7 +312,7 @@ PyObject* py_dilate(PyObject* self, PyObject* args) {
 }
 
 void close_holes(numpy::aligned_array<bool> ref, numpy::aligned_array<bool> f, numpy::aligned_array<bool> Bc) {
-    std::fill_n(f.data(),f. size(), false);
+    std::fill_n(f.data(), f.size(), false);
 
     numpy::position_stack stack(ref.ndim());
     const int N = ref.size();
@@ -364,15 +365,15 @@ void close_holes(numpy::aligned_array<bool> ref, numpy::aligned_array<bool> f, n
 PyObject* py_close_holes(PyObject* self, PyObject* args) {
     PyArrayObject* ref;
     PyArrayObject* Bc;
-    if (!PyArg_ParseTuple(args,"OO", &ref, &Bc)) {
+    if (!PyArg_ParseTuple(args,"OO", &ref, &Bc)) return NULL;
+    if (!numpy::are_arrays(ref, Bc) ||
+        !numpy::equiv_typenums(ref, Bc) ||
+        !PyArray_EquivTypenums(PyArray_TYPE(ref), NPY_BOOL)) {
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
     PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(ref->nd,ref->dimensions,PyArray_TYPE(ref));
     if (!res_a) return NULL;
-    if (PyArray_TYPE(ref) != NPY_BOOL || PyArray_TYPE(Bc) != NPY_BOOL) {
-        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
-        return NULL;
-    }
     try {
         close_holes(numpy::aligned_array<bool>(ref), numpy::aligned_array<bool>(res_a), numpy::aligned_array<bool>(Bc));
     }
@@ -418,6 +419,8 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
     gil_release nogil;
     const int N = res.size();
     const int N2 = Bc.size();
+    assert(res.is_carray());
+    BaseType* rdata = res.data();
     std::vector<NeighbourElem> neighbours;
     const numpy::position centre = central_position(Bc);
     typename numpy::aligned_array<BaseType>::iterator Bi = Bc.begin();
@@ -439,7 +442,7 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
     std::fill(cost.begin(), cost.end(), std::numeric_limits<BaseType>::max());
 
     std::vector<bool> status(array.size());
-    std::fill(status.begin(), status.end(),false);
+    std::fill(status.begin(), status.end(), false);
 
     std::priority_queue<MarkerInfo> hqueue;
 
@@ -447,12 +450,7 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
     for (int i =0; i != N; ++i, ++mpos) {
         if (*mpos) {
             assert(markers.validposition(mpos.position()));
-            int margin = markers.size();
-            for (int d = 0; d != markers.ndims(); ++d) {
-                if (mpos.index(d) < margin) margin = mpos.index(d);
-                int rmargin = markers.dim(d) - mpos.index(d) - 1;
-                if (rmargin < margin) margin = rmargin;
-            }
+            const int margin = margin_of(mpos.position(), markers);
             hqueue.push(MarkerInfo(array.at(mpos.position()), idx++, markers.pos_to_flat(mpos.position()), margin));
             res.at(mpos.position()) = *mpos;
             cost[markers.pos_to_flat(mpos.position())] = array.at(mpos.position());
@@ -460,31 +458,34 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
     }
 
     while (!hqueue.empty()) {
-        MarkerInfo next = hqueue.top();
+        const MarkerInfo next = hqueue.top();
         hqueue.pop();
         if (status[next.position]) continue;
         status[next.position] = true;
         for (std::vector<NeighbourElem>::const_iterator neighbour = neighbours.begin(), past = neighbours.end(); neighbour != past; ++neighbour) {
-            numpy::index_type npos = next.position + neighbour->delta;
+            const numpy::index_type npos = next.position + neighbour->delta;
             int nmargin = next.margin - neighbour->margin;
             if (nmargin < 0) {
+                // nmargin is a lower bound on the margin, so we must recompute the actual thing
                 numpy::position pos = markers.flat_to_pos(next.position);
                 assert(markers.validposition(pos));
-                numpy::position npos = pos + neighbour->delta_position;
-                if (!markers.validposition(npos)) continue;
-
-
-                // we are good, but the margin might have been wrong. Recompute
-                nmargin = margin_of(npos, markers);
+                numpy::position long_pos = pos + neighbour->delta_position;
+                nmargin = margin_of(long_pos, markers);
+                if (nmargin < 0) {
+                    // We are outside the image.
+                    continue;
+                }
+                // we are good with the recomputed margin
+                assert(markers.validposition(long_pos));
             }
             assert(npos < int(cost.size()));
             if (!status[npos]) {
-                BaseType ncost = array.at_flat(npos);
+                const BaseType ncost = array.at_flat(npos);
                 if (ncost < cost[npos]) {
                     cost[npos] = ncost;
-                    res.at_flat(npos) = res.at_flat(next.position);
+                    rdata[npos] = rdata[next.position];
                     hqueue.push(MarkerInfo(ncost, idx++, npos, nmargin));
-                } else if (lines && res.at_flat(next.position) != res.at_flat(npos) && !lines->at_flat(npos)) {
+                } else if (lines && rdata[next.position] != rdata[npos] && !lines->at_flat(npos)) {
                     lines->at_flat(npos) = true;
                 }
             }
@@ -500,7 +501,8 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args,"OOOi", &array, &markers, &Bc,&return_lines)) {
         return NULL;
     }
-    if (!PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(markers))) {
+    if (!numpy::are_arrays(array, markers, Bc) ||
+        !numpy::equiv_typenums(array, markers)) {
         PyErr_SetString(PyExc_RuntimeError, "mahotas._cwatershed: markers and f should have equivalent types.");
         return NULL;
     }

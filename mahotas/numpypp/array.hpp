@@ -389,6 +389,8 @@ struct aligned_array : public array_base<BaseType> {
             return this->raw_stride(i)/sizeof(BaseType);
         }
 
+        bool is_carray() const { return is_carray_; }
+
         BaseType* data() {
             return reinterpret_cast<BaseType*>(PyArray_DATA(this->array_));
         }
