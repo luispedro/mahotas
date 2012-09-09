@@ -94,6 +94,7 @@ void erode(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::al
             T arr_val = T();
             filter.retrieve(iter, j, arr_val);
             value = std::min<T>(value, erode_sub(arr_val, filter[j]));
+            if (value == std::numeric_limits<T>::min()) break;
         }
         *rpos = value;
     }
