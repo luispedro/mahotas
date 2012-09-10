@@ -447,14 +447,16 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
 
     std::priority_queue<MarkerInfo> hqueue;
 
-    typename numpy::aligned_array<BaseType>::iterator mpos = markers.begin();
-    for (int i =0; i != N; ++i, ++mpos) {
-        if (*mpos) {
-            assert(markers.validposition(mpos.position()));
-            const int margin = margin_of(mpos.position(), markers);
-            hqueue.push(MarkerInfo(array.at(mpos.position()), idx++, markers.pos_to_flat(mpos.position()), margin));
-            res.at(mpos.position()) = *mpos;
-            cost[markers.pos_to_flat(mpos.position())] = array.at(mpos.position());
+    typename numpy::aligned_array<BaseType>::iterator miter = markers.begin();
+    for (int i = 0; i != N; ++i, ++miter) {
+        if (*miter) {
+            assert(markers.validposition(miter.position()));
+            const numpy::position mpos = miter.position();
+            const int margin = margin_of(mpos, markers);
+
+            hqueue.push(MarkerInfo(array.at(mpos), idx++, markers.pos_to_flat(mpos), margin));
+            res.at(mpos) = *miter;
+            cost[markers.pos_to_flat(mpos)] = array.at(mpos);
         }
     }
 
