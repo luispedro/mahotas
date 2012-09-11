@@ -439,11 +439,8 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
     }
     int idx = 0;
 
-    std::vector<BaseType> cost(array.size());
-    std::fill(cost.begin(), cost.end(), std::numeric_limits<BaseType>::max());
-
-    std::vector<bool> status(array.size());
-    std::fill(status.begin(), status.end(), false);
+    enum { white, grey, black };
+    std::vector<unsigned char> status(array.size(), static_cast<unsigned char>(white));
 
     std::priority_queue<MarkerInfo> hqueue;
 
@@ -456,18 +453,18 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
 
             hqueue.push(MarkerInfo(array.at(mpos), idx++, markers.pos_to_flat(mpos), margin));
             res.at(mpos) = *miter;
-            cost[markers.pos_to_flat(mpos)] = array.at(mpos);
+            status[markers.pos_to_flat(mpos)] = grey;
         }
     }
 
     while (!hqueue.empty()) {
         const MarkerInfo next = hqueue.top();
         hqueue.pop();
-        if (status[next.position]) continue;
-        status[next.position] = true;
+        status[next.position] = black;
+        int margin = next.margin;
         for (std::vector<NeighbourElem>::const_iterator neighbour = neighbours.begin(), past = neighbours.end(); neighbour != past; ++neighbour) {
             const numpy::index_type npos = next.position + neighbour->delta;
-            int nmargin = next.margin - neighbour->margin;
+            int nmargin = margin - neighbour->margin;
             if (nmargin < 0) {
                 // nmargin is a lower bound on the margin, so we must recompute the actual thing
                 numpy::position pos = markers.flat_to_pos(next.position);
@@ -480,16 +477,23 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
                 }
                 // we are good with the recomputed margin
                 assert(markers.validposition(long_pos));
+                // Update lower bound
+                if ((nmargin - neighbour->margin) > margin) margin = nmargin - neighbour->margin;
             }
-            assert(npos < int(cost.size()));
-            if (!status[npos]) {
-                const BaseType ncost = array.at_flat(npos);
-                if (ncost < cost[npos]) {
-                    cost[npos] = ncost;
+            assert(npos < int(status.size()));
+            switch (status[npos]) {
+                case white: {
+                    const BaseType ncost = array.at_flat(npos);
                     rdata[npos] = rdata[next.position];
                     hqueue.push(MarkerInfo(ncost, idx++, npos, nmargin));
-                } else if (lines && rdata[next.position] != rdata[npos] && !lines->at_flat(npos)) {
-                    lines->at_flat(npos) = true;
+                    status[npos] = grey;
+                    break;
+                }
+                case grey: {
+                    if (lines && rdata[next.position] != rdata[npos]) {
+                        lines->at_flat(npos) = true;
+                    }
+                    break;
                 }
             }
         }
