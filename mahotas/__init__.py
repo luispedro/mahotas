@@ -4,6 +4,21 @@ Mahotas
 =======
 
 A package for computer vision in Python.
+
+Main Features
+-------------
+
+features
+    Compute global and local features (several submodules, include SURF and Haralick features)
+convolve
+    Convolution and wavelets
+morph
+    Morphological features. Most are available at the mahotas level, include erode(), dilate()...
+watershed
+    Seeded watershed implementation
+imread/imsave
+    read/write image
+...
 '''
 try:
     from .bbox import bbox, croptobbox
