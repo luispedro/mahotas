@@ -59,7 +59,9 @@ PyObject* py_convolve(PyObject* self, PyObject* args) {
     PyArrayObject* output;
     int mode;
     if (!PyArg_ParseTuple(args,"OOOi", &array, &filter, &output, &mode)) return NULL;
-    if (!PyArray_Check(array) || !PyArray_Check(filter) || PyArray_TYPE(array) != PyArray_TYPE(filter) || PyArray_NDIM(array) != PyArray_NDIM(filter)) {
+    if (!numpy::are_arrays(array, filter) ||
+        !numpy::equiv_typenums(array, filter) ||
+        PyArray_NDIM(array) != PyArray_NDIM(filter)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
@@ -70,17 +72,11 @@ PyObject* py_convolve(PyObject* self, PyObject* args) {
         if (!output) return NULL;
     } else {
         if (!PyArray_Check(output) ||
-            PyArray_NDIM(output) != PyArray_NDIM(array) ||
-            PyArray_TYPE(output) != PyArray_TYPE(array) ||
+            !numpy::same_shape(output, array) ||
+            !numpy::equiv_typenums(output, array) ||
             !PyArray_ISCARRAY(output)) {
             PyErr_SetString(PyExc_RuntimeError, OutputErrorMsg);
             return NULL;
-        }
-        for (int d = 0; d != PyArray_NDIM(array); ++d) {
-            if (PyArray_DIM(array, d) != PyArray_DIM(output, d)) {
-                PyErr_SetString(PyExc_RuntimeError, OutputErrorMsg);
-                return NULL;
-            }
         }
         Py_INCREF(output);
     }
@@ -478,6 +474,7 @@ void template_match(numpy::aligned_array<T> res, numpy::aligned_array<T> f, nump
     typename numpy::aligned_array<T>::iterator iter = f.begin();
     filter_iterator<T> fiter(f.raw_array(), t.raw_array(), ExtendMode(mode), false);
     const int N2 = fiter.size();
+    assert(res.is_carray());
     // T* is a fine iterator type.
     T* rpos = res.data();
 
@@ -500,10 +497,9 @@ PyObject* py_template_match(PyObject* self, PyObject* args) {
     PyArrayObject* template_;
     int mode;
     PyArrayObject* output;
-    if (!PyArg_ParseTuple(args, "OOOi", &array, &template_, &output, &mode) ||
-        !PyArray_Check(array) || !PyArray_Check(output) || !PyArray_Check(template_) ||
-        PyArray_TYPE(array) != PyArray_TYPE(output) ||
-        PyArray_TYPE(template_) != PyArray_TYPE(array) ||
+    if (!PyArg_ParseTuple(args, "OOOi", &array, &template_, &output, &mode)) return NULL;
+    if (!numpy::are_arrays(array, template_, output) ||
+        !numpy::equiv_typenums(array, template_, output) ||
         !PyArray_ISCARRAY(output)) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;

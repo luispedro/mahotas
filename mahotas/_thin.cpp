@@ -1,5 +1,7 @@
 #include <cstring>
 #include <iostream>
+#include "numpypp/array.hpp"
+#include "numpypp/dispatch.hpp"
 #include "utils.hpp"
 
 extern "C" {
@@ -85,12 +87,11 @@ void fill_data(PyArrayObject* array, structure_element& elem, const bool flip, c
 PyObject* py_thin(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* buffer;
-    if (!PyArg_ParseTuple(args,"OO", &array, &buffer) ||
-        !PyArray_Check(array) || !PyArray_Check(buffer) ||
-        PyArray_TYPE(array) != NPY_BOOL || PyArray_TYPE(buffer) != NPY_BOOL ||
-        PyArray_NDIM(array) != 2 || PyArray_NDIM(buffer) != 2 ||
-        PyArray_DIM(array, 0) != PyArray_DIM(buffer,0) ||
-        PyArray_DIM(array, 1) != PyArray_DIM(buffer, 1) ||
+    if (!PyArg_ParseTuple(args,"OO", &array, &buffer)) return NULL;
+    if (!numpy::are_arrays(array, buffer) ||
+        !numpy::check_type<bool>(array) ||
+        !numpy::check_type<bool>(buffer) ||
+        !numpy::same_shape(array, buffer) ||
         !PyArray_ISCONTIGUOUS(array) || !PyArray_ISCONTIGUOUS(buffer)) {
             PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
             return NULL;

@@ -155,9 +155,10 @@ PyObject* py_locminmax(PyObject* self, PyObject* args) {
     PyArrayObject* output;
     int is_min;
     if (!PyArg_ParseTuple(args, "OOOi", &array, &Bc, &output, &is_min)) return NULL;
-    if (!numpy::are_arrays(array, Bc, output) || !numpy::same_shape(array, output) ||
-        !PyArray_EquivTypenums(PyArray_TYPE(array), PyArray_TYPE(Bc)) ||
-        !PyArray_EquivTypenums(NPY_BOOL, PyArray_TYPE(output)) ||
+    if (!numpy::are_arrays(array, Bc, output) ||
+        !numpy::same_shape(array, output) ||
+        !numpy::equiv_typenums(array, Bc) ||
+        !numpy::check_type<bool>(output) ||
         PyArray_NDIM(array) != PyArray_NDIM(Bc) ||
         !PyArray_ISCARRAY(output)
     ) {

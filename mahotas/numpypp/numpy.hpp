@@ -36,6 +36,9 @@ npy_intp dtype_code<double>() { return NPY_DOUBLE; }
 template<typename T>
 bool check_type(PyArrayObject* a) { return PyArray_EquivTypenums(PyArray_TYPE(a), dtype_code<T>()); }
 
+template<typename T>
+bool check_type(PyObject* a) { return check_type<T>(reinterpret_cast<PyArrayObject*>(a)); }
+
 }
 
 #endif // MAHOTAS_NUMPYPP_NUMPY_HPP_INCLUDE_GUARD_LPC_

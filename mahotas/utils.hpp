@@ -7,6 +7,7 @@ extern "C" {
 }
 
 
+// holdref is a RAII object for decreasing a reference at scope exit
 struct holdref {
     holdref(PyObject* obj, bool incref=true)
         :obj(obj) {
@@ -22,6 +23,7 @@ private:
     PyObject* const obj;
 };
 
+// gil_release is a sort of reverse RAII object: it acquires the GIL on scope exit
 struct gil_release {
     gil_release() {
         _save = PyEval_SaveThread();
@@ -56,6 +58,10 @@ struct PythonException {
     const char* const message_;
 };
 
+
+
+// DECLARE_MODULE is slightly ugly, but it encapsulates the differences in
+// initializing a module between Python 2.x & Python 3.x
 
 #if PY_MAJOR_VERSION < 3
 #define DECLARE_MODULE(name) \
