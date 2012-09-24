@@ -1,5 +1,3 @@
-
-
 Image Processing Library for Python.
 
 It includes a couple of algorithms implemented in C++ for speed while operating
@@ -27,13 +25,12 @@ threshold).
 ::
 
     import numpy as np
-    from scipy import ndimage
     import mahotas
     import pylab
 
     img = mahotas.imread('test.jpeg')
     T_otsu = mahotas.thresholding.otsu(img)
-    seeds,_ = ndimage.label(img > T_otsu)
+    seeds,_ = mahotas.label(img > T_otsu)
     labeled = mahotas.cwatershed(img.max() - img, seeds)
 
     pylab.imshow(labeled)
