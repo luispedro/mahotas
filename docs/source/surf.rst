@@ -17,7 +17,7 @@ features* family. There are two steps to this algorithm:
 1. Detection of interest points.
 2. Description of interest points.
 
-The function ``mahotas.surf.surf`` combines the two steps::
+The function ``mahotas.features.surf.surf`` combines the two steps::
 
     import numpy as np
     from mahotas.features import surf
