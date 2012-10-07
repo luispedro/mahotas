@@ -35,7 +35,7 @@ Thresholding functions have a trivial interface: they take an image and return
 a value. One of the most well-known thresholding methods is Otsu's method::
 
     T_otsu = mahotas.otsu(photo)
-    print T_otsu
+    print(T_otsu)
     imshow(photo > T_otsu)
     show()
 
@@ -54,7 +54,7 @@ prints ``115``.
 
 
     T_otsu = mahotas.otsu(photo)
-    print T_otsu
+    print(T_otsu)
     gray()
     imshow(photo > T_otsu)
     show()
@@ -62,7 +62,7 @@ prints ``115``.
 An alternative is the Riddler-Calvard method::
 
     T_rc = mahotas.rc(photo)
-    print T_rc
+    print(T_rc)
     imshow(photo > T_rc)
     show()
 
@@ -82,7 +82,7 @@ image is exactly the same:
 
 
     T_rc = mahotas.rc(photo)
-    print T_rc
+    print(T_rc)
     gray()
     imshow(photo > T_rc)
     show()

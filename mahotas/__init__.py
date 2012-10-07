@@ -18,7 +18,7 @@ watershed
     Seeded watershed implementation
 imread/imsave
     read/write image
-...
+
 '''
 try:
     from .bbox import bbox, croptobbox

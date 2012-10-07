@@ -27,7 +27,7 @@ We start by importing and loading our input image
     f = f[:256,:256]
     plt.gray()
     # Show the data:
-    print "Fraction of zeros in original image:", np.mean(f==0)
+    print("Fraction of zeros in original image: {0}".format(np.mean(f==0)))
     plt.imshow(f)
     plt.show()
 
@@ -41,7 +41,7 @@ method: save every other pixel and only high-order bits.
     direct = f[::2,::2].copy()
     direct /= 8
     direct = direct.astype(np.uint8)
-    print "Fraction of zeros in original image (after division by 8):", np.mean(direct==0)
+    print("Fraction of zeros in original image (after division by 8): {0}".format(np.mean(direct==0)))
     plt.imshow(direct)
     plt.show()
 
@@ -61,7 +61,7 @@ the high-order bits.
     # Discard low-order bits:
     t /= 8
     t = t.astype(np.int8)
-    print "Fraction of zeros in transform (after division by 8):", np.mean(t==0)
+    print("Fraction of zeros in transform (after division by 8): {0}".format(np.mean(t==0)))
     plt.imshow(t)
     plt.show()
 
@@ -93,7 +93,7 @@ keeping every fourth pixel and low-order bits.
 
 
     tt = soft_threshold(t, 12)
-    print "Fraction of zeros in transform (after division by 8 & soft thresholding):", np.mean(tt==0)
+    print("Fraction of zeros in transform (after division by 8 & soft thresholding): {0}".format(np.mean(tt==0)))
     # Let us look again at what we have:
     rt = mahotas.idaubechies(tt, 'D8')
     plt.imshow(rt)
