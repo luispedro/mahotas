@@ -1,4 +1,4 @@
-# Copyright (C) 2010, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -44,6 +44,16 @@ def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_p
     points = surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points=1024, descriptor_only=False):
 
     Run SURF detection and descriptor computations
+
+    Speeded-Up Robust Features (SURF) are fast local features computed at
+    automatically determined keypoints.
+
+    Reference
+    ---------
+
+    Herbert Bay, Andreas Ess, Tinne Tuytelaars, Luc Van Gool "SURF: Speeded Up
+    Robust Features", Computer Vision and Image Understanding (CVIU), Vol. 110,
+    No. 3, pp. 346--359, 2008
 
     Parameters
     ----------

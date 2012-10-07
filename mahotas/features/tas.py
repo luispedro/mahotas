@@ -95,7 +95,10 @@ def pftas(img, T=None):
     The current version is an adapted version which is free of parameters. The
     thresholding is done by using Otsu's algorithm (or can be pre-computed and
     passed in by setting `T`), the margin around the mean of pixels to be
-    included is the standard deviation.
+    included is the standard deviation. This was first published by Coelho et
+    al. in "Structured Literature Image Finder: Extracting Information from
+    Text and Images in Biomedical Literature"
+    (http://www.springerlink.com/content/60634778710577t0/)
 
     Also returns a version computed on the negative of the binarisation defined
     by Hamilton et al.

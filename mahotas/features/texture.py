@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2011, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # License: MIT (see COPYING file)
@@ -31,6 +31,23 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_fe
     implements the correct feature unless `preserve_haralick_bug` is True. The
     only reason why you'd want the buggy behaviour is if you want to match
     another implementation.
+
+    Reference
+    ---------
+
+    Cite the following reference for these features::
+
+        @article{Haralick1973,
+            author = {Haralick, Robert M. and Dinstein, Its'hak and Shanmugam, K.},
+            journal = {Ieee Transactions On Systems Man And Cybernetics},
+            number = {6},
+            pages = {610--621},
+            publisher = {IEEE},
+            title = {Textural features for image classification},
+            url = {http://ieeexplore.ieee.org/lpdocs/epic03/wrapper.htm?arnumber=4309314},
+            volume = {3},
+            year = {1973}
+        }
 
     Parameters
     ----------
