@@ -18,6 +18,14 @@ def test_get_structuring_elem():
     assert np.all(get_structuring_elem(A, Bc.astype(np.float).T).flags['C_CONTIGUOUS'])
     assert np.all(get_structuring_elem(A, Bc.astype(np.float).T) == Bc.T)
 
+    @raises(ValueError)
+    def bad_dims():
+        Bc = np.ones((3,3,3), dtype=np.bool)
+        get_structuring_elem(A, Bc)
+
+    bad_dims()
+        
+
 def test_open():
     from mahotas.morph import open
     np.random.seed(123)

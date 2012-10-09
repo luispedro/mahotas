@@ -82,6 +82,15 @@ def test_interest_points_descriptor_only():
     only = surf.surf(f, 6, 24, 1, descriptor_only=True)
     assert full.size > only.size
 
+def test_descriptors_descriptor_only():
+    np.random.seed(22)
+    f = np.random.rand(256,256)*230
+    f = f.astype(np.uint8)
+    points = surf.interest_points(f, 6, 24, 1)
+    full = surf.descriptors(f, points)
+    only = surf.descriptors(f, points, descriptor_only=True)
+    assert full.size > only.size
+
 @raises(ValueError)
 def test_3d_image():
     surf.surf(np.arange(8*8*16).reshape((16,8,8)), 6, 24, 1)

@@ -1,5 +1,7 @@
 import numpy as np
 import mahotas.labeled
+from nose.tools import raises
+
 def test_border():
     labeled = np.zeros((32,32), np.uint8)
     labeled[8:11] = 1
@@ -119,3 +121,18 @@ def test_remove_bordering():
         assert np.all(removed[:,0] == 0)
         assert np.all(removed[:,-1] == 0)
 
+        removed2 = np.zeros_like(removed)
+        mahotas.labeled.remove_bordering(labeled, out=removed2)
+        assert np.all(removed2 == removed)
+
+@raises(ValueError)
+def test_check_array_labeled_not_int():
+    arr = np.zeros((4,4))
+    lab = np.zeros((4,4), dtype=np.float32)
+    mahotas.labeled._check_array_labeled(arr, lab, 'testing')
+
+@raises(ValueError)
+def test_check_array_labeled_not_same_shape():
+    arr = np.zeros((4,7))
+    lab = np.zeros((4,3), dtype=np.intc)
+    mahotas.labeled._check_array_labeled(arr, lab, 'testing')

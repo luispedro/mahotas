@@ -55,3 +55,8 @@ def test_complex():
     yield call_f, interpolate.spline_filter1d, f, 3
     yield call_f, interpolate.spline_filter, f, 3
 
+
+@raises(ValueError)
+def test_maybe_filter_error():
+    interpolate._maybe_filter(np.array(3), 1, 'testing', False, np.float32)
+
