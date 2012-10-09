@@ -31,6 +31,10 @@ npy_intp dtype_code<int>() { return NPY_INT; }
 
 template <>
 inline
+npy_intp dtype_code<long>() { return NPY_LONG; }
+
+template <>
+inline
 npy_intp dtype_code<double>() { return NPY_DOUBLE; }
 
 template<typename T>
