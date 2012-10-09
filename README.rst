@@ -117,6 +117,18 @@ better venue and generates a public discussion log for others in the future.
 Recent Changes
 --------------
 
+0.9.3 (October 9 2012)
+~~~~~~~~~~~~~~~~~~~~~~
+- Fix interpolation (Report by Christoph Gohlke)
+- Fix second interpolation bug (Report and patch by Christoph Gohlke)
+- Update tests to newer numpy
+- Enhanced debug mode (compile with DEBUG=2 in environment)
+- Faster morph.dilate()
+- Add labeled.labeled_max & labeled.labeled_min (This also led to a refactoring
+  of the labeled_* code)
+- Many documentation fixes
+
+
 0.9.2 (September 1 2012)
 ~~~~~~~~~~~~~~~~~~~~~~~~
 - Fix compilation on Mac OS X 10.8 (reported by Davide Cittaro)

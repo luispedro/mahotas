@@ -1,4 +1,4 @@
-Version 0.9.2+
+Version 0.9.3 2012-10-09 by luispedro
 	* Fix interpolation (Report by Christoph Gohlke)
 	* Fix second interpolation bug (Report and patch by Christoph Gohlke)
 	* Update tests to newer numpy
