@@ -117,6 +117,10 @@ better venue and generates a public discussion log for others in the future.
 Recent Changes
 --------------
 
+0.9.4 (October 10 2012)
+~~~~~~~~~~~~~~~~~~~~~~~
+- Fix compilation on 32-bit machines (Patch by Christoph Gohlke)
+
 0.9.3 (October 9 2012)
 ~~~~~~~~~~~~~~~~~~~~~~
 - Fix interpolation (Report by Christoph Gohlke)
