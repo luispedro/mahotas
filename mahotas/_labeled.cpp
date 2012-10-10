@@ -147,6 +147,21 @@ void labeled_foldl(numpy::aligned_array<T> array, numpy::aligned_array<int> labe
         }
     }
 }
+// In certain versions of g++, in certain environments,
+// multiple versions of std::min & std::max are in scope and the compiler is
+// unable to resolve them. Therefore, based on
+// http://www.cplusplus.com/reference/algorithm/min/ &
+// http://www.cplusplus.com/reference/algorithm/max/ I implemented equivalents
+// here:
+
+template <class T>
+const T& std_like_min(const T& a, const T& b) {
+      return !(b<a)?a:b;
+}
+template <class T>
+const T& std_like_max(const T& a, const T& b) {
+      return (a<b)?b:a;
+}
 
 template <typename T>
 void labeled_sum(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
@@ -159,12 +174,12 @@ void labeled_sum<bool>(numpy::aligned_array<bool> array, numpy::aligned_array<in
 
 template <typename T>
 void labeled_max(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
-    labeled_foldl(array, labeled, result, maxlabel,std::numeric_limits<T>::min(), std::max<T>);
+    labeled_foldl(array, labeled, result, maxlabel,std::numeric_limits<T>::min(), std_like_max<T>);
 }
 
 template <typename T>
 void labeled_min(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
-    labeled_foldl(array, labeled, result, maxlabel,std::numeric_limits<T>::max(), std::min<T>);
+    labeled_foldl(array, labeled, result, maxlabel,std::numeric_limits<T>::max(), std_like_min<T>);
 }
 
 
