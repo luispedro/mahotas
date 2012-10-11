@@ -212,6 +212,14 @@ int int_pow(const int x, const int p) {
     return r;
 }
 
+// Sometimes std::round() is available, sometimes it is not
+// (It is a C99 & C11 function). Therefore, I add a version here:
+template <typename FT>
+FT std_like_round(FT v) {
+    return (v > 0.0) ? std::floor(v + 0.5) : std::ceil(v - 0.5);
+}
+
+
 template <typename FT>
 void zoom_shift(numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
                                  PyArrayObject* shift_ar, numpy::aligned_array<FT> output,
@@ -247,7 +255,7 @@ void zoom_shift(numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
             FT cc = kk;
             if (shifts) cc += shifts[r];
             if (zooms) cc *= zooms[r];
-            cc = fix_offset(ExtendMode(mode), cc, array.dim(r));
+            cc = fix_offset(ExtendMode(mode), npy_intp(std_like_round(cc + 0.5)), array.dim(r));
             if (cc != border_flag_value) {
                 const int start = int(floor(cc + 0.5*(order & 1)) - order / 2);
                 offsets[r][kk] = array.stride(r) * start;
