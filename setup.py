@@ -86,6 +86,7 @@ classifiers = [
 'Topic :: Software Development :: Libraries',
 'Programming Language :: Python',
 'Programming Language :: C++',
+'Operating System :: OS Independent',
 'License :: OSI Approved :: MIT License',
 ]
 
