@@ -33,6 +33,7 @@ Thresholding functions:
 from __future__ import division
 import numpy as np
 from .histogram import fullhistogram
+from . import _histogram
 __all__ = [
         'otsu',
         'rc',
@@ -58,33 +59,11 @@ def otsu(img, ignore_zeros=False):
     T : integer
         the threshold
     """
-# Calculated according to CVonline:
-# http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/MORSE/threshold.pdf
     hist = fullhistogram(img)
     hist = hist.astype(np.double)
-    Hsum = img.size - hist[0]
-    if Hsum == 0:
-        return 0
     if ignore_zeros:
         hist[0] = 0
-    Ng = len(hist)
-    nB = np.cumsum(hist)
-    nO = nB[-1]-nB
-    mu_B = 0
-    mu_O = (np.arange(1, Ng)*hist[1:]).sum()/Hsum
-    best = nB[0]*nO[0]*(mu_B-mu_O)*(mu_B-mu_O)
-    bestT = 0
-
-    for T in xrange(1, Ng):
-        if nB[T] == 0: continue
-        if nO[T] == 0: break
-        mu_B = (mu_B*nB[T-1] + T*hist[T]) / nB[T]
-        mu_O = (mu_O*nO[T-1] - T*hist[T]) / nO[T]
-        sigma_between = nB[T]*nO[T]*(mu_B-mu_O)*(mu_B-mu_O)
-        if sigma_between > best:
-            best = sigma_between
-            bestT = T
-    return bestT
+    return _histogram.otsu(hist)
 
 
 def rc(img, ignore_zeros=False):

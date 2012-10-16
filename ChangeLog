@@ -1,5 +1,6 @@
 Version 0.9.4+
 	* Fix compilation in older G++
+	* Faster Otsu thresholding
 
 Version 0.9.4 2012-10-10 by luispedro
 	* Fix compilation on 32-bit machines (Patch by Christoph Gohlke)

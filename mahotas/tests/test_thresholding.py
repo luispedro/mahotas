@@ -1,5 +1,46 @@
+# Copyright 2011-2012 Luis Pedro Coelho <luis@luispedro.org>
+# License: MIT
+
 import numpy as np
 from mahotas.thresholding import otsu, rc
+from mahotas.histogram import fullhistogram
+
+def slow_otsu(img, ignore_zeros=False):
+    hist = fullhistogram(img)
+    hist = hist.astype(np.double)
+    Hsum = img.size - hist[0]
+    if ignore_zeros:
+        hist[0] = 0
+    if Hsum == 0:
+        return 0
+    Ng = len(hist)
+
+    nB = np.cumsum(hist)
+    nO = nB[-1]-nB
+    mu_B = 0
+    mu_O = np.dot(np.arange(Ng), hist)/ Hsum
+    best = nB[0]*nO[0]*(mu_B-mu_O)*(mu_B-mu_O)
+    bestT = 0
+
+    for T in range(1, Ng):
+        if nB[T] == 0: continue
+        if nO[T] == 0: break
+        mu_B = (mu_B*nB[T-1] + T*hist[T]) / nB[T]
+        mu_O = (mu_O*nO[T-1] - T*hist[T]) / nO[T]
+        sigma_between = nB[T]*nO[T]*(mu_B-mu_O)*(mu_B-mu_O)
+        if sigma_between > best:
+            best = sigma_between
+            bestT = T
+    return bestT
+
+def test_otsu_fast():
+    np.random.seed(120)
+    for i in range(12):
+        A = 32*np.random.rand(128,128)
+        A = A.astype(np.uint8)
+        fast = otsu(A)
+        slow = slow_otsu(A)
+        assert fast == slow
 
 def test_thresholding():
     np.random.seed(123)
