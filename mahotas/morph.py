@@ -245,14 +245,14 @@ def hitmiss(input, Bc, out=None, output=None):
 
     ::
 
-        print hitmiss(np.array([
+        print(hitmiss(np.array([
                     [0,0,0,0,0],
                     [0,1,1,1,1],
                     [0,0,1,1,1]]),
                 np.array([
                     [0,0,0],
                     [2,1,1],
-                    [2,1,1]]))
+                    [2,1,1]])))
 
         prints::
 

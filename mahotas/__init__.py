@@ -46,8 +46,8 @@ try:
     import morph
     import segmentation
 except ImportError, e:
-    import sys
-    print >>sys.stderr, '''\
+    from sys import stderr
+    stderr.write('''\
 Could not import submodules (exact error was: %s).
 
 There are many reasons for this error the most common one is that you have
@@ -56,7 +56,7 @@ installed them (using `python setup.py install`) and then proceeded to test
 mahotas **without changing the current directory**.
 
 Try installing and then changing to another directory before importing mahotas.
-''' % e
+''' % e)
 
 
 
