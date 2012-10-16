@@ -228,7 +228,9 @@ def show_surf(f, spoints, values=None, colors=None):
         x0 = int(x) - size//2
         x1 = x + size
         y1 = y + size
-        def rotate_around((p0,p1),(c0,c1), a):
+        def rotate_around(p, c, a):
+            p0,p1 = p
+            c0,c1 = c
             d0 = p0-c0
             d1 = p1 - c1
             d0,d1 = rotate(d0,d1,a)

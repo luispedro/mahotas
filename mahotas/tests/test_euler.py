@@ -3,9 +3,9 @@ from mahotas.euler import euler, _euler_lookup4, _euler_lookup8
 from nose.tools import raises
 
 def test_lookup():
-    Q1 = [np.array(q, np.bool) for q in [[0,0],[1,0]], [[0,0],[0,1]], [[0,1],[0,0]], [[1,0],[0,0]] ]
+    Q1 = [np.array(q, np.bool) for q in ([[0,0],[1,0]], [[0,0],[0,1]], [[0,1],[0,0]], [[1,0],[0,0]]) ]
     Q2 =  [(~q) for q in Q1]
-    Q3 = [np.array(q, np.bool) for q in [[0,1],[1,0]], [[1,0],[0,1]] ]
+    Q3 = [np.array(q, np.bool) for q in ([[0,1],[1,0]], [[1,0],[0,1]]) ]
 
     def _value(q, lookup):
         q = q.ravel()

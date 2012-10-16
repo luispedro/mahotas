@@ -3,7 +3,7 @@
 # 
 # License: MIT (see COPYING file)
 
-from __future__ import division
+
 import numpy as np
 from . import _texture
 from ..internal import _verify_is_integer_type
@@ -93,7 +93,7 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_fe
     px_plus_y = np.empty(2*fm1, np.double)
     px_minus_y = np.empty(fm1, np.double)
 
-    for dir in xrange(nr_dirs):
+    for dir in range(nr_dirs):
         cooccurence(f, dir, cmat, symmetric=True)
         if ignore_zeros:
             cmat[0] = 0
@@ -236,11 +236,11 @@ def cooccurence(f, direction, output=None, symmetric=True):
       cooccurence_matrix : cooccurence matrix
     '''
     _verify_is_integer_type(f, 'mahotas.cooccurence')
-    if len(f.shape) == 2:
-        assert direction in (0,1,2,3), 'mahotas.texture.cooccurence: `direction` %s is not in range(4).' % direction
-    elif len(f.shape) == 3:
-        assert direction in xrange(13), 'mahotas.texture.cooccurence: `direction` %s is not in range(13).' % direction
-    else:
+    if len(f.shape) == 2 and not (0 <= direction < 4):
+        raise ValueError('mahotas.texture.cooccurence: `direction` {0} is not in range(4).'.format(direction))
+    elif len(f.shape) == 3 and not (0 <= direction < 13):
+        raise ValueError('mahotas.texture.cooccurence: `direction` {0} is not in range(13).'.format(direction))
+    elif len(f.shape) not in (2,3):
         raise ValueError('mahotas.texture.cooccurence: cannot handle images of %s dimensions.' % len(f.shape))
 
     if output is None:
