@@ -64,6 +64,19 @@ def test_cerode():
     f = (f > .9)
     assert np.all(mahotas.erode(f) == mahotas.cerode(f, np.zeros_like(f)))
 
+def test_cdilate():
+    from mahotas.tests.pymorph_copy import cdilate as slow_cdilate
+    np.random.seed(332)
+    Bc = np.zeros((3,3),bool)
+    Bc[1] = 1
+    Bc[:,1] = 1
+    for n in range(8):
+        f = np.random.random_sample((128,128))
+        f = (f > .9)
+        g = np.random.random_sample((128,128))
+        g = (g > .7)
+        assert np.all(mahotas.cdilate(f,g,Bc,n+1) == slow_cdilate(f,g,Bc,n+1))
+
 
 def test_erode_slice():
     np.random.seed(30)

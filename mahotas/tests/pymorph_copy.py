@@ -1,5 +1,6 @@
 # This is from Pymorph.
 # Partial copy
+import numpy as np
 
 def add4dilate(f, c):
     from numpy import asarray, minimum, maximum, float64
@@ -56,5 +57,14 @@ def neg(f):
 
 def erode(f, b):
     return neg(dilate(neg(f),sereflect(b)))
+
+
+def cdilate(f, g, Bc, n=1):
+    f = np.minimum(f,g)
+    for i in range(n):
+        prev = f
+        f = np.minimum(dilate(f, Bc), g)
+        if np.all(f == prev): break
+    return f
 
 

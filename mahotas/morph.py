@@ -15,6 +15,7 @@ __all__ = [
         'cwatershed',
         'cerode',
         'dilate',
+        'cdilate',
         'erode',
         'get_structuring_elem',
         'hitmiss',
@@ -161,7 +162,7 @@ def erode(A, Bc=None, out=None, output=None):
 
 def cerode(f, g, Bc=None, output=None):
     '''
-    conditionally_eroded = erode(f, g, Bc={3x3 cross}, output={np.empty_as(A)})
+    conditionally_eroded = cerode(f, g, Bc={3x3 cross}, output={np.empty_as(A)})
 
     Conditional morphological erosion.
 
@@ -197,6 +198,39 @@ def cerode(f, g, Bc=None, output=None):
     output = _get_output(f, output, 'cerode')
     f = _morph.erode(f, Bc, output)
     return np.maximum(f, g, out=f)
+
+def cdilate(f, g, Bc=None, n=1):
+    """
+    y = cdilate(f, g, Bc={3x3 cross}, n=1)
+
+    Conditional dilation
+
+    `cdilate` creates the image `y` by dilating the image `f` by the
+    structuring element `Bc` conditionally to the image `g`. This
+    operator may be applied recursively `n` times.
+
+    Parameters
+    ----------
+    f : Gray-scale (uint8 or uint16) or binary image.
+    g : Conditioning image. (Gray-scale or binary).
+    Bc : Structuring element (default: 3x3 cross)
+    n : Number of iterations (default: 1)
+
+    Returns
+    -------
+    y : Image
+    """
+    _verify_is_integer_type(f, 'cdilate')
+    Bc = get_structuring_elem(f, Bc)
+    f = np.minimum(f, g)
+    for i in range(n):
+        prev = f
+        f = dilate(f, Bc)
+        f = np.minimum(f, g)
+        if np.all(f == prev):
+            break
+    return f
+
 
 def cwatershed(surface, markers, Bc=None, return_lines=False):
     '''
