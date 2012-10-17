@@ -33,7 +33,9 @@ try:
         from imread import imread, imsave
     except:
         from .freeimage import imread, imsave
-except OSError, e:
+except OSError:
+    import sys
+    _,e,_ = sys.exc_info()
     _error_message %= e
     imread = error_imread
     imsave = error_imsave

@@ -85,7 +85,7 @@ def get_structuring_elem(A,Bc):
     Bc = np.zeros((3,)*len(A.shape), dtype=A.dtype)
     centre = np.ones(len(A.shape))
     # This is pretty slow, but this should be a tiny array, so who cares
-    for i in xrange(Bc.size):
+    for i in range(Bc.size):
         pos = np.unravel_index(i, Bc.shape)
         pos -= centre
         if np.sum(np.abs(pos)) <= max1:

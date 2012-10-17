@@ -40,12 +40,14 @@ try:
 
     from .tests import run as test
 
-    from mahotas_version import __version__
+    from .mahotas_version import __version__
 
-    import features
-    import morph
-    import segmentation
-except ImportError, e:
+    from . import features
+    from . import morph
+    from . import segmentation
+except ImportError:
+    import sys
+    _,e,_ = sys.exc_info()
     from sys import stderr
     stderr.write('''\
 Could not import submodules (exact error was: %s).

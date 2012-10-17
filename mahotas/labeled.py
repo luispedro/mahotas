@@ -72,8 +72,8 @@ def remove_bordering(im, rsize=1, out=None, output=None):
         Subset of ``labeled``
     '''
     invalid = set()
-    index = [slice(None,None,None) for _ in xrange(im.ndim)]
-    for dim in xrange(im.ndim):
+    index = [slice(None,None,None) for _ in range(im.ndim)]
+    for dim in range(im.ndim):
         for bordering in (
                     slice(rsize),
                     slice(-rsize, None)
@@ -271,7 +271,7 @@ def labeled_size(labeled):
 
     Equivalent to::
 
-        for i in xrange(...):
+        for i in range(...):
             sizes[i] = np.sum(labeled == i)
 
     but, naturally, much faster.

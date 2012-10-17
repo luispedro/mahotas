@@ -324,7 +324,7 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out=None, ou
     sigmas = _normalize_sequence(array, sigma, 'gaussian_filter')
     output[...] = array[...]
     noutput = None
-    for axis in xrange(array.ndim):
+    for axis in range(array.ndim):
         sigma = sigmas[axis]
         order = orders[axis]
         noutput = gaussian_filter1d(output, sigma, axis, order, mode, cval, noutput)
@@ -342,7 +342,7 @@ def _wavelet_array(f, inline, func):
 
 
 def _wavelet_center_compute(oshape, border=0, dtype=None, cval=0.0):
-    for c in xrange(1, 16+border):
+    for c in range(1, 16+border):
         nshape = 2**(np.floor(np.log2(oshape))+c)
         delta = nshape - oshape
         delta //= 2
@@ -448,7 +448,7 @@ def haar(f, preserve_energy=True, inline=False):
         f /= 2.0
     return f
 
-_daubechies_codes = [('D%s' % ci) for ci in xrange(2,21,2)]
+_daubechies_codes = [('D%s' % ci) for ci in range(2,21,2)]
 def daubechies(f, code, inline=False):
     '''
     filtered = daubechies(f, code, inline=False)

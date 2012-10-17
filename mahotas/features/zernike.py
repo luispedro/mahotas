@@ -83,11 +83,11 @@ def zernike_moments(im, radius, degree=8, cm=None):
     An.real = (Xn/Dn)
     An.imag = (Yn/Dn)
 
-    Ans = [An**p for p in xrange(2,degree+2)]
+    Ans = [An**p for p in range(2,degree+2)]
     Ans.insert(0, An) # An**1
     Ans.insert(0, np.ones_like(An)) # An**0
-    for n in xrange(degree+1):
-        for l in xrange(n+1):
+    for n in range(degree+1):
+        for l in range(n+1):
             if (n-l)%2 == 0:
                 z = _zernike.znl(Dn, Ans[l], frac_center, n, l)
                 zvalues.append(abs(z))
