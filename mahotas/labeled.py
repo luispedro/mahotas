@@ -1,6 +1,6 @@
 # Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
-# 
+#
 # LICENSE: MIT
 
 from __future__ import division
@@ -22,14 +22,19 @@ __all__ = [
 
 def label(array, Bc=None, out=None, output=None):
     '''
-    labeled, nr_objects = label(array, Bc={3x3 cross}, out=None)
+    labeled, nr_objects = label(array, Bc={3x3 cross}, output={new array})
 
-    Label the array
+    Label the array, which is interpreted as a binary array
+
+    This is also called *connected component labeled*, where the connectivity
+    is defined by the structuring element ``Bc``.
+
+    See: http://en.wikipedia.org/wiki/Connected-component_labeling
 
     Parameters
     ----------
     array : ndarray
-        This will be interpreted as an integer array
+        This will be interpreted as binary array
     Bc : ndarray, optional
         This is the structuring element to use
     out : ndarray, optional
@@ -86,7 +91,7 @@ def remove_bordering(im, rsize=1, out=None, output=None):
     if out is None and output is not None:
         import warnings
         warnings.warn('Using deprecated `output` argument in function `%s`. Please use `out` in the future.' % fname, DeprecationWarning)
-        out = output 
+        out = output
     if out is None:
         out = im.copy()
     elif out is not im:
