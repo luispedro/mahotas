@@ -4,6 +4,7 @@ Version 0.9.4+
 	* Python 3 support without 2to3
 	* Add `cdilate` function
 	* Add `subm` function
+	* Add tophat transforms (functions `tophat_close` and `tophat_open`)
 
 Version 0.9.4 2012-10-10 by luispedro
 	* Fix compilation on 32-bit machines (Patch by Christoph Gohlke)

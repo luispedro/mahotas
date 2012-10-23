@@ -1,5 +1,5 @@
 import numpy as np
-from mahotas.morph import get_structuring_elem, subm
+from mahotas.morph import get_structuring_elem, subm, tophat_open, tophat_close
 from nose.tools import raises
 
 def test_get_structuring_elem():
@@ -158,3 +158,17 @@ def test_subm_out():
         assert c is  a
         assert c is not b
         assert np.all(c == a)
+
+def test_tophat():
+    np.random.seed(32)
+    for j in xrange(8):
+        s = (128, 256)
+        f = np.random.randint(0,255, size=s)
+        f = f.astype(np.uint8)
+        g = tophat_close(f)
+        assert f.shape == g.shape
+
+        g = tophat_open(f)
+        assert f.shape == g.shape
+
+

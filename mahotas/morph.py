@@ -25,6 +25,8 @@ __all__ = [
         'open',
         'regmax',
         'regmin',
+        'tophat_open',
+        'tophat_close',
         'subm',
         ]
 
@@ -644,4 +646,73 @@ def subm(a, b, out=None):
     if out is not a:
         out[:] = a
     return _morph.subm(out, b)
+
+
+def tophat_close(f, Bc=None, out=None):
+    '''
+    fclosed = tophat_close(f, Bc={3x3 cross}, out={new array})
+
+    Closed top-hat transform (aka black tophat transform)
+
+    This returns objects that are smaller than ``Bc`` and contain lower values
+    than their surroundings.
+
+    See: http://en.wikipedia.org/wiki/Top-hat_transform
+
+    Parameters
+    ----------
+    f : ndarray
+    Bc : ndarray, optional
+        structuring element
+    out : ndarray, optional
+        output array
+
+    Returns
+    -------
+    fclosed : ndarray
+        Of same type and shape as ``f``
+
+    See Also
+    --------
+    tophat_close : function
+        Sister function to this one
+    '''
+    Bc = get_structuring_elem(f, Bc)
+    out = _get_output(f, out, 'tophat_close')
+    fc = close(f, Bc)
+    return subm(fc, f, out=out)
+
+def tophat_open(f, Bc=None, out=None):
+    '''
+    fopen = tophat_open(f, Bc={3x3 cross}, out={new array})
+
+    Open top-hat transform (aka white tophat transform)
+
+    This returns objects that are smaller than ``Bc`` and contain higher values
+    than their surroundings.
+
+    See: http://en.wikipedia.org/wiki/Top-hat_transform
+
+    Parameters
+    ----------
+    f : ndarray
+    Bc : ndarray, optional
+        structuring element
+    out : ndarray, optional
+        output array
+
+    Returns
+    -------
+    fopened : ndarray
+        Of same type and shape as ``f``
+
+    See Also
+    --------
+    tophat_close : function
+        Sister function to this one
+    '''
+    Bc = get_structuring_elem(f, Bc)
+    out = _get_output(f, out, 'tophat_open')
+    fo = open(f,Bc)
+    return subm(f, fo, out=out)
 
