@@ -27,6 +27,46 @@ const char TypeErrorMsg[] =
     "Type not understood. "
     "This is caused by either a direct call to _morph (which is dangerous: types are not checked!) or a bug in mahotas.\n";
 
+template<typename T>
+void subm(numpy::aligned_array<T> a, numpy::aligned_array<T> b) {
+    gil_release nogil;
+    const int N = a.size();
+    typename numpy::aligned_array<T>::iterator ita = a.begin();
+    typename numpy::aligned_array<T>::iterator itb = b.begin();
+    for (int i = 0; i != N; ++i, ++ita, ++itb) {
+        if (std::numeric_limits<T>::is_signed) {
+            T val = *ita - *itb;
+            if (*itb >= 0 && (val <= *ita)) *ita = val; // subtracted a positive number, no underflow
+            else if (*itb < 0 && val > *ita) *ita = val; // subtracted a negative number, no overlow
+            else if (*itb >= 0) *ita = std::numeric_limits<T>::min(); // this is the underflow case
+            else *ita = std::numeric_limits<T>::max(); // this is the overflow case
+        } else {
+            if (*itb > *ita) *ita = T();
+            else *ita -= *itb;
+        }
+    }
+}
+
+
+PyObject* py_subm(PyObject* self, PyObject* args) {
+    PyArrayObject* a;
+    PyArrayObject* b;
+    if (!PyArg_ParseTuple(args, "OO", &a, &b)) return NULL;
+    if (!numpy::are_arrays(a,b) ||
+        !numpy::same_shape(a, b) ||
+        !numpy::equiv_typenums(a,b)) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+#define HANDLE(type) \
+    subm<type>(numpy::aligned_array<type>(a), numpy::aligned_array<type>(b));
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(a, true);
+#undef HANDLE
+
+    Py_XINCREF(a);
+    return PyArray_Return(a);
+}
+
 
 template <typename T>
 numpy::position central_position(const numpy::array_base<T>& array) {
@@ -667,6 +707,7 @@ PyObject* py_majority_filter(PyObject* self, PyObject* args) {
 }
 
 PyMethodDef methods[] = {
+  {"subm",(PyCFunction)py_subm, METH_VARARGS, NULL},
   {"dilate",(PyCFunction)py_dilate, METH_VARARGS, NULL},
   {"erode",(PyCFunction)py_erode, METH_VARARGS, NULL},
   {"close_holes",(PyCFunction)py_close_holes, METH_VARARGS, NULL},

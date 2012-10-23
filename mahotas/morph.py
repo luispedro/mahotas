@@ -1,6 +1,6 @@
 # Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
-# 
+#
 # License: MIT
 
 from __future__ import division
@@ -25,6 +25,7 @@ __all__ = [
         'open',
         'regmax',
         'regmin',
+        'subm',
         ]
 
 def get_structuring_elem(A,Bc):
@@ -319,7 +320,7 @@ def hitmiss(input, Bc, out=None, output=None):
                 Bc = Bc.astype(np.uint8)
         else:
             Bc = Bc.astype(input.dtype)
-    
+
     if out is None and output is not None:
         out = output
 
@@ -598,3 +599,49 @@ def regmax(f, Bc=None, out=None, output=None):
     Bc = _remove_centre(Bc.copy())
     output = _get_output(f, out, 'regmax', np.bool_, output=output)
     return _morph.regmin_max(f, Bc, output, False)
+
+def subm(a, b, out=None):
+    '''
+    c = subm(a, b, out={None})
+
+    Subtract (with saturation).
+
+    This is similar to:
+
+    c = a - b
+
+    but with saturation instead of underflow.
+
+    Example
+    -------
+
+    ::
+
+        a = np.array([10, 10, 10], np.uint8)
+        b = np.array([ 5, 10, 15], np.uint8)
+
+        print subm(a,b)
+
+    Prints out::
+
+        [5, 0, 0]
+
+    Parameters
+    ----------
+    a : ndarray
+    b : ndarray
+    out : ndarray, optional
+        Pass ``a`` as output to subtract in-place.
+
+    Returns
+    -------
+    c : ndarray
+        Result of subtraction
+    '''
+    if a.dtype != b.dtype:
+        raise ValueError('mahotas.subm: This is only well-defined if both arguments are of the same type')
+    out = _get_output(a, out, 'subm')
+    if out is not a:
+        out[:] = a
+    return _morph.subm(out, b)
+

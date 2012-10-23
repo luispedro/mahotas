@@ -1,5 +1,5 @@
 import numpy as np
-from mahotas.morph import get_structuring_elem
+from mahotas.morph import get_structuring_elem, subm
 from nose.tools import raises
 
 def test_get_structuring_elem():
@@ -97,3 +97,64 @@ def test_dilate_crash():
     small = large[128:256,128:256]
     dilate(small)
 
+def slow_subm_uint8(a, b):
+    a = a.astype(np.int64)
+    b = b.astype(np.int64)
+    c = a - b
+    return np.clip(c, 0, 255).astype(np.uint8)
+
+def slow_subm_uint16(a, b):
+    a = a.astype(np.int64)
+    b = b.astype(np.int64)
+    c = a - b
+    return np.clip(c, 0, 2**16-1).astype(np.uint16)
+
+def slow_subm_int16(a, b):
+    a = a.astype(np.int64)
+    b = b.astype(np.int64)
+    c = a - b
+    return np.clip(c, -2**15, 2**15-1).astype(np.int16)
+
+def test_subm():
+    np.random.seed(34)
+    for j in xrange(8):
+        s = (128, 256)
+        a = np.random.randint(0,255, size=s)
+        b = np.random.randint(0,255, size=s)
+        a = a.astype(np.uint8)
+        b = b.astype(np.uint8)
+        assert np.all(slow_subm_uint8(a,b) == subm(a,b))
+
+        a = 257*np.random.randint(0,255, size=s)
+        b = 257*np.random.randint(0,255, size=s)
+        a = a.astype(np.uint16)
+        b = b.astype(np.uint16)
+        assert np.all(slow_subm_uint16(a,b) == subm(a,b))
+
+        a2 = 257*np.random.randint(0,255, size=s)
+        b2 = 257*np.random.randint(0,255, size=s)
+        a = a.astype(np.int16)
+        b = b.astype(np.int16)
+        a -= a2
+        b -= b2
+        assert np.all(slow_subm_int16(a,b) == subm(a,b))
+
+
+
+def test_subm_out():
+    np.random.seed(32)
+    for j in xrange(8):
+        s = (128, 256)
+        a = np.random.randint(0,255, size=s)
+        b = np.random.randint(0,255, size=s)
+
+        c = subm(a,b)
+        assert c is not a
+        assert c is not b
+        assert not np.all(c == a)
+
+
+        c = subm(a,b, out=a)
+        assert c is  a
+        assert c is not b
+        assert np.all(c == a)
