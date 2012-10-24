@@ -32,6 +32,7 @@ Histogram
 from __future__ import division
 import numpy as np
 from . import _histogram
+from .internal import _verify_is_integer_type
 
 __all__ = ['fullhistogram']
 
@@ -58,14 +59,13 @@ def fullhistogram(img):
     hist : an dnarray of type np.uint32
         This will be of size ``img.max() + 1``.
     """
+    _verify_is_integer_type(img, 'fullhistogram')
     img = np.ascontiguousarray(img)
     if img.dtype == np.bool:
         ones = img.sum()
         zeros = img.size - ones
         return np.array([zeros, ones], np.uintc)
 
-    if img.dtype not in (np.uint8, np.uint16, np.uint32, np.uint64):
-        raise TypeError('mahotas.fullhistogram: not an unsigned integer type.')
     histogram = np.zeros(img.max() + 1, np.uintc)
     _histogram.histogram(img, histogram)
     return histogram
