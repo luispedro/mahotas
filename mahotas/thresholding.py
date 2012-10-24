@@ -34,6 +34,7 @@ from __future__ import division
 import numpy as np
 from .histogram import fullhistogram
 from . import _histogram
+from .internal import _verify_is_integer_type
 __all__ = [
         'otsu',
         'rc',
@@ -59,6 +60,7 @@ def otsu(img, ignore_zeros=False):
     T : integer
         the threshold
     """
+    _verify_is_integer_type(img, 'otsu')
     hist = fullhistogram(img)
     hist = hist.astype(np.double)
     if ignore_zeros:
