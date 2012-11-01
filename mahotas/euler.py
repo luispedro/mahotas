@@ -24,7 +24,7 @@ _powers = np.array([
 
 __all__ = ['euler']
 
-def euler(f, n=8):
+def euler(f, n=8, mode='constant'):
     '''
     euler_nr = euler(f, n=8)
 
@@ -39,6 +39,8 @@ def euler(f, n=8):
         A 2-D binary image
     n : int, optional
         Connectivity, one of (4,8). default: 8
+    mode : {'reflect', 'nearest', 'wrap', 'mirror', 'constant' [default]}
+        How to handle borders        
 
     Returns
     -------
@@ -64,6 +66,6 @@ def euler(f, n=8):
     if f.dtype is not np.bool:
         assert np.all( (f == 0) | (f == 1)), 'mahotas.euler: Non-binary image'
         f = (f != 0)
-    value = convolve(f.astype(_powers.dtype), _powers, mode='constant')
+    value = convolve(f.astype(_powers.dtype), _powers, mode=mode)
     return lookup[value].sum()
 
