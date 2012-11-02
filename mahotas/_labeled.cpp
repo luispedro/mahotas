@@ -87,11 +87,11 @@ int label(numpy::aligned_array<int> labeled, numpy::aligned_array<int> Bc) {
 
 
 template<typename T>
-void borders(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, numpy::aligned_array<bool> result) {
+void borders(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, numpy::aligned_array<bool> result, int mode) {
     gil_release nogil;
     const int N = array.size();
     typename numpy::aligned_array<T>::iterator iter = array.begin();
-    filter_iterator<T> fiter(array.raw_array(), filter.raw_array(), EXTEND_CONSTANT, true);
+    filter_iterator<T> fiter(array.raw_array(), filter.raw_array(), ExtendMode(mode), true);
     const int N2 = fiter.size();
     bool* out = result.data();
 
@@ -202,7 +202,8 @@ PyObject* py_borders(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* filter;
     PyArrayObject* output;
-    if (!PyArg_ParseTuple(args,"OOO", &array, &filter, &output)) return NULL;
+    int mode;
+    if (!PyArg_ParseTuple(args,"OOOi", &array, &filter, &output, &mode)) return NULL;
     if (!numpy::are_arrays(array, filter, output) ||
         !numpy::equiv_typenums(array, filter) ||
         !numpy::check_type<bool>(output) ||
@@ -217,7 +218,8 @@ PyObject* py_borders(PyObject* self, PyObject* args) {
     borders<type>( \
                 numpy::aligned_array<type>(array), \
                 numpy::aligned_array<type>(filter), \
-                numpy::aligned_array<bool>(output));
+                numpy::aligned_array<bool>(output), \
+                mode);
     SAFE_SWITCH_ON_TYPES_OF(array, false)
 #undef HANDLE
     if (PyErr_Occurred()) {
