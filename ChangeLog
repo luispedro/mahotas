@@ -6,6 +6,7 @@ Version 0.9.4+
 	* Add `subm` function
 	* Add tophat transforms (functions `tophat_close` and `tophat_open`)
 	* Add `mode` argument to euler() (patch by Karol M. Langner)
+	* Add `mode` argument to bwperim() & borders() (patch by Karol M. Langner)
 
 Version 0.9.4 2012-10-10 by luispedro
 	* Fix compilation on 32-bit machines (Patch by Christoph Gohlke)
