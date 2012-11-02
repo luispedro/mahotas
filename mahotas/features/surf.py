@@ -141,7 +141,7 @@ def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold
 
 def descriptors(f, interest_points, is_integral=False, descriptor_only=False):
     '''
-    desc_array = descriptors(f, interest_points, is_integral=False)
+    desc_array = descriptors(f, interest_points, is_integral=False, descriptor_only=False)
 
     Compute SURF descriptors
 
