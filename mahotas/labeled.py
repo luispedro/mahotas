@@ -8,6 +8,7 @@ import numpy as np
 from .morph import get_structuring_elem
 from . import _labeled
 from .internal import _get_output
+from ._filters import mode2int, modes, _check_mode
 
 __all__ = [
     'borders',
@@ -134,7 +135,7 @@ def border(labeled, i, j, Bc=None, out=None, always_return=True, output=None):
     output.fill(False)
     return _labeled.border(labeled, Bc, output, i, j, bool(always_return))
 
-def borders(labeled, Bc=None, out=None, output=None):
+def borders(labeled, Bc=None, out=None, output=None, mode='constant'):
     '''
     border_img = borders(labeled, Bc={3x3 cross}, out={np.zeros(labeled.shape, bool)})
 
@@ -150,6 +151,8 @@ def borders(labeled, Bc=None, out=None, output=None):
     Bc : structure element, optional
     out : ndarray of same shape as `labeled`, dtype=bool, optional
         where to store the output. If ``None``, a new array is allocated
+    mode : {'reflect', 'nearest', 'wrap', 'mirror', 'constant' [default]}
+        How to handle borders
 
     Returns
     -------
@@ -159,9 +162,9 @@ def borders(labeled, Bc=None, out=None, output=None):
     Bc = get_structuring_elem(labeled, Bc)
     output = _get_output(labeled, out, 'labeled.borders', bool, output=output)
     output.fill(False)
-    return _labeled.borders(labeled, Bc, output)
+    return _labeled.borders(labeled, Bc, output, mode2int[mode])
 
-def bwperim(bw, n=4):
+def bwperim(bw, n=4, mode="constant"):
     '''
     perim = bwperim(bw, n=4)
 
@@ -179,6 +182,8 @@ def bwperim(bw, n=4):
         A black-and-white image (any other image will be converted to black & white)
     n : int, optional
         Connectivity. Must be 4 or 8 (default: 4)
+    mode : {'reflect', 'nearest', 'wrap', 'mirror', 'constant' [default]}
+        How to handle borders
 
     Returns
     -------
@@ -191,7 +196,7 @@ def bwperim(bw, n=4):
         This is a more generic function
     '''
     bw = (bw != 0)
-    return bw&borders(bw, n)
+    return bw&borders(bw, n, mode=mode)
 
 def _check_array_labeled(array, labeled, funcname):
     if labeled.dtype != np.intc or not labeled.flags.carray:
