@@ -1,4 +1,4 @@
-Version 0.9.4+
+Version 0.9.5 2012-11-05 by luispedro
 	* Fix compilation in older G++
 	* Faster Otsu thresholding
 	* Python 3 support without 2to3

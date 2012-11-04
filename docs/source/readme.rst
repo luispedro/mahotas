@@ -39,6 +39,17 @@ threshold).
 Recent Changes
 --------------
 
+0.9.5 (November 05 2012)
+~~~~~~~~~~~~~~~~~~~~~~~~
+- Fix compilation in older G++
+- Faster Otsu thresholding
+- Python 3 support without 2to3
+- Add ``cdilate`` function
+- Add ``subm`` function
+- Add tophat transforms (functions ``tophat_close`` and ``tophat_open``)
+- Add ``mode`` argument to euler() (patch by Karol M. Langner)
+- Add ``mode`` argument to bwperim() & borders() (patch by Karol M. Langner)
+
 0.9.4 (October 10 2012)
 ~~~~~~~~~~~~~~~~~~~~~~~
 - Fix compilation on 32-bit machines (Patch by Christoph Gohlke)
