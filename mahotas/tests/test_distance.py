@@ -27,3 +27,10 @@ def test_distance():
 
     bw[200:210, 200:210] = 0
     yield compare_slow, bw
+
+
+def test_uint8():
+    # This did not work correctly in 0.9.5
+    a8 = np.zeros((5,5), dtype=np.uint8)
+    ab = np.zeros((5,5), dtype=bool)
+    assert np.all(distance(a8) == distance(ab))

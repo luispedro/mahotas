@@ -1,3 +1,6 @@
+Version 0.9.5+
+	* Fix distance() of non-boolean images (issue #24 on github)
+
 Version 0.9.5 2012-11-05 by luispedro
 	* Fix compilation in older G++
 	* Faster Otsu thresholding

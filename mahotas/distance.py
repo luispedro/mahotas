@@ -16,12 +16,16 @@ def distance(bw, metric='euclidean2'):
 
     Computes the distance transform of image `bw`::
 
-        dmap[i,j] = min_{i', j'} { (i-i')**2 + (j-j')**2 | bw[i', j'] }
+        dmap[i,j] = min_{i', j'} { (i-i')**2 + (j-j')**2 | !bw[i', j'] }
+
+    That is, at each point, compute the distance to the background
 
     Parameters
     ----------
     bw : 2d-ndarray
-        Black & White image
+        If boolean, ``False`` will denote the background and ``True`` the
+        foreground. If not boolean, this will be interpreted as ``bw != 0``
+        (this way you can use labeled images without any problems).
     metric : str, optional
         one of 'euclidean2' (default) or 'euclidean'
 
@@ -38,7 +42,8 @@ def distance(bw, metric='euclidean2'):
     Available at:
     http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.88.1647&rep=rep1&type=pdf.
     '''
-
+    if bw.dtype != np.bool_:
+        bw = (bw != 0)
     f = np.zeros(bw.shape, np.double)
     f[bw] = len(f.shape)*max(f.shape)**2+1
     _distance.dt(f, None)
