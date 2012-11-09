@@ -18,7 +18,10 @@ def distance(bw, metric='euclidean2'):
 
         dmap[i,j] = min_{i', j'} { (i-i')**2 + (j-j')**2 | !bw[i', j'] }
 
-    That is, at each point, compute the distance to the background
+    That is, at each point, compute the distance to the background.
+
+    If there is no background, then a very high value will be returned in all
+    pixels (this is a sort of infinity).
 
     Parameters
     ----------
