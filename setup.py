@@ -37,7 +37,10 @@ import numpy.distutils.core as numpyutils
 exec(compile(open('mahotas/mahotas_version.py').read(),
              'mahotas/mahotas_version.py', 'exec'))
 
-long_description = open('docs/source/readme.rst').read()
+try:
+    long_description = open('docs/source/readme.rst', encoding='utf-8').read()
+except:
+    long_description = open('docs/source/readme.rst').read()
 
 undef_macros = []
 define_macros = []
