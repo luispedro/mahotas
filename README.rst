@@ -22,6 +22,9 @@ Notable algorithms:
 
 Mahotas currently has circa 80 image processing functions and keeps growing.
 
+There is a `manuscript about mahotas <http://arxiv.org/abs/1211.4907>`__, which
+will hopefully evolve into a journal publication later.
+
 Examples
 --------
 
