@@ -136,3 +136,25 @@ def test_check_array_labeled_not_same_shape():
     arr = np.zeros((4,7))
     lab = np.zeros((4,3), dtype=np.intc)
     mahotas.labeled._check_array_labeled(arr, lab, 'testing')
+
+def _nelems(arr):
+    return len(set(map(int, arr.ravel())))
+
+def test_relabel():
+    np.random.seed(24)
+    for i in xrange(8):
+        f = np.random.random_sample((128,128)) > .8
+        labeled, n = mahotas.labeled.label(f)
+        labeled *= ( (labeled % 7) != 4)
+        relabeled,new_n = mahotas.labeled.relabel(labeled)
+        assert relabeled.max() == new_n
+        assert (relabeled.max()+1) == _nelems(labeled)
+        assert np.all( (relabeled > 0) == (labeled > 0) )
+        assert not np.all(labeled == relabeled)
+
+        for a in (8, 23, 35, 13, 213):
+            assert _nelems(labeled[relabeled == a]) == 1
+            assert _nelems(relabeled[labeled == a]) == 1
+        mahotas.labeled.relabel(labeled, inplace=True)
+        assert np.all( labeled == relabeled )
+

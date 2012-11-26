@@ -83,6 +83,26 @@ int label(numpy::aligned_array<int> labeled, numpy::aligned_array<int> Bc) {
     return (next - 1);
 }
 
+int relabel(numpy::aligned_array<int> labeled) {
+    gil_release nogil;
+    const int N = labeled.size();
+    int* data = labeled.data();
+    int next = 1;
+    std::map<int, int> seen;
+    seen[0] = 0;
+    for (int i = 0; i != N; ++i) {
+        const int val = data[i];
+        std::map<int, int>::iterator where = seen.find(val);
+        if (where == seen.end()) {
+            data[i] = next;
+            seen[val] = next;
+            ++next;
+        } else {
+            data[i] = where->second;
+        }
+    }
+    return (next - 1);
+}
 
 
 
@@ -195,6 +215,19 @@ PyObject* py_label(PyObject* self, PyObject* args) {
         return NULL;
     }
     int n = label(numpy::aligned_array<int>(array), numpy::aligned_array<int>(filter));
+    return PyLong_FromLong(n);
+}
+
+PyObject* py_relabel(PyObject* self, PyObject* args) {
+    PyArrayObject* labeled;
+    if (!PyArg_ParseTuple(args,"O", &labeled)) return NULL;
+    if (!numpy::are_arrays(labeled) ||
+        !numpy::check_type<int>(labeled) ||
+        !PyArray_ISCARRAY(labeled)) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    int n = relabel(numpy::aligned_array<int>(labeled));
     return PyLong_FromLong(n);
 }
 
@@ -338,6 +371,7 @@ PyObject* py_labeled_max_min(PyObject* self, PyObject* args) {
 
 PyMethodDef methods[] = {
   {"label",(PyCFunction)py_label, METH_VARARGS, NULL},
+  {"relabel",(PyCFunction)py_relabel, METH_VARARGS, NULL},
   {"borders",(PyCFunction)py_borders, METH_VARARGS, NULL},
   {"border",(PyCFunction)py_border, METH_VARARGS, NULL},
   {"labeled_sum",(PyCFunction)py_labeled_sum, METH_VARARGS, NULL},

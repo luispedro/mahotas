@@ -54,6 +54,47 @@ def label(array, Bc=None, out=None, output=None):
     nr_objects = _labeled.label(output, Bc)
     return output, nr_objects
 
+def relabel(labeled, inplace=False):
+    '''
+    relabeled, nr_objs = relabel(labeled, inplace=False)
+
+    Relabeling ensures that ``relabeled`` is a labeled image such that every
+    label from 1 to ``relabeled.max()`` is used (0 is reserved for the
+    background and is passed through).
+
+    Example::
+
+        labeled,n = label(some_binary_map)
+        for region in xrange(n):
+            if not good_region(labeled, region + 1):
+                # This deletes the region:
+                labeled[labeled == (region + 1)] = 0
+        relabel(labeled, inplace=True)
+
+    Parameters
+    ----------
+    relabeled : ndarray of int
+        A labeled array
+    inplace : boolean, optional
+        Whether to perform relabeling inplace, erasing the values in
+        ``labeled`` (default: False)
+
+    Returns
+    -------
+    relabeled: ndarray
+    nr_objs : int
+        Number of objects
+
+    See Also
+    --------
+    label : function
+    '''
+    _check_array_labeled(labeled, labeled, 'relabel')
+    if not inplace:
+        labeled = labeled.copy()
+    n = _labeled.relabel(labeled)
+    return labeled, n
+
 def remove_bordering(im, rsize=1, out=None, output=None):
     '''
     slabeled = remove_bordering(labeled, rsize=1, out={np.empty_like(im)})
@@ -163,6 +204,7 @@ def borders(labeled, Bc=None, out=None, output=None, mode='constant'):
     output = _get_output(labeled, out, 'labeled.borders', bool, output=output)
     output.fill(False)
     return _labeled.borders(labeled, Bc, output, mode2int[mode])
+
 
 def bwperim(bw, n=4, mode="constant"):
     '''
