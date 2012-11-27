@@ -14,11 +14,13 @@ __all__ = [
     'borders',
     'border',
     'bwperim',
-    'remove_bordering',
     'label',
     'labeled_sum',
     'labeled_max',
     'labeled_size',
+    'relabel',
+    'remove_bordering',
+    'remove_regions'
     ]
 
 def label(array, Bc=None, out=None, output=None):
@@ -105,13 +107,23 @@ def remove_regions(labeled, regions, inplace=False):
 
         labeled[ labeled element-wise-in regions ] = 0
 
-    This function **does not** relabel its arguments.
+    This function **does not** relabel its arguments. You can use the
+    ``relabel`` function for that::
+
+        removed = relabel(remove_regions(labeled, regions))
+
+    Or, saving one image allocation::
+
+        removed = relabel(remove_regions(labeled, regions), inplace=True)
+
+    This is the same, but reuses the memory in the relabeling operation.
 
     Parameters
     ----------
     relabeled : ndarray of int
         A labeled array
     regions : sequence of int
+        These regions will be removed
     inplace : boolean, optional
         Whether to perform removal inplace, erasing the values in
         ``labeled`` (default: False)
@@ -123,6 +135,8 @@ def remove_regions(labeled, regions, inplace=False):
     See Also
     --------
     relabel : function
+        After removing unecessary regions, it is often a good idea to relabel
+        your label image.
     '''
     _check_array_labeled(labeled, labeled, 'remove_regions')
     regions = np.asarray(regions, dtype=np.intc)
