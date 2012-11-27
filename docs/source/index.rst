@@ -83,6 +83,7 @@ Jump to detailed `API Documentation <api.html>`__
    faq
    internals
    principles
+   contributing
    readme
    api
 
