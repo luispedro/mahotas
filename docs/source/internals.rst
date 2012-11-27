@@ -6,6 +6,20 @@ This section is of interest if you are trying to understand how mahotas works
 in order to fix something, extend it (patches are always welcome), or use some
 of its technology in your projects.
 
+Philosophy
+----------
+
+Mahotas should not suck.
+
+This is my main development goal and, if achieve, it should put mahotas in the
+top ten to one percent of software packages.
+
+Mahotas should have no bugs. None. Ever. Of course, some creep in. So, we
+settle for the next best thing: *Mahotas should have no **known bugs***.
+Whenever a bug is discovered, the top priority is to squash it. The user
+should never be able to crash the Python interpreter with mahotas.
+
+
 C++/Python Division
 -------------------
 

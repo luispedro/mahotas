@@ -1,11 +1,11 @@
-===================================
-Mahotas: Image Processing for numpy
-===================================
+==================================
+Mahotas: Computer Vision in Python
+==================================
 
-Image Processing Library for Python.
+Mahotas is a computer vision and image processing library for Python.
 
-It includes a couple of algorithms implemented in C++ for speed while operating
-in numpy arrays.
+It includes many algorithms implemented in C++ for speed while operating in
+numpy arrays and with a very clean Python interface.
 
 Notable algorithms:
  - watershed.
@@ -69,6 +69,7 @@ Jump to detailed `API Documentation <api.html>`__
 .. toctree::
    :maxdepth: 2
 
+   wally
    morphology
    features
    surf

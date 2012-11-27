@@ -105,10 +105,14 @@ Development
 Development happens on github (`http://github.com/luispedro/mahotas <https://github.com/luispedro/mahotas>`__).
 
 You can set the ``DEBUG`` environment variable before compilation to get a
-debug compile. You can set it to the value ``2`` to get extra (slow) checks::
+debug compile. You can set it to the value ``2`` to get extra checks::
 
     export DEBUG=2
     python setup.py test
+
+Be careful not to use this in production unless you are chasing a bug. The
+debug modes are pretty slow as they add many runtime checks.
+
 
 Contacts
 --------
