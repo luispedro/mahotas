@@ -2,6 +2,7 @@ Version 0.9.5+
 	* Fix distance() of non-boolean images (issue #24 on github)
 	* Fix encoding issue on PY3 on Mac OS (issue #25 on github)
 	* Add relabel() function
+	* Add remove_regions() function in labeled module
 
 Version 0.9.5 2012-11-05 by luispedro
 	* Fix compilation in older G++

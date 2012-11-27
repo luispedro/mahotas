@@ -95,6 +95,44 @@ def relabel(labeled, inplace=False):
     n = _labeled.relabel(labeled)
     return labeled, n
 
+
+def remove_regions(labeled, regions, inplace=False):
+    '''
+    removed = remove_regions(labeled, regions, inplace=False):
+
+    Removes the regions in ``regions``. If an elementwise ``in`` operator
+    existed, this would be equivalent to the following::
+
+        labeled[ labeled element-wise-in regions ] = 0
+
+    This function **does not** relabel its arguments.
+
+    Parameters
+    ----------
+    relabeled : ndarray of int
+        A labeled array
+    regions : sequence of int
+    inplace : boolean, optional
+        Whether to perform removal inplace, erasing the values in
+        ``labeled`` (default: False)
+
+    Returns
+    -------
+    removed : ndarray
+
+    See Also
+    --------
+    relabel : function
+    '''
+    _check_array_labeled(labeled, labeled, 'remove_regions')
+    regions = np.asarray(regions, dtype=np.intc)
+    regions = np.unique(regions)
+    if not inplace:
+        labeled = labeled.copy()
+    _labeled.remove_regions(labeled, regions)
+    return labeled
+
+
 def remove_bordering(im, rsize=1, out=None, output=None):
     '''
     slabeled = remove_bordering(labeled, rsize=1, out={np.empty_like(im)})

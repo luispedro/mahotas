@@ -104,6 +104,18 @@ int relabel(numpy::aligned_array<int> labeled) {
     return (next - 1);
 }
 
+void remove_regions(numpy::aligned_array<int> labeled, numpy::aligned_array<int> regions) {
+    gil_release nogil;
+    const int N = labeled.size();
+    int* data = labeled.data();
+
+    const int* const r_start = regions.data();
+    const int* const r_end = regions.data() + regions.size();
+    for (int i = 0; i != N; ++i) {
+        if (data[i] && std::binary_search(r_start, r_end, data[i])) data[i] = 0;
+    }
+}
+
 
 
 template<typename T>
@@ -229,6 +241,22 @@ PyObject* py_relabel(PyObject* self, PyObject* args) {
     }
     int n = relabel(numpy::aligned_array<int>(labeled));
     return PyLong_FromLong(n);
+}
+
+PyObject* py_remove_regions(PyObject* self, PyObject* args) {
+    PyArrayObject* labeled;
+    PyArrayObject* regions;
+    if (!PyArg_ParseTuple(args,"OO", &labeled, &regions)) return NULL;
+    if (!numpy::are_arrays(labeled, regions) ||
+        !numpy::check_type<int>(labeled) ||
+        !numpy::check_type<int>(regions) ||
+        !PyArray_ISCARRAY(labeled) ||
+        !PyArray_ISCARRAY(regions)) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    remove_regions(numpy::aligned_array<int>(labeled), numpy::aligned_array<int>(regions));
+    return PyLong_FromLong(0);
 }
 
 PyObject* py_borders(PyObject* self, PyObject* args) {
@@ -372,6 +400,7 @@ PyObject* py_labeled_max_min(PyObject* self, PyObject* args) {
 PyMethodDef methods[] = {
   {"label",(PyCFunction)py_label, METH_VARARGS, NULL},
   {"relabel",(PyCFunction)py_relabel, METH_VARARGS, NULL},
+  {"remove_regions",(PyCFunction)py_remove_regions, METH_VARARGS, NULL},
   {"borders",(PyCFunction)py_borders, METH_VARARGS, NULL},
   {"border",(PyCFunction)py_border, METH_VARARGS, NULL},
   {"labeled_sum",(PyCFunction)py_labeled_sum, METH_VARARGS, NULL},

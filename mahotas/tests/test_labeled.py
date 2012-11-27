@@ -158,3 +158,18 @@ def test_relabel():
         mahotas.labeled.relabel(labeled, inplace=True)
         assert np.all( labeled == relabeled )
 
+
+def test_remove_regions():
+    np.random.seed(34)
+    f = np.random.random_sample((128,128)) > .92
+    labeled, n = mahotas.labeled.label(f)
+    regions = [23,55,8]
+    removed = mahotas.labeled.remove_regions(labeled, regions)
+
+    for r in regions:
+        assert not  np.any(removed == r)
+        assert      np.any(labeled == r)
+    mahotas.labeled.remove_regions(labeled, regions, inplace=True)
+    assert np.all(labeled == removed)
+    removed = mahotas.labeled.remove_regions(labeled, [])
+    assert np.all(labeled == removed)
