@@ -30,3 +30,9 @@ What are the parameters to Local Binary Patterns?
 
 Checkout the documentation on `local binary patterns <lbp.html>`__.
 
+I am using mahotas in a scientific publication, is there a citation?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There is a manuscript about mahotas under review. In the meanwhile, only a
+pre-print is available at the `arXiv <http://arxiv.org/abs/1211.4907>`__. You
+can cite the preprint.
