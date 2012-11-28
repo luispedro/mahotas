@@ -20,7 +20,8 @@ Notable algorithms:
  - Sobel edge detection.
  - spline interpolation
 
-Mahotas currently has circa 80 image processing functions and keeps growing.
+Mahotas currently has over 100 functions for image processing and computer
+vision and it keeps growing.
 
 There is a `manuscript about mahotas <http://arxiv.org/abs/1211.4907>`__, which
 will hopefully evolve into a journal publication later.
