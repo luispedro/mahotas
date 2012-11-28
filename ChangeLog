@@ -6,6 +6,7 @@ Version 0.9.5+
 	* Fix median_filter() on the borders (respect the `mode` argument)
 	* Add mahotas.color module for conversion between colour spaces
 	* Add SLIC Superpixels
+	* Many improvements to the documentation
 
 Version 0.9.5 2012-11-05 by luispedro
 	* Fix compilation in older G++

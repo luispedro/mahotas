@@ -66,6 +66,12 @@ def slic(array, spacer=16):
     segmented : ndarray
     n_segments : int
         Number of segments
+
+    References
+    ----------
+    .. [1] Radhakrishna Achanta, Appu Shaji, Kevin Smith, Aurelien Lucchi,
+        Pascal Fua, and Sabine Süsstrunk, SLIC Superpixels Compared to
+        State-of-the-art Superpixel Methods, TPAMI, May 2012.
     '''
     array = np.ascontiguousarray(array, dtype=np.float32)
     _check_3(array, 'slic')
