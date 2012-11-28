@@ -38,6 +38,9 @@ This results in an image with 3 values:
 There is an extra argument to ``label``: the structuring element, which
 defaults to a 3x3 cross (or, 4-neighbourhood).
 
+.. versionadded:: 0.7
+    ``labeled_size`` and ``labeled_sum`` were added in version 0.7
+
 We can now collect a few statistics on the labeled regions. For example, how
 big are they?
 
@@ -53,6 +56,108 @@ instead measure the total weight in each area::
     array = np.random.random_sample(regions.shape)
     sums = mahotas.labeled_sum(array, labeled)
     print 'Sum of first region', sums[1]
+
+Filtering Regions
+-----------------
+
+.. versionadded:: 0.9.6
+    remove_regions & relabel were only added in version 0.9.6
+
+Here is a slightly more complex example. This is in ``demos`` directory as
+``nuclear.py``. We are going to use this image, a fluorescent microscopy image
+from a `nuclear segmentation benchmark <http://luispedro.org/projects/nuclear-segmentation>`__
+
+.. plot::
+   :context:
+
+    import mahotas
+    import numpy as np
+    from pylab import imshow, show
+
+    f = mahotas.imread('../../mahotas/demos/data/nuclear.png')
+    f = f[:,:,0]
+    imshow(f)
+    show()
+
+First we perform a bit of Gaussian filtering and thresholding:
+
+::
+
+    f = mahotas.gaussian_filter(f, 4)
+    f = (f> f.mean())
+
+
+.. plot::
+   :context:
+
+    f = mahotas.gaussian_filter(f, 4)
+    f = (f> f.mean())
+    imshow(f)
+    show()
+
+Labeling gets us all of the nuclei::
+
+    labeled, n_nucleus  = mahotas.label(f)
+    print('Found {} nuclei.'.format(n_nucleus))
+
+.. plot::
+   :context:
+
+    labeled, n_nucleus  = mahotas.label(f)
+    print('Found {} nuclei.'.format(n_nucleus))
+    imshow(labeled)
+    show()
+
+``42`` nuclei were found. None were missed, but, unfortunately, we also get
+some aggregates. In this case, we are going to assume that we wanted to perform
+some measurements on the real nuclei, but are willing to filter out anything
+that is not a complete nucleus or that is a lump on nuclei. So we measure sizes
+and filter::
+
+    sizes = mahotas.labeled.labeled_size(labeled)
+    too_big = np.where(sizes > 10000)
+    labeled = mahotas.labeled.remove_regions(labeled, too_big)
+
+.. plot::
+   :context:
+
+    sizes = mahotas.labeled.labeled_size(labeled)
+    too_big = np.where(sizes > 10000)
+    labeled = mahotas.labeled.remove_regions(labeled, too_big)
+    imshow(labeled)
+    show()
+
+We can also remove the region touching the border::
+
+    labeled = mahotas.labeled.remove_bordering(labeled)
+
+.. plot::
+   :context:
+
+    labeled = mahotas.labeled.remove_bordering(labeled)
+    imshow(labeled)
+    show()
+
+This array, ``labeled`` now has values in the range ``0`` to ``n_nucleus``, but
+with some values missing. We can ``relabel`` to get a cleaner version::
+
+    relabeled, n_left = mahotas.labeled.relabel(labeled)
+    print('After filtering and relabeling, there are {} nuclei left.'.format(n_left))
+
+Now, we have ``24`` nuclei.
+
+.. plot::
+   :context:
+
+    relabeled, n_left = mahotas.labeled.relabel(labeled)
+    print('After filtering and relabeling, there are {} nuclei left.'.format(n_left))
+    imshow(relabeled)
+    show()
+
+
+
+
+
 
 Borders
 -------
