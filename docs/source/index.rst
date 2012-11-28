@@ -70,16 +70,16 @@ Jump to detailed `API Documentation <api.html>`__
    :maxdepth: 2
 
    wally
-   morphology
-   features
-   surf
-   thresholding
-   distance
    labeled
-   polygon
+   thresholding
    wavelets
-   classification
+   distance
+   polygon
+   features
    lbp
+   surf
+   classification
+   morphology
    faq
    internals
    principles
