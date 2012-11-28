@@ -11,6 +11,8 @@ def test_compare_w_ndimage():
     A = np.arange(34*340, dtype='float64').reshape((34,340))%3
     B = np.ones((3,3), A.dtype)
     for mode in mahotas._filters.modes:
+        if mode == 'ignore':
+            continue
         assert np.all(mahotas.convolve(A, B, mode=mode) == ndimage.convolve(A, B, mode=mode))
 
 def test_22():
