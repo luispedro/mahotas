@@ -6,10 +6,7 @@
 from __future__ import division
 
 import numpy as np
-
-def _check_3(arr, funcname):
-    if arr.ndim != 3 or arr.shape[2] != 3:
-        raise ValueError('mahotas.color.%s: input array is not a 3 dimensional array with a depth of 3' % funcname)
+from .internal import _check_3
 
 def rgb2grey(array, dtype=np.float):
     '''

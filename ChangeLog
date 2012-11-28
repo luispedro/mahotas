@@ -5,6 +5,7 @@ Version 0.9.5+
 	* Add remove_regions() function in labeled module
 	* Fix median_filter() on the borders (respect the `mode` argument)
 	* Add mahotas.color module for conversion between colour spaces
+	* Add SLIC Superpixels
 
 Version 0.9.5 2012-11-05 by luispedro
 	* Fix compilation in older G++

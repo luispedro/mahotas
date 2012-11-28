@@ -149,3 +149,9 @@ def _as_floating_point_array(array):
     if not np.issubdtype(array.dtype, np.float_):
         return array.astype(np.double)
     return array
+
+
+def _check_3(arr, funcname):
+    if arr.ndim != 3 or arr.shape[2] != 3:
+        raise ValueError('mahotas.%s: input array is not a 3 dimensional array with a depth of 3' % funcname)
+

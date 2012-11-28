@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2011 Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2012 Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # Carnegie Mellon University
-# 
+#
 # License: MIT (see COPYING file)
 
 from __future__ import division
 import numpy as np
+
+from .internal import _check_3
 from . import _distance
+from . import _segmentation
 
 __all__ = [
     'gvoronoi',
+    'slic'
     ]
 
 def gvoronoi(labeled):
@@ -40,3 +44,32 @@ def gvoronoi(labeled):
     orig = np.arange(f.size, dtype=np.intc).reshape(f.shape)
     _distance.dt(f, orig)
     return labeled.flat[orig]
+
+
+def slic(array, spacer=16):
+    '''
+    segmented, n_segments = slic(array, spacer=16)
+
+    SLIC Superpixels
+
+    Note: This function operates on the array values. In the original
+    publication, SLIC was applied in L*a*b* space. See the mahotas.color module
+    for color space transformations.
+
+    Parameters
+    ----------
+    array : ndarray
+    spacer : int, optional
+
+    Returns
+    -------
+    segmented : ndarray
+    n_segments : int
+        Number of segments
+    '''
+    array = np.ascontiguousarray(array, dtype=np.float32)
+    _check_3(array, 'slic')
+    labels = np.zeros((array.shape[0], array.shape[1]), dtype=np.intc)
+    labels = labels.copy()
+    n = _segmentation.slic(array, labels, int(16))
+    return labels, n
