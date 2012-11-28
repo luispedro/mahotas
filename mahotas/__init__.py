@@ -42,6 +42,7 @@ try:
 
     from .mahotas_version import __version__
 
+    from . import colors
     from . import features
     from . import morph
     from . import segmentation
