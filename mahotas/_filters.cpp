@@ -111,7 +111,8 @@ npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len) {
             return len - 1;
         }
         return cc;
-    case EXTEND_CONSTANT:
+    case ExtendIgnore:
+    case ExtendConstant:
         if (cc < 0 || cc >= len)
             return border_flag_value;
         return cc;

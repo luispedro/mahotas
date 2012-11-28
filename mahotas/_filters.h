@@ -12,15 +12,19 @@
      by the python code, but C code is kept around in case we might wish
      to add it. */
 typedef enum {
-    EXTEND_FIRST = 0,
-    EXTEND_NEAREST = 0,
-    EXTEND_WRAP = 1,
-    EXTEND_REFLECT = 2,
-    EXTEND_MIRROR = 3,
-    EXTEND_CONSTANT = 4,
-    EXTEND_LAST = EXTEND_CONSTANT,
-    EXTEND_DEFAULT = EXTEND_MIRROR
+    ExtendNearest = 0,
+    ExtendWrap = 1,
+    ExtendReflect = 2,
+    ExtendMirror = 3,
+    ExtendConstant = 4,
+    ExtendIgnore = 5
 } ExtendMode;
+const ExtendMode EXTEND_NEAREST = ExtendNearest;
+const ExtendMode EXTEND_WRAP = ExtendWrap;
+const ExtendMode EXTEND_REFLECT = ExtendReflect;
+const ExtendMode EXTEND_MIRROR = ExtendMirror;
+const ExtendMode EXTEND_CONSTANT = ExtendConstant;
+const ExtendMode EXTEND_LAST = ExtendIgnore;
 
 const npy_intp border_flag_value = std::numeric_limits<npy_intp>::max();
 

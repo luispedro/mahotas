@@ -11,6 +11,7 @@ mode2int = {
     'reflect' : 2,
     'mirror' : 3,
     'constant' : 4,
+    'ignore' : 5,
 }
 
 modes = frozenset(mode2int.keys())

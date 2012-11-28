@@ -28,7 +28,7 @@ void cooccurence(numpy::aligned_array<npy_int32> res, numpy::aligned_array<T> ar
     gil_release nogil;
     const int N = array.size();
     typename numpy::aligned_array<T>::iterator iter = array.begin();
-    filter_iterator<T> filter(array.raw_array(), Bc.raw_array(), EXTEND_CONSTANT, true);
+    filter_iterator<T> filter(array.raw_array(), Bc.raw_array(), ExtendIgnore, true);
 
     for (int i = 0; i != N; ++i, filter.iterate_both(iter)) {
         T val = *iter;
