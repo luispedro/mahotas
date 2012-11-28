@@ -71,5 +71,5 @@ def slic(array, spacer=16):
     _check_3(array, 'slic')
     labels = np.zeros((array.shape[0], array.shape[1]), dtype=np.intc)
     labels = labels.copy()
-    n = _segmentation.slic(array, labels, int(16))
+    n = _segmentation.slic(array, labels, int(spacer))
     return labels, n
