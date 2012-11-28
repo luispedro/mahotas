@@ -101,6 +101,7 @@ int slic(numpy::aligned_array<npy_float32> array, numpy::aligned_array<int> alab
     centroid_counts.resize(centroids.size());
 
     for (int i = 0; i < max_iters; ++i) {
+        bool changed = false;
         for (unsigned ci = 0; ci < centroids.size(); ++ci) {
             const centroid_info& c = centroids[ci];
             const int start_y = std::max<float>(0.0, c.y - S);
@@ -123,10 +124,13 @@ int slic(numpy::aligned_array<npy_float32> array, numpy::aligned_array<int> alab
                     if (D < distance[pos]) {
                         distance[pos] = D;
                         labels[pos] = ci;
+                        changed = true;
                     }
                 }
             }
         }
+        // If nothing changed, we are done
+        if (!changed) break;
         std::fill(centroids.begin(), centroids.end(), centroid_info());
         std::fill(centroid_counts.begin(), centroid_counts.end(), 0);
         for (int pos = 0; pos != N; ++pos) {
