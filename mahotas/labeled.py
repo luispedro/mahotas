@@ -244,7 +244,7 @@ def borders(labeled, Bc=None, out=None, output=None, mode='constant'):
     Bc : structure element, optional
     out : ndarray of same shape as `labeled`, dtype=bool, optional
         where to store the output. If ``None``, a new array is allocated
-    mode : {'reflect', 'nearest', 'wrap', 'mirror', 'constant' [default]}
+    mode : {'reflect', 'nearest', 'wrap', 'mirror', 'constant' [default], 'ignore'}
         How to handle borders
 
     Returns
@@ -276,7 +276,7 @@ def bwperim(bw, n=4, mode="constant"):
         A black-and-white image (any other image will be converted to black & white)
     n : int, optional
         Connectivity. Must be 4 or 8 (default: 4)
-    mode : {'reflect', 'nearest', 'wrap', 'mirror', 'constant' [default]}
+    mode : {'reflect', 'nearest', 'wrap', 'mirror', 'constant' [default], 'ignore'}
         How to handle borders
 
     Returns

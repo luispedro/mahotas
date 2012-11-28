@@ -41,7 +41,7 @@ def convolve(f, weights, mode='reflect', cval=0.0, out=None, output=None):
         input. Any dimension is supported
     weights : ndarray
         weight filter. If not of the same dtype as `f`, it is cast
-    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant'}
+    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
         How to handle borders
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
@@ -73,7 +73,7 @@ def median_filter(f, Bc=None, mode='reflect', cval=0.0, out=None, output=None):
         input. Any dimension is supported
     Bc : ndarray or int, optional
         Defines the neighbourhood, default is a square of side 3.
-    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant'}
+    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
         How to handle borders
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
@@ -109,7 +109,7 @@ def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None, output=None):
     Bc : ndarray
         Defines the neighbourhood. Must be explicitly passed, no default.
     rank : integer
-    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant'}
+    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
         How to handle borders
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
@@ -148,7 +148,7 @@ def template_match(f, template, mode='reflect', cval=0., out=None, output=None):
         input. Any dimension is supported
     template : ndarray
         Template to match. Must be explicitly passed, no default.
-    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant'}
+    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
         How to handle borders
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
@@ -185,7 +185,7 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None, output=None)
         weight filter. If not of the same dtype as `f`, it is cast
     axis : int
         Axis along which to convolve
-    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant'}
+    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
         How to handle borders
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
@@ -234,7 +234,7 @@ def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., o
         kernel. An order of 1, 2, or 3 corresponds to convolution with
         the first, second or third derivatives of a Gaussian. Higher
         order derivatives are not implemented
-    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant'}
+    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
         How to handle borders
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
@@ -295,7 +295,7 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out=None, ou
         corresponds to convolution with the first, second or third
         derivatives of a Gaussian. Higher order derivatives are not
         implemented
-    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant'}
+    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
         How to handle borders
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)

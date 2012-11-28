@@ -3,6 +3,7 @@ Version 0.9.5+
 	* Fix encoding issue on PY3 on Mac OS (issue #25 on github)
 	* Add relabel() function
 	* Add remove_regions() function in labeled module
+	* Fix median_filter() on the borders (respect the `mode` argument)
 
 Version 0.9.5 2012-11-05 by luispedro
 	* Fix compilation in older G++

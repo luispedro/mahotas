@@ -10,21 +10,26 @@ def test_median_filter():
 
 def _slow_rank_filter(A,r):
     B = np.zeros_like(A)
-    for i in range(1,A.shape[0]-1):
-        for j in range(1, A.shape[1]-1):
-            pixels = A[i-1:i+2,j-1:j+2].ravel()
-            pixels = pixels.copy()
+    for i in range(A.shape[0]):
+        for j in range(A.shape[1]):
+            s0 = max(0, i - 1)
+            s1 = max(0, j - 1)
+            e0 = min(A.shape[0], i + 2)
+            e1 = min(A.shape[1], j + 2)
+            pixels = list(A[s0:e0, s1:e1].ravel())
+            pixels.extend([0] * (9-len(pixels)))
             pixels.sort()
             B[i,j] = pixels[r]
-    return B[1:-1,1:-1]
+    return B
+
 def test_rank_filter():
     np.random.seed(22)
     A = np.random.random_integers(0,255, (32,32))
     Bc = np.ones((3,3))
     for r in range(9):
-        B1 = rank_filter(A,Bc,r)
+        B1 = rank_filter(A, Bc, r, mode='constant')
         B2 = _slow_rank_filter(A,r)
-        assert np.all(B1[1:-1,1:-1] == B2)
+        assert np.all(B1 == B2)
 
 def test_uint8():
     # This used to raise an exception in 0.7.1

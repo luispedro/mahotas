@@ -414,7 +414,7 @@ PyObject* py_ihaar(PyObject* self, PyObject* args) {
 }
 
 template<typename T>
-void rank_filter(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc, const int rank, const int mode) {
+void rank_filter(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc, const int rank, const int mode, const T cval = T()) {
     gil_release nogil;
     const int N = res.size();
     typename numpy::aligned_array<T>::iterator iter = array.begin();
@@ -423,24 +423,28 @@ void rank_filter(numpy::aligned_array<T> res, numpy::aligned_array<T> array, num
     if (rank < 0 || rank >= N2) {
         return;
     }
+    std::vector<T> n_data;
+    n_data.resize(N2);
     // T* is a fine iterator type.
     T* rpos = res.data();
-    T* neighbours = new T[N2];
+
+    // This is generally a T*, except in debug builds, so we get checking there
+    typename std::vector<T>::iterator neighbours = n_data.begin();
 
     for (int i = 0; i != N; ++i, ++rpos, fiter.iterate_both(iter)) {
         int n = 0;
         for (int j = 0; j != N2; ++j) {
             T val;
             if (fiter.retrieve(iter, j, val)) neighbours[n++] = val;
+            else if (mode == ExtendConstant) neighbours[n++] = cval;
         }
         int currank = rank;
         if (n != N2) {
             currank = int(n * rank/float(N2));
         }
         std::nth_element(neighbours, neighbours + currank, neighbours + n);
-        *rpos = neighbours[rank];
+        *rpos = neighbours[currank];
     }
-    delete [] neighbours;
 }
 PyObject* py_rank_filter(PyObject* self, PyObject* args) {
     PyArrayObject* array;
