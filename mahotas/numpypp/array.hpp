@@ -122,7 +122,7 @@ struct position_vector {
             :size_(s)
             { }
 
-        position operator[](const unsigned i) {
+        position operator[](const unsigned i) const {
             assert((i*size_) < store_.size());
             position res(&store_[i*size_], size_);
             return res;
@@ -132,6 +132,7 @@ struct position_vector {
             assert(p.ndim() == size_);
             for (int d = 0; d != size_; ++d) store_.push_back(p[d]);
         }
+        unsigned size() const { return store_.size()/size_; }
         bool empty() const { return store_.empty(); }
     protected:
         const int size_;
