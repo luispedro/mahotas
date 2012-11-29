@@ -110,7 +110,7 @@ T& operator << (T& out, const numpy::position& p) {
     return out;
 }
 
-struct position_stack {
+struct position_vector {
     // The reason for this structure is very simple:
     // Using a std::vector<position> would lead to a full position object for
     // each entry, but typically, most of the NPY_MAXDIMS entries are
@@ -118,8 +118,31 @@ struct position_stack {
     // Therefore, we want to only store the correct number of dimensions. This
     // structure manages this.
     public:
-        position_stack(const int s)
+        position_vector(const int s)
             :size_(s)
+            { }
+
+        position operator[](const unsigned i) {
+            assert((i*size_) < store_.size());
+            position res(&store_[i*size_], size_);
+            return res;
+        }
+
+        void push_back(const position& p) {
+            assert(p.ndim() == size_);
+            for (int d = 0; d != size_; ++d) store_.push_back(p[d]);
+        }
+        bool empty() const { return store_.empty(); }
+    protected:
+        const int size_;
+        std::vector<npy_intp> store_;
+};
+
+
+struct position_stack : position_vector {
+    public:
+        position_stack(const int s)
+            :position_vector(s)
             { }
 
         position top_pop() {
@@ -128,14 +151,7 @@ struct position_stack {
             store_.erase(store_.end()-size_, store_.end());
             return res;
         }
-        void push(const position& p) {
-            assert(p.ndim() == size_);
-            for (int d = 0; d != size_; ++d) store_.push_back(p[d]);
-        }
-        bool empty() const { return store_.empty(); }
-    private:
-        const int size_;
-        std::vector<npy_intp> store_;
+        void push(const position& p) { this->push_back(p); }
 };
 
 
