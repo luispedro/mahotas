@@ -28,11 +28,11 @@ const char TypeErrorMsg[] =
     "This is caused by either a direct call to _morph (which is dangerous: types are not checked!) or a bug in mahotas.\n";
 
 template<typename T>
-void subm(numpy::aligned_array<T> a, numpy::aligned_array<T> b) {
+void subm(numpy::aligned_array<T> a, const numpy::aligned_array<T> b) {
     gil_release nogil;
     const int N = a.size();
     typename numpy::aligned_array<T>::iterator ita = a.begin();
-    typename numpy::aligned_array<T>::iterator itb = b.begin();
+    typename numpy::aligned_array<T>::const_iterator itb = b.begin();
     for (int i = 0; i != N; ++i, ++ita, ++itb) {
         if (std::numeric_limits<T>::is_signed) {
             T val = *ita - *itb;
@@ -120,10 +120,10 @@ template<typename T> bool is_bool(T) { return false; }
 template<> bool is_bool<bool>(bool) { return true; }
 
 template<typename T>
-void erode(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc) {
+void erode(numpy::aligned_array<T> res, const numpy::aligned_array<T> array, const numpy::aligned_array<T> Bc) {
     gil_release nogil;
     const int N = res.size();
-    typename numpy::aligned_array<T>::iterator iter = array.begin();
+    typename numpy::aligned_array<T>::const_iterator iter = array.begin();
     filter_iterator<T> filter(array.raw_array(), Bc.raw_array(), EXTEND_NEAREST, is_bool(T()));
     const int N2 = filter.size();
     T* rpos = res.data();
@@ -165,10 +165,10 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
 }
 
 template<typename T>
-void locmin_max(numpy::aligned_array<bool> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc, bool is_min) {
+void locmin_max(numpy::aligned_array<bool> res, const numpy::aligned_array<T> array, const numpy::aligned_array<T> Bc, bool is_min) {
     gil_release nogil;
     const int N = res.size();
-    typename numpy::aligned_array<T>::iterator iter = array.begin();
+    typename numpy::aligned_array<T>::const_iterator iter = array.begin();
     filter_iterator<T> filter(res.raw_array(), Bc.raw_array(), EXTEND_NEAREST, true);
     const int N2 = filter.size();
     bool* rpos = res.data();
@@ -218,7 +218,7 @@ PyObject* py_locminmax(PyObject* self, PyObject* args) {
 }
 
 template <typename T>
-void remove_fake_regmin_max(numpy::aligned_array<bool> regmin, numpy::aligned_array<T> f, numpy::aligned_array<T> Bc, bool is_min) {
+void remove_fake_regmin_max(numpy::aligned_array<bool> regmin, const numpy::aligned_array<T> f, const numpy::aligned_array<T> Bc, bool is_min) {
     const int N = f.size();
     numpy::aligned_array<bool>::iterator riter = regmin.begin();
     const std::vector<numpy::position> Bc_neighbours = neighbours(Bc);
@@ -307,10 +307,10 @@ bool dilate_add(bool a, bool b) {
 }
 
 template<typename T>
-void dilate(numpy::aligned_array<T> res, numpy::array<T> array, numpy::aligned_array<T> Bc) {
+void dilate(numpy::aligned_array<T> res, const numpy::array<T> array, const numpy::aligned_array<T> Bc) {
     gil_release nogil;
     const int N = res.size();
-    typename numpy::array<T>::iterator iter = array.begin();
+    typename numpy::array<T>::const_iterator iter = array.begin();
     filter_iterator<T> filter(res.raw_array(), Bc.raw_array(), EXTEND_NEAREST, is_bool(T()));
     const int N2 = filter.size();
     // T* is a fine iterator type.
@@ -353,7 +353,7 @@ PyObject* py_dilate(PyObject* self, PyObject* args) {
     return PyArray_Return(output);
 }
 
-void close_holes(numpy::aligned_array<bool> ref, numpy::aligned_array<bool> f, numpy::aligned_array<bool> Bc) {
+void close_holes(const numpy::aligned_array<bool> ref, numpy::aligned_array<bool> f, const numpy::aligned_array<bool> Bc) {
     std::fill_n(f.data(), f.size(), false);
 
     numpy::position_stack stack(ref.ndim());
@@ -457,7 +457,11 @@ struct NeighbourElem {
 };
 
 template<typename BaseType>
-void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* lines, numpy::aligned_array<BaseType> array, numpy::aligned_array<BaseType> markers, numpy::aligned_array<BaseType> Bc) {
+void cwatershed(numpy::aligned_array<BaseType> res,
+                        numpy::aligned_array<bool>* lines,
+                        const numpy::aligned_array<BaseType> array,
+                        const numpy::aligned_array<BaseType> markers,
+                        const numpy::aligned_array<BaseType> Bc) {
     gil_release nogil;
     const int N = res.size();
     const int N2 = Bc.size();
@@ -465,7 +469,7 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
     BaseType* rdata = res.data();
     std::vector<NeighbourElem> neighbours;
     const numpy::position centre = central_position(Bc);
-    typename numpy::aligned_array<BaseType>::iterator Bi = Bc.begin();
+    typename numpy::aligned_array<BaseType>::const_iterator Bi = Bc.begin();
     for (int j = 0; j != N2; ++j, ++Bi) {
         if (*Bi) {
             numpy::position npos = Bi.position() - centre;
@@ -485,7 +489,7 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
 
     std::priority_queue<MarkerInfo> hqueue;
 
-    typename numpy::aligned_array<BaseType>::iterator miter = markers.begin();
+    typename numpy::aligned_array<BaseType>::const_iterator miter = markers.begin();
     for (int i = 0; i != N; ++i, ++miter) {
         if (*miter) {
             assert(markers.validposition(miter.position()));
@@ -503,7 +507,10 @@ void cwatershed(numpy::aligned_array<BaseType> res, numpy::aligned_array<bool>* 
         hqueue.pop();
         status[next.position] = black;
         int margin = next.margin;
-        for (std::vector<NeighbourElem>::const_iterator neighbour = neighbours.begin(), past = neighbours.end(); neighbour != past; ++neighbour) {
+        for (std::vector<NeighbourElem>::const_iterator neighbour = neighbours.begin(),
+                            past = neighbours.end();
+                    neighbour != past;
+                    ++neighbour) {
             const numpy::index_type npos = next.position + neighbour->delta;
             int nmargin = margin - neighbour->margin;
             if (nmargin < 0) {

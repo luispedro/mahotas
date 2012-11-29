@@ -221,7 +221,7 @@ FT std_like_round(FT v) {
 
 
 template <typename FT>
-void zoom_shift(numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
+void zoom_shift(const numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
                                  PyArrayObject* shift_ar, numpy::aligned_array<FT> output,
                                  const int order, const int mode, const FT cval) {
     gil_release nogil;

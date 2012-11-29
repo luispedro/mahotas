@@ -71,7 +71,7 @@ struct centroid_info {
     float x;
 };
 
-int slic(numpy::aligned_array<npy_float32> array, numpy::aligned_array<int> alabels, const int S, const int max_iters=64) {
+int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int> alabels, const int S, const int max_iters=64) {
     assert(alabels.is_carray());
     gil_release no_gil;
     const int Ny = array.dim(0);

@@ -42,7 +42,7 @@ void join(int* data, int i, int j) {
     data[i] = j;
 }
 
-int label(numpy::aligned_array<int> labeled, numpy::aligned_array<int> Bc) {
+int label(numpy::aligned_array<int> labeled, const numpy::aligned_array<int> Bc) {
     gil_release nogil;
     const int N = labeled.size();
     int* data = labeled.data();
@@ -119,10 +119,10 @@ void remove_regions(numpy::aligned_array<int> labeled, numpy::aligned_array<int>
 
 
 template<typename T>
-void borders(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, numpy::aligned_array<bool> result, int mode) {
+void borders(const numpy::aligned_array<T> array, const numpy::aligned_array<T> filter, numpy::aligned_array<bool> result, int mode) {
     gil_release nogil;
     const int N = array.size();
-    typename numpy::aligned_array<T>::iterator iter = array.begin();
+    typename numpy::aligned_array<T>::const_iterator iter = array.begin();
     filter_iterator<T> fiter(array.raw_array(), filter.raw_array(), ExtendMode(mode), true);
     const int N2 = fiter.size();
     bool* out = result.data();
@@ -140,10 +140,10 @@ void borders(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, nump
 }
 
 template<typename T>
-bool border(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, numpy::aligned_array<bool> result, T i, T j) {
+bool border(const numpy::aligned_array<T> array, const numpy::aligned_array<T> filter, numpy::aligned_array<bool> result, T i, T j) {
     gil_release nogil;
     const int N = array.size();
-    typename numpy::aligned_array<T>::iterator iter = array.begin();
+    typename numpy::aligned_array<T>::const_iterator iter = array.begin();
     filter_iterator<T> fiter(array.raw_array(), filter.raw_array(), EXTEND_CONSTANT, true);
     const int N2 = fiter.size();
     bool* out = result.data();
@@ -167,10 +167,10 @@ bool border(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, numpy
 }
 
 template <typename T, typename F>
-void labeled_foldl(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, const int maxlabel, const T start, F f) {
+void labeled_foldl(const numpy::aligned_array<T> array, const numpy::aligned_array<int> labeled, T* result, const int maxlabel, const T start, F f) {
     gil_release nogil;
-    typename numpy::aligned_array<T>::iterator iterator = array.begin();
-    numpy::aligned_array<int>::iterator literator = labeled.begin();
+    typename numpy::aligned_array<T>::const_iterator iterator = array.begin();
+    numpy::aligned_array<int>::const_iterator literator = labeled.begin();
     const int N = array.size();
     std::fill(result, result + maxlabel, start);
     for (int i = 0; i != N; ++i, ++iterator, ++literator) {
@@ -196,21 +196,21 @@ const T& std_like_max(const T& a, const T& b) {
 }
 
 template <typename T>
-void labeled_sum(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
+void labeled_sum(const numpy::aligned_array<T> array, const numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
     labeled_foldl(array, labeled, result, maxlabel, T(), std::plus<T>());
 }
 template <>
-void labeled_sum<bool>(numpy::aligned_array<bool> array, numpy::aligned_array<int> labeled, bool* result, const int maxlabel) {
+void labeled_sum<bool>(const numpy::aligned_array<bool> array, const numpy::aligned_array<int> labeled, bool* result, const int maxlabel) {
     labeled_foldl(array, labeled, result, maxlabel, false, std::logical_or<bool>());
 }
 
 template <typename T>
-void labeled_max(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
+void labeled_max(const numpy::aligned_array<T> array, const numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
     labeled_foldl(array, labeled, result, maxlabel,std::numeric_limits<T>::min(), std_like_max<T>);
 }
 
 template <typename T>
-void labeled_min(numpy::aligned_array<T> array, numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
+void labeled_min(const numpy::aligned_array<T> array, const numpy::aligned_array<int> labeled, T* result, const int maxlabel) {
     labeled_foldl(array, labeled, result, maxlabel,std::numeric_limits<T>::max(), std_like_min<T>);
 }
 

@@ -75,7 +75,7 @@ convexhull(PyObject* self, PyObject* args) {
     std::vector<Point> Pv;
     try { // Release GIL
         gil_release nogil;
-        numpy::aligned_array<bool> barray(array);
+        const numpy::aligned_array<bool> barray(array);
         const int N0 = barray.dim(0);
         const int N1 = barray.dim(1);
         for (int y = 0; y != N0; ++y) {

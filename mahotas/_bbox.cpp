@@ -26,10 +26,10 @@ const char TypeErrorMsg[] =
 
 
 template<typename T>
-void bbox(numpy::aligned_array<T> array, numpy::index_type* extrema) {
+void bbox(const numpy::aligned_array<T> array, numpy::index_type* extrema) {
     gil_release nogil;
     const int N = array.size();
-    typename numpy::aligned_array<T>::iterator pos = array.begin();
+    typename numpy::aligned_array<T>::const_iterator pos = array.begin();
     for (int i = 0; i != N; ++i, ++pos) {
         if (*pos) {
             numpy::position where = pos.position();

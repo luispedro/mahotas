@@ -217,6 +217,17 @@ struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
 };
 
 
+template<typename T>
+struct no_const {
+    typedef T type;
+};
+
+template<typename T>
+struct no_const<const T> {
+    typedef T type;
+};
+
+
 
 template <typename BaseType>
 class iterator_type : public iterator_base<BaseType> {
@@ -226,7 +237,7 @@ class iterator_type : public iterator_base<BaseType> {
             }
         BaseType operator * () const {
             assert(this->is_valid());
-            BaseType res;
+            typename no_const<BaseType>::type res;
             std::memcpy(&res,this->data_,sizeof(res));
             return res;
         }
@@ -343,8 +354,20 @@ struct array : public array_base<BaseType> {
         iterator begin() {
             return iterator(this->array_);
         }
+        const_iterator begin() const {
+            return const_iterator(this->array_);
+        }
+
         iterator end() {
             iterator res = begin();
+            for (unsigned i = 0, N = this->size(); i!= N; ++i) {
+                ++res;
+            }
+            return res;
+        }
+
+        const_iterator end() const {
+            const_iterator res = begin();
             for (unsigned i = 0, N = this->size(); i!= N; ++i) {
                 ++res;
             }

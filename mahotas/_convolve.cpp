@@ -23,10 +23,10 @@ const char OutputErrorMsg[] =
 
 
 template<typename T>
-void convolve(numpy::aligned_array<T> array, numpy::aligned_array<T> filter, numpy::aligned_array<T> result, int mode) {
+void convolve(const numpy::aligned_array<T> array, const numpy::aligned_array<T> filter, numpy::aligned_array<T> result, int mode) {
     gil_release nogil;
     const int N = array.size();
-    typename numpy::aligned_array<T>::iterator iter = array.begin();
+    typename numpy::aligned_array<T>::const_iterator iter = array.begin();
     filter_iterator<T> fiter(array.raw_array(), filter.raw_array(), ExtendMode(mode), true);
     const int N2 = fiter.size();
     T* out = result.data();
@@ -414,10 +414,10 @@ PyObject* py_ihaar(PyObject* self, PyObject* args) {
 }
 
 template<typename T>
-void rank_filter(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc, const int rank, const int mode, const T cval = T()) {
+void rank_filter(numpy::aligned_array<T> res, const numpy::aligned_array<T> array, const numpy::aligned_array<T> Bc, const int rank, const int mode, const T cval = T()) {
     gil_release nogil;
     const int N = res.size();
-    typename numpy::aligned_array<T>::iterator iter = array.begin();
+    typename numpy::aligned_array<T>::const_iterator iter = array.begin();
     filter_iterator<T> fiter(array.raw_array(), Bc.raw_array(), ExtendMode(mode), true);
     const int N2 = fiter.size();
     if (rank < 0 || rank >= N2) {
@@ -472,10 +472,10 @@ PyObject* py_rank_filter(PyObject* self, PyObject* args) {
 }
 
 template <typename T>
-void template_match(numpy::aligned_array<T> res, numpy::aligned_array<T> f, numpy::aligned_array<T> t, int mode) {
+void template_match(numpy::aligned_array<T> res, const numpy::aligned_array<T> f, const numpy::aligned_array<T> t, int mode) {
     gil_release nogil;
     const int N = res.size();
-    typename numpy::aligned_array<T>::iterator iter = f.begin();
+    typename numpy::aligned_array<T>::const_iterator iter = f.begin();
     filter_iterator<T> fiter(f.raw_array(), t.raw_array(), ExtendMode(mode), false);
     const int N2 = fiter.size();
     assert(res.is_carray());
