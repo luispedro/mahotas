@@ -126,6 +126,16 @@ better venue and generates a public discussion log for others in the future.
 
 Recent Changes
 --------------
+0.9.6 (December 02 2012)
+~~~~~~~~~~~~~~~~~~~~~~~~
+- Fix ``distance()`` of non-boolean images (issue #24 on github)
+- Fix encoding issue on PY3 on Mac OS (issue #25 on github)
+- Add ``relabel()`` function
+- Add ``remove_regions()`` function in labeled module
+- Fix ``median_filter()`` on the borders (respect the ``mode`` argument)
+- Add ``mahotas.color`` module for conversion between colour spaces
+- Add SLIC Superpixels
+- Many improvements to the documentation
 
 0.9.5 (November 05 2012)
 ~~~~~~~~~~~~~~~~~~~~~~~~

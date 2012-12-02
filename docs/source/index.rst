@@ -84,7 +84,7 @@ Jump to detailed `API Documentation <api.html>`__
    internals
    principles
    contributing
-   readme
+   history
    api
 
 

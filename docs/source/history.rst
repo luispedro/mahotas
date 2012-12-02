@@ -1,43 +1,16 @@
-Image Processing Library for Python.
-
-It includes a couple of algorithms implemented in C++ for speed while operating
-in numpy arrays.
-
-Notable algorithms:
- - watershed.
- - convex points calculations.
- - hit & miss. thinning.
- - Zernike & Haralick, LBP, and TAS features.
- - freeimage based numpy image loading (requires freeimage libraries to be
-   installed).
- - Speeded-Up Robust Features (SURF), a form of local features.
- - thresholding.
- - convolution.
- - Sobel edge detection.
-
-Examples
---------
-
-This is a simple example of loading a file (called `test.jpeg`) and calling
-`watershed` using above threshold regions as a seed (we use Otsu to define
-threshold).
-
-::
-
-    import numpy as np
-    import mahotas
-    import pylab
-
-    img = mahotas.imread('test.jpeg')
-    T_otsu = mahotas.thresholding.otsu(img)
-    seeds,_ = mahotas.label(img > T_otsu)
-    labeled = mahotas.cwatershed(img.max() - img, seeds)
-
-    pylab.imshow(labeled)
-
-
-Recent Changes
---------------
+=======
+History
+=======
+0.9.6 (December 02 2012)
+~~~~~~~~~~~~~~~~~~~~~~~~
+- Fix ``distance()`` of non-boolean images (issue #24 on github)
+- Fix encoding issue on PY3 on Mac OS (issue #25 on github)
+- Add ``relabel()`` function
+- Add ``remove_regions()`` function in labeled module
+- Fix ``median_filter()`` on the borders (respect the ``mode`` argument)
+- Add ``mahotas.color`` module for conversion between colour spaces
+- Add SLIC Superpixels
+- Many improvements to the documentation
 
 0.9.5 (November 05 2012)
 ~~~~~~~~~~~~~~~~~~~~~~~~
