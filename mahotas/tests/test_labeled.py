@@ -142,7 +142,7 @@ def _nelems(arr):
 
 def test_relabel():
     np.random.seed(24)
-    for i in xrange(8):
+    for i in range(8):
         f = np.random.random_sample((128,128)) > .8
         labeled, n = mahotas.labeled.label(f)
         labeled *= ( (labeled % 7) != 4)
