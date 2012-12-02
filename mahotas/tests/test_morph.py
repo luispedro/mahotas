@@ -117,7 +117,7 @@ def slow_subm_int16(a, b):
 
 def test_subm():
     np.random.seed(34)
-    for j in xrange(8):
+    for j in range(8):
         s = (128, 256)
         a = np.random.randint(0,255, size=s)
         b = np.random.randint(0,255, size=s)
@@ -143,7 +143,7 @@ def test_subm():
 
 def test_subm_out():
     np.random.seed(32)
-    for j in xrange(8):
+    for j in range(8):
         s = (128, 256)
         a = np.random.randint(0,255, size=s)
         b = np.random.randint(0,255, size=s)
@@ -161,7 +161,7 @@ def test_subm_out():
 
 def test_tophat():
     np.random.seed(32)
-    for j in xrange(8):
+    for j in range(8):
         s = (128, 256)
         f = np.random.randint(0,255, size=s)
         f = f.astype(np.uint8)
