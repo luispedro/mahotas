@@ -3,6 +3,7 @@
 #include <new>
 
 #include "../utils.hpp"
+#include "../numpypp/numpy.hpp"
 
 extern "C" {
     #include <Python.h>
@@ -26,6 +27,7 @@ double fact(int n) {
 }
 
 PyObject* py_znl(PyObject* self, PyObject* args) {
+    using numpy::ndarray_cast;
     using std::pow;
     using std::atan;
     using std::atan2;
@@ -50,9 +52,9 @@ PyObject* py_znl(PyObject* self, PyObject* args) {
     holdref Aa_hr(Aa);
     holdref Pa_hr(Pa);
 
-    double* D = static_cast<double*>(PyArray_DATA(Da));
-    complex<double>* A = static_cast<complex<double>*>(PyArray_DATA(Aa));
-    double* P = static_cast<double*>(PyArray_DATA(Pa));
+    double* D = ndarray_cast<double*>(Da);
+    complex<double>* A = ndarray_cast<complex<double>*>(Aa);
+    double* P = ndarray_cast<double*>(Pa);
     const int Nelems = PyArray_SIZE(Da);
     complex<double> v = 0.;
     try {

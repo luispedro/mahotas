@@ -96,7 +96,7 @@ convexhull(PyObject* self, PyObject* args) {
 		PyErr_NoMemory();
 		return 0;
 	}
-    npy_intp* oiter = static_cast<npy_intp*>(PyArray_DATA(output));
+    npy_intp* oiter = numpy::ndarray_cast<npy_intp*>(output);
 	for (unsigned i = 0; i != h; ++i) {
         *oiter++ = Pv[i].y;
         *oiter++ = Pv[i].x;

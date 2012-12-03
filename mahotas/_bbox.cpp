@@ -18,6 +18,7 @@ extern "C" {
 }
 
 namespace{
+using numpy::ndarray_cast;
 
 const char TypeErrorMsg[] = 
     "Type not understood. "
@@ -78,7 +79,7 @@ PyObject* py_bbox(PyObject* self, PyObject* args) {
 
     if (!extrema) return NULL;
     // format for extrema: [ min_0, max_0, min_1, max_1, min_2, max_2, ..., min_k, max_k]
-    npy_intp* extrema_v = static_cast<npy_intp*>(PyArray_DATA(extrema));
+    npy_intp* extrema_v = ndarray_cast<npy_intp*>(extrema);
     for (int j = 0; j != array->nd; ++j) {
         extrema_v[2*j] = PyArray_DIM(array,j);
         extrema_v[2*j+1] = 0;
@@ -86,7 +87,7 @@ PyObject* py_bbox(PyObject* self, PyObject* args) {
     switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
         if (PyArray_ISCARRAY_RO(array) && array->nd == 2) { \
-            carray2_bbox<type>(static_cast<const type*>(PyArray_DATA(array)), PyArray_DIM(array,0), PyArray_DIM(array, 1), extrema_v); \
+            carray2_bbox<type>(ndarray_cast<const type*>(array), PyArray_DIM(array,0), PyArray_DIM(array, 1), extrema_v); \
         } else { \
             bbox<type>(numpy::aligned_array<type>(array), extrema_v); \
         }

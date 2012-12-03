@@ -225,8 +225,9 @@ void zoom_shift(const numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
                                  PyArrayObject* shift_ar, numpy::aligned_array<FT> output,
                                  const int order, const int mode, const FT cval) {
     gil_release nogil;
-    const FT *zooms = zoom_ar ? static_cast<const FT*>(PyArray_DATA(zoom_ar)) : NULL;
-    const FT *shifts = shift_ar ? static_cast<const FT*>(PyArray_DATA(shift_ar)) : NULL;
+    using numpy::ndarray_cast;
+    const FT *zooms = zoom_ar ? ndarray_cast<const FT*>(zoom_ar) : NULL;
+    const FT *shifts = shift_ar ? ndarray_cast<const FT*>(shift_ar) : NULL;
     const int rank = array.ndims();
 
     std::vector< std::vector<bool> > zeros;

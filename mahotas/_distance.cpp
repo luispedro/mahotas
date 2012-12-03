@@ -16,6 +16,7 @@ extern "C" {
     #include <numpy/ndarrayobject.h>
 }
 namespace {
+using numpy::ndarray_cast;
 
 const char TypeErrorMsg[] =
     "Type not understood. "
@@ -79,7 +80,7 @@ PyObject* py_dt(PyObject* self, PyObject* args) {
         orig = 0;
     }
     Py_INCREF(f);
-    int* orig_i = (orig? static_cast<int*>(PyArray_DATA(orig)) : 0);
+    int* orig_i = (orig? ndarray_cast<int*>(orig) : 0);
     npy_intp* ostrides = (orig ? PyArray_STRIDES(orig) : 0);
     double* z = 0;
     int* v = 0;

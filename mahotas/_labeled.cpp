@@ -346,7 +346,7 @@ PyObject* py_labeled_sum(PyObject* self, PyObject* args) {
 
 #define HANDLE(type) \
     { \
-        type* odata = static_cast<type*>(PyArray_DATA(output)); \
+        type* odata = numpy::ndarray_cast<type*>(output); \
         labeled_sum<type>( \
                 numpy::aligned_array<type>(array), \
                 numpy::aligned_array<int>(labeled), \
@@ -376,7 +376,7 @@ PyObject* py_labeled_max_min(PyObject* self, PyObject* args) {
 
 #define HANDLE(type) \
     { \
-        type* odata = static_cast<type*>(PyArray_DATA(output)); \
+        type* odata = numpy::ndarray_cast<type*>(output); \
         if (is_max) { \
             labeled_max<type>( \
                 numpy::aligned_array<type>(array), \

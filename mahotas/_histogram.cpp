@@ -16,6 +16,7 @@ extern "C" {
     #include <numpy/ndarrayobject.h>
 }
 namespace {
+using numpy::ndarray_cast;
 
 template<typename BaseType>
 void compute_histogram(BaseType* data, int N, unsigned int* histogram) {
@@ -38,23 +39,23 @@ PyObject* py_histogram(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError, "Bad arguments to internal function.");
         return NULL;
     }
-    unsigned int* histogram_data = static_cast<unsigned int*>(PyArray_DATA(histogram));
+    unsigned int* histogram_data = ndarray_cast<unsigned int*>(histogram);
     const unsigned N = PyArray_SIZE(array);
     switch (PyArray_TYPE(array)) {
         case NPY_UBYTE:
-            compute_histogram(static_cast<unsigned char*>(PyArray_DATA(array)), N, histogram_data);
+            compute_histogram(ndarray_cast<unsigned char*>(array), N, histogram_data);
             break;
         case NPY_USHORT:
-            compute_histogram(static_cast<unsigned short*>(PyArray_DATA(array)), N, histogram_data);
+            compute_histogram(ndarray_cast<unsigned short*>(array), N, histogram_data);
             break;
         case NPY_UINT:
-            compute_histogram(static_cast<unsigned int*>(PyArray_DATA(array)), N, histogram_data);
+            compute_histogram(ndarray_cast<unsigned int*>(array), N, histogram_data);
             break;
         case NPY_ULONG:
-            compute_histogram(static_cast<npy_ulong*>(PyArray_DATA(array)), N, histogram_data);
+            compute_histogram(ndarray_cast<npy_ulong*>(array), N, histogram_data);
             break;
         case NPY_ULONGLONG:
-            compute_histogram(static_cast<npy_ulonglong*>(PyArray_DATA(array)), N, histogram_data);
+            compute_histogram(ndarray_cast<npy_ulonglong*>(array), N, histogram_data);
             break;
         default:
             PyErr_SetString(PyExc_RuntimeError, "Cannot handle type.");
@@ -112,7 +113,7 @@ PyObject* py_otsu(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError, "Bad arguments to internal function.");
         return NULL;
     }
-    const double* histogram_data = static_cast<double*>(PyArray_DATA(histogram));
+    const double* histogram_data = ndarray_cast<double*>(histogram);
     const unsigned N = PyArray_SIZE(histogram);
     const int res = otsu(histogram_data, N);
     return Py_BuildValue("i", res);

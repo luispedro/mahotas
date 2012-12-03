@@ -17,6 +17,7 @@ extern "C" {
 }
 
 namespace{
+using numpy::ndarray_cast;
 
 const char TypeErrorMsg[] =
     "Type not understood. "
@@ -59,7 +60,7 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
             PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
             return NULL;
         }
-        labels = static_cast<const npy_int32*>(PyArray_DATA(labels_obj));
+        labels = ndarray_cast<const npy_int32*>(labels_obj);
     }
     holdref labels_obj_hr(labels_obj);
     if (labels) {
@@ -84,7 +85,7 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
     if (!centers) return NULL;
     { // DROP THE GIL
         gil_release nogil;
-        npy_double* centers_v = static_cast<npy_double*>(PyArray_DATA(centers));
+        npy_double* centers_v = ndarray_cast<npy_double*>(centers);
         std::fill(centers_v, centers_v + dims[0], 0);
         switch(PyArray_TYPE(array)) {
 #define HANDLE(type) \
