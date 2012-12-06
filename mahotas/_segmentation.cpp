@@ -166,7 +166,8 @@ PyObject* py_slic(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* labels;
     int S;
-    if (!PyArg_ParseTuple(args,"OOi", &array, &labels, &S)) return NULL;
+    int max_iters;
+    if (!PyArg_ParseTuple(args,"OOii", &array, &labels, &S, &max_iters)) return NULL;
     if (!numpy::are_arrays(array, labels) ||
         !PyArray_ISCARRAY(array) ||
         !PyArray_ISCARRAY(labels)) {
@@ -186,7 +187,8 @@ PyObject* py_slic(PyObject* self, PyObject* args) {
         return NULL;
     }
     try {
-        const int n = slic(numpy::aligned_array<npy_float32>(array), numpy::aligned_array<int>(labels), S);
+        if (max_iters < 0) max_iters = 128;
+        const int n = slic(numpy::aligned_array<npy_float32>(array), numpy::aligned_array<int>(labels), S, max_iters);
         return PyLong_FromLong(n);
     }
     CATCH_PYTHON_EXCEPTIONS(true);
