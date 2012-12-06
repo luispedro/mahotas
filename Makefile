@@ -13,7 +13,7 @@ tests: debug
 docs:
 	rm -rf build/docs
 	cd docs && make html && cp -r build/html ../build/docs
-	echo python setup.py upload_docs
+	@echo python setup.py upload_docs
 
 .PHONY: clean docs tests fast debug
 
