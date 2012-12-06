@@ -9,11 +9,15 @@ from . import _texture
 from ..internal import _verify_is_integer_type
 import math
 
-__all__ = ['haralick', "haralick_labels"]
+__all__ = [
+    'haralick',
+    'haralick_labels',
+    'cooccurence',
+    ]
 
 def _entropy(p):
     p = p.ravel()
-    return -np.dot(np.log(p+(p==0)),p)/math.log(2.0)
+    return -np.dot(np.log2(p+(p==0)),p)
 
 
 def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False):
