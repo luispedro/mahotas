@@ -57,7 +57,7 @@ PyObject* py_cooccurent(PyObject* self, PyObject* args) {
 
 #define HANDLE(type) \
     cooccurence<type>(numpy::aligned_array<npy_int32>(result), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));
-    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, true)
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array);
 #undef HANDLE
     if (symmetric) {
         numpy::aligned_array<npy_int32> cmatrix(result);

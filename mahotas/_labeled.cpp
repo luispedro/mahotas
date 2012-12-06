@@ -281,11 +281,9 @@ PyObject* py_borders(PyObject* self, PyObject* args) {
                 numpy::aligned_array<type>(filter), \
                 numpy::aligned_array<bool>(output), \
                 mode);
-    SAFE_SWITCH_ON_TYPES_OF(array, false)
+    SAFE_SWITCH_ON_TYPES_OF(array);
 #undef HANDLE
-    if (PyErr_Occurred()) {
-        return NULL;
-    }
+
     Py_INCREF(output);
     return PyArray_Return(output);
 }
@@ -316,11 +314,8 @@ PyObject* py_border(PyObject* self, PyObject* args) {
                 numpy::aligned_array<bool>(output), \
                 static_cast<type>(i), \
                 static_cast<type>(j));
-    SAFE_SWITCH_ON_TYPES_OF(array, false);
+    SAFE_SWITCH_ON_TYPES_OF(array);
 #undef HANDLE
-    if (PyErr_Occurred()) {
-        return NULL;
-    }
     if (always_return || has_any) {
         Py_INCREF(output);
         return PyArray_Return(output);
@@ -353,7 +348,7 @@ PyObject* py_labeled_sum(PyObject* self, PyObject* args) {
                 odata, \
                 maxi); \
     }
-    SAFE_SWITCH_ON_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_TYPES_OF(array);
 #undef HANDLE
 
     Py_RETURN_NONE;
@@ -391,7 +386,7 @@ PyObject* py_labeled_max_min(PyObject* self, PyObject* args) {
                 maxi); \
         } \
     }
-    SAFE_SWITCH_ON_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_TYPES_OF(array);
 #undef HANDLE
 
     Py_RETURN_NONE;

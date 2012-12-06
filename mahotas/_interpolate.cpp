@@ -381,7 +381,7 @@ PyObject* py_spline_filter1d(PyObject* self, PyObject* args) {
     holdref array_hr(array);
 #define HANDLE(type) \
     spline_filter1d<type>(numpy::aligned_array<type>(array), order, axis);
-    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array);
 #undef HANDLE
 
     Py_RETURN_NONE;
@@ -423,7 +423,7 @@ PyObject* py_zoom_shift(PyObject* self, PyObject* args) {
     holdref output_hr(output);
 #define HANDLE(type) \
     zoom_shift<type>(numpy::aligned_array<type>(array), zooms, shifts, numpy::aligned_array<type>(output), order, mode, type(cval));
-    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array);
 #undef HANDLE
 
     Py_RETURN_NONE;

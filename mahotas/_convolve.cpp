@@ -83,7 +83,7 @@ PyObject* py_convolve(PyObject* self, PyObject* args) {
 
 #define HANDLE(type) \
     convolve<type>(numpy::aligned_array<type>(array), numpy::aligned_array<type>(filter), numpy::aligned_array<type>(output), mode);
-    SAFE_SWITCH_ON_TYPES_OF(array, true)
+    SAFE_SWITCH_ON_TYPES_OF(array);
 #undef HANDLE
     return PyArray_Return(output);
 }
@@ -210,7 +210,7 @@ PyObject* py_haar(PyObject* self, PyObject* args) {
 #define HANDLE(type) \
         haar<type>(numpy::aligned_array<type>(array));
 
-    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array);
 #undef HANDLE
 
     Py_INCREF(array);
@@ -274,7 +274,7 @@ PyObject* py_wavelet(PyObject* self, PyObject* args) {
 #define HANDLE(type) \
         wavelet<type>(numpy::aligned_array<type>(array), acoeffs.data(), acoeffs.dim(0));
 
-    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array);
 #undef HANDLE
 
     Py_INCREF(array);
@@ -297,7 +297,7 @@ PyObject* py_iwavelet(PyObject* self, PyObject* args) {
 #define HANDLE(type) \
         iwavelet<type>(numpy::aligned_array<type>(array), acoeffs.data(), acoeffs.dim(0));
 
-    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array);
 #undef HANDLE
 
     Py_INCREF(array);
@@ -337,7 +337,7 @@ PyObject* py_daubechies(PyObject* self, PyObject* args) {
 #define HANDLE(type) \
         wavelet<type>(numpy::aligned_array<type>(array), coeffs, ncoeffs);
 
-    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array);
 #undef HANDLE
 
     Py_INCREF(array);
@@ -361,7 +361,7 @@ PyObject* py_idaubechies(PyObject* self, PyObject* args) {
 #define HANDLE(type) \
         iwavelet<type>(numpy::aligned_array<type>(array), coeffs, ncoeffs);
 
-    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array);
 #undef HANDLE
 
     return PyArray_Return(array);
@@ -406,7 +406,7 @@ PyObject* py_ihaar(PyObject* self, PyObject* args) {
 #define HANDLE(type) \
         ihaar<type>(numpy::aligned_array<type>(array));
 
-    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_FLOAT_TYPES_OF(array);
 #undef HANDLE
 
     Py_INCREF(array);
@@ -464,7 +464,7 @@ PyObject* py_rank_filter(PyObject* self, PyObject* args) {
 
 #define HANDLE(type) \
         rank_filter<type>(numpy::aligned_array<type>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc), rank, mode);
-    SAFE_SWITCH_ON_TYPES_OF(array,true)
+    SAFE_SWITCH_ON_TYPES_OF(array);
 #undef HANDLE
 
     Py_INCREF(output);
@@ -512,7 +512,7 @@ PyObject* py_template_match(PyObject* self, PyObject* args) {
 
 #define HANDLE(type) \
         template_match<type>(numpy::aligned_array<type>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(template_), mode);
-    SAFE_SWITCH_ON_TYPES_OF(array,true)
+    SAFE_SWITCH_ON_TYPES_OF(array);
 #undef HANDLE
 
     Py_INCREF(output);

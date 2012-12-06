@@ -60,7 +60,7 @@ PyObject* py_subm(PyObject* self, PyObject* args) {
     }
 #define HANDLE(type) \
     subm<type>(numpy::aligned_array<type>(a), numpy::aligned_array<type>(b));
-    SAFE_SWITCH_ON_INTEGER_TYPES_OF(a, true);
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(a);
 #undef HANDLE
 
     Py_XINCREF(a);
@@ -157,7 +157,7 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
 
 #define HANDLE(type) \
     erode<type>(numpy::aligned_array<type>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));
-    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array);
 #undef HANDLE
 
     Py_XINCREF(output);
@@ -210,7 +210,7 @@ PyObject* py_locminmax(PyObject* self, PyObject* args) {
 
 #define HANDLE(type) \
     locmin_max<type>(numpy::aligned_array<bool>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc), bool(is_min));
-    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array);
 #undef HANDLE
 
     Py_XINCREF(output);
@@ -282,7 +282,7 @@ PyObject* py_regminmax(PyObject* self, PyObject* args) {
     locmin_max<type>(numpy::aligned_array<bool>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc), bool(is_min)); \
     remove_fake_regmin_max<type>(numpy::aligned_array<bool>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc), bool(is_min));
 
-    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array);
 #undef HANDLE
 
     Py_XINCREF(output);
@@ -346,7 +346,7 @@ PyObject* py_dilate(PyObject* self, PyObject* args) {
     holdref r_o(output);
 #define HANDLE(type) \
     dilate<type>(numpy::aligned_array<type>(output),numpy::array<type>(array),numpy::aligned_array<type>(Bc));
-    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array);
 #undef HANDLE
 
     Py_XINCREF(output);
@@ -416,14 +416,17 @@ PyObject* py_close_holes(PyObject* self, PyObject* args) {
     }
     PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(ref->nd,ref->dimensions,PyArray_TYPE(ref));
     if (!res_a) return NULL;
+
+    // We own the only reference.
+    // If an exception happens, we want r_a to delete the object.
+    // So we do call it with incref=false:
+    holdref r_a(res_a, false);
     try {
         close_holes(numpy::aligned_array<bool>(ref), numpy::aligned_array<bool>(res_a), numpy::aligned_array<bool>(Bc));
     }
-    CATCH_PYTHON_EXCEPTIONS(false)
-    if (PyErr_Occurred()) {
-        Py_DECREF(res_a);
-        return NULL;
-    }
+    CATCH_PYTHON_EXCEPTIONS
+
+    Py_INCREF(res_a);
     return PyArray_Return(res_a);
 }
 
@@ -572,7 +575,7 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
     }
 #define HANDLE(type) \
     cwatershed<type>(numpy::aligned_array<type>(res_a),lines_a,numpy::aligned_array<type>(array),numpy::aligned_array<type>(markers),numpy::aligned_array<type>(Bc));
-    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array,true)
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array);
 #undef HANDLE
     if (return_lines) {
         delete lines_a;
@@ -667,7 +670,7 @@ PyObject* py_hitmiss(PyObject* self, PyObject* args) {
 
 #define HANDLE(type) \
     hitmiss<type>(numpy::aligned_array<type>(res_a), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));
-    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array, true);
+    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array);
 #undef HANDLE
 
     Py_INCREF(res_a);

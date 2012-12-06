@@ -19,15 +19,7 @@ typedef unsigned short ushort;
     HANDLE_INTEGER_TYPES() \
     HANDLE_FLOAT_TYPES()
 
-#define SWITCH_ON_TYPES_OF(array) \
-    switch(PyArray_TYPE(array)) { \
-            HANDLE_TYPES();\
-            default: \
-            PyErr_SetString(PyExc_RuntimeError, "Dispatch on types failed!"); \
-            return NULL; \
-    }
-
-#define SAFE_SWITCH_ON_TYPES_OF(array,return_null) \
+#define SAFE_SWITCH_ON_TYPES_OF(array) \
     try { \
         switch(PyArray_TYPE(array)) { \
                 HANDLE_TYPES();\
@@ -36,9 +28,9 @@ typedef unsigned short ushort;
                 return NULL; \
         } \
     } \
-    CATCH_PYTHON_EXCEPTIONS(return_null)
+    CATCH_PYTHON_EXCEPTIONS
 
-#define SAFE_SWITCH_ON_INTEGER_TYPES_OF(array,return_null) \
+#define SAFE_SWITCH_ON_INTEGER_TYPES_OF(array) \
     try { \
         switch(PyArray_TYPE(array)) { \
                 HANDLE_INTEGER_TYPES();\
@@ -47,9 +39,9 @@ typedef unsigned short ushort;
                 return NULL; \
         } \
     } \
-    CATCH_PYTHON_EXCEPTIONS(return_null)
+    CATCH_PYTHON_EXCEPTIONS
 
-#define SAFE_SWITCH_ON_FLOAT_TYPES_OF(array,return_null) \
+#define SAFE_SWITCH_ON_FLOAT_TYPES_OF(array) \
     try { \
         switch(PyArray_TYPE(array)) { \
                 HANDLE_FLOAT_TYPES();\
@@ -58,15 +50,15 @@ typedef unsigned short ushort;
                 return NULL; \
         } \
     } \
-    CATCH_PYTHON_EXCEPTIONS(return_null)
+    CATCH_PYTHON_EXCEPTIONS
 
 
-#define CATCH_PYTHON_EXCEPTIONS(return_null) \
+#define CATCH_PYTHON_EXCEPTIONS \
     catch (const PythonException& pe) { \
         PyErr_SetString(pe.type(), pe.message()); \
-        if (return_null) return NULL; \
+        return NULL; \
     } catch (const std::bad_alloc&) {\
         PyErr_NoMemory(); \
-        if (return_null) return NULL; \
+        return NULL; \
     }
 

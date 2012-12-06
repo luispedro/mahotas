@@ -185,8 +185,11 @@ PyObject* py_slic(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError, "mahotas._segmentation: Unexpected array dimensions");
         return NULL;
     }
-    const int n = slic(numpy::aligned_array<npy_float32>(array), numpy::aligned_array<int>(labels), S);
-    return PyLong_FromLong(n);
+    try {
+        const int n = slic(numpy::aligned_array<npy_float32>(array), numpy::aligned_array<int>(labels), S);
+        return PyLong_FromLong(n);
+    }
+    CATCH_PYTHON_EXCEPTIONS(true);
 }
 
 

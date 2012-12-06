@@ -557,6 +557,8 @@ struct aligned_array : public array_base<BaseType> {
 
 template <typename BaseType>
 aligned_array<BaseType> new_array(const npy_intp ndims, const npy_intp* dims) {
+    assert(ndims < NPY_MAXDIMS);
+    for (int d = 0; d != ndims; ++d) assert(dims[d] >= 0);
     aligned_array<BaseType> res(reinterpret_cast<PyArrayObject*>(
         PyArray_SimpleNew(ndims, const_cast<npy_intp*>(dims), dtype_code<BaseType>())));
     // SimpleNew returns an object with count = 1
