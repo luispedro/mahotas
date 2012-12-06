@@ -24,13 +24,13 @@ of runtime checks. This is controlled by the ``DEBUG`` environment variable.
 There are two levels:
 
 1.  ``DEBUG=1`` This turns on assertions. The code will run slower, but
-    probably not noticebly slower, except for very large images.
+    probably not noticeably slower, except for very large images.
 2.  ``DEBUG=2`` This turns on the assertions and additionally uses the debug
     version of the C++ library (this is probably only working if you are using
     GCC). Some of the internal code also picks up on this and adds even more
-    sanity checking. This will be *much slower* as all operations done through
-    iterators into standard containers are now checked (including many inner
-    loop operations).
+    sanity checking. The result will be code that runs **much slower** as all
+    operations done through iterators into standard containers are now checked
+    (including many inner loop operations).
 
 The Makefile that comes with the source helps you::
 

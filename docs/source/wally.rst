@@ -38,6 +38,7 @@ w is the white channel.
     pattern = np.ones((24,16), float)
     for i in xrange(2):
         pattern[i::4] = -1
+
 Build up a pattern of +1,+1,-1,-1 on the vertical axis. This is Wally's shirt.
 
 ::

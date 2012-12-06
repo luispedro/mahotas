@@ -41,6 +41,53 @@ to the nearest black pixel in ``f``. If ``f[y,x] == True``, then ``dmap[y,x] ==
 .. plot:: ../../mahotas/demos/distance.py
     :include-source:
 
+Distance Transform and Watershed
+--------------------------------
+
+The distance transform is often combined with the watershed for segmentation.
+Here is an example (which is available with the source in the
+``mahotas/demos/`` directory as ``nuclear_distance_watershed.py``).
+
+.. plot:: ../../mahotas/demos/nuclear_distance_watershed.py
+
+The code is not very complex. Start by loading the image and preprocessing it
+with a Gaussian blur::
+
+    import mahotas
+    nuclear = mahotas.imread('mahotas/demos/data/nuclear.png')
+    nuclear = nuclear[:,:,0]
+    nuclear = mahotas.gaussian_filter(nuclear, 1.)
+    threshed  = (nuclear > nuclear.mean())
+
+Now, we compute the distance transform::
+
+    distances = mahotas.stretch(mahotas.distance(threshed))
+
+We find and label the regional maxima::
+
+    Bc = np.ones((9,9))
+    maxima = mahotas.morph.regmax(distances, Bc=Bc)
+    spots,n_spots = mahotas.label(maxima, Bc=Bc)
+
+Finally, to obtain the image above, we invert the distance transform (because
+of the way that ``cwatershed`` is defined) and compute the watershed::
+
+    surface = (distances.max() - distances)
+    areas = mahotas.cwatershed(surface, spots)
+    areas *= threshed
+
+We used a random colormap with a black background for the final image. This is
+achieved by::
+
+    import random
+    from matplotlib import colors as c
+    colors = map(cm.jet,range(0, 256, 4))
+    random.shuffle(colors)
+    colors[0] = (0.,0.,0.,1.)
+    rmap = c.ListedColormap(colors)
+    imshow(areas, cmap=rmap)
+    show()
+
 API Documentation
 -----------------
 

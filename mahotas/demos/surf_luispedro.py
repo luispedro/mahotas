@@ -6,10 +6,13 @@ from pylab import *
 
 from os import path
 
-luispedro_image = path.join(
+try:
+    luispedro_image = path.join(
                     path.dirname(path.abspath(__file__)),
                     'data',
                     'luispedro.jpg')
+except NameError:
+    luispedro_image = 'data/luispedro.jpg'
 
 f = mahotas.imread(luispedro_image, as_grey=True)
 f = f.astype(np.uint8)

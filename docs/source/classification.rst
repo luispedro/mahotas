@@ -5,9 +5,10 @@ Classification Using Mahotas
     Before version 0.8, texture was under mahotas, not under mahotas.features
 
 Here is an example of using mahotas and `milk <http://luispedro.org/software/milk>`_
-for image classification.  I assume that there are three important directories:
-``positives/`` and ``negatives/`` contain the manually labeled examples, and
-the rest of the data is in an ``unlabeled/`` directory.
+for image classification (but most of the code can easily be adapted to use
+another machine learning package).  I assume that there are three important
+directories: ``positives/`` and ``negatives/`` contain the manually labeled
+examples, and the rest of the data is in an ``unlabeled/`` directory.
 
 Here is the simple algorithm:
 

@@ -39,7 +39,7 @@ History
 - Many documentation fixes
 
 0.9.2 (September 1 2012)
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 - Fix compilation on Mac OS X 10.8 (reported by Davide Cittaro)
 - Freeimage fixes on Windows by Christoph Gohlke
 - Slightly faster _filter implementaiton

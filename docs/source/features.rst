@@ -73,7 +73,7 @@ SURF: Speeded-Up Robust Features
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Speeded-Up Robust Features (SURF) have both a *location* (pixel coordinates)
-and a scale (natural size) as well as a descriptor (the local features).
+and a *scale* (natural size) as well as a descriptor (the local features).
 
-Read `more about SURF <surf.html>`__
+Read `more about SURF <surf.html>`__.
 
