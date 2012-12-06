@@ -19,22 +19,33 @@ New Features
 Small Improvements
 ------------------
 
+- something like the ``overlay`` function from `pymorph <http://luispedro.org/software/pymorph>`__ (or even just copy it over and adapt it to mahotas style).
+- H-maxima transform (again, pymorph can provide a basis)
 - `entropy thresholding <http://en.wikipedia.org/wiki/Thresholding_(image_processing)>`__
 
+Internals
+---------
+
+These can be very complex as they require an understanding of the inner
+workings of mahotas, but that does appeal to a certain personality.
 
 - special case 1-D convolution on C-Arrays in C++. The idea is that you can
-write a tight inner loop::
+write a tight inner loop in one dimension::
 
-    void (floating* r, const floating* f, const floating a, const int n, const int r_step, const int f_step) {
+    void multiply(floating* r, const floating* f, const floating a, const int n, const int r_step, const int f_step) {
         for (int i = 0; i != n; ++i) {
-            *r = a * *f;
+            *r += a * *f;
             r += r_step;
             f += f_step;
         }
     }
 
-This would be useful for Guassian filtering.
+to implement::
 
-(This is not really a junior job as it can be complicated to understand all of the inner workings).
+    r[row] += a* f[row+offset]
+
+and you can call this with all the different values of ``a`` and ``offset``
+that make up your filter. This would be useful for Guassian filtering.
+
 
 
