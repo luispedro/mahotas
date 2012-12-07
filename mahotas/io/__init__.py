@@ -4,6 +4,27 @@ mahotas.%%s depends on imread or freeimage, neither of which could be found.
 Everything else will work, though, so this error is only triggered when you
 attempt to use these optional functions.
 
+
+
+To install imread:
+
+On **Ubuntu**, run the following commands::
+
+    sudo apt-get install libpng12-dev libtiff4-dev libwebp-dev python-pip python-dev g++
+    sudo pip install imread
+
+On **Mac OS**, if using ``port``, run the following commands::
+
+    sudo port install libpng tiff webp
+    sudo pip install imread
+
+On **Windows**, use Christoph Gohlke's packages. See:
+
+http://www.lfd.uci.edu/~gohlke/pythonlibs/#imread
+
+
+
+
 To install FreeImage:
 
 You need to have the freeimage installed for imread/imsave (everything else
