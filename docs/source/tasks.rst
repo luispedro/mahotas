@@ -48,4 +48,11 @@ and you can call this with all the different values of ``a`` and ``offset``
 that make up your filter. This would be useful for Guassian filtering.
 
 
+Tutorials
+---------
+
+Mahotas has very good API documentation, but not so many *start to finish*
+tutorials which touch several parts of it (and even other packages, the ability
+to seamlessly use other packages in Python is, of course, a good reason to use
+it).
 
