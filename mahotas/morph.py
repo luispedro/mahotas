@@ -147,6 +147,9 @@ def erode(A, Bc=None, out=None, output=None):
     Bc : ndarray, optional
         Structuring element. By default, use a cross (see
         ``get_structuring_elem`` for details on the default).
+    out : ndarray, optional
+        output array. If used, this must be a C-array of the same ``dtype`` as
+        ``A``. Otherwise, a new array is allocated.
 
     Returns
     -------
@@ -163,9 +166,9 @@ def erode(A, Bc=None, out=None, output=None):
     return _morph.erode(A, Bc, output)
 
 
-def cerode(f, g, Bc=None, output=None):
+def cerode(f, g, Bc=None, out=None, output=None):
     '''
-    conditionally_eroded = cerode(f, g, Bc={3x3 cross}, output={np.empty_as(A)})
+    conditionally_eroded = cerode(f, g, Bc={3x3 cross}, out={np.empty_as(A)})
 
     Conditional morphological erosion.
 
@@ -198,8 +201,8 @@ def cerode(f, g, Bc=None, output=None):
     f = np.maximum(f, g)
     _verify_is_integer_type(f, 'cerode')
     Bc = get_structuring_elem(f, Bc)
-    output = _get_output(f, output, 'cerode')
-    f = _morph.erode(f, Bc, output)
+    out = _get_output(f, out, 'cerode', output=output)
+    f = _morph.erode(f, Bc, out)
     return np.maximum(f, g, out=f)
 
 def cdilate(f, g, Bc=None, n=1):
@@ -510,9 +513,9 @@ def locmax(f, Bc=None, out=None, output=None):
     return _morph.locmin_max(f, Bc, output, False)
 
 
-def locmin(f, Bc=None, output=None):
+def locmin(f, Bc=None, out=None, output=None):
     '''
-    filtered = locmin(f, Bc={3x3 cross}, output={np.empty(f.shape, bool)})
+    filtered = locmin(f, Bc={3x3 cross}, out={np.empty(f.shape, bool)})
 
     Local minima
 
@@ -521,7 +524,7 @@ def locmin(f, Bc=None, output=None):
     f : ndarray
     Bc : ndarray, optional
         structuring element
-    output : ndarray, optional
+    out : ndarray, optional
         Used for output. Must be Boolean ndarray of same size as `f`
 
     Returns
@@ -537,7 +540,7 @@ def locmin(f, Bc=None, output=None):
     _verify_is_integer_type(f, 'locmin')
     Bc = get_structuring_elem(f, Bc)
     Bc = _remove_centre(Bc.copy())
-    output = _get_output(f, output, 'locmin', np.bool_)
+    output = _get_output(f, out, 'locmin', np.bool_, output=output)
     return _morph.locmin_max(f, Bc, output, True)
 
 
