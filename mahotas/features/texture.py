@@ -1,6 +1,6 @@
 # Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
-# 
+#
 # License: MIT (see COPYING file)
 
 
@@ -36,8 +36,8 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_fe
     only reason why you'd want the buggy behaviour is if you want to match
     another implementation.
 
-    Reference
-    ---------
+    References
+    ----------
 
     Cite the following reference for these features::
 
@@ -59,6 +59,9 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_fe
         input image. 2-D and 3-D images are supported.
     ignore_zeros : bool, optional
         Whether to ignore zero pixels (default: False).
+
+    Other Parameters
+    ----------------
     preserve_haralick_bug : bool, optional
         whether to replicate Haralick's typo (default: False).
         You probably want to always set this to ``False`` unless you want to
@@ -81,30 +84,104 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_fe
         nr_dirs = len(_3d_deltas)
     else:
         raise ValueError('mahotas.texture.haralick: Can only handle 2D and 3D images.')
-    feats = np.zeros((nr_dirs, 13 + bool(compute_14th_feature)), np.double)
     fm1 = f.max() + 1
     cmat = np.empty((fm1, fm1), np.int32)
-    k = np.arange(fm1)
-    k2 = k**2
-    tk = np.arange(2*fm1)
-    tk2 = tk**2
-    i,j = np.mgrid[:fm1,:fm1]
-    ij = i*j
-    i_j2_p1 = (i - j)**2
-    i_j2_p1 += 1
-    i_j2_p1 = 1. / i_j2_p1
-    i_j2_p1 = i_j2_p1.ravel()
-    px_plus_y = np.empty(2*fm1, np.double)
-    px_minus_y = np.empty(fm1, np.double)
+    def all_cmatrices():
+        for dir in range(nr_dirs):
+            cooccurence(f, dir, cmat, symmetric=True)
+            yield cmat
+    return haralick_features(all_cmatrices(), ignore_zeros=ignore_zeros, preserve_haralick_bug=preserve_haralick_bug, compute_14th_feature=compute_14th_feature)
 
-    for dir in range(nr_dirs):
-        cooccurence(f, dir, cmat, symmetric=True)
+def haralick_features(cmats, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False):
+    '''
+    features = haralick_features(cmats, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False)
+
+    Computers Haralick features for the given cooccurrence matrices.
+
+    This function is not usually necessary, as you can call ``haralick`` with
+    an image to obtain features for that image. Use only if you know what you
+    are doing.
+
+    Notes
+    -----
+    Haralick's paper has a typo in one of the equations. This function
+    implements the correct feature unless `preserve_haralick_bug` is True. The
+    only reason why you'd want the buggy behaviour is if you want to match
+    another implementation.
+
+    References
+    ----------
+
+    Cite the following reference for these features::
+
+        @article{Haralick1973,
+            author = {Haralick, Robert M. and Dinstein, Its'hak and Shanmugam, K.},
+            journal = {Ieee Transactions On Systems Man And Cybernetics},
+            number = {6},
+            pages = {610--621},
+            publisher = {IEEE},
+            title = {Textural features for image classification},
+            url = {http://ieeexplore.ieee.org/lpdocs/epic03/wrapper.htm?arnumber=4309314},
+            volume = {3},
+            year = {1973}
+        }
+
+
+    Parameters
+    ----------
+    cmats : sequence of ndarrays
+        This should be a sequence of ndarrays, all square and all of the same
+        shape.
+    ignore_zeros : bool, optional
+        Whether to ignore zero pixels (default: False).
+
+    Other Parameters
+    ----------------
+    preserve_haralick_bug : bool, optional
+        whether to replicate Haralick's typo (default: False).
+        You probably want to always set this to ``False`` unless you want to
+        replicate someone else's wrong implementation.
+    compute_14th_feature : bool, optional
+        whether to compute & return the 14-th feature
+
+    Returns
+    -------
+    feats : ndarray of np.double
+        A 4x13 or 4x14 feature vector (one row per direction) if `f` is 2D,
+        13x13 or 13x14 if it is 3D. The exact number of features depends on the
+        value of ``compute_14th_feature``
+
+    See Also
+    --------
+    haralick : function
+        compute Haralick features for an image
+    '''
+    features = []
+    for cmat in cmats:
+        feats = np.zeros(13 + bool(compute_14th_feature), np.double)
         if ignore_zeros:
             cmat[0] = 0
             cmat[:,0] = 0
         T = cmat.sum()
         if not T:
             continue
+        if not len(features):
+            maxv = len(cmat)
+            k = np.arange(maxv)
+            k2 = k**2
+            tk = np.arange(2*maxv)
+            tk2 = tk**2
+            i,j = np.mgrid[:maxv,:maxv]
+            ij = i*j
+            i_j2_p1 = (i - j)**2
+            i_j2_p1 += 1
+            i_j2_p1 = 1. / i_j2_p1
+            i_j2_p1 = i_j2_p1.ravel()
+            px_plus_y = np.empty(2*maxv, np.double)
+            px_minus_y = np.empty(maxv, np.double)
+        elif maxv != len(cmat):
+            raise ValueError('mahotas.haralick_features: All cmatrices must be of the same size')
+
         p = cmat / float(T)
         pravel = p.ravel()
         px = p.sum(0)
@@ -121,34 +198,34 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_fe
         px_minus_y.fill(0)
         _texture.compute_plus_minus(p, px_plus_y, px_minus_y)
 
-        feats[dir, 0] = np.dot(pravel, pravel)
-        feats[dir, 1] = np.dot(k2, px_minus_y)
+        feats[0] = np.dot(pravel, pravel)
+        feats[1] = np.dot(k2, px_minus_y)
 
         if sx == 0. or sy == 0.:
-            feats[dir, 2] = 1.
+            feats[2] = 1.
         else:
-            feats[dir, 2] = (1. / sx / sy) * (np.dot(ij.ravel(), pravel) - ux * uy)
+            feats[2] = (1. / sx / sy) * (np.dot(ij.ravel(), pravel) - ux * uy)
 
-        feats[dir, 3] = vx
-        feats[dir, 4] = np.dot(i_j2_p1, pravel)
-        feats[dir, 5] = np.dot(tk, px_plus_y)
+        feats[3] = vx
+        feats[4] = np.dot(i_j2_p1, pravel)
+        feats[5] = np.dot(tk, px_plus_y)
 
-        feats[dir, 7] = _entropy(px_plus_y)
+        feats[7] = _entropy(px_plus_y)
 
-        # There is some confusion w.r.t. feats[dir, 6].
+        # There is some confusion w.r.t. feats[6].
         #
-        # Haralick's paper uses feats[dir, 7] in its computation, but it is
-        # clear that feats[dir, 5] should be used (i.e., it computes a
+        # Haralick's paper uses feats[7] in its computation, but it is
+        # clear that feats[5] should be used (i.e., it computes a
         # variance).
         #
         if preserve_haralick_bug:
-            feats[dir, 6] = ((tk-feats[dir, 7])**2*px_plus_y).sum()
+            feats[6] = ((tk-feats[7])**2*px_plus_y).sum()
         else:
-            feats[dir, 6] = np.dot(tk2, px_plus_y) - feats[dir, 5]**2
+            feats[6] = np.dot(tk2, px_plus_y) - feats[5]**2
 
-        feats[dir,  8] = _entropy(pravel)
-        feats[dir,  9] = px_minus_y.var()
-        feats[dir, 10] = _entropy(px_minus_y)
+        feats[ 8] = _entropy(pravel)
+        feats[ 9] = px_minus_y.var()
+        feats[10] = _entropy(px_minus_y)
 
         HX = _entropy(px)
         HY = _entropy(py)
@@ -159,10 +236,10 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_fe
         HXY2 = _entropy(crosspxpy)
 
         if max(HX, HY) == 0.:
-            feats[dir, 11] = (feats[dir,8]-HXY1)
+            feats[11] = (feats[8]-HXY1)
         else:
-            feats[dir, 11] = (feats[dir,8]-HXY1)/max(HX,HY)
-        feats[dir, 12] = np.sqrt(1 - np.exp( -2. * (HXY2 - feats[dir,8])))
+            feats[11] = (feats[8]-HXY1)/max(HX,HY)
+        feats[12] = np.sqrt(1 - np.exp( -2. * (HXY2 - feats[8])))
 
         if compute_14th_feature:
             # Square root of the second largest eigenvalue of the correlation matrix
@@ -174,11 +251,12 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_fe
                 ccm = np.corrcoef(nz_pmat)
                 e_vals = np.linalg.eigvalsh(ccm)
                 e_vals.sort()
-                feats[dir, 13] = np.sqrt(e_vals[-2])
+                feats[13] = np.sqrt(e_vals[-2])
             else:
-                feats[dir, 13] = 0
+                feats[13] = 0
+        features.append(feats)
 
-    return feats
+    return np.array(features)
 
 
 haralick_labels = ["Angular Second Moment",
