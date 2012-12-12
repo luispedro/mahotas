@@ -19,6 +19,20 @@ Notable algorithms:
  - convolution.
  - Sobel edge detection.
 
+Mahotas currently has over 100 functions for image processing and computer
+vision and it keeps growing.
+
+The release schedule is roughly one release a month and each release brings new
+functionality and improved performance. The interface is very stable, though,
+and code written using a version of mahotas from years back will work just fine
+in the current version, except it will be faster (some interfaces are
+deprecated and will be removed after a few years, but in the meanwhile, you
+only get a warning). In a few unfortunate cases, there was a bug in the old
+code and your results will change for the better.
+
+There is a `manuscript about mahotas <http://arxiv.org/abs/1211.4907>`__, which
+will hopefully evolve into a journal publication later.
+
 Examples
 --------
 

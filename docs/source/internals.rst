@@ -11,13 +11,16 @@ Philosophy
 
 Mahotas should not suck.
 
-This is my main development goal and, if achieve, it should put mahotas in the
-top ten to one percent of software packages.
+This is my main development goal and, if I achieve it, this alone should put
+mahotas in the top ten to one percent of software packages.
 
-Mahotas should have no bugs. None. Ever. Of course, some creep in. So, we
-settle for the next best thing: *Mahotas should have no **known bugs***.
-Whenever a bug is discovered, the top priority is to squash it. The user
-should never be able to crash the Python interpreter with mahotas.
+Mahotas should have no bugs. None. Ever.
+
+Of course, some creep in. So, we settle for the next best thing: *Mahotas
+should have no **known bugs***.  Whenever a bug is discovered, the top priority
+is to squash it.
+
+Read the `principles of mahotas <principles.html>`__
 
 
 C++/Python Division
@@ -25,7 +28,8 @@ C++/Python Division
 
 Mahotas is written in C++, but almost always, you call a Python function which
 checks types and then calls the internal function. This is slightly slower, but
-it is easier to develop this way.
+it is easier to develop this way (and, for all but the smallest image, it will
+not matter).
 
 So each ``module.py`` will have its associated ``_module.cpp``.
 
@@ -49,11 +53,10 @@ So, for example, this is how *erode* is implemented. ``py_erode`` is generic::
         PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
         if (!res_a) return NULL;
         PyArray_FILLWBYTE(res_a, 0);
-        switch(PyArray_TYPE(array)) {
     #define HANDLE(type) \
         erode<type>(numpy::aligned_array<type>(res_a), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));\
 
-            HANDLE_INTEGER_TYPES();
+            SAFE_SWITCH_ON_INTEGER_TYPES_OF(array)
     #undef HANDLE
         ...
 
@@ -61,9 +64,9 @@ So, for example, this is how *erode* is implemented. ``py_erode`` is generic::
 These functions normally contain a lot of boiler-plate code: read the
 arguments, perform some sanity checks, perhaps a bit of initialisation, and
 then, the switch on the input type with the help of the
-``HANDLE_INTEGER_TYPES()``, ``HANDLE_FLOAT_TYPE()``, and ``HANDLE_TYPES()``
-macros, which call the right specialisation of the template that does the
-actual work. In this example ``erode`` implements (binary) erosion:: 
+``SAFE_SWITCH_ON_INTEGER_TYPES_OF()`` and friends, which call the right
+specialisation of the template that does the actual work. In this example
+``erode`` implements (binary) erosion::
 
     template<typename T>
     void erode(numpy::aligned_array<T> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc) {

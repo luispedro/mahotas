@@ -26,7 +26,9 @@ the output).
 
 Interfaces are designed to be as flexible as possible. No specific types are
 required unless it is really needed or in performance-enhancing features (such
-as using ``output`` parameters).
+as using ``out`` parameters).
+
+The user should never be able to crash the Python interpreter with mahotas.
 
 Well documented
 ---------------
@@ -51,13 +53,10 @@ Minimal dependencies
 
 Try to avoid dependencies. Right now, building mahotas depends on a C++
 compiler, numpy. These are unlikely to ever change. To run mahotas, we need
-numpy, scipy, and freeimage.
+numpy and either imread or freeimage.
 
-The scipy dependency is something that I would prefer to remove. The freeimage
-dependency is a soft dependency: everything, except for imread works without
-it. The code is written to ensure that ``import``-ing mahotas without freeimage
-will not trigger an error unless the ``imread()`` function is used. Similarly,
-mahotas can be imported without scipy and only a few of the functions stop
-working.
-
+The imread/freeimage dependency is a soft dependency: everything, except for imread
+works without it. The code is written to ensure that ``import``-ing mahotas
+without freeimage will not trigger an error unless the ``imread()`` function is
+used.
 
