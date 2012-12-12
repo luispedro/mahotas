@@ -122,7 +122,7 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
                     const float Dc = (c.l - l)*(c.l - l) +
                             (c.a - a)*(c.a - a) +
                             (c.b - b)*(c.b - b);
-                    const float D2 = Dc+ Ds*m2S2;
+                    const float D2 = Dc + Ds*m2S2;
 
                     assert(D2 < inf);
                     if (D2 < distance[pos]) {
