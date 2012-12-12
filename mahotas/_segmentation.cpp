@@ -71,7 +71,7 @@ struct centroid_info {
     float x;
 };
 
-int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int> alabels, const int S, const int max_iters=64) {
+int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int> alabels, const int S, const float m, const int max_iters=64) {
     assert(alabels.is_carray());
     gil_release no_gil;
     const int Ny = array.dim(0);
@@ -80,6 +80,8 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
     assert(alabels.dim(1) == Nx);
     const int N = Ny*Nx;
     const float inf = 10e20;
+    // m²/S²
+    const float m2S2 = float(m*m)/float(S*S);
     int* labels = alabels.data();
     std::fill(labels, labels + N, -1);
 
@@ -101,6 +103,7 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
     centroid_counts.resize(centroids.size());
 
     for (int i = 0; i < max_iters; ++i) {
+        std::fill(distance.begin(), distance.end(), inf);
         bool changed = false;
         for (unsigned ci = 0; ci < centroids.size(); ++ci) {
             const centroid_info& c = centroids[ci];
@@ -114,15 +117,16 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
                     float l = array.at(y,x,0);
                     float a = array.at(y,x,1);
                     float b = array.at(y,x,2);
-                    const float D = (c.y - y)*(c.y - y) +
-                            (c.x - x)*(c.x - x) +
-                            (c.l - l)*(c.l - l) +
+                    const float Ds = (c.y - y)*(c.y - y) +
+                            (c.x - x)*(c.x - x);
+                    const float Dc = (c.l - l)*(c.l - l) +
                             (c.a - a)*(c.a - a) +
                             (c.b - b)*(c.b - b);
+                    const float D2 = Dc+ Ds*m2S2;
 
-                    assert(D < inf);
-                    if (D < distance[pos]) {
-                        distance[pos] = D;
+                    assert(D2 < inf);
+                    if (D2 < distance[pos]) {
+                        distance[pos] = D2;
                         labels[pos] = ci;
                         changed = true;
                     }
@@ -166,8 +170,9 @@ PyObject* py_slic(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* labels;
     int S;
+    float m;
     int max_iters;
-    if (!PyArg_ParseTuple(args,"OOii", &array, &labels, &S, &max_iters)) return NULL;
+    if (!PyArg_ParseTuple(args,"OOifi", &array, &labels, &S, &m, &max_iters)) return NULL;
     if (!numpy::are_arrays(array, labels) ||
         !PyArray_ISCARRAY(array) ||
         !PyArray_ISCARRAY(labels)) {
@@ -188,7 +193,7 @@ PyObject* py_slic(PyObject* self, PyObject* args) {
     }
     try {
         if (max_iters < 0) max_iters = 128;
-        const int n = slic(numpy::aligned_array<npy_float32>(array), numpy::aligned_array<int>(labels), S, max_iters);
+        const int n = slic(numpy::aligned_array<npy_float32>(array), numpy::aligned_array<int>(labels), S, m, max_iters);
         return PyLong_FromLong(n);
     }
     CATCH_PYTHON_EXCEPTIONS(true);

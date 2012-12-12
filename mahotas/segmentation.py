@@ -46,9 +46,9 @@ def gvoronoi(labeled):
     return labeled.flat[orig]
 
 
-def slic(array, spacer=16, max_iters=128):
+def slic(array, spacer=16, m=1.0, max_iters=128):
     '''
-    segmented, n_segments = slic(array, spacer=16, max_iters=128)
+    segmented, n_segments = slic(array, spacer=16, m=1.0, max_iters=128)
 
     SLIC Superpixels
 
@@ -60,6 +60,8 @@ def slic(array, spacer=16, max_iters=128):
     ----------
     array : ndarray
     spacer : int, optional
+    m : float, optional
+        tradeoff between colour space and spatial distance.
     max_iters : int, optional
         Maximum number of k-means iterations. Generally this does not need to
         be very large because the search is only local and convergence is
@@ -82,5 +84,5 @@ def slic(array, spacer=16, max_iters=128):
     _check_3(array, 'slic')
     labels = np.zeros((array.shape[0], array.shape[1]), dtype=np.intc)
     labels = labels.copy()
-    n = _segmentation.slic(array, labels, int(spacer), int(max_iters))
+    n = _segmentation.slic(array, labels, int(spacer), float(m), int(max_iters))
     return labels, n
