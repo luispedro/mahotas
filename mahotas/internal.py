@@ -23,25 +23,26 @@ def _get_output(array, out, fname, dtype=None, output=None):
     -------
     output : ndarray
     '''
+    detail = '.\nWhen an output argument is used, the checking is very strict as this is a performance feature.'
     if dtype is None:
         dtype = array.dtype
     if output is not None:
         import warnings
-        warnings.warn('Using deprecated `output` argument in function `%s`. Please use `out` in the future.' % fname, DeprecationWarning)
+        warnings.warn('Using deprecated `output` argument in function `%s`. Please use `out` in the future. It has exactly the same meaning and it matches what numpy uses.' % fname, DeprecationWarning)
         if out is not None:
-            warnings.warn('Using both `out` and `output` in function `%s`' % fname)
+            warnings.warn('Using both `out` and `output` in function `%s`.\nMahotas is going to ignore the `output` argument and use the `out` version exclusively.' % fname)
         else:
             out = output
     if out is None:
         return np.empty(array.shape, dtype)
     if out.dtype != dtype:
         raise ValueError(
-            'mahotas.%s: `out` has wrong type (out.dtype is %s; expected %s)' %
-                (fname, out.dtype, dtype))
+            'mahotas.%s: `out` has wrong type (out.dtype is %s; expected %s)%s' %
+                (fname, out.dtype, dtype, detail))
     if out.shape != array.shape:
-        raise ValueError('mahotas.%s: `out` has wrong shape' % fname)
+        raise ValueError('mahotas.%s: `out` has wrong shape (got %s, while expecting %s)%s' % (fname, out.shape, array.shape, detail))
     if not out.flags.contiguous:
-        raise ValueError('mahotas.%s: `out` is not c-array' % fname)
+        raise ValueError('mahotas.%s: `out` is not c-array%s' % (fname,detail))
     return out
 
 def _get_axis(array, axis, fname):
@@ -65,7 +66,7 @@ def _get_axis(array, axis, fname):
     if axis < 0:
         axis += len(array.shape)
     if not (0 <= axis < len(array.shape)):
-        raise ValueError('mahotas.%s: `axis` is out of bounds' % fname)
+        raise ValueError('mahotas.%s: `axis` is out of bounds (maximum was %s, got %s)' % (fname, array.ndim, axis))
     return axis
 
 def _normalize_sequence(array, value, fname):
@@ -92,7 +93,7 @@ def _normalize_sequence(array, value, fname):
     except TypeError:
         return [value for s in array.shape]
     if len(value) != array.ndim:
-        raise ValueError('mahotas.%s: argument is sequence, but has wrong size (%s for an array of %s dimensions' % (fname, len(value), array.ndim))
+        raise ValueError('mahotas.%s: argument is sequence, but has wrong size (%s for an array of %s dimensions)' % (fname, len(value), array.ndim))
     return value
 
 def _verify_is_floatingpoint_type(A, function_name):
@@ -153,5 +154,5 @@ def _as_floating_point_array(array):
 
 def _check_3(arr, funcname):
     if arr.ndim != 3 or arr.shape[2] != 3:
-        raise ValueError('mahotas.%s: input array is not a 3 dimensional array with a depth of 3' % funcname)
+        raise ValueError('mahotas.%s: this function expects an array of shape (h, w, 3), received an array of shape %s.' % (funcname, arr.shape))
 
