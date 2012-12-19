@@ -141,6 +141,81 @@ void erode(numpy::aligned_array<T> res, const numpy::aligned_array<T> array, con
     }
 }
 
+void fast_binary_dilate_erode_2d(numpy::aligned_array<bool> res, const numpy::aligned_array<bool> array, numpy::aligned_array<bool> Bc, const bool is_erosion) {
+    assert(res.is_carray());
+    assert(array.is_carray());
+    assert(res.ndim() == 2);
+
+    const int Ny = array.dim(0);
+    const int Nx = array.dim(1);
+    const int N = Ny * Nx;
+
+    const int By = Bc.dim(0);
+    const int Bx = Bc.dim(1);
+
+    const int Cy = By/2;
+    const int Cx = Bx/2;
+
+    std::vector<int> positions;
+    for (int y = 0; y != By; ++y) {
+        for (int x = 0; x != Bx; ++x) {
+            if (!Bc.at(y,x)) continue;
+            const int dy = y-Cy;
+            const int dx = x-Cx;
+            if (std::abs(dy) >= Ny || std::abs(dx) >= Nx) continue;
+            if (dy || dx) {
+                positions.push_back(is_erosion ? dy: -dy);
+                positions.push_back(is_erosion ? dx: -dx);
+            }
+        }
+    }
+    const int N2 = positions.size()/2;
+    if (Bc.at(Cy,Cx)) std::copy(array.data(), array.data() + N, res.data());
+    else std::fill_n(res.data(), N, is_erosion);
+    if (positions.empty()) return;
+
+    for (int y = 0; y != Ny; ++y) {
+        bool* const orow = res.data(y);
+        for (int j = 0; j != N2; ++j) {
+            int dy = positions[2*j];
+            int dx = positions[2*j + 1];
+            assert(dx || dy);
+            if ((y + dy) < 0) dy = -y;
+            if ((y + dy) >= Ny) {
+                dy = -y+(Ny-1);
+            }
+            bool* out = orow;
+            const bool* in = array.data(y + dy);
+            int n = Nx - std::abs(dx);
+            if (dx > 0) {
+                for (int i = 0; i != (dx-1); ++i) {
+                    if (is_erosion) {
+                        out[Nx-i-1] &= in[Nx-1];
+                    } else {
+                        out[Nx-i-1] |= in[Nx-1];
+                    }
+                }
+                in += dx;
+            } else if (dx < 0) {
+                for (int i = 0; i != -dx; ++i) {
+                    if (is_erosion) {
+                        out[i] &= in[0];
+                    } else {
+                        out[i] |= in[0];
+                    }
+                }
+                out += -dx;
+            }
+            if (is_erosion) {
+                for (int i = 0; i != n; ++i) *out++ &= *in++;
+            } else {
+                for (int i = 0; i != n; ++i) *out++ |= *in++;
+            }
+        }
+    }
+}
+
+
 
 PyObject* py_erode(PyObject* self, PyObject* args) {
     PyArrayObject* array;
@@ -156,10 +231,14 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
     }
     holdref r_o(output);
 
+    if (numpy::check_type<bool>(array) && PyArray_NDIM(array) == 2 && PyArray_ISCARRAY(array)) {
+        fast_binary_dilate_erode_2d(numpy::aligned_array<bool>(output), numpy::aligned_array<bool>(array), numpy::aligned_array<bool>(Bc), true);
+    } else {
 #define HANDLE(type) \
     erode<type>(numpy::aligned_array<type>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc));
     SAFE_SWITCH_ON_INTEGER_TYPES_OF(array);
 #undef HANDLE
+    }
 
     Py_XINCREF(output);
     return PyArray_Return(output);
@@ -312,7 +391,7 @@ void dilate(numpy::aligned_array<T> res, const numpy::array<T> array, const nump
     gil_release nogil;
     const int N = res.size();
     typename numpy::array<T>::const_iterator iter = array.begin();
-    filter_iterator<T> filter(res.raw_array(), Bc.raw_array(), EXTEND_NEAREST, is_bool(T()));
+    filter_iterator<T> filter(res.raw_array(), Bc.raw_array(), ExtendNearest, is_bool(T()));
     const int N2 = filter.size();
     // T* is a fine iterator type.
     T* rpos = res.data();
@@ -346,10 +425,14 @@ PyObject* py_dilate(PyObject* self, PyObject* args) {
         return NULL;
     }
     holdref r_o(output);
+    if (numpy::check_type<bool>(array) && PyArray_NDIM(array) == 2 && PyArray_ISCARRAY(array)) {
+        fast_binary_dilate_erode_2d(numpy::aligned_array<bool>(output), numpy::aligned_array<bool>(array), numpy::aligned_array<bool>(Bc), false);
+    } else {
 #define HANDLE(type) \
-    dilate<type>(numpy::aligned_array<type>(output),numpy::array<type>(array),numpy::aligned_array<type>(Bc));
-    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array);
+        dilate<type>(numpy::aligned_array<type>(output),numpy::array<type>(array),numpy::aligned_array<type>(Bc));
+        SAFE_SWITCH_ON_INTEGER_TYPES_OF(array);
 #undef HANDLE
+    }
 
     Py_XINCREF(output);
     return PyArray_Return(output);

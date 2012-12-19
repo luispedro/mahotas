@@ -90,6 +90,44 @@ def test_dilate_slice():
         f = (np.random.random_sample((256,256))*255).astype(np.uint8)
         assert np.all(mahotas.dilate(f[:3,:3]) == mahotas.dilate(f[:3,:3].copy()))
 
+def test_fast_binary():
+    # This test is based on an internal code decision: the fast code is only triggered for CARRAYs
+    # Therefore, we test to see if both paths lead to the same result
+    np.random.seed(34)
+    for i in xrange(8):
+        f = np.random.random((128,128)) > .9
+        f2 = np.dstack([f,f,f])
+
+        SEs = [
+            np.ones((3,3)),
+            np.ones((5,5)),
+            np.array([
+                    [0,1,0],
+                    [0,0,0],
+                    [0,0,0]]),
+            np.array([
+                    [0,0,0],
+                    [1,0,0],
+                    [0,0,0]]),
+            np.array([
+                    [1,0,0],
+                    [1,0,0],
+                    [0,0,0]]),
+            np.array([
+                    [1,1,1],
+                    [1,1,1],
+                    [1,1,0]]),
+            np.array([
+                    [1,1,1],
+                    [0,1,1],
+                    [1,1,0]]),
+            ]
+        for Bc in SEs:
+            assert np.all(mahotas.erode(f,Bc=Bc) == mahotas.erode(f2[:,:,1],Bc=Bc))
+            # For dilate, the border conditions are different;
+            # This is not great, but it's actually the slow implementation
+            # which has the most unsatisfactory behaviour:
+            assert np.all(mahotas.dilate(f,Bc=Bc)[1:-1,1:-1] == mahotas.dilate(f2[:,:,1],Bc=Bc)[1:-1,1:-1])
 
 def test_se_zeros():
     np.random.seed(35)
