@@ -89,3 +89,13 @@ def test_dilate_slice():
     for i in range(16):
         f = (np.random.random_sample((256,256))*255).astype(np.uint8)
         assert np.all(mahotas.dilate(f[:3,:3]) == mahotas.dilate(f[:3,:3].copy()))
+
+
+def test_se_zeros():
+    np.random.seed(35)
+    f = np.random.random((128,128)) > .9
+    f2 = np.dstack([f,f,f])
+    mahotas.erode(f, np.zeros((3,3)))
+    mahotas.dilate(f, np.zeros((3,3)))
+    mahotas.erode(f2[:,:,1], np.zeros((3,3)))
+    mahotas.dilate(f2[:,:,1], np.zeros((3,3)))

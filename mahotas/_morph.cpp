@@ -127,6 +127,7 @@ void erode(numpy::aligned_array<T> res, const numpy::aligned_array<T> array, con
     filter_iterator<T> filter(array.raw_array(), Bc.raw_array(), EXTEND_NEAREST, is_bool(T()));
     const int N2 = filter.size();
     T* rpos = res.data();
+    if (!N2) return;
 
     for (int i = 0; i != N; ++i, ++rpos, filter.iterate_both(iter)) {
         T value = std::numeric_limits<T>::max();
@@ -316,6 +317,7 @@ void dilate(numpy::aligned_array<T> res, const numpy::array<T> array, const nump
     // T* is a fine iterator type.
     T* rpos = res.data();
     std::fill(rpos, rpos + res.size(), std::numeric_limits<T>::min());
+    if (!N2) return;
 
     for (int i = 0; i != N; ++i, ++rpos, filter.iterate_both(iter)) {
         const T value = *iter;
