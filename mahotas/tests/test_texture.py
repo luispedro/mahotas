@@ -37,6 +37,36 @@ def test__cooccurence():
     res[:3,:3] = 0
     assert not np.any(res)
 
+def test_cooccurence_errors():
+    f2 = np.zeros((6,6), np.uint8)
+    f3 = np.zeros((6,6,6), np.uint8)
+    f4 = np.zeros((6,6,6,6), np.uint8)
+    @raises(ValueError)
+    def c_1():
+        texture.cooccurence(f2, -2)
+    yield c_1
+
+    @raises(ValueError)
+    def c_1():
+        texture.cooccurence(f3, -2)
+    yield c_1
+
+    @raises(ValueError)
+    def c_2_10():
+        texture.cooccurence(f2, 10)
+    yield c_2_10
+
+    @raises(ValueError)
+    def c_3_17():
+        texture.cooccurence(f3, 17)
+    yield c_3_17
+
+    @raises(ValueError)
+    def c_4_1():
+        texture.cooccurence(f4, 1)
+    yield c_4_1
+
+
 
 def brute_force(f, dy, dx):
     res = np.zeros((f.max()+1, f.max() + 1), np.double)
