@@ -120,9 +120,9 @@ def pftas(img, T=None):
     if T is None:
         T = otsu(img)
     pixels = img[img > T].ravel()
-    try:
-        std = pixels.std()
-    except FloatingPointError:
+    if len(pixels) == 0:
         std = 0
+    else:
+        std = pixels.std()
     return _tas(img, T, std)
 
