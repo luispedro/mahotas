@@ -1,6 +1,7 @@
 import numpy as np
 from mahotas.internal import _get_output, _get_axis
 from mahotas.internal import _normalize_sequence, _verify_is_integer_type, _verify_is_floatingpoint_type, _as_floating_point_array
+from mahotas.internal import _check_3
 from nose.tools import raises
 
 def test_get_output():
@@ -21,7 +22,7 @@ def test_get_output_bad_shape():
     f = np.arange(256).reshape((32,8))
     output = np.zeros((16,16), f.dtype)
     _get_output(f, output, 'testing')
-    
+
 @raises(ValueError)
 def test_get_output_non_contiguous():
     f = np.arange(256).reshape((32,8))
@@ -35,7 +36,7 @@ def test_get_output_explicit_dtype():
     f = np.arange(256).reshape((32,8))
     output = np.zeros_like(f)
     _get_output(f, output, 'testing', bool)
-    
+
 
 def test_get_axis_good():
     f = np.zeros((3,4,5,3,2,2,5,3,2,4,1))
@@ -131,4 +132,19 @@ def test_as_floating_point_array():
     yield check_arr, [1,2,3]
     yield check_arr, [[1,2],[2,3],[3,4]]
     yield check_arr, [[1.,2.],[2.,3.],[3.,4.]]
+
+def test_check_3():
+    _check_3(np.zeros((14,24,3), np.uint8), 'testing')
+
+@raises(ValueError)
+def test_check_3_dim4():
+    _check_3(np.zeros((14,24,3,5), np.uint8), 'testing')
+
+@raises(ValueError)
+def test_check_3_not3():
+    _check_3(np.zeros((14,24,5), np.uint8), 'testing')
+
+@raises(ValueError)
+def test_check_3_not3_dim4():
+    _check_3(np.zeros((14,24,5,5), np.uint8), 'testing')
 
