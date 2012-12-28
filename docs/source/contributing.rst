@@ -44,9 +44,12 @@ the ``fast`` Make target to get the non-debug build::
     make clean
     make fast
 
-Using make will not change your environment.
+Using make will not change your environment. The ``DEBUG`` variable is set
+internally only.
 
-Also, check out `ccache <http://ccache.samba.org/>`__ which is a great tool if
-you are developing. It will allow you to quickly perform ``make clean; make
-debug`` and ``make clean; make fast`` so you never get your builds mixed up.
+If you don't know about it, check out `ccache <http://ccache.samba.org/>`__
+which is a great tool if you are developing in compiled languages (this is not
+specific to mahotas or even Python). It will allow you to quickly perform
+``make clean; make debug`` and ``make clean; make fast`` so you never get your
+builds mixed up.
 

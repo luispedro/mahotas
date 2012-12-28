@@ -4,8 +4,8 @@ Labeled Image Functions
 
 Labeled images are integer images where the values correspond to different
 regions. I.e., region 1 is all of the pixels which have value *1*, region two
-is the pixels with value 2, and so on. By convention, region 0 is the
-background and processed differently.
+is the pixels with value 2, and so on. By convention, **region 0 is the
+background and often handled differently**.
 
 Labeling Images
 ---------------
@@ -86,6 +86,8 @@ First we perform a bit of Gaussian filtering and thresholding:
     f = mahotas.gaussian_filter(f, 4)
     f = (f> f.mean())
 
+(Without the Gaussian filter, the resulting thresholded image has very noisy
+edges. You can get the image in the ``demos/`` directory and try it out.)
 
 .. plot::
    :context:
@@ -139,12 +141,14 @@ We can also remove the region touching the border::
     show()
 
 This array, ``labeled`` now has values in the range ``0`` to ``n_nucleus``, but
-with some values missing. We can ``relabel`` to get a cleaner version::
+with some values missing (e.g., if region ``7`` was one of the ones touching
+the border, then ``7`` is not used in the labeling). We can ``relabel`` to get
+a cleaner version::
 
     relabeled, n_left = mahotas.labeled.relabel(labeled)
     print('After filtering and relabeling, there are {} nuclei left.'.format(n_left))
 
-Now, we have ``24`` nuclei.
+Now, we have ``24`` nuclei and ``relabeled`` goes from ``0`` (background) to ``24``.
 
 .. plot::
    :context:
@@ -153,10 +157,6 @@ Now, we have ``24`` nuclei.
     print('After filtering and relabeling, there are {} nuclei left.'.format(n_left))
     imshow(relabeled)
     show()
-
-
-
-
 
 
 Borders

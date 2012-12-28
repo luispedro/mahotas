@@ -78,6 +78,8 @@ Close & Open
 Closing and opening are based on erosion and dilation. Again, they work in
 greyscale and can use an arbitrary structure element.
 
+Here is closing:
+
 ::
 
     mahotas.morph.close(eye)
@@ -88,6 +90,9 @@ greyscale and can use an arbitrary structure element.
     imshow(mahotas.morph.close(eye))
     show()
 
+
+And here is opening:
+
 ::
 
     mahotas.morph.open(eye)
@@ -97,4 +102,7 @@ greyscale and can use an arbitrary structure element.
 
     imshow(mahotas.morph.open(eye))
     show()
+
+Of course, both ``close`` and ``open`` take an optional structuring element as
+a second argument.
 
