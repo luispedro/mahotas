@@ -35,21 +35,21 @@ templates_path = ['.templates']
 source_suffix = '.rst'
 
 # The encoding of source files.
-#source_encoding = 'utf-8'
+source_encoding = 'utf-8'
 
 # The master toctree document.
 master_doc = 'index'
 
 # General information about the project.
 project = u'mahotas'
-copyright = u'2008-2011, Luis Pedro Coelho'
+copyright = u'2008-2013, Luis Pedro Coelho'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-version = '0.6'
+version = '0.9'
 # The full version, including alpha/beta/rc tags.
 release = mahotas_version
 
