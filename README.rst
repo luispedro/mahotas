@@ -108,6 +108,11 @@ You can test your instalation by running::
 
     python -c "import mahotas; mahotas.test()"
 
+If something fails, you can obtain more detail by running it again in *verbose
+mode*::
+
+    python -c "import mahotas; mahotas.test(verbose=True)"
+
 Development
 -----------
 
