@@ -1,4 +1,4 @@
-/* Copyright (C) 2012 Luis Pedro Coelho
+/* Copyright (C) 2012-2013 Luis Pedro Coelho
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -196,7 +196,7 @@ PyObject* py_slic(PyObject* self, PyObject* args) {
         const int n = slic(numpy::aligned_array<npy_float32>(array), numpy::aligned_array<int>(labels), S, m, max_iters);
         return PyLong_FromLong(n);
     }
-    CATCH_PYTHON_EXCEPTIONS(true);
+    CATCH_PYTHON_EXCEPTIONS
 }
 
 
