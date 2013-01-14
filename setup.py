@@ -60,7 +60,6 @@ extensions = {
     'mahotas._interpolate': ['mahotas/_interpolate.cpp', 'mahotas/_filters.cpp'],
     'mahotas._labeled': ['mahotas/_labeled.cpp', 'mahotas/_filters.cpp'],
     'mahotas._morph': ['mahotas/_morph.cpp', 'mahotas/_filters.cpp'],
-    'mahotas._segmentation': ['mahotas/_segmentation.cpp'],
     'mahotas._thin': ['mahotas/_thin.cpp'],
 
     'mahotas.features._lbp': ['mahotas/features/_lbp.cpp'],

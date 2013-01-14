@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2012 Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2013 Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # Carnegie Mellon University
 #
@@ -10,7 +10,7 @@ import numpy as np
 
 from .internal import _check_3
 from . import _distance
-from . import _segmentation
+from . import _labeled
 
 __all__ = [
     'gvoronoi',
@@ -84,5 +84,5 @@ def slic(array, spacer=16, m=1.0, max_iters=128):
     _check_3(array, 'slic')
     labels = np.zeros((array.shape[0], array.shape[1]), dtype=np.intc)
     labels = labels.copy()
-    n = _segmentation.slic(array, labels, int(spacer), float(m), int(max_iters))
+    n = _labeled.slic(array, labels, int(spacer), float(m), int(max_iters))
     return labels, n
