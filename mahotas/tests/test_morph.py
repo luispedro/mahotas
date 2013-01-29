@@ -63,10 +63,11 @@ def slow_reg(A, agg):
 def test_locmin_max():
     from mahotas.morph import locmax, locmin
     np.random.seed(123)
-    for i in range(4):
+    for i in range(8):
         A = np.random.random_sample((64,64))
         A *= 255
-        A = A.astype(np.uint8)
+        if (i % 2) == 0:
+            A = A.astype(np.uint8)
         fast = locmax(A)
         assert np.all(fast == slow_reg(A, max))
 

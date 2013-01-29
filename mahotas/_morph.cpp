@@ -290,7 +290,7 @@ PyObject* py_locminmax(PyObject* self, PyObject* args) {
 
 #define HANDLE(type) \
     locmin_max<type>(numpy::aligned_array<bool>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc), bool(is_min));
-    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array);
+    SAFE_SWITCH_ON_TYPES_OF(array);
 #undef HANDLE
 
     Py_XINCREF(output);
