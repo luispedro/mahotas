@@ -1,8 +1,8 @@
-# Copyright 2011-2012 Luis Pedro Coelho <luis@luispedro.org>
+# Copyright 2011-2013 Luis Pedro Coelho <luis@luispedro.org>
 # License: MIT
 
 import numpy as np
-from mahotas.thresholding import otsu, rc
+from mahotas.thresholding import otsu, rc, bernsen
 from mahotas.histogram import fullhistogram
 
 def slow_otsu(img, ignore_zeros=False):
@@ -97,3 +97,12 @@ def test_soft_threhold():
         assert t.max() == f.max()-16
         assert t.min() == f.min()+16
         assert np.all( (np.abs(f) <= 16) | (np.abs(f)-16 == np.abs(t)))
+
+
+def test_bernsen():
+    np.random.seed(120)
+    for i in range(4):
+        f = 32*np.random.rand(128,128)
+        f = f.astype(np.uint8)
+        b = bernsen(f, 8, 15)
+        assert f.shape == b.shape

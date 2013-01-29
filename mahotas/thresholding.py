@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2013, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -38,6 +38,8 @@ from .internal import _verify_is_integer_type
 __all__ = [
         'otsu',
         'rc',
+        'soft_threshold',
+        'bernsen',
     ]
 
 
@@ -146,3 +148,34 @@ def soft_threshold(f, tval):
     f += tval * (f < -tval)
     return f
 
+def bernsen(f, radius, contrast_threshold, gthresh=None):
+    '''
+    thresholded = bernsen(f, radius, contrast_threshold, gthresh={128})
+
+    Bernsen local thresholding
+
+    Parameters
+    ----------
+    f : ndarray
+        input image
+    radius : integer
+        radius of circle (to consider "local")
+    contrast_threshold : integer
+        contrast threshold
+    gthresh : numeric, optional
+        global threshold to fall back in low contrast regions
+
+    Returns
+    -------
+    thresholded : binary ndarray
+    '''
+    from mahotas import morph
+    from mahotas.convolve import rank_filter
+    if gthresh is None:
+        gthresh = 128
+    circle = morph.circle_se(radius)
+    fmax = rank_filter(f, circle, circle.sum()-1)
+    fmin = rank_filter(f, circle, 0)
+    fptp = fmax - fmin
+    fmean = fmax/.2 + fmin/.2 # Do not use (fmax + fmin) as that may overflow
+    return np.choose(fptp < contrast_threshold, (fmean < gthresh, fmean > f))
