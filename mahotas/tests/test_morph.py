@@ -172,3 +172,16 @@ def test_tophat():
         assert f.shape == g.shape
 
 
+def test_circle_se():
+    from mahotas.morph import circle_se
+    for r in (4,5):
+        c = circle_se(r)
+        assert len(c) == (2*r + 1)
+        assert len(c) == len(c.T)
+        assert not c.all()
+        assert c.any()
+
+    @raises(ValueError)
+    def circle_1():
+        circle_se(-1)
+    circle_1()

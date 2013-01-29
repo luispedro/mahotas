@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2013, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT
@@ -719,3 +719,24 @@ def tophat_open(f, Bc=None, out=None):
     fo = open(f,Bc)
     return subm(f, fo, out=out)
 
+
+def circle_se(radius):
+    '''
+    circle = circle_se(radius)
+
+    Build a circular structuring element of a given radius
+
+    Parameters
+    ----------
+    radius : int
+        Radius of circle
+
+    Returns
+    -------
+    circle : boolean ndarray
+    '''
+    if not (radius > 0):
+        raise ValueError('mahotas.morph.circle: radius must be positive')
+    X = np.arange(-radius, +radius+1)
+    X,Y = np.meshgrid(X,X)
+    return (X**2 + Y**2) < radius**2
