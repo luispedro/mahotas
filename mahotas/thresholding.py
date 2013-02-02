@@ -168,14 +168,47 @@ def bernsen(f, radius, contrast_threshold, gthresh=None):
     Returns
     -------
     thresholded : binary ndarray
+
+    See Also
+    --------
+    gbernsen : function
+        Generalised Bernsen thresholding
     '''
-    from mahotas import morph
-    from mahotas.convolve import rank_filter
+    from mahotas.morph import circle_se
     if gthresh is None:
         gthresh = 128
-    circle = morph.circle_se(radius)
-    fmax = rank_filter(f, circle, circle.sum()-1)
-    fmin = rank_filter(f, circle, 0)
+    return gbernsen(f, circle_se(radius), contrast_threshold, gthresh)
+
+def gbernsen(f, se, contrast_threshold, gthresh):
+    '''
+    thresholded = gbernsen(f, se, contrast_threshold, gthresh)
+
+    Generalised Bernsen local thresholding
+
+    Parameters
+    ----------
+    f : ndarray
+        input image
+    se : boolean ndarray
+        structuring element to use for "locality"
+    contrast_threshold : integer
+        contrast threshold
+    gthresh : numeric, optional
+        global threshold to fall back in low contrast regions
+
+    Returns
+    -------
+    thresholded : binary ndarray
+
+    See Also
+    --------
+    bernsen : function
+        Bernsen thresholding with a circular region
+    '''
+    from mahotas.convolve import rank_filter
+    fmax = rank_filter(f, se, se.sum()-1)
+    fmin = rank_filter(f, se, 0)
     fptp = fmax - fmin
     fmean = fmax/.2 + fmin/.2 # Do not use (fmax + fmin) as that may overflow
     return np.choose(fptp < contrast_threshold, (fmean < gthresh, fmean > f))
+

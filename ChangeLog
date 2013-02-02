@@ -7,7 +7,7 @@ Version 0.9.6+
 	* Add ``verbose`` argument to tests.run()
 	* Add ``circle_se`` to ``morph``
 	* Allow ``loc(max|min)`` to take floating point inputs
-	* Add Bernsen local thresholding
+	* Add Bernsen local thresholding (``bernsen`` and ``gbernsen`` functions)
 
 Version 0.9.6 2012-12-02 by luispedro
 	* Fix distance() of non-boolean images (issue #24 on github)

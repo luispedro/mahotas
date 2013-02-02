@@ -2,7 +2,7 @@
 # License: MIT
 
 import numpy as np
-from mahotas.thresholding import otsu, rc, bernsen
+from mahotas.thresholding import otsu, rc, bernsen, gbernsen
 from mahotas.histogram import fullhistogram
 
 def slow_otsu(img, ignore_zeros=False):
@@ -102,7 +102,17 @@ def test_soft_threhold():
 def test_bernsen():
     np.random.seed(120)
     for i in range(4):
-        f = 32*np.random.rand(128,128)
+        f = 32*np.random.rand(40,68)
         f = f.astype(np.uint8)
         b = bernsen(f, 8, 15)
+        assert f.shape == b.shape
+        b = bernsen(f, 8, 15, 34)
+        assert f.shape == b.shape
+
+def test_gbernsen():
+    np.random.seed(120)
+    for i in range(4):
+        f = 32*np.random.rand(64,96)
+        f = f.astype(np.uint8)
+        b = gbernsen(f, np.ones((3,3), bool), 15, 145)
         assert f.shape == b.shape
