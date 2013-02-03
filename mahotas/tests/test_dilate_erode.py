@@ -94,7 +94,7 @@ def test_fast_binary():
     # This test is based on an internal code decision: the fast code is only triggered for CARRAYs
     # Therefore, we test to see if both paths lead to the same result
     np.random.seed(34)
-    for i in xrange(8):
+    for i in range(8):
         f = np.random.random((128,128)) > .9
         f2 = np.dstack([f,f,f])
 
