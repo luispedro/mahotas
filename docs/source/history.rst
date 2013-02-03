@@ -1,6 +1,20 @@
 =======
 History
 =======
+
+0.9.7 (February 03 2013)
+~~~~~~~~~~~~~~~~~~~~~~~~
+- Add ``haralick_features`` function
+- Add ``out`` parameter to morph functions which were missing it
+- Fix erode() & dilate() with empty structuring elements
+- Special case binary erosion/dilation in C-Arrays
+- Fix long-standing warning in TAS on zero inputs
+- Add ``verbose`` argument to tests.run()
+- Add ``circle_se`` to ``morph``
+- Allow ``loc(max|min)`` to take floating point inputs
+- Add Bernsen local thresholding (``bernsen`` and ``gbernsen`` functions)
+
+
 0.9.6 (December 02 2012)
 ~~~~~~~~~~~~~~~~~~~~~~~~
 - Fix ``distance()`` of non-boolean images (issue #24 on github)

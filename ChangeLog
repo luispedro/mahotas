@@ -1,4 +1,4 @@
-Version 0.9.6+
+Version 0.9.7 2013-02-03 by luispedro
 	* Add ``haralick_features`` function
 	* Add ``out`` parameter to morph functions which were missing it
 	* Fix erode() & dilate() with empty structuring elements
