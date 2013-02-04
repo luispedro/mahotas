@@ -94,6 +94,7 @@ Jump to detailed `API Documentation <api.html>`__
    surf
    classification
    morphology
+   io
    faq
    internals
    principles
