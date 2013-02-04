@@ -2,14 +2,14 @@
 Morphological Operators
 =======================
 .. versionadded:: 0.8
-    open() & close() were only added in version 0.8
+    open() & close() were added in version 0.8
 
 Morphological operators were the first operations in mahotas (back then, it was
 even, briefly, just a single C++ module called ``morph``). Since then, mahotas
-hsa grown a lot, including having more morphological operators.
+has grown a lot. This module, too, has grown and acquired more morphological
+operators as well as being optimised for speed.
 
-
-Let's first select an interesting image
+Let us first select an interesting image
 
 .. plot::
     :context:
@@ -71,6 +71,14 @@ non-flat ones). By default, a 1-cross is used::
             [1, 1, 1],
             [0, 1, 0]])
 
+However, you can use whatever structuring element you want::
+
+    se = np.array([
+        [1, 1, 0],
+        [1, 1, 1],
+        [0, 1, 1]])
+    dilated = mahotas.morph.dilate(eye, se)
+    eroded = mahotas.morph.erode(eye, se)
 
 Close & Open
 ------------
@@ -103,6 +111,9 @@ And here is opening:
     imshow(mahotas.morph.open(eye))
     show()
 
-Of course, both ``close`` and ``open`` take an optional structuring element as
-a second argument.
+Both ``close`` and ``open`` take an optional structuring element as a second
+argument::
+
+    mahotas.morph.open(eye, se)
+
 
