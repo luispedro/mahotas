@@ -83,6 +83,7 @@ Jump to detailed `API Documentation <api.html>`__
 .. toctree::
    :maxdepth: 2
 
+   install
    wally
    labeled
    thresholding
