@@ -14,3 +14,7 @@ few other libraries that do:
     Freeimage can read and write many formats. Unfortunately, it is harder to
     install and it is not as well-maintained as imread.
 
+3.  As a final fallback, it tries to use `matplotlib
+    <http://matplotlib.org/>`__, which has builtin PNG support and wraps PIL
+    for other formats.
+

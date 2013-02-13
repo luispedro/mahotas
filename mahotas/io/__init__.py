@@ -53,7 +53,10 @@ try:
     try:
         from imread import imread, imsave
     except:
-        from .freeimage import imread, imsave
+        try:
+            from .freeimage import imread, imsave
+        except:
+            from matplotlib.pyplot import imread, imsave
 except OSError:
     import sys
     _,e,_ = sys.exc_info()
