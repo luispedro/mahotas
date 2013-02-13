@@ -159,7 +159,7 @@ struct position_stack : position_vector {
 
 template <typename BaseType>
 struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
-    friend class ::filter_iterator<BaseType>;
+    friend struct ::filter_iterator<BaseType>;
     protected:
 #ifdef _GLIBCXX_DEBUG
         const PyArrayObject* base;
