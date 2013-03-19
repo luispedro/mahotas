@@ -113,4 +113,12 @@ def test_integral_descriptors():
     points = surf.interest_points(f, is_integral=True)
     surf.descriptors(f.astype(np.int32), points, is_integral=True)
 
+def test_dense():
+    f = np.arange(280*360).reshape((280,360)) % 25
+    d16 = surf.dense(f, 16)
+    d16_s = surf.dense(f, 16, 3.)
+    d32 = surf.dense(f, 32)
 
+    assert len(d16) > len(d32)
+    assert d16.shape[1] == d32.shape[1]
+    assert d16.shape[1] == d16_s.shape[1]

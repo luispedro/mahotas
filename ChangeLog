@@ -1,5 +1,6 @@
 Version 0.9.7+
 	* Use matplotlib as IO backend (fallback only)
+	* Compute dense SURF features
 
 Version 0.9.7 2013-02-03 by luispedro
 	* Add ``haralick_features`` function

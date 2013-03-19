@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2013, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -175,6 +175,47 @@ def descriptors(f, interest_points, is_integral=False, descriptor_only=False):
     if descriptor_only:
         surfs = surfs[:,6:]
     return surfs
+
+def dense(f, spacing, scale=None, is_integral=False, include_interest_point=False):
+    '''
+    desc_array = dense(f, spacing, scale={np.sqrt(spacing)}, is_integral=False, include_interest_point=False)
+
+    Parameters
+    ----------
+    f : image
+        original image
+    spacing : integer
+        Distance between points
+    scale : float, optional
+        Scale of interest points. By default, it is set to ``np.sqrt(scaling)``
+    is_integral : boolean, optional
+        Whether `f` is an integral image
+    include_interest_point : bool, optional
+        Whether to return interest point information. Default is False
+
+    Returns
+    -------
+    descriptors : ndarray
+        Descriptors at dense points. Note that the interest point is **not
+        returned by default**.
+
+    See Also
+    --------
+    surf : function
+        Find interest points and then compute descriptors
+    descriptors : function
+        Compute descriptors at user provided interest points
+    '''
+    if scale is None:
+        scale = np.sqrt(spacing)
+    s0,s1 = f.shape
+    x = np.arange(int(spacing/2), s0, int(spacing))
+    y = np.arange(int(spacing/2), s1, int(spacing))
+    X,Y = np.meshgrid(x,y)
+    S = np.zeros_like(X)
+    S += scale
+    ips = np.vstack([X.ravel(), Y.ravel(), S.ravel(), np.ones(X.size), np.ones(X.size)])
+    return descriptors(f, ips.T, is_integral=is_integral, descriptor_only=(not include_interest_point))
 
 
 def show_surf(f, spoints, values=None, colors=None):
