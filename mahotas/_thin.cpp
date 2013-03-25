@@ -58,7 +58,7 @@ const npy_intp adelta0[] = {    -1,    -1,     0,    0,   +1,   +1 };
 const npy_intp adelta1[] = {     0,    +1,    +1,   -1,   -1,    0 };
 
 
-
+// This is useful for debugging purposes, but otherwise unused:
 void show_data(const bool flip, const npy_intp* delta0, const npy_intp* delta1) {
     int arr[3][3];
     for (int j = 0; j!= 3; ++j)
