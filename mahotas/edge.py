@@ -61,7 +61,7 @@ def sobel(img, just_filter=False):
     if just_filter:
         return filtered
     thresh = 2*np.sqrt(filtered.mean())
-    filtered *= (np.sqrt(filtered) < thresh)
+    filtered *= (np.sqrt(filtered) > thresh)
 
     r,c = filtered.shape
     x = (filtered > np.hstack((np.zeros((r,1)),filtered[:,:-1]))) & (filtered > np.hstack((filtered[:,1:], np.zeros((r,1)))))

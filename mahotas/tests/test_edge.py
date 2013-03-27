@@ -33,3 +33,10 @@ def test_zero_images():
     assert np.isnan(sobel(np.zeros((16,16)))).sum() == 0
     assert sobel(np.zeros((16,16)), just_filter=True).sum() == 0
 
+def test_find_edge():
+    import mahotas as mh
+    f = np.zeros((32,48))
+    f[:,16:] = 255
+    f = mh.gaussian_filter(f,4)
+    fs = sobel(f)
+    assert np.all(fs[:,15] > 0)
