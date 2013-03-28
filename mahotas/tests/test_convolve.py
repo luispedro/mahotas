@@ -1,6 +1,7 @@
 import numpy as np
 import mahotas
 import mahotas.convolve
+import mahotas as mh
 from mahotas.convolve import convolve1d, gaussian_filter
 import mahotas._filters
 from os import path
@@ -221,4 +222,23 @@ def test_center_wavelet_iwavelet_decenter():
         r = mahotas.idaubechies(t, wav)
         rd = mahotas.wavelet_decenter(r, fo.shape, border=24)
         assert np.allclose(fo, rd)
+
+
+def test_convolve1d():
+    ws = [
+        np.array([-.1, .5,.7,.7,.5]),
+        np.array([.1,.7,.5]),
+        ]
+    for i in xrange(8):
+        for w in ws:
+            f = np.random.random((128,96))
+            ww = np.atleast_2d(w)
+            fw = mh.convolve(f, ww)
+            fww = mh.convolve(f, ww.T)
+
+            f0w = mh.convolve1d(f, w, 0)
+            f1w = mh.convolve1d(f, w, 1)
+
+            assert np.all(fw == f0w)
+            assert np.all(fww == f1w)
 

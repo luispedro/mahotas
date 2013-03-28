@@ -1,4 +1,4 @@
-// Copyright (C) 2010-2012 Luis Pedro Coelho <luis@luispedro.org>
+// Copyright (C) 2010-2013 Luis Pedro Coelho <luis@luispedro.org>
 //
 // License: MIT (Check COPYING file)
 
@@ -6,6 +6,8 @@
 #include "numpypp/dispatch.hpp"
 #include "utils.hpp"
 #include "_filters.h"
+
+#include <iostream>
 
 extern "C" {
     #include <Python.h>
@@ -23,6 +25,53 @@ const char OutputErrorMsg[] =
 
 
 template<typename T>
+void convolve1d(const numpy::aligned_array<T> array, const numpy::aligned_array<double> filter, numpy::aligned_array<T> result, ExtendMode mode) {
+    gil_release nogil;
+    assert(filter.ndims() == 1);
+    assert(array.ndims() == 2);
+    assert(result.is_carray());
+
+    const int N0 = array.dim(0);
+    const int N1 = array.dim(1);
+    const int step = array.stride(1);
+    const double* fdata = filter.data();
+    const int Nf = filter.size();
+    const int centre = Nf/2;
+
+    for (int y = 0; y != N0; ++y) {
+        const T* base0 = array.data(y);
+        // The two loops (over x & x_) are almost the same.
+        // However, combining them, whilst leading to better code,
+        // made the result much slower (probably because there was a need to
+        // test the value of x in the inner loop). This was true in a 2013
+        // MacBook Air
+        T* out = result.data(y,centre);
+        for (int x = centre; x != (N1 - centre); ++x) {
+            double cur = 0;
+            for (int j = 0; j != Nf; ++j) {
+                const double val = base0[(x + j-centre)*step];
+                assert(val == array.at(y, x - centre + j));
+                cur += val * fdata[j];
+            }
+            *out++ = T(cur);
+        }
+
+
+        for (int x_ = 0; x_ != 2*centre; ++x_) {
+            double cur = 0;
+            const int x = (x_ < centre ? x_ : (N1 - 1) - (x_ - centre));
+            for (int j = 0; j != Nf; ++j) {
+                const npy_intp offset = fix_offset(mode, x + (j - centre), N1);
+                const double val = (offset == border_flag_value ? 0 : base0[offset * step]);
+                cur += val * fdata[j];
+            }
+            *result.data(y,x) = cur;
+        }
+    }
+}
+
+
+template<typename T>
 void convolve(const numpy::aligned_array<T> array, const numpy::aligned_array<T> filter, numpy::aligned_array<T> result, int mode) {
     gil_release nogil;
     const int N = array.size();
@@ -36,10 +85,10 @@ void convolve(const numpy::aligned_array<T> array, const numpy::aligned_array<T>
         //   (1) it is slightly faster (10%)
         //   (2) it handles over/underflow better
         //   (3) scipy.ndimage.convolve does it
-        // 
+        //
         // Alternatively, we could have written:
         // T cur = T();
-        // 
+        //
         // and removed the double cast in double(val)*fiter[j] below.
         double cur = 0.;
         for (int j = 0; j != N2; ++j) {
@@ -52,6 +101,31 @@ void convolve(const numpy::aligned_array<T> array, const numpy::aligned_array<T>
     }
 }
 
+
+PyObject* py_convolve1d(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* filter;
+    PyArrayObject* output;
+    int mode;
+    if (!PyArg_ParseTuple(args,"OOOi", &array, &filter, &output, &mode)) return NULL;
+    if (!numpy::are_arrays(array, filter, output) ||
+            !numpy::same_shape(output, array) ||
+            !numpy::equiv_typenums(output, array) ||
+            !PyArray_ISCARRAY(output)) {
+            PyErr_SetString(PyExc_RuntimeError, OutputErrorMsg);
+            return NULL;
+    }
+    holdref outref(output);
+
+#define HANDLE(type) \
+    convolve1d<type>(numpy::aligned_array<type>(array), numpy::aligned_array<double>(filter), numpy::aligned_array<type>(output), ExtendMode(mode));
+
+    SAFE_SWITCH_ON_TYPES_OF(array);
+#undef HANDLE
+
+    Py_INCREF(output);
+    return PyArray_Return(output);
+}
 
 PyObject* py_convolve(PyObject* self, PyObject* args) {
     PyArrayObject* array;
@@ -521,6 +595,7 @@ PyObject* py_template_match(PyObject* self, PyObject* args) {
 
 PyMethodDef methods[] = {
   {"convolve",(PyCFunction)py_convolve, METH_VARARGS, NULL},
+  {"convolve1d",(PyCFunction)py_convolve1d, METH_VARARGS, NULL},
   {"wavelet",(PyCFunction)py_wavelet, METH_VARARGS, NULL},
   {"iwavelet",(PyCFunction)py_iwavelet, METH_VARARGS, NULL},
   {"daubechies",(PyCFunction)py_daubechies, METH_VARARGS, NULL},

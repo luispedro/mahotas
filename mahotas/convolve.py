@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2013, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -60,6 +60,71 @@ def convolve(f, weights, mode='reflect', cval=0.0, out=None, output=None):
     output = _get_output(f, out, 'convolve', output=output)
     _check_mode(mode, cval, 'convolve')
     return _convolve.convolve(f, weights, output, mode2int[mode])
+
+
+def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None, output=None):
+    '''
+    convolved = convolve1d(f, weights, axis, mode='reflect', cval=0.0, out={new array})
+
+    Convolution of `f` and `weights` along axis `axis`.
+
+    Convolution is performed in `doubles` to avoid over/underflow, but the
+    result is then cast to `f.dtype`.
+
+    Parameters
+    ----------
+    f : ndarray
+        input. Any dimension is supported
+    weights : 1-D ndarray
+        weight filter. If not of the same dtype as `f`, it is cast
+    axis : int
+        Axis along which to convolve
+    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
+        How to handle borders
+    cval : double, optional
+        If `mode` is constant, which constant to use (default: 0.0)
+    out : ndarray, optional
+        Output array. Must have same shape and dtype as `f` as well as be
+        C-contiguous.
+
+    Returns
+    -------
+    convolved : ndarray of same dtype as `f`
+
+    See Also
+    --------
+    convolve : function
+        generic convolution
+    '''
+    weights = np.asanyarray(weights)
+    weights = weights.squeeze()
+    if weights.ndim != 1:
+        raise ValueError('mahotas.convolve1d: only 1-D sequences allowed')
+    _check_mode(mode, cval, 'convolve1d')
+    # The reason for the check of f.shape[axis] is that the
+    # convolve1d is slower than the general algorithm if the
+    # weights vector is very long
+    if f.flags.contiguous and (len(weights) < .25*f.shape[axis]):
+        weights = weights.astype(np.double)
+        indices = [a for a in range(f.ndim) if a != axis] + [axis]
+        rindices = [indices.index(a) for a in range(f.ndim)]
+        oshape = f.shape
+        f = f.transpose(indices)
+        f = f.reshape((f.shape[0],-1))
+        f = f.transpose()
+
+        out = _get_output(f, out, 'convolve1d')
+        _convolve.convolve1d(f, weights, out, mode2int[mode])
+        out = out.transpose()
+        out = out.transpose(rindices)
+        out.reshape(oshape)
+        return out
+    else:
+        index = [None] * f.ndim
+        index[axis] = slice(0, None)
+        weights = weights[tuple(index)]
+        return convolve(f, weights, mode=mode, cval=cval, output=output)
+
 
 def median_filter(f, Bc=None, mode='reflect', cval=0.0, out=None, output=None):
     '''
@@ -167,51 +232,6 @@ def template_match(f, template, mode='reflect', cval=0., out=None, output=None):
     output = _get_output(f, out, 'template_match', output=output)
     _check_mode(mode, cval, 'template_match')
     return _convolve.template_match(f, template, output, mode2int[mode])
-
-def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None, output=None):
-    '''
-    convolved = convolve1d(f, weights, axis, mode='reflect', cval=0.0, out={new array})
-
-    Convolution of `f` and `weights` along axis `axis`.
-
-    Convolution is performed in `doubles` to avoid over/underflow, but the
-    result is then cast to `f.dtype`.
-
-    Parameters
-    ----------
-    f : ndarray
-        input. Any dimension is supported
-    weights : 1-D ndarray
-        weight filter. If not of the same dtype as `f`, it is cast
-    axis : int
-        Axis along which to convolve
-    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
-        How to handle borders
-    cval : double, optional
-        If `mode` is constant, which constant to use (default: 0.0)
-    out : ndarray, optional
-        Output array. Must have same shape and dtype as `f` as well as be
-        C-contiguous.
-
-    Returns
-    -------
-    convolved : ndarray of same dtype as `f`
-
-    See Also
-    --------
-    convolve : function
-        generic convolution
-    '''
-
-    from sys import maxsize
-    weights = np.asanyarray(weights)
-    weights = weights.squeeze()
-    if weights.ndim != 1:
-        raise ValueError('mahotas.convolve1d: only 1-D sequences allowed')
-    index = [None] * f.ndim
-    index[axis] = slice(0, None)
-    weights = weights[tuple(index)]
-    return convolve(f, weights, mode=mode, cval=cval, output=output)
 
 
 def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., out=None, output=None):

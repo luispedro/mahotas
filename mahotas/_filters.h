@@ -1,5 +1,7 @@
+#ifndef MAHOTAS_FILTER_H_INCLUDE_GUARD_
+#define MAHOTAS_FILTER_H_INCLUDE_GUARD_
 // Copyright (C) 2003-2005 Peter J. Verveer
-// Copyright (C) 2010-2012 Luis Pedro Coelho
+// Copyright (C) 2010-2013 Luis Pedro Coelho
 // LICENSE: MIT
 
 #include <vector>
@@ -28,7 +30,85 @@ const ExtendMode EXTEND_LAST = ExtendIgnore;
 
 const npy_intp border_flag_value = std::numeric_limits<npy_intp>::max();
 
-npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len);
+inline
+npy_intp fix_offset(const ExtendMode mode, npy_intp cc, const npy_intp len) {
+    /* apply boundary conditions, if necessary: */
+    switch (mode) {
+    case ExtendMirror:
+        if (cc < 0) {
+            if (len <= 1) {
+                return 0;
+            } else {
+                int sz2 = 2 * len - 2;
+                cc = sz2 * (int)(-cc / sz2) + cc;
+                return cc <= 1 - len ? cc + sz2 : -cc;
+            }
+        } else if (cc >= len) {
+            if (len <= 1) {
+                return 0;
+            } else {
+                int sz2 = 2 * len - 2;
+                cc -= sz2 * (int)(cc / sz2);
+                if (cc >= len)
+                    cc = sz2 - cc;
+            }
+        }
+        return cc;
+
+    case ExtendReflect:
+        if (cc < 0) {
+            if (len <= 1) {
+                return 0;
+            } else {
+                int sz2 = 2 * len;
+                if (cc < -sz2)
+                    cc = sz2 * (int)(-cc / sz2) + cc;
+                cc = cc < -len ? cc + sz2 : -cc - 1;
+            }
+        } else if (cc >= len) {
+            if (len <= 1) {
+                return 0;
+            } else {
+                int sz2 = 2 * len;
+                cc -= sz2 * (int)(cc / sz2);
+                if (cc >= len)
+                    cc = sz2 - cc - 1;
+            }
+        }
+        return cc;
+    case ExtendWrap:
+        if (cc < 0) {
+            if (len <= 1) {
+                return 0;
+            } else {
+                int sz = len;
+                cc += sz * (int)(-cc / sz);
+                if (cc < 0)
+                    cc += sz;
+            }
+        } else if (cc >= len) {
+            if (len <= 1) {
+                return 0;
+            } else {
+                int sz = len;
+                cc -= sz * (int)(cc / sz);
+            }
+        }
+        return cc;
+    case ExtendNearest:
+        if (cc < 0) return 0;
+        if (cc >= len) return len - 1;
+        return cc;
+    case ExtendIgnore:
+    case ExtendConstant:
+        if (cc < 0 || cc >= len)
+            return border_flag_value;
+        return cc;
+    }
+    assert(false); // We should never get here
+    return 0;
+}
+
 
 int init_filter_offsets(PyArrayObject *array, bool *footprint,
          const npy_intp * const fshape, npy_intp* origins,
@@ -130,3 +210,4 @@ struct filter_iterator {
         npy_intp maxbound_[NPY_MAXDIMS];
 };
 
+#endif // MAHOTAS_FILTER_H_INCLUDE_GUARD_
