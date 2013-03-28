@@ -101,10 +101,7 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None, output=None)
     if weights.ndim != 1:
         raise ValueError('mahotas.convolve1d: only 1-D sequences allowed')
     _check_mode(mode, cval, 'convolve1d')
-    # The reason for the check of f.shape[axis] is that the
-    # convolve1d is slower than the general algorithm if the
-    # weights vector is very long
-    if f.flags.contiguous and (len(weights) < .25*f.shape[axis]):
+    if f.flags.contiguous:
         weights = weights.astype(np.double)
         indices = [a for a in range(f.ndim) if a != axis] + [axis]
         rindices = [indices.index(a) for a in range(f.ndim)]

@@ -43,8 +43,9 @@ void convolve1d(const numpy::aligned_array<T> array, const numpy::aligned_array<
         // The two loops (over x & x_) are almost the same.
         // However, combining them, whilst leading to better code,
         // made the result much slower (probably because there was a need to
-        // test the value of x in the inner loop). This was true in a 2013
-        // MacBook Air
+        // test the value of x in the inner loop).
+        //
+        // This was true in a 2013 MacBook Air. Maybe re-check in the future
         T* out = result.data(y,centre);
         for (int x = centre; x != (N1 - centre); ++x) {
             double cur = 0;
@@ -55,14 +56,20 @@ void convolve1d(const numpy::aligned_array<T> array, const numpy::aligned_array<
             }
             *out++ = T(cur);
         }
+    }
 
-
-        for (int x_ = 0; x_ != 2*centre; ++x_) {
+    std::vector<npy_intp> offsets;
+    offsets.resize(Nf);
+    for (int x_ = 0; x_ != 2*centre; ++x_) {
+        const int x = (x_ < centre ? x_ : (N1 - 1) - (x_ - centre));
+        for (int j = 0; j != Nf; ++j) {
+            offsets[j] = fix_offset(mode, x + (j - centre), N1);
+        }
+        for (int y = 0; y != N0; ++y) {
+            const T* base0 = array.data(y);
             double cur = 0;
-            const int x = (x_ < centre ? x_ : (N1 - 1) - (x_ - centre));
             for (int j = 0; j != Nf; ++j) {
-                const npy_intp offset = fix_offset(mode, x + (j - centre), N1);
-                const double val = (offset == border_flag_value ? 0 : base0[offset * step]);
+                const double val = (offsets[j] == border_flag_value ? 0 : base0[offsets[j] * step]);
                 cur += val * fdata[j];
             }
             *result.data(y,x) = cur;
