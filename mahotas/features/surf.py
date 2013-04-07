@@ -212,7 +212,7 @@ def dense(f, spacing, scale=None, is_integral=False, include_interest_point=Fals
     x = np.arange(int(spacing/2), s0, int(spacing))
     y = np.arange(int(spacing/2), s1, int(spacing))
     X,Y = np.meshgrid(x,y)
-    S = np.zeros_like(X)
+    S = np.zeros(X.shape, dtype=float)
     S += scale
     ips = np.vstack([X.ravel(), Y.ravel(), S.ravel(), np.ones(X.size), np.ones(X.size)])
     return descriptors(f, ips.T, is_integral=is_integral, descriptor_only=(not include_interest_point))

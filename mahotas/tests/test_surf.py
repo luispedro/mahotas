@@ -1,4 +1,5 @@
 import numpy as np
+import mahotas as mh
 import mahotas.features.surf as surf
 from mahotas.features import _surf
 from nose.tools import raises
@@ -122,3 +123,11 @@ def test_dense():
     assert len(d16) > len(d32)
     assert d16.shape[1] == d32.shape[1]
     assert d16.shape[1] == d16_s.shape[1]
+
+
+def test_dense_scale():
+    im = mh.imread('mahotas/demos/data/luispedro.jpg', as_grey=1).astype(np.uint8)
+    surf.dense(im, spacing=32)
+    s5 = surf.dense(im, spacing=32, scale=5)
+    s51 = surf.dense(im, spacing=32, scale=5.1)
+    assert not np.all(s5 == s51)
