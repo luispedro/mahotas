@@ -1,8 +1,8 @@
-=====================
-Principles of Mahotas
-=====================
+==================
 The Why of mahotas
-------------------
+==================
+Principles of Mahotas
+---------------------
 
 Here are the principles of mahotas, in decreasing order of importance:
 
@@ -34,10 +34,14 @@ Well documented
 ---------------
 
 No public function is without a complete docstring. In addition to that *hard
-documentation*, there is also *soft documentation* with examples.
+documentation* (i.e., information with complete technical detail of every nook
+and cranny of the interface), there is also *soft documentation* (tutorial-like
+documentation with examples and higher level reasoning).
 
 Fast code
 ---------
+
+Performance is a feature.
 
 The code should be as fast as possible without sacrificing generality (see
 *just work* above). This is why C++ templates are used for type independent
@@ -51,12 +55,17 @@ The code should be simple.
 Minimal dependencies
 --------------------
 
-Try to avoid dependencies. Right now, building mahotas depends on a C++
-compiler, numpy. These are unlikely to ever change. To run mahotas, we need
-numpy and either imread or freeimage.
+Mahotas tries to avoid dependencies.
+
+Right now, building mahotas depends on a C++ compiler, numpy. These are
+unlikely to ever change. To run mahotas, we need numpy. In order to read
+images, we need one of (1) imread, (2) FreeImage, or (3) matplotlib.
 
 The imread/freeimage dependency is a soft dependency: everything, except for imread
 works without it. The code is written to ensure that ``import``-ing mahotas
-without freeimage will not trigger an error unless the ``imread()`` function is
+without an IO backend will not trigger an error unless the ``imread()`` function is
 used.
+
+Therefore, once mahotas is compiled, all you really need is numpy. This is
+unlikely to ever change.
 
