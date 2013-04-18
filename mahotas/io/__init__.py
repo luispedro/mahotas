@@ -56,7 +56,7 @@ try:
         try:
             from .freeimage import imread, imsave
         except:
-            from matplotlib.pyplot import imread, imsave
+            from .matplotlibwrap import imread, imsave
 except OSError:
     import sys
     _,e,_ = sys.exc_info()

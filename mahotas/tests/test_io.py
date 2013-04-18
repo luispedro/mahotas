@@ -2,6 +2,7 @@ import numpy as np
 from mahotas.io import error_imread, error_imsave
 from nose.tools import raises
 from os import path
+import mahotas as mh
 
 filename = path.join(
             path.dirname(__file__),
@@ -15,3 +16,8 @@ def test_error_imread():
 @raises(ImportError)
 def test_error_imsave():
     error_imsave('/tmp/test_mahotas.png', np.arange(16, dtype=np.uint8).reshape((4,4)))
+
+
+def test_as_grey():
+    im = mh.imread('mahotas/demos/data/luispedro.jpg', as_grey=1)
+    assert im.ndim == 2
