@@ -11,11 +11,11 @@ extern "C" {
 struct holdref {
     holdref(PyObject* obj, bool incref=true)
         :obj(obj) {
-        if (incref) Py_XINCREF(obj);
+        if (incref) { Py_XINCREF(obj); }
     }
     holdref(PyArrayObject* obj, bool incref=true)
         :obj((PyObject*)obj) {
-        if (incref) Py_XINCREF(obj);
+        if (incref) { Py_XINCREF(obj); }
     }
     ~holdref() { Py_XDECREF(obj); }
 
