@@ -1,4 +1,4 @@
-Version 0.9.7+
+Version 0.9.8 2013-04-22 by luispedro
 	* Use matplotlib as IO backend (fallback only)
 	* Compute dense SURF features
 	* Fix sobel edge filtering (post-processing)

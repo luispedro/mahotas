@@ -2,6 +2,18 @@
 History
 =======
 
+0.9.8 (April 22 2013)
+~~~~~~~~~~~~~~~~~~~~~
+- Use matplotlib as IO backend (fallback only)
+- Compute dense SURF features
+- Fix sobel edge filtering (post-processing)
+- Faster 1D convultions (including faster Gaussian filtering)
+- Location independent tests (run mahotas.tests.run() anywhere)
+- Add labeled.is_same_labeling function
+- Post filter SLIC for smoother regions
+- Fix compilation warnings on several platforms
+
+
 0.9.7 (February 03 2013)
 ~~~~~~~~~~~~~~~~~~~~~~~~
 - Add ``haralick_features`` function
