@@ -6,6 +6,7 @@ Version 0.9.7+
 	* Location independent tests (run mahotas.tests.run() anywhere)
 	* Add labeled.is_same_labeling function
 	* Post filter SLIC for smoother regions
+	* Fix compilation warnings on several platforms
 
 Version 0.9.7 2013-02-03 by luispedro
 	* Add ``haralick_features`` function
