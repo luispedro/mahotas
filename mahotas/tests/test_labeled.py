@@ -1,4 +1,5 @@
 import numpy as np
+import mahotas as mh
 import mahotas.labeled
 from nose.tools import raises
 
@@ -173,3 +174,15 @@ def test_remove_regions():
     assert np.all(labeled == removed)
     removed = mahotas.labeled.remove_regions(labeled, [])
     assert np.all(labeled == removed)
+
+def test_is_same_labeling():
+    np.random.seed(143)
+    ell = (np.random.random((256,256))*16).astype(np.intc)
+    order = np.arange(1,16)
+    np.random.shuffle(order)
+    order = np.insert(order, 0, 0)
+    assert mh.labeled.is_same_labeling(ell, order[ell])
+    ell2 = order[ell]
+    ell2[ell == 0] = 1
+    
+    assert not mh.labeled.is_same_labeling(ell, ell2)

@@ -19,6 +19,7 @@ __all__ = [
     'labeled_max',
     'labeled_size',
     'relabel',
+    'is_same_labeling',
     'remove_bordering',
     'remove_regions'
     ]
@@ -96,6 +97,39 @@ def relabel(labeled, inplace=False):
         labeled = labeled.copy()
     n = _labeled.relabel(labeled)
     return labeled, n
+
+def is_same_labeling(labeled0, labeled1):
+    '''
+    same = is_same_labeling(labeled0, labeled1)
+
+    Checks whether ``labeled0`` and ``labeled1`` represent the same labeling
+    (i.e., whether they are the same except for a possible change of label
+    values).
+
+    Note that the background (value 0) is treated differently. Namely
+
+    is_same_labeling(a, b) implies np.all( (a == 0) == (b == 0) )
+
+    Parameters
+    ----------
+    labeled0 : ndarray of int
+        A labeled array
+    labeled1 : ndarray of int
+        A labeled array
+
+    Returns
+    -------
+    same : bool
+        Number of objects
+
+    See Also
+    --------
+    label : function
+    relabel : function
+    '''
+    labeled0 = _convert_labeled(labeled0)
+    labeled1 = _convert_labeled(labeled1)
+    return _labeled.is_same_labeling(labeled0, labeled1)
 
 
 def remove_regions(labeled, regions, inplace=False):
@@ -297,6 +331,14 @@ def _check_array_labeled(array, labeled, funcname):
         raise ValueError('mahotas.labeled.%s: labeled is not as expected' % funcname)
     if array.shape != labeled.shape:
         raise ValueError('mahotas.labeled.%s: `array` is not the same size as `labeled`' % funcname)
+
+def _convert_labeled(labeled):
+    labeled = np.asanyarray(labeled)
+    if labeled.dtype != np.intc:
+        labeled = labeled.astype(np.intc)
+    if not labeled.flags.carray:
+        return labeled.copy()
+    return labeled
 
 def labeled_sum(array, labeled):
     '''

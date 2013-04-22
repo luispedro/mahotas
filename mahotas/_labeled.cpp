@@ -135,6 +135,27 @@ int relabel(numpy::aligned_array<int> labeled) {
     return (next - 1);
 }
 
+bool is_same_labeling(numpy::aligned_array<int> labeled0, numpy::aligned_array<int> labeled1) {
+    gil_release nogil;
+    std::map<int,int> index;
+    std::map<int,int> rindex;
+    index[0] = 0;
+    rindex[0] = 0;
+    const int N = labeled0.size();
+    assert(labeled1.size() == N);
+    const int* a = labeled0.data();
+    const int* b = labeled1.data();
+    for (int p = 0; p < N; ++p, ++a, ++b) {
+        std::map<int,int>::const_iterator va =  index.insert(std::make_pair(*a, *b)).first;
+        std::map<int,int>::const_iterator vb = rindex.insert(std::make_pair(*b, *a)).first;
+
+        if (va->second != *b || vb->second != *a) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void remove_regions(numpy::aligned_array<int> labeled, numpy::aligned_array<int> regions) {
     gil_release nogil;
     const int N = labeled.size();
@@ -272,6 +293,22 @@ PyObject* py_relabel(PyObject* self, PyObject* args) {
     }
     int n = relabel(numpy::aligned_array<int>(labeled));
     return PyLong_FromLong(n);
+}
+
+PyObject* py_is_same_labeling(PyObject* self, PyObject* args) {
+    PyArrayObject* labeled0;
+    PyArrayObject* labeled1;
+    if (!PyArg_ParseTuple(args,"OO", &labeled0, &labeled1)) return NULL;
+    if (!numpy::are_arrays(labeled0, labeled1) ||
+        !numpy::check_type<int>(labeled0) ||
+        !numpy::check_type<int>(labeled1) ||
+        !PyArray_ISCARRAY(labeled0) ||
+        !PyArray_ISCARRAY(labeled1)) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    bool same = is_same_labeling(numpy::aligned_array<int>(labeled0), numpy::aligned_array<int>(labeled1));
+    return PyBool_FromLong(same);
 }
 
 PyObject* py_remove_regions(PyObject* self, PyObject* args) {
@@ -579,6 +616,7 @@ PyObject* py_slic(PyObject* self, PyObject* args) {
 PyMethodDef methods[] = {
   {"label",(PyCFunction)py_label, METH_VARARGS, NULL},
   {"relabel",(PyCFunction)py_relabel, METH_VARARGS, NULL},
+  {"is_same_labeling",(PyCFunction)py_is_same_labeling, METH_VARARGS, NULL},
   {"remove_regions",(PyCFunction)py_remove_regions, METH_VARARGS, NULL},
   {"borders",(PyCFunction)py_borders, METH_VARARGS, NULL},
   {"border",(PyCFunction)py_border, METH_VARARGS, NULL},
