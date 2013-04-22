@@ -16,7 +16,7 @@ The first step is obtaining a labeled function from a binary function:
 .. plot::
     :include-source:
 
-    import mahotas
+    import mahotas as mh
     import numpy as np
     from pylab import imshow, show
 
@@ -24,7 +24,7 @@ The first step is obtaining a labeled function from a binary function:
 
     regions[:3,:3] = 1
     regions[6:,6:] = 1
-    labeled, nr_objects = mahotas.label(regions)
+    labeled, nr_objects = mh.label(regions)
 
     imshow(labeled, interpolation='nearest')
     show()
@@ -36,7 +36,11 @@ This results in an image with 3 values:
 2. for the second region: (6:, 6:).
 
 There is an extra argument to ``label``: the structuring element, which
-defaults to a 3x3 cross (or, 4-neighbourhood).
+defaults to a 3x3 cross (or, 4-neighbourhood). This defines what it means for
+two pixels to be in the same region. You can use 8-neighbourhoods by replacing
+it with a square::
+
+    labeled,nr_objects = mh.label(regions, np.ones((3,3), bool))
 
 .. versionadded:: 0.7
     ``labeled_size`` and ``labeled_sum`` were added in version 0.7
@@ -46,7 +50,7 @@ big are they?
 
 ::
 
-    sizes = mahotas.labeled_size(labeled)
+    sizes = mh.labeled_size(labeled)
     print 'Background size', sizes[0]
     print 'Size of first region', sizes[1]
 
@@ -54,7 +58,7 @@ This size is measured simply as the number of pixels in each region. We can
 instead measure the total weight in each area::
 
     array = np.random.random_sample(regions.shape)
-    sums = mahotas.labeled_sum(array, labeled)
+    sums = mh.labeled_sum(array, labeled)
     print 'Sum of first region', sums[1]
 
 Filtering Regions
@@ -70,11 +74,11 @@ from a `nuclear segmentation benchmark <http://luispedro.org/projects/nuclear-se
 .. plot::
    :context:
 
-    import mahotas
+    import mahotas as mh
     import numpy as np
     from pylab import imshow, show
 
-    f = mahotas.imread('../../mahotas/demos/data/nuclear.png')
+    f = mh.imread('../../mahotas/demos/data/nuclear.png')
     f = f[:,:,0]
     imshow(f)
     show()
@@ -83,7 +87,7 @@ First we perform a bit of Gaussian filtering and thresholding:
 
 ::
 
-    f = mahotas.gaussian_filter(f, 4)
+    f = mh.gaussian_filter(f, 4)
     f = (f> f.mean())
 
 (Without the Gaussian filter, the resulting thresholded image has very noisy
@@ -92,20 +96,20 @@ edges. You can get the image in the ``demos/`` directory and try it out.)
 .. plot::
    :context:
 
-    f = mahotas.gaussian_filter(f, 4)
+    f = mh.gaussian_filter(f, 4)
     f = (f> f.mean())
     imshow(f)
     show()
 
 Labeling gets us all of the nuclei::
 
-    labeled, n_nucleus  = mahotas.label(f)
+    labeled, n_nucleus  = mh.label(f)
     print('Found {} nuclei.'.format(n_nucleus))
 
 .. plot::
    :context:
 
-    labeled, n_nucleus  = mahotas.label(f)
+    labeled, n_nucleus  = mh.label(f)
     print('Found {} nuclei.'.format(n_nucleus))
     imshow(labeled)
     show()
@@ -116,27 +120,27 @@ some measurements on the real nuclei, but are willing to filter out anything
 that is not a complete nucleus or that is a lump on nuclei. So we measure sizes
 and filter::
 
-    sizes = mahotas.labeled.labeled_size(labeled)
+    sizes = mh.labeled.labeled_size(labeled)
     too_big = np.where(sizes > 10000)
-    labeled = mahotas.labeled.remove_regions(labeled, too_big)
+    labeled = mh.labeled.remove_regions(labeled, too_big)
 
 .. plot::
    :context:
 
-    sizes = mahotas.labeled.labeled_size(labeled)
+    sizes = mh.labeled.labeled_size(labeled)
     too_big = np.where(sizes > 10000)
-    labeled = mahotas.labeled.remove_regions(labeled, too_big)
+    labeled = mh.labeled.remove_regions(labeled, too_big)
     imshow(labeled)
     show()
 
 We can also remove the region touching the border::
 
-    labeled = mahotas.labeled.remove_bordering(labeled)
+    labeled = mh.labeled.remove_bordering(labeled)
 
 .. plot::
    :context:
 
-    labeled = mahotas.labeled.remove_bordering(labeled)
+    labeled = mh.labeled.remove_bordering(labeled)
     imshow(labeled)
     show()
 
@@ -145,7 +149,7 @@ with some values missing (e.g., if region ``7`` was one of the ones touching
 the border, then ``7`` is not used in the labeling). We can ``relabel`` to get
 a cleaner version::
 
-    relabeled, n_left = mahotas.labeled.relabel(labeled)
+    relabeled, n_left = mh.labeled.relabel(labeled)
     print('After filtering and relabeling, there are {} nuclei left.'.format(n_left))
 
 Now, we have ``24`` nuclei and ``relabeled`` goes from ``0`` (background) to ``24``.
@@ -153,7 +157,7 @@ Now, we have ``24`` nuclei and ``relabeled`` goes from ``0`` (background) to ``2
 .. plot::
    :context:
 
-    relabeled, n_left = mahotas.labeled.relabel(labeled)
+    relabeled, n_left = mh.labeled.relabel(labeled)
     print('After filtering and relabeling, there are {} nuclei left.'.format(n_left))
     imshow(relabeled)
     show()

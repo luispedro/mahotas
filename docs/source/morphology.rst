@@ -36,6 +36,8 @@ Dilation & Erosion
 operators (mathematically, you only need one of them as you
 can define the erosion as dilation of the negative or vice-versa).
 
+These operations are available in the ``mahotas.morph`` module:
+
 ::
 
     mahotas.morph.dilate(eye)
@@ -69,16 +71,20 @@ non-flat ones). By default, a 1-cross is used::
     se = np.array([
             [0, 1, 0],
             [1, 1, 1],
-            [0, 1, 0]])
+            [0, 1, 0]], bool)
 
 However, you can use whatever structuring element you want::
 
     se = np.array([
         [1, 1, 0],
         [1, 1, 1],
-        [0, 1, 1]])
+        [0, 1, 1]], bool)
     dilated = mahotas.morph.dilate(eye, se)
     eroded = mahotas.morph.erode(eye, se)
+
+Note that when you pass it a non-boolean array as the first argument, you will
+get *grescale erosion*. Mahotas supports full grescale erosion, including
+arbitrary, flat or non-flat, structuring elements).
 
 Close & Open
 ------------
