@@ -2,6 +2,7 @@ import numpy as np
 import mahotas as mh
 import mahotas.features.surf as surf
 from mahotas.features import _surf
+from .utils import luispedro_jpg
 from nose.tools import raises
 
 def test_integral():
@@ -126,7 +127,7 @@ def test_dense():
 
 
 def test_dense_scale():
-    im = mh.imread('mahotas/demos/data/luispedro.jpg', as_grey=1).astype(np.uint8)
+    im = luispedro_jpg(True)
     surf.dense(im, spacing=32)
     s5 = surf.dense(im, spacing=32, scale=5)
     s51 = surf.dense(im, spacing=32, scale=5.1)

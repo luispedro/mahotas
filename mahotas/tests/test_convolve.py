@@ -6,6 +6,7 @@ from mahotas.convolve import convolve1d, gaussian_filter
 import mahotas._filters
 from os import path
 from nose.tools import raises
+from mahotas.tests.utils import luispedro_jpg
 
 def test_compare_w_ndimage():
     from scipy import ndimage
@@ -55,17 +56,10 @@ def test_convolve1d_2d():
     n = np.array([[.5,1.,.5],[0.,2.,0.]])
     convolve1d(f, n, 0)
 
-luispedro_jpg = lambda: mahotas.imread(path.join(
-    path.abspath(path.dirname(__file__)),
-                '..',
-                'demos',
-                'data',
-                'luispedro.jpg'), 1)
-
 
 def test_gaussian_filter():
     from scipy import ndimage
-    f = luispedro_jpg()
+    f = luispedro_jpg(1)
     for s in (4.,8.,12.):
         g = gaussian_filter(f, s)
         n = ndimage.gaussian_filter(f, s)
@@ -88,7 +82,7 @@ def test_gaussian_order_high():
     yield gaussian_order, 1.5
 
 def test_haar():
-    image = luispedro_jpg()
+    image = luispedro_jpg(1)
     image = image[:256,:256]
     wav = mahotas.haar(image)
 
@@ -96,14 +90,14 @@ def test_haar():
     assert np.allclose((image[0].reshape((-1,2)).mean(1)+image[1].reshape((-1,2)).mean(1))/2, wav[0,:128]/2.)
     assert np.abs(np.mean(image**2) - np.mean(wav**2)) < 1.
 
-    image = luispedro_jpg()
+    image = luispedro_jpg(1)
     wav =  mahotas.haar(image, preserve_energy=False)
     assert np.abs(np.mean(image**2) - np.mean(wav**2)) > 16.
     wav =  mahotas.haar(image, inline=True)
     assert id(image) == id(wav)
 
 def test_ihaar():
-    image = luispedro_jpg()
+    image = luispedro_jpg(1)
     image = image[:256,:256]
     wav = mahotas.haar(image)
     iwav = mahotas.ihaar(wav)
@@ -115,7 +109,7 @@ def test_ihaar():
 
 
 def test_daubechies_D2_haar():
-    image = luispedro_jpg()
+    image = luispedro_jpg(1)
     image = image[:256,:256]
     wav = mahotas.haar(image, preserve_energy=False)
     dau = mahotas.daubechies(image, 'D2')
@@ -142,7 +136,7 @@ def test_wavelets_inline():
     yield inline, lambda im,inline: mahotas.daubechies(im, 'D4', inline=inline)
 
 def test_wavelet_iwavelet():
-    f = luispedro_jpg()
+    f = luispedro_jpg(1)
     f = f[:256,:256]
     fo = f.copy()
     D4 = np.array([0.6830127,  1.1830127,  0.3169873, -0.1830127], dtype=np.float32)
@@ -167,7 +161,7 @@ def test_wavelet_iwavelet():
 
     
 def test_daubechies_idaubechies():
-    f = luispedro_jpg()
+    f = luispedro_jpg(1)
     f = f[:256,:256]
     fo = f.copy()
 
@@ -212,7 +206,7 @@ def test_center_wavelet_iwavelet_decenter():
     import mahotas
     import numpy as np
 
-    f = luispedro_jpg()
+    f = luispedro_jpg(1)
     f = f[:100,:250]
     fo = f.copy()
 

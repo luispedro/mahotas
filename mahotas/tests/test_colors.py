@@ -1,9 +1,10 @@
 import mahotas
 import numpy as np
+from mahotas.tests.utils import luispedro_jpg
 from mahotas.colors import rgb2xyz, rgb2lab, xyz2rgb, rgb2grey
 
 def test_colors():
-    f = mahotas.imread('mahotas/demos/data/luispedro.jpg')
+    f = luispedro_jpg()
     lab = rgb2lab(f)
     assert np.max(np.abs(lab)) <= 100.
     assert np.max(np.abs(xyz2rgb(rgb2xyz(f)) - f)) < 1.
@@ -18,7 +19,7 @@ def test_colors():
 
 
 def test_rgb2grey():
-    f = mahotas.imread('mahotas/demos/data/luispedro.jpg')
+    f = luispedro_jpg()
     fg = rgb2grey(f)
     fg8 = rgb2grey(f, dtype=np.uint8)
     assert f.ndim == 3

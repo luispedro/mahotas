@@ -3,6 +3,7 @@ Version 0.9.7+
 	* Compute dense SURF features
 	* Fix sobel edge filtering (post-processing)
 	* Faster 1D convultions (including faster Gaussian filtering)
+	* Location independent tests (run mahotas.tests.run() anywhere)
 
 Version 0.9.7 2013-02-03 by luispedro
 	* Add ``haralick_features`` function

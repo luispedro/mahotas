@@ -19,5 +19,11 @@ def test_error_imsave():
 
 
 def test_as_grey():
-    im = mh.imread('mahotas/demos/data/luispedro.jpg', as_grey=1)
+    filename = path.join(
+            path.dirname(__file__),
+            '..',
+            'demos',
+            'data',
+            'luispedro.jpg')
+    im = mh.imread(filename, as_grey=1)
     assert im.ndim == 2
