@@ -592,15 +592,6 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
             }
         }
     }
-    for (unsigned ci = 0; ci != centroids.size(); ++ci) {
-        centroid_info& c = centroids[ci];
-        const int cc =  centroid_counts[ci];
-        std::cerr << ci << '\t'
-                << cc << '\t'
-                << c.y << '\t'
-                << c.x << '\t'
-                <<'\n';
-    }
 
     for (int i = 0; i != N; ++i) nlabels[i] = i;
     int * nlabelsp = &nlabels[0];
