@@ -5,6 +5,7 @@ Version 0.9.7+
 	* Faster 1D convultions (including faster Gaussian filtering)
 	* Location independent tests (run mahotas.tests.run() anywhere)
 	* Add labeled.is_same_labeling function
+	* Post filter SLIC for smoother regions
 
 Version 0.9.7 2013-02-03 by luispedro
 	* Add ``haralick_features`` function

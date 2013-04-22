@@ -485,7 +485,7 @@ struct centroid_info {
     float x;
 };
 
-int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int> alabels, const int S, const float m, const int max_iters=64) {
+int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int> alabels, const int S, const float m, const int max_iters) {
     assert(alabels.is_carray());
     gil_release no_gil;
     const int Ny = array.dim(0);
@@ -497,7 +497,10 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
     // m²/S²
     const float m2S2 = float(m*m)/float(S*S);
     int* labels = alabels.data();
-    std::fill(labels, labels + N, -1);
+    std::fill(labels, labels + N, -2);
+
+    std::vector<int> nlabels;
+    nlabels.resize(N, -1);
 
     std::vector<float> distance;
     distance.resize(N, inf);
@@ -518,13 +521,14 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
 
     for (int i = 0; i < max_iters; ++i) {
         std::fill(distance.begin(), distance.end(), inf);
-        bool changed = false;
         for (unsigned ci = 0; ci < centroids.size(); ++ci) {
             const centroid_info& c = centroids[ci];
-            const int start_y = std::max<float>(0.0, c.y - S);
-            const int start_x = std::max<float>(0.0, c.x - S);
-            const int end_y = std::min<float>(Ny, c.y + S);
-            const int end_x = std::min<float>(Nx, c.x + S);
+            const int start_y = std::max<float>(0.0, c.y - 2*S);
+            const int start_x = std::max<float>(0.0, c.x - 2*S);
+            const int end_y = std::min<float>(Ny, c.y + 2*S);
+            const int end_x = std::min<float>(Nx, c.x + 2*S);
+            assert(start_y < end_y);
+            assert(start_x < end_x);
             for (int y = start_y; y != end_y; ++y) {
                 for (int x = start_x; x != end_x; ++x) {
                     const int pos = y*Nx + x;
@@ -541,20 +545,26 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
                     assert(D2 < inf);
                     if (D2 < distance[pos]) {
                         distance[pos] = D2;
-                        labels[pos] = ci;
-                        changed = true;
+                        nlabels[pos] = ci;
                     }
                 }
+            }
+        }
+        bool changed = false;
+        for (int p = 0; p != N; ++p) {
+            if (nlabels[p] != labels[p]) {
+                labels[p] = nlabels[p];
+                changed = true;
             }
         }
         // If nothing changed, we are done
         if (!changed) break;
         std::fill(centroids.begin(), centroids.end(), centroid_info());
         std::fill(centroid_counts.begin(), centroid_counts.end(), 0);
+        int y = 0;
+        int x = 0;
         for (int pos = 0; pos != N; ++pos) {
-            const int y = (pos / Nx);
-            const int x = (pos % Nx);
-            assert(labels[pos] != -1);
+            assert(labels[pos] >= 0);
             ++centroid_counts[labels[pos]];
             centroid_info& c = centroids[labels[pos]];
             c.l += array.at(y,x,0);
@@ -562,6 +572,13 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
             c.b += array.at(y,x,2);
             c.y += y;
             c.x += x;
+
+
+            ++x;
+            if (x == Nx) {
+                x = 0;
+                ++y;
+            }
         }
         for (unsigned ci = 0; ci != centroids.size(); ++ci) {
             centroid_info& c = centroids[ci];
@@ -570,11 +587,62 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
                 c.l /= cc;
                 c.a /= cc;
                 c.b /= cc;
-                c.x /= cc;
                 c.y /= cc;
+                c.x /= cc;
             }
         }
     }
+    for (unsigned ci = 0; ci != centroids.size(); ++ci) {
+        centroid_info& c = centroids[ci];
+        const int cc =  centroid_counts[ci];
+        std::cerr << ci << '\t'
+                << cc << '\t'
+                << c.y << '\t'
+                << c.x << '\t'
+                <<'\n';
+    }
+
+    for (int i = 0; i != N; ++i) nlabels[i] = i;
+    int * nlabelsp = &nlabels[0];
+
+    for (int y = 0; y != Ny; ++y) {
+        for (int x = 0; x != Nx; ++x) {
+#define CHECK(dy,dx) \
+            if ((y + dy) >= 0 && (y + dy) < alabels.dim(0) && (x + dx) >= 0 && (x + dx) < alabels.dim(1)) { \
+                if (alabels.at(y,x) == alabels.at(y+dy,x + dx)) { \
+                    const int i = y*Nx + x; \
+                    const int j = (y+dy)*Nx + x + dx; \
+                    join(nlabelsp, i, j); \
+                } \
+            }
+            CHECK(-1,0)
+            CHECK(0,1)
+            CHECK(0,-1)
+            CHECK(1,0)
+        }
+    }
+    for (int y = 0; y != Ny; ++y) {
+        for (int x = 0; x != Nx; ++x) {
+            const int i = y*Nx + x;
+            const int cy = centroids[alabels.at(y,x)].y;
+            const int cx = centroids[alabels.at(y,x)].x;
+            const int j = cy*Nx + cx;
+            if (nlabels[i] != nlabels[j]) {
+                float min_d = inf;
+                int k = -1;
+                for (unsigned ci = 0; ci < centroids.size(); ++ci) {
+                    const centroid_info& c = centroids[ci];
+                    const float d = (c.y - y)*(c.y - y) + (c.x - x)*(c.x - x);
+                    if (d < min_d) {
+                        min_d = d;
+                        k = ci;
+                    }
+                }
+                alabels.at(y,x) = k;
+            }
+        }
+    }
+
     // Above, we work with labels in 0...[N-1]
     for (unsigned pos = 0; pos != N; ++pos) ++labels[pos];
     return centroids.size();
