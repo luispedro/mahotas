@@ -35,11 +35,33 @@ You can use the simple::
 
 You need the numpy headers and a C++ compiler.
 
-Dependencies
-------------
+Runtime Dependencies
+--------------------
 
-numpy
+Only **numpy** is required.
 
 If you are running tests, ``scipy`` is sometimes used (as a comparison). It is
 otherwise not used in mahotas (since version 0.7).
+
+Compilation Dependencies
+------------------------
+
+You need numpy, the Python headers, and a C++ compiler.
+
+Below, you can find information on specific Linux distributions. These will
+install mahotas system-wide with all necessary dependencies.
+
+Ubuntu
+~~~~~~
+::
+
+    sudo apt-get install python-dev python-numpy g++ python-pip
+    sudo pip install mahotas
+
+Red Hat and Amazon Linux
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+    sudo yum -y install gcc-c++ numpy python-devel
+    sudo easy_install mahotas
 
