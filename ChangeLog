@@ -1,3 +1,6 @@
+Version 0.9.8+
+	* Make matplotlib a soft dependency
+
 Version 0.9.8 2013-04-22 by luispedro
 	* Use matplotlib as IO backend (fallback only)
 	* Compute dense SURF features

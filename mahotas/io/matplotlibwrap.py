@@ -1,9 +1,10 @@
-from matplotlib import pyplot as plt
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # Copyright (C) 2013  Luis Pedro Coelho
 # 
 # License: MIT (see COPYING file)
+
+from matplotlib import pyplot as plt
 import numpy as np
 
 def imread(filename, as_grey=False):

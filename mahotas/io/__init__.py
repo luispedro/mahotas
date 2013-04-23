@@ -1,10 +1,14 @@
 _error_message = '''
-mahotas.%%s depends on imread or freeimage, neither of which could be found.
+mahotas.%%s depends on one of (in order of preference):
+
+1. imread
+2. freeimage
+3. matplotlib
+
+None of which could be found!
 
 Everything else will work, though, so this error is only triggered when you
 attempt to use these optional functions.
-
-
 
 To install imread:
 
@@ -57,7 +61,7 @@ try:
             from .freeimage import imread, imsave
         except:
             from .matplotlibwrap import imread, imsave
-except OSError:
+except:
     import sys
     _,e,_ = sys.exc_info()
     _error_message %= e
