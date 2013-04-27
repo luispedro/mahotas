@@ -206,10 +206,10 @@ else:
                     break
             if _FI is not None:
                 break
-        if not _FI:
-            raise OSError(
-                'mahotas.freeimage: could not find libFreeImage in any of the'
-                'following directories: \'%s\'' % '\', \''.join(_lib_dirs))
+    if not _FI:
+        raise OSError(
+            'mahotas.freeimage: could not find libFreeImage in any of the'
+            'following directories: \'%s\'' % '\', \''.join(_lib_dirs))
 
 _FI = _register_api(_FI, _API)
 
