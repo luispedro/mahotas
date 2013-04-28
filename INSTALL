@@ -38,7 +38,14 @@ You need the numpy headers and a C++ compiler.
 Runtime Dependencies
 --------------------
 
-Only **numpy** is required.
+Only **numpy** is required, except:
+
+You will need a way to load images into numpy arrays. Try one of the following
+packages
+
+1. `imread <http://github.com/luispedro/imread>`__
+2. matplotlib
+3. Freeimage
 
 If you are running tests, ``scipy`` is sometimes used (as a comparison). It is
 otherwise not used in mahotas (since version 0.7).
