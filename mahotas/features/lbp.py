@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2008-2009 Robert Webb and Luis Pedro Coelho <luis@luispedro.org>
-# Copyright (C) 2011 Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2011-2013 Luis Pedro Coelho <luis@luispedro.org>
 #
 # License: MIT (see COPYING file)
 
@@ -16,6 +16,11 @@ def lbp(image, radius, points, ignore_zeros=False):
 
     Compute Linear Binary Patterns
 
+    The return value is a **histogram** of feature counts, where position ``i``
+    corresponds to the number of pixels that had code ``i``. The codes are
+    compressed so that impossible codes are not used. Therefore, this is the
+    ``i``th feature, not just the feature with binary code ``i``.
+
     Parameters
     ----------
     image : ndarray
@@ -30,13 +35,13 @@ def lbp(image, radius, points, ignore_zeros=False):
     Returns
     -------
     features : 1-D numpy ndarray
-        histogram of features
-
+        histogram of features. See above for a caveat on the interpretation of
+        these.
 
     Reference
     ---------
     Gray Scale and Rotation Invariant Texture Classification with Local Binary Patterns
-        Ojala, T. Pietikainen, M. Maenpaa, T. LECTURE NOTES IN COMPUTER SCIENCE (Springer)
+        Ojala, T. Pietikainen, M. Maenpaa, T. Lecture Notes in Computer Science (Springer)
         2000, ISSU 1842, pages 404-420
     '''
     from ..interpolate import shift
