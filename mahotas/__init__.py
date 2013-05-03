@@ -19,6 +19,10 @@ watershed
 imread/imsave
     read/write image
 
+Citation:
+
+    Mahotas: Open source software for scriptable computer vision by Luis Pedro
+    Coelho in Journal of Open Research Software (forthcoming).
 '''
 try:
     from .bbox import bbox, croptobbox
@@ -61,7 +65,28 @@ mahotas **without changing the current directory**.
 Try installing and then changing to another directory before importing mahotas.
 ''' % e)
 
+citation_text = '''
+If you use mahotas please cite
 
+    Mahotas: Open source software for scriptable computer vision by Luis Pedro
+    Coelho in Journal of Open Research Software (forthcoming).
+
+In BibTex format:
+
+@article{
+    title = {Mahotas: Open source software for scriptable computer vision},
+    author = {Luis Pedro Coelho},
+    journal = {Journal of Open Research Software},
+    year = {2013}
+}
+'''
+
+def citation(print_out=True):
+    if print_out:
+        # Use a Python2/3 compatible form of printing:
+        from sys import stdout
+        stdout.write(citation_text)
+    return citation_text
 
 __all__ = [
     'as_rgb',
@@ -118,6 +143,8 @@ __all__ = [
 
     'test',
 
+    'citation',
+    'citation_text'
     '__version__',
     ]
 

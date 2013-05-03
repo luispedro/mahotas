@@ -1,6 +1,7 @@
 Version 0.9.8+
 	* Make matplotlib a soft dependency
 	* Add demos.image_path() function
+	* Add citation() function
 
 Version 0.9.8 2013-04-22 by luispedro
 	* Use matplotlib as IO backend (fallback only)
