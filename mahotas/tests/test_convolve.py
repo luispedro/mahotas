@@ -223,7 +223,7 @@ def test_convolve1d():
         np.array([-.1, .5,.7,.7,.5]),
         np.array([.1,.7,.5]),
         ]
-    for i in xrange(8):
+    for i in range(8):
         for w in ws:
             f = np.random.random((128,96))
             ww = np.atleast_2d(w)
