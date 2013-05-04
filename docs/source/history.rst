@@ -2,6 +2,14 @@
 History
 =======
 
+0.99 (May 4 2013)
+~~~~~~~~~~~~~~~~~
+- Make matplotlib a soft dependency
+- Add demos.image_path() function
+- Add citation() function
+
+This version is **1.0 beta**.
+
 0.9.8 (April 22 2013)
 ~~~~~~~~~~~~~~~~~~~~~
 - Use matplotlib as IO backend (fallback only)
