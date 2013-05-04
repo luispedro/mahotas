@@ -31,7 +31,13 @@ only get a warning). In a few unfortunate cases, there was a bug in the old
 code and your results will change for the better.
 
 There is a `manuscript about mahotas <http://arxiv.org/abs/1211.4907>`__, which
-will hopefully evolve into a journal publication later.
+is forthcoming in the `Journal of Open Research Software
+<http://openresearchsoftware.metajnl.com/>`__. Full citation (for the time
+being) is:
+
+    Mahotas: Open source software for scriptable computer vision by Luis Pedro
+    Coelho in Journal of Open Research Software (forthcoming).
+
 
 Examples
 --------
