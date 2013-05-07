@@ -1,0 +1,16 @@
+language: python
+python:
+  - "2.5"
+  - "2.6"
+  - "2.7"
+  - "3.2"
+  - "3.3"
+# command to install dependencies
+# numpy needs to finish installing before we can install scipy
+install:
+  - "pip install numpy"
+  - "pip install scipy"
+  - "pip install nose"
+  - "make debug"
+# command to run tests
+script: nosetests
