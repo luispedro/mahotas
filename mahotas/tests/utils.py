@@ -1,10 +1,13 @@
 import mahotas as mh
+import numpy as np
 def luispedro_jpg(as_grey=False):
     from os import path
-    return mh.imread(path.join(
-        path.abspath(path.dirname(__file__)),
-                '..',
-                'demos',
+    path = path.join(
+                path.abspath(path.dirname(__file__)),
                 'data',
-                'luispedro.jpg'), as_grey=as_grey)
-
+                'luispedro.npy')
+    im = np.load(path)
+    if as_grey:
+        transform = np.array([0.30, 0.59, 0.11])
+        return np.dot(im, transform)
+    return im
