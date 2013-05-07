@@ -9,8 +9,8 @@ virtualenv:
 before_install:
     - sudo apt-get update -qq
     - sudo apt-get install -qq python-numpy libatlas-dev liblapack-dev gfortran
-    - sudo apt-get install -qq python-scipy
-    - sudo apt-get install -qq python3-numpy python3-scipy
+    - sudo apt-get install -qq python-scipy python-matplotlib python-imaging
+    - sudo apt-get install -qq python3-numpy python3-scipy python3-matplotlib python3-imaging
 install:
   - "pip install nose"
   - "make debug"
