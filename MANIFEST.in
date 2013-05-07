@@ -7,6 +7,5 @@ include README.rst
 include docs/source/*.rst
 include ChangeLog
 include COPYING
-include LICENSE.BOOST
 include mahotas/tests/data/*
 include mahotas/demos/data/*
