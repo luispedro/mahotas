@@ -4,12 +4,14 @@ python:
   - "2.7"
   - "3.2"
   - "3.3"
+virtualenv:
+    system_site_packages: true
 before_install:
     - sudo apt-get update -qq
-    - sudo apt-get install -qq python-numpy cython libatlas-dev liblapack-dev gfortran
-    - sudo apt-get install -qq python-scipy libhdf5-serial-1.8.4 libhdf5-serial-dev
+    - sudo apt-get install -qq python-numpy libatlas-dev liblapack-dev gfortran
+    - sudo apt-get install -qq python-scipy
+    - sudo apt-get install -qq python3-numpy python3-scipy
 install:
   - "pip install nose"
   - "make debug"
-# command to run tests
 script: nosetests
