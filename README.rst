@@ -127,15 +127,22 @@ debug compile. You can set it to the value ``2`` to get extra checks::
 Be careful not to use this in production unless you are chasing a bug. The
 debug modes are pretty slow as they add many runtime checks.
 
+Travis Build Status
+~~~~~~~~~~~~~~~~~~~
+
+.. image:: https://travis-ci.org/luispedro/mahotas.png
+       :target: https://travis-ci.org/luispedro/mahotas
+
 
 Contacts
 --------
 
-For bugfixes, feel free to use my email: luis@luispedro.org
+For bug reports and fixes, feel free to use my email: luis@luispedro.org
 
 For more general with achieving certain tasks in Python, the `pythonvision
 mailing list <http://groups.google.com/group/pythonvision?pli=1>`__ is a much
 better venue and generates a public discussion log for others in the future.
+You can use it for mahotas or general computer vision in Python questions.
 
 Recent Changes
 --------------
