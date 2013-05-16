@@ -50,7 +50,7 @@ big are they?
 
 ::
 
-    sizes = mh.labeled_size(labeled)
+    sizes = mh.labeled.labeled_size(labeled)
     print 'Background size', sizes[0]
     print 'Size of first region', sizes[1]
 
