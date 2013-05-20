@@ -239,7 +239,7 @@ def haralick_features(cmats, ignore_zeros=False, preserve_haralick_bug=False, co
             feats[11] = (feats[8]-HXY1)
         else:
             feats[11] = (feats[8]-HXY1)/max(HX,HY)
-        feats[12] = np.sqrt(1 - np.exp( -2. * (HXY2 - feats[8])))
+        feats[12] = np.sqrt(np.max(0,1 - np.exp( -2. * (HXY2 - feats[8]))))
 
         if compute_14th_feature:
             # Square root of the second largest eigenvalue of the correlation matrix
