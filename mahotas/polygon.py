@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2013, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # License: MIT (see COPYING file)
@@ -83,7 +83,9 @@ def fill_polygon(polygon, canvas, color=1):
     min_y = min(y for y,x in polygon)
     max_y = max(y for y,x in polygon)
     polygon = [(float(y),float(x)) for y,x in polygon]
-    for y in range(min_y, max_y+1):
+    if max_y < canvas.shape[0]:
+        max_y += 1
+    for y in range(min_y, max_y):
         nodes = []
         j = -1
         for i,p in enumerate(polygon):

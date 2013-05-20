@@ -1,4 +1,5 @@
 import numpy as np
+import mahotas as mh
 import mahotas.polygon
 from mahotas.polygon import fill_polygon, fill_convexhull
 from nose.tools import raises
@@ -70,3 +71,10 @@ def test_convex_in_3d():
     canvas[5,4,2] = 1
     canvas[3,6,2] = 1
     mahotas.polygon.fill_convexhull(canvas)
+
+
+def test_border():
+    canvas = np.zeros((32,32))
+    polygon = np.array([(0,0),(0,32),(32,0)])
+    fill_polygon(polygon, canvas)
+    assert not np.all(canvas)
