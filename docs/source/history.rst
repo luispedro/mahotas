@@ -2,6 +2,12 @@
 History
 =======
 
+1.0 (May 21 2013)
+~~~~~~~~~~~~~~~~~
+- Fix a few corner cases in texture analysis
+- Integrate with travis
+- Update citation (include DOI)
+
 0.99 (May 4 2013)
 ~~~~~~~~~~~~~~~~~
 - Make matplotlib a soft dependency

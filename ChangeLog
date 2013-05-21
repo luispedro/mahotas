@@ -1,8 +1,13 @@
+Version 1.0 2013-05-21 by luispedro
+	* Fix tests in Python 3
+	* Fix a few corner cases in texture analysis
+	* Integrate with travis
+	* Update citation (include DOI)
+
 Version 0.99 2013-05-04 by luispedro
 	* Make matplotlib a soft dependency
 	* Add demos.image_path() function
 	* Add citation() function
-	* Fix a few corner cases in texture analysis
 
 Version 0.9.8 2013-04-22 by luispedro
 	* Use matplotlib as IO backend (fallback only)

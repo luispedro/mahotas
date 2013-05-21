@@ -21,8 +21,9 @@ imread/imsave
 
 Citation:
 
-    Mahotas: Open source software for scriptable computer vision by Luis Pedro
-    Coelho in Journal of Open Research Software (forthcoming).
+    Coelho, Luis Pedro, 2013. Mahotas: Open source software for scriptable
+    computer vision. Journal of Open Research Software, 1:e3, DOI:
+    http://dx.doi.org/10.5334/jors.ac
 '''
 try:
     from .bbox import bbox, croptobbox
@@ -68,8 +69,10 @@ Try installing and then changing to another directory before importing mahotas.
 citation_text = '''
 If you use mahotas please cite
 
-    Mahotas: Open source software for scriptable computer vision by Luis Pedro
-    Coelho in Journal of Open Research Software (forthcoming).
+    Coelho, Luis Pedro, 2013. Mahotas: Open source software for scriptable
+    computer vision. Journal of Open Research Software, 1:e3, DOI:
+    http://dx.doi.org/10.5334/jors.ac
+
 
 In BibTex format:
 
@@ -78,6 +81,9 @@ In BibTex format:
     author = {Luis Pedro Coelho},
     journal = {Journal of Open Research Software},
     year = {2013}
+    volume = {1},
+    doi = {10.5334/jors.ac},
+    url = {http://dx.doi.org/10.5334/jors.ac}
 }
 '''
 

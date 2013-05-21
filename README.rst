@@ -147,6 +147,15 @@ You can use it for mahotas or general computer vision in Python questions.
 Recent Changes
 --------------
 
+1.0 (May 21 2013)
+~~~~~~~~~~~~~~~~~
+- Make matplotlib a soft dependency
+- Add demos.image_path() function
+- Add citation() function
+- Fix a few corner cases in texture analysis
+- Integrate with travis
+- Update citation (include DOI)
+
 0.99 (May 4 2013)
 ~~~~~~~~~~~~~~~~~
 - Make matplotlib a soft dependency
