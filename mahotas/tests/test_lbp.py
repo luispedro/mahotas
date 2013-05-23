@@ -48,3 +48,12 @@ def test_lbp_transform():
     assert transformed.shape == im.shape
     assert transformed.min() >= 0
     assert transformed.max() < 2**4
+    transformed = lbp_transform(im, 8, 4, preserve_shape=False)
+    assert len(transformed.shape) == 1
+    assert transformed.size == im.size
+
+    np.random.seed(234)
+    im *= np.random.random(im.shape) > .1
+    transformed = lbp_transform(im, 8, 4, preserve_shape=False, ignore_zeros=True)
+    assert len(transformed.shape) == 1
+    assert transformed.size == (im.size - (im==0).sum())

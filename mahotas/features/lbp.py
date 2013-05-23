@@ -12,9 +12,9 @@ __all__ = [
     'lbp_transform',
     ]
 
-def lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=False):
+def lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=True):
     '''
-    transformed = lbp(image, radius, points, ignore_zeros=False, preserve_shape=False)
+    transformed = lbp(image, radius, points, ignore_zeros=False, preserve_shape=True)
 
     Compute Linear Binary Pattern Transform
 
@@ -32,7 +32,11 @@ def lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=Fals
     points : integer
         nr of points to consider
     ignore_zeros : boolean, optional
-        whether to ignore zeros (default: False)
+        whether to ignore zeros. Note that if you set this to ``True``, you
+        will need to set ``preserve_shape`` to False. (default: False)
+    preserve_shape : boolean, optional
+        whether to return an array with the same shape as ``image``. (default:
+        True)
 
     Returns
     -------
@@ -110,7 +114,7 @@ def lbp(image, radius, points, ignore_zeros=False):
         2000, ISSU 1842, pages 404-420
     '''
     from mahotas.features import _lbp
-    codes = lbp_transform(image, radius, points, ignore_zeros=ignore_zeros)
+    codes = lbp_transform(image, radius, points, ignore_zeros=ignore_zeros, preserve_shape=False)
     final = fullhistogram(codes.astype(np.uint32))
 
     codes = np.arange(2**points, dtype=np.uint32)
