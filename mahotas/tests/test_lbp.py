@@ -2,6 +2,7 @@ import numpy as np
 from mahotas.features import _lbp
 import mahotas.thresholding
 from mahotas.features import lbp
+from mahotas.tests.utils import luispedro_jpg
 
 def test_shape():
     A = np.arange(32*32).reshape((32,32))
@@ -38,3 +39,12 @@ def test_positives():
     lbps = lbp(f, 4, 8)
     assert len(np.where(lbps == 0)[0]) < 2
     assert lbps.sum() == f.size
+
+def test_lbp_transform():
+    from mahotas.features.lbp import lbp_transform
+
+    im = luispedro_jpg().max(2)
+    transformed = lbp_transform(im, 8, 4, preserve_shape=True)
+    assert transformed.shape == im.shape
+    assert transformed.min() >= 0
+    assert transformed.max() < 2**4
