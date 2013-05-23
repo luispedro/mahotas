@@ -1,3 +1,5 @@
+Version 1.0+
+
 Version 1.0 2013-05-21 by luispedro
 	* Fix tests in Python 3
 	* Fix a few corner cases in texture analysis
