@@ -6,7 +6,7 @@
     // (See the file LICENSE.BOOST in the mahotas distribution)
 //
 // Mahotas itself is
-// Copyright (C) 2010-2012 Luis Pedro Coelho (luis@luispedro.org)
+// Copyright (C) 2010-2013 Luis Pedro Coelho (luis@luispedro.org)
 // License: MIT
 
 #include "../numpypp/array.hpp"
@@ -736,8 +736,8 @@ PyObject* py_descriptors(PyObject* self, PyObject* args) {
     }
     if (PyArray_DIM(points_arr,1) != npy_intp(interest_point::ndoubles)) {
         std::ostringstream ss;
-        ss << "mahotas.features.surf.descriptors: interestpoints must have " << interest_point::ndoubles << " entries per element."
-            << " Only " << PyArray_DIM(points_arr, 1) << "found.";
+        ss << "mahotas.features.surf.descriptors: interestpoints must have " << interest_point::ndoubles
+            << " entries per element (" << PyArray_DIM(points_arr, 1) << " were found).";
         PyErr_SetString(PyExc_ValueError, ss.str().c_str());
         return NULL;
     }
