@@ -261,8 +261,7 @@ See the ``ChangeLog`` for older version.
 *Website*: `http://luispedro.org/software/mahotas
 <http://luispedro.org/software/mahotas>`_
 
-*API Docs*: `http://packages.python.org/mahotas/
-<http://packages.python.org/mahotas/>`_
+*API Docs*: `http://mahotas.readthedocs.org/ <http://mahotas.readthedocs.org/>`__
 
 *Mailing List*: Use the `pythonvision mailing list
 <http://groups.google.com/group/pythonvision?pli=1>`_ for questions, bug
