@@ -1,7 +1,7 @@
 import mahotas
 import numpy as np
 from mahotas.tests.utils import luispedro_jpg
-from mahotas.colors import rgb2xyz, rgb2lab, xyz2rgb, rgb2grey
+from mahotas.colors import rgb2xyz, rgb2lab, xyz2rgb, rgb2grey, rgb2sepia
 
 def test_colors():
     f = luispedro_jpg()
@@ -30,3 +30,8 @@ def test_rgb2grey():
     assert fg.shape == fg8.shape
     assert fg8.dtype == np.uint8
 
+
+def test_sepia():
+    f = luispedro_jpg()
+    sepia= mahotas.colors.rgb2sepia(f)
+    assert sepia.shape == f.shape

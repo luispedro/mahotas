@@ -1,4 +1,4 @@
-# Copyright (C) 2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2012-2013, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # License: MIT (see COPYING file)
@@ -173,6 +173,7 @@ def rgb2lab(rgb, dtype=None):
     Parameters
     ----------
     rgb : ndarray
+        Must be of shape (h,w,3)
     dtype : dtype, optional 
         What dtype to return. Default will be floats
 
@@ -181,3 +182,27 @@ def rgb2lab(rgb, dtype=None):
     lab : ndarray
     '''
     return xyz2lab(rgb2xyz(rgb), dtype=dtype)
+
+def rgb2sepia(rgb):
+    '''
+    sepia = rgb2sepia(rgb)
+
+    Parameters
+    ----------
+    rgb : ndarray
+        Must be of shape (h,w,3)
+
+    Returns
+    -------
+    sepia : ndarray
+        Output is of same shape as ``rgb``
+    '''
+    rgb2sepia_weights = np.array([
+                [.393,.769,.189],
+                [.349,.686,.168],
+                [.272,.534,.131]])
+    sepia = _convert(rgb, rgb2sepia_weights, dtype=np.float32, funcname='rgb2sepia')
+    sepia = np.minimum(sepia,255)
+    sepia = np.maximum(sepia,0)
+    return sepia.astype(np.uint8)
+
