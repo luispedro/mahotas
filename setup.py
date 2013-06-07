@@ -81,6 +81,11 @@ package_data = {
     'mahotas.demos': ['data/*'],
     }
 
+install_requires = open('requirements.txt').read()
+
+tests_require = open('tests-requirments.txt').read()
+
+
 classifiers = [
 'Development Status :: 5 - Production/Stable',
 'Intended Audience :: Developers',
@@ -108,5 +113,7 @@ numpyutils.setup(name = 'mahotas',
       package_dir = package_dir,
       package_data = package_data,
       test_suite = 'nose.collector',
+      install_requires = install_requires,
+      tests_require = tests_require
       )
 
