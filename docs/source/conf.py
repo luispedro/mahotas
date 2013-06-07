@@ -154,9 +154,13 @@ html_static_path = ['.static']
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'pymorphdoc'
+htmlhelp_basename = 'mahotasdoc'
 
 
+# Options for plot output
+# -----------------------
+plot_include_source = True
+ 
 # Options for LaTeX output
 # ------------------------
 

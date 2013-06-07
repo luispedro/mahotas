@@ -5,7 +5,13 @@ include mahotas/*h
 include mahotas/*py
 include README.rst
 include docs/source/*.rst
+include AUTHORS
 include ChangeLog
 include COPYING
+include INSTALL
+include Makefile
 include mahotas/tests/data/*
 include mahotas/demos/data/*
+include *requirements.txt
+graft docs/source
+include docs/Makefile
