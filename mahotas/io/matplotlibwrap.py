@@ -29,4 +29,27 @@ def imread(filename, as_grey=False):
         return np.dot(img, transform)
     return img
 
-imsave = plt.imsave
+def imsave(filename, array):
+    '''
+    imsave(filename, array)
+
+    Writes `array` into file `filename`
+
+    Parameters
+    ----------
+    filename : str
+        path on file system
+    array : ndarray-like
+    '''
+    import numpy as np
+    if len(array.shape) == 2:
+        import warnings
+        warnings.warn('mahotas.imsave: The `matplotlib` backend does not support saving greyscale images natively.\n'
+                    'Emulating by saving in RGB format (with all channels set to same value).\n'
+                    'If this is a problem, please use another IO backend\n'
+                    '\n'
+                    'See http://mahotas.readthedocs.org/en/latest/io.html \n'
+                    )
+        array = np.dstack([array, array, array])
+    plt.imsave(filename, array)
+
