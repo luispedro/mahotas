@@ -1,6 +1,7 @@
 Version 1.0+
 	* Add lbp_transform() function
 	* Add rgb2sepia function
+	* Add mahotas.demos.nuclear_image() function
 
 Version 1.0 2013-05-21 by luispedro
 	* Fix tests in Python 3
