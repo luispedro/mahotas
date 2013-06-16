@@ -76,11 +76,11 @@ If you use mahotas please cite
 
 In BibTex format:
 
-@article{
+@article{coelho:mahotas,
     title = {Mahotas: Open source software for scriptable computer vision},
     author = {Luis Pedro Coelho},
     journal = {Journal of Open Research Software},
-    year = {2013}
+    year = {2013},
     volume = {1},
     doi = {10.5334/jors.ac},
     url = {http://dx.doi.org/10.5334/jors.ac}
