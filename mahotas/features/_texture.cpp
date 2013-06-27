@@ -11,10 +11,6 @@
 #include "../utils.hpp"
 #include "../_filters.h"
 
-extern "C" {
-    #include <Python.h>
-    #include <numpy/ndarrayobject.h>
-}
 
 namespace{
 

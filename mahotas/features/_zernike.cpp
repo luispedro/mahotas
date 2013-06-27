@@ -5,10 +5,6 @@
 #include "../utils.hpp"
 #include "../numpypp/numpy.hpp"
 
-extern "C" {
-    #include <Python.h>
-    #include <numpy/ndarrayobject.h>
-}
 
 namespace{
 

@@ -2,10 +2,6 @@
 // Copyright 2008-2012 Luis Pedro Coelho <luis@luispedro.org>
 #include "../utils.hpp"
 
-extern "C" {
-    #include <Python.h>
-    #include <numpy/ndarrayobject.h>
-}
 
 namespace{
 

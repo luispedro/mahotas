@@ -7,11 +7,6 @@
 #include "numpypp/array.hpp"
 #include "utils.hpp"
 
-extern "C" {
-    #include <Python.h>
-    #include <numpy/ndarrayobject.h>
-}
-
 namespace {
 struct Point {
     Point(int y_, int x_):y(y_), x(x_) { }

@@ -4,11 +4,6 @@
 #include "numpypp/dispatch.hpp"
 #include "utils.hpp"
 
-extern "C" {
-    #include <Python.h>
-    #include <numpy/ndarrayobject.h>
-}
-
 namespace{
 
 const char TypeErrorMsg[] =

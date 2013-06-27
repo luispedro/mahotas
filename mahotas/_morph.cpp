@@ -1,4 +1,4 @@
-// Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
+// Copyright (C) 2008-2013, Luis Pedro Coelho <luis@luispedro.org>
 // vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 // 
 // License: MIT
@@ -15,11 +15,6 @@
 #include "utils.hpp"
 
 #include "_filters.h"
-
-extern "C" {
-    #include <Python.h>
-    #include <numpy/ndarrayobject.h>
-}
 
 namespace{
 

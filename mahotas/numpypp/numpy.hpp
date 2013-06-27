@@ -7,10 +7,8 @@
 
 #include <complex>
 
-extern "C" {
-    #include <Python.h>
-    #include <numpy/ndarrayobject.h>
-}
+#include <Python.h>
+#include <numpy/ndarrayobject.h>
 
 namespace numpy {
 

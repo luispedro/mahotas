@@ -19,11 +19,6 @@
 #include <sstream>
 #include <limits>
 
-extern "C" {
-    #include <Python.h>
-    #include <numpy/ndarrayobject.h>
-}
-
 namespace{
 
 const char TypeErrorMsg[] =

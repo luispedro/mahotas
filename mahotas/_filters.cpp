@@ -35,11 +35,6 @@
 #include "_filters.h"
 #include "utils.hpp"
 
-extern "C" {
-    #include <Python.h>
-    #include <numpy/ndarrayobject.h>
-}
-
 /* Calculate the offsets to the filter points, for all border regions and
      the interior of the array: */
 int init_filter_offsets(PyArrayObject *array, bool *footprint,
