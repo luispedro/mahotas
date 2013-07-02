@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2013, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -239,7 +239,7 @@ def haralick_features(cmats, ignore_zeros=False, preserve_haralick_bug=False, co
             feats[11] = (feats[8]-HXY1)
         else:
             feats[11] = (feats[8]-HXY1)/max(HX,HY)
-        feats[12] = np.sqrt(np.max(0,1 - np.exp( -2. * (HXY2 - feats[8]))))
+        feats[12] = np.sqrt(max(0,1 - np.exp( -2. * (HXY2 - feats[8]))))
 
         if compute_14th_feature:
             # Square root of the second largest eigenvalue of the correlation matrix

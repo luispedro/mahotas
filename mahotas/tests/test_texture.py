@@ -1,5 +1,6 @@
 import numpy as np
 from mahotas.features import texture
+import mahotas as mh
 import mahotas.features._texture
 from nose.tools import raises
 
@@ -173,3 +174,18 @@ def test_zeros():
 def test_4d_image():
     texture.haralick(np.arange(4**5).reshape((4,4,4,4,4)))
 
+
+def rand_haralick():
+    f = 255*np.random.random((128,128))
+    f = f.astype(np.uint8)
+    f = mh.features.haralick(f)
+    return f.mean(0)
+def test_feature_non_zero():
+    np.random.seed(23)
+    assert any(np.all(rand_haralick() != 0) for i in xrange(12))
+
+def test_feature_not_same():
+    np.random.seed(26)
+
+    multiple = np.array([rand_haralick() for i in xrange(8)])
+    assert np.all(multiple.ptp(0) > 0)
