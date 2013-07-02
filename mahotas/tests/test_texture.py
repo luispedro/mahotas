@@ -182,10 +182,10 @@ def rand_haralick():
     return f.mean(0)
 def test_feature_non_zero():
     np.random.seed(23)
-    assert any(np.all(rand_haralick() != 0) for i in xrange(12))
+    assert any(np.all(rand_haralick() != 0) for i in range(12))
 
 def test_feature_not_same():
     np.random.seed(26)
 
-    multiple = np.array([rand_haralick() for i in xrange(8)])
+    multiple = np.array([rand_haralick() for i in range(8)])
     assert np.all(multiple.ptp(0) > 0)
