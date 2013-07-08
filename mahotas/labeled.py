@@ -181,13 +181,13 @@ def remove_regions(labeled, regions, inplace=False):
     return labeled
 
 
-def remove_bordering(im, rsize=1, out=None, output=None):
+def remove_bordering(labeled, rsize=1, out=None, output=None):
     '''
     slabeled = remove_bordering(labeled, rsize=1, out={np.empty_like(im)})
 
     Remove objects that are touching the border.
 
-    Pass ``im`` as ``out`` to achieve in-place operation.
+    Pass ``labeled`` as ``out`` to achieve in-place operation.
 
     Parameters
     ----------
@@ -204,6 +204,7 @@ def remove_bordering(im, rsize=1, out=None, output=None):
     slabeled : ndarray
         Subset of ``labeled``
     '''
+    im = labeled
     invalid = set()
     index = [slice(None,None,None) for _ in range(im.ndim)]
     for dim in range(im.ndim):
