@@ -466,6 +466,12 @@ def haar(f, preserve_energy=True, inline=False):
     return f
 
 _daubechies_codes = [('D%s' % ci) for ci in range(2,21,2)]
+def _daubechies_code(c):
+    try:
+        return _daubechies_codes.index(c)
+    except:
+        raise ValueError('mahotas.convolve: Known daubechies codes are {0}. You passed in {1}.'.format(_daubechies_codes, c))
+
 def daubechies(f, code, inline=False):
     '''
     filtered = daubechies(f, code, inline=False)
@@ -491,7 +497,7 @@ def daubechies(f, code, inline=False):
         Haar transform (equivalent to D2)
     '''
     f = _wavelet_array(f, inline, 'daubechies')
-    code = _daubechies_codes.index(code)
+    code = _daubechies_code(code)
     _convolve.daubechies(f, code)
     _convolve.daubechies(f.T, code)
     return f
@@ -520,7 +526,7 @@ def idaubechies(f, code, inline=False):
         Haar transform (equivalent to D2)
     '''
     f = _wavelet_array(f, inline, 'idaubechies')
-    code = _daubechies_codes.index(code)
+    code = _daubechies_code(code)
     _convolve.idaubechies(f.T, code)
     _convolve.idaubechies(f, code)
     return f
