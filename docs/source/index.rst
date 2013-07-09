@@ -99,6 +99,7 @@ Jump to detailed `API Documentation <api.html>`__
    features
    lbp
    surf
+   surfref
    classification
    morphology
    io
