@@ -57,3 +57,22 @@ def test_lbp_transform():
     transformed = lbp_transform(im, 8, 4, preserve_shape=False, ignore_zeros=True)
     assert len(transformed.shape) == 1
     assert transformed.size == (im.size - (im==0).sum())
+
+
+def test_count_binary1s():
+    from mahotas.features.lbp import count_binary1s
+    assert np.all(count_binary1s(np.zeros((23,23), np.uint8)) == np.zeros((23,23)))
+
+    np.random.seed(3499)
+    arr = np.random.randint(45,size=(23,23))
+    c = count_binary1s(arr)
+    assert np.all((c == 0) == (arr == 0))
+    assert c.shape == arr.shape
+    assert np.all(c[arr == 5] == 2)
+    assert np.all(c[arr == 7] == 3)
+    assert np.all(c[arr == 8] == 1)
+    assert np.all(c[arr == 32] == 1)
+
+    assert np.all(count_binary1s([128]) == [1])
+
+test_count_binary1s()

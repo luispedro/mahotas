@@ -4,6 +4,7 @@ Version 1.0+
 	* Add mahotas.demos.nuclear_image() function
 	* Work around matplotlib.imsave's implementation of greyscale
 	* Fix Haralick bug (report & patch by Tony S Yu)
+	* Add count_binary1s() function
 
 Version 1.0 2013-05-21 by luispedro
 	* Fix tests in Python 3

@@ -78,6 +78,36 @@ def lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=True
         codes = codes.reshape(image.shape)
     return codes
 
+def count_binary1s(array):
+    '''
+    one_count = count_binary1s(array)
+
+    Count the number of 1s in the binary representation of integer values
+
+    Definition::
+
+        one_count.flat[i] == nr_of_1s_in_binary_representation_of(array.flat[i])
+
+    Parameters
+    ----------
+    array : ndarray
+        input array
+
+    Returns
+    -------
+    one_count : ndarray
+        output array of same type & shape as array
+    '''
+    from ..internal import _verify_is_integer_type
+    array = np.array(array)
+    _verify_is_integer_type(array, 'mahotas.features.lbp.count_binary1s')
+    maxv = 1+int(np.log2(1+array.max()))
+    counts = np.zeros_like(array)
+    for _ in range(maxv):
+        counts += (array & 1)
+        array >>= 1
+    return counts
+
 
 def lbp(image, radius, points, ignore_zeros=False):
     '''
