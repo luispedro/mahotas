@@ -2,6 +2,15 @@
 History
 =======
 
+1.0.1 (July 9 2013)
+~~~~~~~~~~~~~~~~~~~
+- Add lbp_transform() function
+- Add rgb2sepia function
+- Add mahotas.demos.nuclear_image() function
+- Work around matplotlib.imsave's implementation of greyscale
+- Fix Haralick bug (report & patch by Tony S Yu)
+- Add count_binary1s() function
+
 1.0 (May 21 2013)
 ~~~~~~~~~~~~~~~~~
 - Fix a few corner cases in texture analysis

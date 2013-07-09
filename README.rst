@@ -170,6 +170,15 @@ You can use it for mahotas or general computer vision in Python questions.
 Recent Changes
 --------------
 
+1.0.1 (July 9 2013)
+~~~~~~~~~~~~~~~~~~~
+- Add lbp_transform() function
+- Add rgb2sepia function
+- Add mahotas.demos.nuclear_image() function
+- Work around matplotlib.imsave's implementation of greyscale
+- Fix Haralick bug (report & patch by Tony S Yu)
+- Add count_binary1s() function
+
 1.0 (May 21 2013)
 ~~~~~~~~~~~~~~~~~
 - Make matplotlib a soft dependency
@@ -211,73 +220,6 @@ This version is **1.0 beta**.
 - Allow ``loc(max|min)`` to take floating point inputs
 - Add Bernsen local thresholding (``bernsen`` and ``gbernsen`` functions)
 
-0.9.6 (December 02 2012)
-~~~~~~~~~~~~~~~~~~~~~~~~
-- Fix ``distance()`` of non-boolean images (issue #24 on github)
-- Fix encoding issue on PY3 on Mac OS (issue #25 on github)
-- Add ``relabel()`` function
-- Add ``remove_regions()`` function in labeled module
-- Fix ``median_filter()`` on the borders (respect the ``mode`` argument)
-- Add ``mahotas.color`` module for conversion between colour spaces
-- Add SLIC Superpixels
-- Many improvements to the documentation
-
-0.9.5 (November 05 2012)
-~~~~~~~~~~~~~~~~~~~~~~~~
-- Fix compilation in older G++
-- Faster Otsu thresholding
-- Python 3 support without 2to3
-- Add ``cdilate`` function
-- Add ``subm`` function
-- Add tophat transforms (functions ``tophat_close`` and ``tophat_open``)
-- Add ``mode`` argument to euler() (patch by Karol M. Langner)
-- Add ``mode`` argument to bwperim() & borders() (patch by Karol M. Langner)
-
-
-0.9.4 (October 10 2012)
-~~~~~~~~~~~~~~~~~~~~~~~
-- Fix compilation on 32-bit machines (Patch by Christoph Gohlke)
-
-0.9.3 (October 9 2012)
-~~~~~~~~~~~~~~~~~~~~~~
-- Fix interpolation (Report by Christoph Gohlke)
-- Fix second interpolation bug (Report and patch by Christoph Gohlke)
-- Update tests to newer numpy
-- Enhanced debug mode (compile with DEBUG=2 in environment)
-- Faster morph.dilate()
-- Add labeled.labeled_max & labeled.labeled_min (This also led to a refactoring
-  of the labeled_* code)
-- Many documentation fixes
-
-
-0.9.2 (September 1 2012)
-~~~~~~~~~~~~~~~~~~~~~~~~
-- Fix compilation on Mac OS X 10.8 (reported by Davide Cittaro)
-- Freeimage fixes on Windows by Christoph Gohlke
-- Slightly faster _filter implementaiton
-
-
-0.9.1 (August 28 2012)
-~~~~~~~~~~~~~~~~~~~~~~
-
-- Python 3 support (you need to use ``2to3``)
-- Haar wavelets (forward and inverse transform)
-- Daubechies wavelets (forward and inverse transform)
-- Corner case fix in Otsu thresholding
-- Add soft_threshold function
-- Have polygon.convexhull return an ndarray (instead of a list)
-- Memory usage improvements in regmin/regmax/close_holes (first reported
-  as issue #9 by thanasi)
-
-
-0.9 (July 16 2012)
-~~~~~~~~~~~~~~~~~~
-- Auto-convert integer to double on gaussian_filter (previously, integer
-  values would result in zero-valued outputs).
-- Check for integer types in (reg|loc)(max|min)
-- Use name `out` instead of `output` for output arguments. This matches
-  Numpy better
-- Switched to MIT License
 
 See the ``ChangeLog`` for older version.
 

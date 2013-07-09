@@ -1,4 +1,4 @@
-Version 1.0+
+Version 1.0.1 2013-07-09 by luispedro
 	* Add lbp_transform() function
 	* Add rgb2sepia function
 	* Add mahotas.demos.nuclear_image() function
