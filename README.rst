@@ -31,8 +31,8 @@ deprecated and will be removed after a few years, but in the meanwhile, you
 only get a warning). In a few unfortunate cases, there was a bug in the old
 code and your results will change for the better.
 
-There is a `manuscript about mahotas <http://arxiv.org/abs/1211.4907>`__, which
-will hopefully evolve into a journal publication later.
+Please cite the mahotas paper (see details below under *Citation*) if you use
+it in a publication.
 
 Examples
 --------
