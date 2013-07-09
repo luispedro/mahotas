@@ -127,12 +127,35 @@ debug compile. You can set it to the value ``2`` to get extra checks::
 Be careful not to use this in production unless you are chasing a bug. The
 debug modes are pretty slow as they add many runtime checks.
 
+
 Travis Build Status
 ~~~~~~~~~~~~~~~~~~~
 
 .. image:: https://travis-ci.org/luispedro/mahotas.png
        :target: https://travis-ci.org/luispedro/mahotas
 
+Citation
+--------
+
+If you use mahotas on a published publication, please cite:
+
+    **Luis Pedro Coelho** Mahotas: Open source software for scriptable computer
+    vision in Journal of Open Research Software, 2013 (in press).
+
+
+In Bibtex format::
+
+    @article{mahotas,
+        author = {Luis Pedro Coelho},
+        title = {Mahotas: Open source software for scriptable computer vision},
+        journal = {Journal of Open Research Software},
+        year = {2013},
+        note = {in press},
+        volume = {1}
+    }
+
+
+You can access this information using the ``mahotas.citation()`` function.
 
 Contacts
 --------
