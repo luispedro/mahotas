@@ -2,6 +2,10 @@
 History
 =======
 
+1.0.2 (July 10 2013)
+~~~~~~~~~~~~~~~~~~~~
+- Fix requirements filename
+
 1.0.1 (July 9 2013)
 ~~~~~~~~~~~~~~~~~~~
 - Add lbp_transform() function
