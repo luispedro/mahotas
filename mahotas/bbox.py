@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2011, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2013, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # License: MIT (see COPYING file)
@@ -8,7 +8,7 @@ from __future__ import division
 from . import _bbox
 import numpy as np
 
-def bbox(img):
+def bbox(img, border=None):
     """
     min1,max1,min2,max2 = bbox(img)
 
@@ -27,7 +27,15 @@ def bbox(img):
     """
     if not img.shape:
         return np.array([], dtype=np.intp)
-    return _bbox.bbox(img)
+    r = _bbox.bbox(img)
+    if border:
+        min1,max1,min2,max2 = r
+        min1 = max(0, min1-border)
+        min2 = max(0, min2-border)
+        max1 += border
+        max2 += border
+        return min1,max1,min2,max2
+    return r
 
 def croptobbox(img, border=None):
     """
@@ -55,11 +63,6 @@ def croptobbox(img, border=None):
 
     This ensures that the result is always a sub-image of the input.
     """
-    min1,max1,min2,max2 = bbox(img)
-    if border:
-        min1 = max(0, min1-border)
-        min2 = max(0, min2-border)
-        max1 += border
-        max2 += border
+    min1,max1,min2,max2 = bbox(img, border=border)
     return img[min1:max1,min2:max2]
 

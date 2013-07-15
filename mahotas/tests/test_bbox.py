@@ -65,3 +65,14 @@ def test_bbox():
     assert a1 == 2
     assert b1 == 9
 
+    c0,d0,c1,d1=bbox(img, 0)
+    assert c0 == a0
+    assert b0 == d0
+    assert c1 == a1
+    assert b1 == d1
+
+    c0,d0,c1,d1=bbox(img, 1)
+    assert c0 != a0
+    assert b0 != d0
+    assert c1 != a1
+    assert b1 != d1
