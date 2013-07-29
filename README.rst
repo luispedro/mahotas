@@ -150,7 +150,8 @@ In Bibtex format::
         title = {Mahotas: Open source software for scriptable computer vision},
         journal = {Journal of Open Research Software},
         year = {2013},
-        note = {in press},
+        doi = {http://dx.doi.org/10.5334/jors.ac},
+        month = {July},
         volume = {1}
     }
 
