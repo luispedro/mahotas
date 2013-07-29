@@ -113,6 +113,31 @@ mode*::
 
     python -c "import mahotas; mahotas.test(verbose=True)"
 
+Citation
+--------
+
+If you use mahotas on a published publication, please cite:
+
+    **Luis Pedro Coelho** Mahotas: Open source software for scriptable computer
+    vision in Journal of Open Research Software, vol 1, 2013. [`DOI
+    <http://dx.doi.org/10.5334/jors.ac>`__]
+
+
+In Bibtex format::
+
+    @article{mahotas,
+        author = {Luis Pedro Coelho},
+        title = {Mahotas: Open source software for scriptable computer vision},
+        journal = {Journal of Open Research Software},
+        year = {2013},
+        doi = {http://dx.doi.org/10.5334/jors.ac},
+        month = {July},
+        volume = {1}
+    }
+
+
+You can access this information using the ``mahotas.citation()`` function.
+
 Development
 -----------
 
@@ -134,29 +159,6 @@ Travis Build Status
 .. image:: https://travis-ci.org/luispedro/mahotas.png
        :target: https://travis-ci.org/luispedro/mahotas
 
-Citation
---------
-
-If you use mahotas on a published publication, please cite:
-
-    **Luis Pedro Coelho** Mahotas: Open source software for scriptable computer
-    vision in Journal of Open Research Software, 2013 (in press).
-
-
-In Bibtex format::
-
-    @article{mahotas,
-        author = {Luis Pedro Coelho},
-        title = {Mahotas: Open source software for scriptable computer vision},
-        journal = {Journal of Open Research Software},
-        year = {2013},
-        doi = {http://dx.doi.org/10.5334/jors.ac},
-        month = {July},
-        volume = {1}
-    }
-
-
-You can access this information using the ``mahotas.citation()`` function.
 
 Contacts
 --------
