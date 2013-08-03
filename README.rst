@@ -31,7 +31,7 @@ deprecated and will be removed after a few years, but in the meanwhile, you
 only get a warning). In a few unfortunate cases, there was a bug in the old
 code and your results will change for the better.
 
-Please cite the mahotas paper (see details below under *Citation*) if you use
+Please cite the mahotas paper (see details below under Citation_) if you use
 it in a publication.
 
 Examples
@@ -115,6 +115,8 @@ mode*::
 
 Citation
 --------
+
+.. _Citation:
 
 If you use mahotas on a published publication, please cite:
 
