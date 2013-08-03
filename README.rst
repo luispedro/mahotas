@@ -44,13 +44,12 @@ threshold).
 ::
 
     import numpy as np
-    from scipy import ndimage
     import mahotas
     import pylab
 
     img = mahotas.imread('test.jpeg')
     T_otsu = mahotas.thresholding.otsu(img)
-    seeds,_ = ndimage.label(img > T_otsu)
+    seeds,_ = mahotas.label(img > T_otsu)
     labeled = mahotas.cwatershed(img.max() - img, seeds)
 
 Here is a very simple example of using ``mahotas.distance`` (which computes a
@@ -239,7 +238,8 @@ See the ``ChangeLog`` for older version.
 
 *Mailing List*: Use the `pythonvision mailing list
 <http://groups.google.com/group/pythonvision?pli=1>`_ for questions, bug
-submissions, etc.
+submissions, etc. Or ask on `stackoverflow (tag mahotas)
+<http://stackoverflow.com/questions/tagged/mahotas>`__
 
 *Author*: Luis Pedro Coelho (with code by Zachary Pincus [from scikits.image],
 Peter J. Verveer [from scipy.ndimage], and Davis King [from dlib])
