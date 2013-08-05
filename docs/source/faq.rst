@@ -37,7 +37,7 @@ If you use mahotas in a scientific publication, please cite:
 
     Coelho, L.P. 2013. Mahotas: Open source software for scriptable computer
     vision. Journal of Open Research Software 1(1), DOI:
-    http://dx.doi.org/10.5334/4
+    http://dx.doi.org/10.5334/jors.ac
 
 In BibTeX format::
 
