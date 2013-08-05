@@ -28,11 +28,28 @@ it easy to mix-and-match.
 What are the parameters to Local Binary Patterns?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Checkout the documentation on `local binary patterns <lbp.html>`__.
+Read the documentation on `local binary patterns <lbp.html>`__.
 
 I am using mahotas in a scientific publication, is there a citation?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There is a manuscript about mahotas under review. In the meanwhile, only a
-pre-print is available at the `arXiv <http://arxiv.org/abs/1211.4907>`__. You
-can cite the preprint.
+If you use mahotas in a scientific publication, please cite:
+
+    Coelho, L.P. 2013. Mahotas: Open source software for scriptable computer
+    vision. Journal of Open Research Software 1(1), DOI:
+    http://dx.doi.org/10.5334/4
+
+In BibTeX format::
+
+    @article{coelho:mahotas,
+        title = {Mahotas: Open source software for scriptable computer vision},
+        author = {Luis Pedro Coelho},
+        journal = {Journal of Open Research Software},
+        year = {2013},
+        volume = {1},
+        doi = {10.5334/jors.ac},
+        url = {http://dx.doi.org/10.5334/jors.ac}
+    }
+
+This is accessible in Python using ``mahotas.citation()``.
+
