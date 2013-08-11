@@ -236,3 +236,7 @@ def test_convolve1d():
             assert np.all(fw == f0w)
             assert np.all(fww == f1w)
 
+@raises(ValueError)
+def test_gaussian_small_sigma():
+    im =  np.arange(128*4).reshape((16,-1))
+    mh.gaussian_filter(im, .01)

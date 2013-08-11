@@ -271,6 +271,8 @@ def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., o
     # make the length of the filter equal to 4 times the standard
     # deviations:
     lw = int(4.0 * sigma + 0.5)
+    if lw <= 0:
+        raise ValueError('mahotas.gaussian_filter1d: sigma must be greater or equal to 0.125 [1/8]')
     x = np.arange(2*lw+1, dtype=float)
     x -= lw
     weights = np.exp(x*x/(-2.*s2))
