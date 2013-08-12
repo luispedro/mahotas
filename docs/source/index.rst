@@ -30,14 +30,11 @@ deprecated and will be removed after a few years, but in the meanwhile, you
 only get a warning). In a few unfortunate cases, there was a bug in the old
 code and your results will change for the better.
 
-There is a `manuscript about mahotas <http://arxiv.org/abs/1211.4907>`__, which
-is forthcoming in the `Journal of Open Research Software
-<http://openresearchsoftware.metajnl.com/>`__. Full citation (for the time
-being) is:
+If you are using mahotas in a scientific publication, please cite:
 
-    Mahotas: Open source software for scriptable computer vision by Luis Pedro
-    Coelho in Journal of Open Research Software (forthcoming).
-
+    Coelho, L.P. 2013. Mahotas: Open source software for scriptable computer
+    vision. Journal of Open Research Software 1(1):e3, DOI:
+    http://dx.doi.org/10.5334/jors.ac
 
 Examples
 --------
