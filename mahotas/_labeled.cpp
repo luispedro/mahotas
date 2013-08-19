@@ -518,10 +518,10 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
         std::fill(distance.begin(), distance.end(), inf);
         for (unsigned ci = 0; ci < centroids.size(); ++ci) {
             const centroid_info& c = centroids[ci];
-            const int start_y = std::max<float>(0.0, c.y - 2*S);
-            const int start_x = std::max<float>(0.0, c.x - 2*S);
-            const int end_y = std::min<float>(Ny, c.y + 2*S);
-            const int end_x = std::min<float>(Nx, c.x + 2*S);
+            const int start_y = int(std::max<float>(0.0, c.y - 2*S));
+            const int start_x = int(std::max<float>(0.0, c.x - 2*S));
+            const int end_y = int(std::min<float>(Ny, c.y + 2*S));
+            const int end_x = int(std::min<float>(Nx, c.x + 2*S));
             assert(start_y < end_y);
             assert(start_x < end_x);
             for (int y = start_y; y != end_y; ++y) {
@@ -630,7 +630,7 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
     }
 
     // Above, we work with labels in 0...[N-1]
-    for (unsigned pos = 0; pos != N; ++pos) ++labels[pos];
+    for (int pos = 0; pos != N; ++pos) ++labels[pos];
     return centroids.size();
 }
 

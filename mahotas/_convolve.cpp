@@ -49,7 +49,7 @@ void convolve1d(const numpy::aligned_array<T> array, const numpy::aligned_array<
                 assert(val == array.at(y, x - centre + j));
                 cur += val * fdata[j];
             }
-            *out++ = T(cur);
+            *out++ = T(cur); // consider T(std::round(cur)) as well
         }
     }
 
@@ -67,7 +67,7 @@ void convolve1d(const numpy::aligned_array<T> array, const numpy::aligned_array<
                 const double val = (offsets[j] == border_flag_value ? 0 : base0[offsets[j] * step]);
                 cur += val * fdata[j];
             }
-            *result.data(y,x) = cur;
+            *result.data(y,x) = T(cur); // as above T(std::round(cur)) could be better
         }
     }
 }
@@ -99,7 +99,7 @@ void convolve(const numpy::aligned_array<T> array, const numpy::aligned_array<T>
                 cur += double(val)*fiter[j];
             }
         }
-        *out = T(cur);
+        *out = T(cur); // again, possibly T(std::round(cur))
     }
 }
 
