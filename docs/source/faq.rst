@@ -53,3 +53,18 @@ In BibTeX format::
 
 This is accessible in Python using ``mahotas.citation()``.
 
+Imread cannot find FreeImage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Mahotas itself does not have the functionality to read in images. ``imread`` is
+just a wrapper around one of 3 backends:
+
+1. mahotas-imread (i.e., https://pypi.python.org/pypi/imread)
+2. FreeImage
+3. matplotlib (which only supports PNG & JPEG)
+
+Thus, you need to install one of the packages above.
+
+If you are running on Windows, you may wish to try `Christoph Gohlke's packages
+<http://www.lfd.uci.edu/~gohlke/pythonlibs/#mahotas>`__.
+
