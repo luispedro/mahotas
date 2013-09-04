@@ -164,7 +164,8 @@ Travis Build Status
 Contacts
 --------
 
-For bug reports and fixes, feel free to use my email: luis@luispedro.org
+For bug reports and fixes use the `github issue tracker
+<https://github.com/luispedro/mahotas/issues>`__.
 
 For more general discussion of computer vision in Python, the `pythonvision
 mailing list <http://groups.google.com/group/pythonvision?pli=1>`__ is a much
@@ -235,6 +236,8 @@ See the ``ChangeLog`` for older version.
 <http://luispedro.org/software/mahotas>`_
 
 *API Docs*: `http://mahotas.readthedocs.org/ <http://mahotas.readthedocs.org/>`__
+
+*Issue Tracker*: `github mahotas issues <https://github.com/luispedro/mahotas/issues>`__
 
 *Mailing List*: Use the `pythonvision mailing list
 <http://groups.google.com/group/pythonvision?pli=1>`_ for questions, bug
