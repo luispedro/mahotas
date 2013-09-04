@@ -97,9 +97,10 @@ Jump to detailed `API Documentation <api.html>`__
    lbp
    surf
    surfref
-   classification
    morphology
    io
+   classification
+   edf
    faq
    internals
    principles
