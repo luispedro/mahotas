@@ -7,11 +7,11 @@ few other libraries that do. The result is that you can do::
 
     import mahotas as mh
     image = mh.imread('file.png')
-    mh.imwrite('copy.png', image)
+    mh.imsave('copy.png', image)
 
 It can use the following backends (it tries them in the following order):
 
-1.  It prefers `imread <https://github.com/luispedro/imread>`__, if it is
+1.  It prefers `mahotas-imread <https://github.com/luispedro/imread>`__, if it is
     available. Imread is a native C++ library which reads images into Numpy
     arrays. It supports PNG, JPEG, TIFF, WEBP, BMP, and a few TIFF-based
     microscopy formats (LSM and STK).
@@ -24,3 +24,8 @@ It can use the following backends (it tries them in the following order):
     <http://matplotlib.org/>`__, which has builtin PNG support and wraps PIL
     for other formats.
 
+Thus, to use the ``imread`` or ``imsave`` functions, you need to install one of
+the packages above.
+
+If you are running on Windows, you may wish to try `Christoph Gohlke's packages
+<http://www.lfd.uci.edu/~gohlke/pythonlibs/#mahotas>`__.

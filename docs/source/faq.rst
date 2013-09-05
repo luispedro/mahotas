@@ -56,8 +56,10 @@ This is accessible in Python using ``mahotas.citation()``.
 Imread cannot find FreeImage
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Mahotas itself does not have the functionality to read in images. ``imread`` is
-just a wrapper around one of 3 backends:
+Mahotas itself does not have the functionality to read in images (see the `I/O
+section <io.html>`__.
+
+Functions such as ``imread`` are just a wrapper around one of 3 backends:
 
 1. mahotas-imread (i.e., https://pypi.python.org/pypi/imread)
 2. FreeImage
