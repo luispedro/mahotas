@@ -1,6 +1,6 @@
-============================
-Classification Using Mahotas
-============================
+======================================
+Tutorial: Classification Using Mahotas
+======================================
 .. versionadded:: 0.8
     Before version 0.8, texture was under mahotas, not under mahotas.features
 
