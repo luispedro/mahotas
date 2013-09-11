@@ -29,7 +29,7 @@ extensions = [
 # ---------------------
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['.templates']
+templates_path = ['_templates']
 
 # The suffix of source filenames.
 source_suffix = '.rst'
@@ -127,7 +127,9 @@ html_static_path = ['.static']
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = {}
+html_sidebars = {
+    '*': ['searchbox.html', 'sidebar.html'],
+}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
