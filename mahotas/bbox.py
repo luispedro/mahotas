@@ -8,9 +8,9 @@ from __future__ import division
 from . import _bbox
 import numpy as np
 
-def bbox(img, border=None):
+def bbox(img, border=None, as_slice=False):
     """
-    min1,max1,min2,max2 = bbox(img)
+    min1,max1,min2,max2 = bbox(img, border={0}, as_slice={False})
 
     Calculate the bounding box of image img.
 
@@ -34,7 +34,9 @@ def bbox(img, border=None):
         min2 = max(0, min2-border)
         max1 += border
         max2 += border
-        return min1,max1,min2,max2
+        r = min1,max1,min2,max2
+    if as_slice:
+        return (slice(r[0],r[1]),slice(r[2],r[3]))
     return r
 
 def croptobbox(img, border=None):

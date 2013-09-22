@@ -76,3 +76,11 @@ def test_bbox():
     assert b0 != d0
     assert c1 != a1
     assert b1 != d1
+
+def test_as_slice():
+    YXZ = np.indices((32,32,64), float)
+    YXZ -= 8
+    Y,X,Z = YXZ
+    ball = ((X**2+Y**2+Z**2) < 64).astype(np.uint8)
+    s = bbox(ball, as_slice=True)
+    assert ball[s].sum() == ball.sum()
