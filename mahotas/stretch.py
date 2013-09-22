@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2009-2013, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -79,9 +79,12 @@ def as_rgb(r, g, b):
     '''
     rgb = as_rgb(r, g, b)
 
-    Returns an RGB image
+    Returns an RGB image with ``r`` in the red channel, ``g`` in the green, and
+    ``b`` in the blue. The channels are contrast stretched.
 
-    If any of the channels is `None`, that channel is set to zero.
+    If any of the channels is `None`, that channel is set to zero. The same can
+    be achieved by passing ``0`` as that channels value. In fact, passing a
+    number as a channel value will set the whole channel to that value.
 
     Example
     -------
@@ -102,7 +105,7 @@ def as_rgb(r, g, b):
 
     Parameters
     ----------
-    r,g,b : array-like, optional
+    r,g,b : array-like or int, optional
         The channels can be of any type or None.
         At least one must be not None and all must have the same shape.
 
@@ -113,16 +116,22 @@ def as_rgb(r, g, b):
     '''
     for c in (r,g,b):
         if c is not None:
+            c = np.array(c)
             shape = c.shape
-            break
+            if shape != ():
+                break
     else:
         raise ValueError('mahotas.as_rgb: Not all arguments can be None')
     def s(c):
         if c is None:
             return np.zeros(shape, np.uint8)
-        if c.shape != shape:
+        c = np.asanyarray(c)
+        if c.shape == ():
+            c = np.tile(c, shape)
+            return c
+        elif c.shape != shape:
             sh = lambda c : (c.shape if c is not None else ' . ')
             raise ValueError('mahotas.as_rgb: Not all arguments have the same shape. Shapes were : %s' % [sh(r), sh(g), sh(b)])
-        return stretch(np.asanyarray(c))
+        return stretch(c)
     return np.dstack([s(r), s(g), s(b)])
 
