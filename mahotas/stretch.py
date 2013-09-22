@@ -128,7 +128,7 @@ def as_rgb(r, g, b):
         c = np.asanyarray(c)
         if c.shape == ():
             c = np.tile(c, shape)
-            return c
+            return c.astype(np.uint8)
         elif c.shape != shape:
             sh = lambda c : (c.shape if c is not None else ' . ')
             raise ValueError('mahotas.as_rgb: Not all arguments have the same shape. Shapes were : %s' % [sh(r), sh(g), sh(b)])

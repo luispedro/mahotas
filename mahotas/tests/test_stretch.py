@@ -52,6 +52,7 @@ def test_as_rgb_shape_mismatch():
 
 def test_as_rgb_integer():
     int_rgb = mh.as_rgb(1,2,np.zeros((8,6)))
+    assert int_rgb.dtype == np.uint8
     assert int_rgb.shape == (8,6,3)
     assert np.all( int_rgb[0,0] == (1,2,0) )
     assert np.all( int_rgb[-1,3] == (1,2,0) )
