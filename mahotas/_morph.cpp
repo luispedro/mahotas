@@ -669,28 +669,15 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
 
 
 double compute_euc2_dist(const numpy:: position& a, const numpy::position b) {
+    assert(a.ndim() == b.ndim());
     double r = 0.;
-    for (int i = 0; i != b.ndim(); ++i) {
+    const int n = a.ndim();
+    for (int i = 0; i != n; ++i) {
         r += (a[i]-b[i])*(a[i]-b[i]);
     }
     return r;
 }
 
-struct dist_marker {
-    dist_marker(const numpy::position cur, const numpy::position orig)
-        :cur_(cur)
-        ,orig_(orig)
-        ,dist_(compute_euc2_dist(cur, orig))
-        { }
-    const numpy::position position() const { return cur_; }
-    const numpy::position origin() const { return orig_; }
-    double distance() const { return dist_; }
-    numpy::position cur_;
-    numpy::position orig_;
-    double dist_;
-};
-
-bool operator < (const dist_marker& a, const dist_marker& b) { return a.dist_ < b.dist_; }
 
 template<typename BaseType>
 void distance_multi(numpy::aligned_array<BaseType> res,
@@ -705,7 +692,9 @@ void distance_multi(numpy::aligned_array<BaseType> res,
     typename numpy::aligned_array<bool>::const_iterator aiter = array.begin();
     typename numpy::aligned_array<BaseType>::iterator riter = res.begin();
 
-    std::priority_queue<dist_marker> q;
+    numpy::position_queue cur_q(res.ndim());
+    numpy::position_queue orig_q(res.ndim());
+    std::queue<double> dist_q;
     for (int i = 0; i != N; ++i, ++riter, ++aiter) {
         if (*aiter) {
             *riter = 0;
@@ -713,24 +702,33 @@ void distance_multi(numpy::aligned_array<BaseType> res,
             for (int j = 0; j != N2; ++j) {
                 const numpy::position next = p + Bcs[j];
                 if (array.validposition(next) && !array.at(next)) {
-                    q.push(dist_marker(next, p));
+                    const double dist = compute_euc2_dist(next, p);
+                    assert(dist == compute_euc2_dist(p, next));
+                    cur_q.push(next);
+                    orig_q.push(p);
+                    dist_q.push(dist);
                 }
             }
         }
     }
 
-    while (!q.empty()) {
-        const numpy::position cur = q.top().position();
-        const numpy::position orig = q.top().origin();
-        const BaseType dist = q.top().distance();
-        q.pop();
+    while (!dist_q.empty()) {
+        const numpy::position cur = cur_q.top_pop();
+        const numpy::position orig = orig_q.top_pop();
+        const BaseType dist = dist_q.front();
+        dist_q.pop();
+
+        assert(dist == compute_euc2_dist(cur, orig));
 
         if (res.at(cur) > dist) {
             res.at(cur) = dist;
             for (int j = 0; j != N2; ++j) {
                 const numpy::position next = cur + Bcs[j];
                 if (array.validposition(next) && res.at(next) > dist) {
-                    q.push(dist_marker(next, orig));
+                    const double next_dist = compute_euc2_dist(next, orig);
+                    cur_q.push(next);
+                    orig_q.push(orig);
+                    dist_q.push(next_dist);
                 }
             }
         }

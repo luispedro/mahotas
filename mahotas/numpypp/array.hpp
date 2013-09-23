@@ -150,6 +150,33 @@ struct position_stack : position_vector {
         void push(const position& p) { this->push_back(p); }
 };
 
+struct position_queue : protected position_vector {
+    position_queue(const int s)
+        :position_vector(s)
+        ,next_(0)
+        { }
+
+    void push(const position& p) { this->push_back(p); }
+    unsigned size() const { return this->position_vector::size() - next_; }
+    bool empty() const { return this->size()  == 0; }
+
+    position top() const { return (*this)[next_]; }
+    void pop() {
+        ++next_;
+        if (next_ == 8) {
+            store_.erase(store_.begin(), store_.begin() + next_ * size_);
+            next_ = 0;
+        }
+    }
+    position top_pop() {
+        position p = this->top();
+        this->pop();
+        return p;
+    }
+    protected:
+    unsigned next_;
+};
+
 
 
 template <typename BaseType>
