@@ -163,7 +163,7 @@ struct position_queue : protected position_vector {
     position top() const { return (*this)[next_]; }
     void pop() {
         ++next_;
-        if (next_ == 8) {
+        if (next_ == 512) {
             store_.erase(store_.begin(), store_.begin() + next_ * size_);
             next_ = 0;
         }
