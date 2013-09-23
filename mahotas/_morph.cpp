@@ -679,6 +679,8 @@ double compute_euc2_dist(const numpy:: position& a, const numpy::position b) {
 }
 
 
+// Arguably the function distance_multi should have been in file distance.cpp,
+// but it uses several functions from this module like neighbours().
 template<typename BaseType>
 void distance_multi(numpy::aligned_array<BaseType> res,
                         const numpy::aligned_array<bool> array,
