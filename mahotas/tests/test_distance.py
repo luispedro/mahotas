@@ -38,6 +38,6 @@ def test_uint8():
 
 def test_4d():
     binim = np.random.random((4,8,4,6)) > .5
-    dist = mahotas.distance(binim)
+    dist = distance(binim)
     assert dist.shape == binim.shape
     assert np.all(dist[~binim] == 0)
