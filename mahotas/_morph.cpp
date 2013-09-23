@@ -696,12 +696,12 @@ void distance_multi(numpy::aligned_array<BaseType> res,
     numpy::position_queue orig_q(res.ndim());
     std::queue<double> dist_q;
     for (int i = 0; i != N; ++i, ++riter, ++aiter) {
-        if (*aiter) {
+        if (!*aiter) {
             *riter = 0;
             const numpy::position p = aiter.position();
             for (int j = 0; j != N2; ++j) {
                 const numpy::position next = p + Bcs[j];
-                if (array.validposition(next) && !array.at(next)) {
+                if (array.validposition(next) && array.at(next)) {
                     const double dist = compute_euc2_dist(next, p);
                     assert(dist == compute_euc2_dist(p, next));
                     cur_q.push(next);
@@ -749,7 +749,7 @@ PyObject* py_distance_multi(PyObject* self, PyObject* args) {
         !numpy::check_type<bool>(Bc) ||
         !numpy::same_shape(array, res)
         ) {
-        PyErr_SetString(PyExc_RuntimeError, "mahotas._distance_multi: markers and f should have equivalent types.");
+        PyErr_SetString(PyExc_RuntimeError, "mahotas._distance_multi: res and input array should have same shape. input & Bc arrays maust be boolean arrays.");
         return NULL;
     }
 #define HANDLE(type) \
