@@ -722,8 +722,9 @@ void distance_multi(numpy::aligned_array<BaseType> res,
 
         assert(dist == compute_euc2_dist(cur, orig));
 
-        if (res.at(cur) > dist) {
-            res.at(cur) = dist;
+        BaseType* rpos = res.data(cur);
+        if (*rpos > dist) {
+            *rpos = dist;
             for (int j = 0; j != N2; ++j) {
                 const numpy::position next = cur + Bcs[j];
                 if (array.validposition(next)) {
