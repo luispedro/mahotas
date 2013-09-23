@@ -667,6 +667,102 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
     return PyArray_Return(res_a);
 }
 
+
+double compute_euc2_dist(const numpy:: position& a, const numpy::position b) {
+    double r = 0.;
+    for (int i = 0; i != b.ndim(); ++i) {
+        r += (a[i]-b[i])*(a[i]-b[i]);
+    }
+    return r;
+}
+
+struct dist_marker {
+    dist_marker(const numpy::position cur, const numpy::position orig)
+        :cur_(cur)
+        ,orig_(orig)
+        ,dist_(compute_euc2_dist(cur, orig))
+        { }
+    const numpy::position position() const { return cur_; }
+    const numpy::position origin() const { return orig_; }
+    double distance() const { return dist_; }
+    numpy::position cur_;
+    numpy::position orig_;
+    double dist_;
+};
+
+bool operator < (const dist_marker& a, const dist_marker& b) { return a.dist_ < b.dist_; }
+
+template<typename BaseType>
+void distance_multi(numpy::aligned_array<BaseType> res,
+                        const numpy::aligned_array<bool> array,
+                        const numpy::aligned_array<bool> Bc) {
+    gil_release nogil;
+    const int N = res.size();
+    const std::vector<numpy::position> Bcs = neighbours(Bc);
+    const int N2 = Bcs.size();
+
+    std::vector<NeighbourElem> neighbours;
+    typename numpy::aligned_array<bool>::const_iterator aiter = array.begin();
+    typename numpy::aligned_array<BaseType>::iterator riter = res.begin();
+
+    std::priority_queue<dist_marker> q;
+    for (int i = 0; i != N; ++i, ++riter, ++aiter) {
+        if (*aiter) {
+            *riter = 0;
+            const numpy::position p = aiter.position();
+            for (int j = 0; j != N2; ++j) {
+                const numpy::position next = p + Bcs[j];
+                if (array.validposition(next) && !array.at(next)) {
+                    q.push(dist_marker(next, p));
+                }
+            }
+        }
+    }
+
+    while (!q.empty()) {
+        const numpy::position cur = q.top().position();
+        const numpy::position orig = q.top().origin();
+        const BaseType dist = q.top().distance();
+        q.pop();
+
+        if (res.at(cur) > dist) {
+            res.at(cur) = dist;
+            for (int j = 0; j != N2; ++j) {
+                const numpy::position next = cur + Bcs[j];
+                if (array.validposition(next) && res.at(next) > dist) {
+                    q.push(dist_marker(next, orig));
+                }
+            }
+        }
+    }
+}
+
+PyObject* py_distance_multi(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* res;
+    PyArrayObject* Bc;
+    if (!PyArg_ParseTuple(args,"OOO", &res, &array, &Bc)) {
+        return NULL;
+    }
+    if (!numpy::are_arrays(array, res, Bc) ||
+        !numpy::check_type<bool>(array) ||
+        !numpy::check_type<bool>(Bc) ||
+        !numpy::same_shape(array, res)
+        ) {
+        PyErr_SetString(PyExc_RuntimeError, "mahotas._distance_multi: markers and f should have equivalent types.");
+        return NULL;
+    }
+#define HANDLE(type) \
+    distance_multi<type>(numpy::aligned_array<type>(res), \
+                        numpy::aligned_array<bool>(array),\
+                        numpy::aligned_array<bool>(Bc));
+
+    SAFE_SWITCH_ON_TYPES_OF(res);
+#undef HANDLE
+
+    Py_RETURN_NONE;
+}
+
 struct HitMissNeighbour {
     HitMissNeighbour(int delta, int value)
         :delta(delta)
@@ -796,12 +892,16 @@ PyObject* py_majority_filter(PyObject* self, PyObject* args) {
     return PyArray_Return(res_a);
 }
 
+
+
+
 PyMethodDef methods[] = {
   {"subm",(PyCFunction)py_subm, METH_VARARGS, NULL},
   {"dilate",(PyCFunction)py_dilate, METH_VARARGS, NULL},
   {"erode",(PyCFunction)py_erode, METH_VARARGS, NULL},
   {"close_holes",(PyCFunction)py_close_holes, METH_VARARGS, NULL},
   {"cwatershed",(PyCFunction)py_cwatershed, METH_VARARGS, NULL},
+  {"distance_multi",(PyCFunction)py_distance_multi, METH_VARARGS, NULL},
   {"locmin_max",(PyCFunction)py_locminmax, METH_VARARGS, NULL},
   {"regmin_max",(PyCFunction)py_regminmax, METH_VARARGS, NULL},
   {"hitmiss",(PyCFunction)py_hitmiss, METH_VARARGS, NULL},

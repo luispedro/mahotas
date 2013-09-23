@@ -186,3 +186,14 @@ def test_circle_se():
     def circle_1():
         circle_se(-1)
     circle_1()
+
+def test_distance_multi():
+    import mahotas._morph
+    np.random.seed(20)
+    binim = np.random.random((12,18)) > .9
+    f = (binim * 0 + 26 *27).astype(float)
+    Bc = np.ones((3,3), bool)
+    mahotas._morph.distance_multi(f, binim, Bc)
+    f2 = mahotas.distance(~binim)
+    assert np.all(f == f2)
+
