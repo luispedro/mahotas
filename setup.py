@@ -50,6 +50,7 @@ if os.environ.get('DEBUG'):
         define_macros = [('_GLIBCXX_DEBUG','1')]
 
 define_macros.append(('NPY_NO_DEPRECATED_API','NPY_1_7_API_VERSION'))
+define_macros.append(('PY_ARRAY_UNIQUE_SYMBOL','Mahotas_PyArray_API_Symbol'))
 
 extensions = {
     'mahotas._bbox': ['mahotas/_bbox.cpp'],

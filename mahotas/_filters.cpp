@@ -30,6 +30,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define NO_IMPORT_ARRAY
+
 #include <cassert>
 #include <memory>
 #include "_filters.h"
