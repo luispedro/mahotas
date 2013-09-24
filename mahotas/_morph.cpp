@@ -784,7 +784,6 @@ struct HitMissNeighbour {
 template <typename T>
 void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, const numpy::aligned_array<T>& Bc) {
     gil_release nogil;
-    typedef typename numpy::aligned_array<T>::iterator iterator;
     typedef typename numpy::aligned_array<T>::const_iterator const_iterator;
     const numpy::index_type N = input.size();
     const numpy::index_type N2 = Bc.size();
