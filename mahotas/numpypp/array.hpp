@@ -199,17 +199,18 @@ struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
 #ifdef _GLIBCXX_DEBUG
             base = array;
 #endif
-            int nd = array->nd;
+            assert(PyArray_Check(array));
+            int nd = PyArray_NDIM(array);
             position_.nd_=nd;
-            data_=reinterpret_cast<BaseType*>(array->data);
+            data_ = ndarray_cast<BaseType*>(array);
             std::fill(position_.position_, position_.position_ + nd, 0);
 
             unsigned cummul = 0;
             for (int i = 0; i != position_.nd_; ++i) {
-                dimensions_[i] = array->dimensions[nd-i-1];
-                steps_[i] = array->strides[nd-i-1]/sizeof(BaseType)-cummul;
-                cummul *= array->dimensions[nd-i-1];
-                cummul += steps_[i]*array->dimensions[nd-i-1];
+                dimensions_[i] = PyArray_DIM(array, nd - i - 1);
+                steps_[i] = PyArray_STRIDE(array, nd - i - 1)/sizeof(BaseType)-cummul;
+                cummul *= PyArray_DIM(array, nd - i - 1);
+                cummul += steps_[i]*PyArray_DIM(array, nd - i - 1);
             }
         }
 
@@ -356,7 +357,7 @@ class array_base {
         }
         PyArrayObject* raw_array() const { return array_; }
         void* raw_data() const { return PyArray_DATA(array_); }
-        const npy_intp* raw_dims() const { return array_->dimensions; }
+        const npy_intp* raw_dims() const { return PyArray_DIMS(array_); }
 
         bool validposition(const position& pos) const {
             if (ndims() != pos.nd_) return false;
@@ -613,7 +614,7 @@ aligned_array<BaseType> new_array(int s0, int s1, int s2) {
 template <typename BaseType>
 aligned_array<BaseType> array_like(const array_base<BaseType>& orig) {
     PyArrayObject* array = orig.raw_array();
-    return aligned_array<BaseType>((PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array)));
+    return aligned_array<BaseType>((PyArrayObject*)PyArray_SimpleNew(PyArray_NDIM(array), PyArray_DIMS(array), PyArray_TYPE(array)));
 }
 
 inline

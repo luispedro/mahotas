@@ -49,13 +49,14 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
         return NULL;
     }
     if (labels_obj != Py_None) {
+        PyArrayObject* labels_arr = (PyArrayObject*)(labels_obj);
         if (!PyArray_Check(labels_obj) ||
-            !PyArray_ISCARRAY_RO(labels_obj) ||
-            !numpy::check_type<npy_int32>(labels_obj)) {
+            !PyArray_ISCARRAY_RO(labels_arr) ||
+            !numpy::check_type<npy_int32>(labels_arr)) {
             PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
             return NULL;
         }
-        labels = ndarray_cast<const npy_int32*>(labels_obj);
+        labels = ndarray_cast<const npy_int32*>(labels_arr);
     }
     holdref labels_obj_hr(labels_obj);
     if (labels) {
@@ -75,7 +76,7 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
         std::fill(totals, totals + max_label + 1, 0.0);
     }
     npy_intp dims[1];
-    dims[0] = array->nd * (max_label+1);
+    dims[0] = PyArray_NDIM(array) * (max_label+1);
     PyArrayObject* centers = (PyArrayObject*)PyArray_SimpleNew(1, dims, NPY_DOUBLE);
     if (!centers) return NULL;
     { // DROP THE GIL

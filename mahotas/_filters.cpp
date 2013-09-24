@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2005 Peter J. Verveer
- * Copyright (C) 2010-2012 Luis Pedro Coelho
+ * Copyright (C) 2010-2013 Luis Pedro Coelho
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,11 +44,11 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
 {
     npy_intp coordinates[NPY_MAXDIMS], position[NPY_MAXDIMS];
     npy_intp forigins[NPY_MAXDIMS];
-    const int rank = array->nd;
-    const npy_intp* const ashape = array->dimensions;
+    const int rank = PyArray_NDIM(array);
+    const npy_intp* const ashape = PyArray_DIMS(array);
 
     npy_intp astrides[NPY_MAXDIMS];
-    for (int d = 0; d != rank; ++d) astrides[d] = array->strides[d]/PyArray_ITEMSIZE(array);
+    for (int d = 0; d != rank; ++d) astrides[d] = PyArray_STRIDE(array, d)/PyArray_ITEMSIZE(array);
 
     /* calculate how many sets of offsets must be stored: */
     npy_intp offsets_size = 1;

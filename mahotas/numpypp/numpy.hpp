@@ -56,6 +56,8 @@ template<typename T>
 struct no_ptr { typedef T type; };
 template<typename T>
 struct no_ptr<T*> { typedef T type; };
+template<typename T>
+struct no_ptr<const T*> { typedef T type; };
 
 template<typename T>
 T ndarray_cast(PyArrayObject* a) {

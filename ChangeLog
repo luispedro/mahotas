@@ -3,6 +3,7 @@ Version 1.0.2+
 	* Better error message in gaussian_filter
 	* Allow as_rgb() to take integer arguments
 	* Extend distance() to n-dimensions
+	* Update to newer Numpy APIs (remove direct access to PyArray members)
 
 Version 1.0.2 2013-07-10 by luispedro
 	* Fix requirements filename

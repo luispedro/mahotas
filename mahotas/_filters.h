@@ -126,7 +126,7 @@ struct filter_iterator {
          to the filter offsets when moving into a different region in the
          array: */
     filter_iterator(PyArrayObject* array, PyArrayObject* filter, ExtendMode mode = EXTEND_NEAREST, bool compress=true)
-        :filter_data_(reinterpret_cast<const T* const>(PyArray_DATA(filter)))
+        :filter_data_(numpy::ndarray_cast<T*>(filter))
         ,own_filter_data_(false)
         ,nd_(PyArray_NDIM(array))
     {

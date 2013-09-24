@@ -490,11 +490,14 @@ PyObject* py_close_holes(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args,"OO", &ref, &Bc)) return NULL;
     if (!numpy::are_arrays(ref, Bc) ||
         !numpy::equiv_typenums(ref, Bc) ||
-        !PyArray_EquivTypenums(PyArray_TYPE(ref), NPY_BOOL)) {
+        !numpy::check_type<bool>(ref)
+        ) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
-    PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(ref->nd,ref->dimensions,PyArray_TYPE(ref));
+    PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(PyArray_NDIM(ref),
+                                            PyArray_DIMS(ref),
+                                            PyArray_TYPE(ref));
     if (!res_a) return NULL;
 
     // We own the only reference.
@@ -644,12 +647,15 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError, "mahotas._cwatershed: markers and f should have equivalent types.");
         return NULL;
     }
-    PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(array->nd,array->dimensions,PyArray_TYPE(array));
+    PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(
+                                                    PyArray_NDIM(array),
+                                                    PyArray_DIMS(array),
+                                                    PyArray_TYPE(array));
     if (!res_a) return NULL;
     PyArrayObject* lines =  0;
     numpy::aligned_array<bool>* lines_a = 0;
     if (return_lines) {
-        lines = (PyArrayObject*)PyArray_SimpleNew(array->nd, array->dimensions, NPY_BOOL);
+        lines = (PyArrayObject*)PyArray_SimpleNew(PyArray_NDIM(array), PyArray_DIMS(array), NPY_BOOL);
         if (!lines) return NULL;
         lines_a = new numpy::aligned_array<bool>(lines);
     }
