@@ -48,7 +48,7 @@ def test_uint8():
 
 def test_4d():
     np.random.seed(324)
-    for _ in xrange(16):
+    for _ in range(16):
         binim = np.random.random((4,8,4,6)) > .5
         dist = distance(binim)
         assert dist.shape == binim.shape
