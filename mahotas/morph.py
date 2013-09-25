@@ -503,8 +503,23 @@ def locmax(f, Bc=None, out=None, output=None):
 
     See Also
     --------
+    regmax : function
+        Regional maxima. This is a stricter criterion than the local maxima as
+        it takes the whole object into account and not just the neighbourhood
+        defined by ``Bc``::
+
+            0 0 0 0 0
+            0 0 2 0 0
+            0 0 2 0 0
+            0 0 3 0 0
+            0 0 3 0 0
+            0 0 0 0 0
+
+        The top 2 is a local maximum because it has the maximal value in its
+        neighbourhood, but it is not a regional maximum.
+
     locmin : function
-        Regional minima
+        Local minima
     '''
     Bc = get_structuring_elem(f, Bc)
     output = _get_output(f, out, 'locmax', np.bool_, output=output)
@@ -546,7 +561,7 @@ def regmin(f, Bc=None, out=None, output=None):
     '''
     filtered = regmin(f, Bc={3x3 cross}, out={np.empty(f.shape, bool)})
 
-    Regional minima
+    Regional minima. See the documentation for ``regmax`` for more details.
 
     Parameters
     ----------
@@ -577,7 +592,20 @@ def regmax(f, Bc=None, out=None, output=None):
     '''
     filtered = regmax(f, Bc={3x3 cross}, out={np.empty(f.shape, bool)})
 
-    Regional maxima
+    Regional maxima. This is a stricter criterion than the local maxima as
+    it takes the whole object into account and not just the neighbourhood
+    defined by ``Bc``::
+
+        0 0 0 0 0
+        0 0 2 0 0
+        0 0 2 0 0
+        0 0 3 0 0
+        0 0 3 0 0
+        0 0 0 0 0
+
+    The top 2 is a local maximum because it has the maximal value in its
+    neighbourhood, but it is not a regional maximum.
+
 
     Parameters
     ----------
@@ -595,7 +623,7 @@ def regmax(f, Bc=None, out=None, output=None):
     See Also
     --------
     locmax : function
-        Local maxima
+        Local maxima. The local maxima are a superset of the regional maxima
     '''
     _verify_is_integer_type(f, 'regmax')
     Bc = get_structuring_elem(f, Bc)
