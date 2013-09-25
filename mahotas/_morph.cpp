@@ -85,6 +85,18 @@ std::vector<numpy::position> neighbours(const numpy::aligned_array<T>& Bc, bool 
     return res;
 }
 
+
+template <typename T>
+std::vector<numpy::position> neighbours_delta(const numpy::aligned_array<T>& Bc, bool include_centre = false) {
+    std::vector<numpy::position> rs = neighbours(Bc, include_centre);
+    numpy::position accumulated = rs[0];
+    for (unsigned i = 1; i < rs.size(); ++i) {
+        rs[i] -= accumulated;
+        accumulated += rs[i];
+    }
+    return rs;
+}
+
 template<typename T>
 numpy::index_type margin_of(const numpy::position& position, const numpy::array_base<T>& ref) {
     numpy::index_type margin = std::numeric_limits<numpy::index_type>::max();
@@ -693,10 +705,9 @@ void distance_multi(numpy::aligned_array<BaseType> res,
                         const numpy::aligned_array<bool> Bc) {
     gil_release nogil;
     const int N = res.size();
-    const std::vector<numpy::position> Bcs = neighbours(Bc);
+    const std::vector<numpy::position> Bcs = neighbours_delta(Bc);
     const int N2 = Bcs.size();
 
-    std::vector<NeighbourElem> neighbours;
     typename numpy::aligned_array<bool>::const_iterator aiter = array.begin();
     typename numpy::aligned_array<BaseType>::iterator riter = res.begin();
 
@@ -707,8 +718,9 @@ void distance_multi(numpy::aligned_array<BaseType> res,
         if (!*aiter) {
             *riter = 0;
             const numpy::position p = aiter.position();
+            numpy::position next = p;
             for (int j = 0; j != N2; ++j) {
-                const numpy::position next = p + Bcs[j];
+                next += Bcs[j];
                 if (array.validposition(next) && array.at(next)) {
                     const double dist = compute_euc2_dist(next, p);
                     BaseType* rpos = res.data(next);
@@ -725,16 +737,16 @@ void distance_multi(numpy::aligned_array<BaseType> res,
     }
 
     while (!dist_q.empty()) {
-        const numpy::position cur = cur_q.top_pop();
+        numpy::position next = cur_q.top_pop();
         const numpy::position orig = orig_q.top_pop();
         const BaseType dist = dist_q.front();
         dist_q.pop();
 
-        assert(dist == compute_euc2_dist(cur, orig));
+        assert(dist == compute_euc2_dist(next, orig));
 
-        if (res.at(cur) < dist) continue;
+        if (res.at(next) < dist) continue;
         for (int j = 0; j != N2; ++j) {
-            const numpy::position next = cur + Bcs[j];
+            next += Bcs[j];
             if (array.validposition(next)) {
                 const double next_dist = compute_euc2_dist(next, orig);
                 BaseType* rpos = res.data(next);

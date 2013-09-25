@@ -68,18 +68,32 @@ struct position {
 };
 
 inline
+position operator += (position& a, const position& b) {
+    assert(a.nd_ == b.nd_);
+    for (int i = 0; i != a.nd_; ++i) a.position_[i] += b.position_[i];
+    return a;
+}
+
+inline
 position operator + (const position& a, const position& b) {
     assert(a.nd_ == b.nd_);
     position res = a;
-    for (int i = 0; i != a.nd_; ++i) res.position_[i] += b.position_[i];
+    res += b;
     return res;
+}
+
+inline
+position operator -= (position& a, const position& b) {
+    assert(a.nd_ == b.nd_);
+    for (int i = 0; i != a.nd_; ++i) a.position_[i] -= b.position_[i];
+    return a;
 }
 
 inline
 position operator - (const position& a, const position& b) {
     assert(a.nd_ == b.nd_);
     position res = a;
-    for (int i = 0; i != a.nd_; ++i) res.position_[i] -= b.position_[i];
+    res -= b;
     return res;
 }
 
