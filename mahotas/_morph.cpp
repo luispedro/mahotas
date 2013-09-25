@@ -711,10 +711,14 @@ void distance_multi(numpy::aligned_array<BaseType> res,
                 const numpy::position next = p + Bcs[j];
                 if (array.validposition(next) && array.at(next)) {
                     const double dist = compute_euc2_dist(next, p);
-                    assert(dist == compute_euc2_dist(p, next));
-                    cur_q.push(next);
-                    orig_q.push(p);
-                    dist_q.push(dist);
+                    BaseType* rpos = res.data(next);
+                    if (*rpos > dist) {
+                        *rpos = dist;
+
+                        cur_q.push(next);
+                        orig_q.push(p);
+                        dist_q.push(dist);
+                    }
                 }
             }
         }
@@ -728,18 +732,17 @@ void distance_multi(numpy::aligned_array<BaseType> res,
 
         assert(dist == compute_euc2_dist(cur, orig));
 
-        BaseType* rpos = res.data(cur);
-        if (*rpos > dist) {
-            *rpos = dist;
-            for (int j = 0; j != N2; ++j) {
-                const numpy::position next = cur + Bcs[j];
-                if (array.validposition(next)) {
-                    const double next_dist = compute_euc2_dist(next, orig);
-                    if (res.at(next) > next_dist) {
-                        cur_q.push(next);
-                        orig_q.push(orig);
-                        dist_q.push(next_dist);
-                    }
+        if (res.at(cur) < dist) continue;
+        for (int j = 0; j != N2; ++j) {
+            const numpy::position next = cur + Bcs[j];
+            if (array.validposition(next)) {
+                const double next_dist = compute_euc2_dist(next, orig);
+                BaseType* rpos = res.data(next);
+                if (*rpos > next_dist) {
+                    *rpos = next_dist;
+                    cur_q.push(next);
+                    orig_q.push(orig);
+                    dist_q.push(next_dist);
                 }
             }
         }
