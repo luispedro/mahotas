@@ -15,6 +15,7 @@ __all__ = [
         'cwatershed',
         'cerode',
         'dilate',
+        'disk',
         'cdilate',
         'erode',
         'get_structuring_elem',
@@ -95,6 +96,30 @@ def get_structuring_elem(A,Bc):
         if np.sum(np.abs(pos)) <= max1:
             Bc.flat[i] = 1
     return Bc
+
+def disk(radius, dim=2):
+    '''
+    D = disk(radius, dim=2)
+
+    Return a binary disk structuring element of radius ``radius`` and dimension ``dim``
+
+    Parameters
+    ----------
+    radius : int
+        Radius (in pixels) of returned disk
+    dim : int, optional
+        Dimension of returned array (default: 2)
+
+    Returns
+    -------
+    D : boolean ndarray
+    '''
+    import numpy as np
+    shape = [(radius*2+1) for _ in range(dim)]
+    indices = np.indices(shape, float)
+    indices -= radius
+    indices **= 2
+    return (indices.sum(0) < radius)
 
 def dilate(A, Bc=None, out=None, output=None):
     '''

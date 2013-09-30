@@ -4,6 +4,7 @@ Version 1.0.2+
 	* Allow as_rgb() to take integer arguments
 	* Extend distance() to n-dimensions
 	* Update to newer Numpy APIs (remove direct access to PyArray members)
+	* Add morph.disk() function
 
 Version 1.0.2 2013-07-10 by luispedro
 	* Fix requirements filename

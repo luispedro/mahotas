@@ -197,3 +197,20 @@ def test_distance_multi():
     f2 = mahotas.distance(binim)
     assert np.all(f == f2)
 
+
+
+def test_disk():
+    from mahotas.morph import disk
+    D2 = disk(2) 
+    assert D2.shape[0] == D2.shape[1]
+    assert D2.shape == (5,5)
+    assert not D2[0,0]
+    assert len(D2.shape) == 2
+    D3 = disk(2,3)
+
+    assert np.all(D3[2] == D2)
+
+    D3 = disk(4,3)
+    assert len(D3.shape) == 3
+    assert D3.shape[0] == D3.shape[1]
+    assert D3.shape[0] == D3.shape[2]
