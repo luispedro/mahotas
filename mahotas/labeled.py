@@ -488,14 +488,10 @@ def perimeter(bwimage, n=4, mode="constant"):
                     mh.convolve(perim, _perimeter_magic))
 
     if _perimeter_values is None:
-        perimeter_weights = {
-            1:                 (5, 7, 15, 17, 25, 27),
-            np.sqrt(2):           (21, 33),
-            (1 + np.sqrt(2)) / 2: (13, 23)
-        }
         _perimeter_values = np.zeros(34, float)
-        for v, indices in perimeter_weights.items():
-            for i in indices: _perimeter_values[i] = v
+        _perimeter_values[[5, 7, 15, 17, 25, 27]] = 1
+        _perimeter_values[[21, 33]] = np.sqrt(2)
+        _perimeter_values[[13, 23]] = (1 + np.sqrt(2)) / 2
 
-    size = min(len(_perimeter_values), len(histogram))
+    size = min(34, len(histogram))
     return np.dot(histogram[:size], _perimeter_values[:size])
