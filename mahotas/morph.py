@@ -119,7 +119,7 @@ def disk(radius, dim=2):
     indices = np.indices(shape, float)
     indices -= radius
     indices **= 2
-    return (indices.sum(0) < radius)
+    return (indices.sum(0) < (radius**2))
 
 def dilate(A, Bc=None, out=None, output=None):
     '''

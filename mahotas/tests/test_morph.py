@@ -214,3 +214,8 @@ def test_disk():
     assert len(D3.shape) == 3
     assert D3.shape[0] == D3.shape[1]
     assert D3.shape[0] == D3.shape[2]
+
+    # Simple regression
+    D = disk(32, 2)
+    assert D[32,2]
+
