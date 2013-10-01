@@ -139,6 +139,16 @@ def _verify_is_integer_type(A, function_name):
     if A.dtype not in int_types:
         raise TypeError('mahotas.%s: This function only accepts integer types (passed array of type %s)' % (function_name, A.dtype))
 
+def _make_binary(array):
+    '''
+    bin = _make_binary(array)
+
+    Returns (possibly a copy) of array as a boolean array
+    '''
+    array = np.asanyarray(array)
+    if array.dtype != bool:
+        return (array != 0)
+    return array
 
 def _as_floating_point_array(array):
     '''

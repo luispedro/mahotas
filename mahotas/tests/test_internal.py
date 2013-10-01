@@ -148,3 +148,14 @@ def test_check_3_not3():
 def test_check_3_not3_dim4():
     _check_3(np.zeros((14,24,5,5), np.uint8), 'testing')
 
+
+def test_make_binary():
+    from mahotas.internal import _make_binary
+    np.random.seed(34)
+    binim = np.random.random_sample((32,64)) > .25
+    assert _make_binary(binim) is binim
+    assert np.all( _make_binary(binim.astype(int)) == binim )
+    assert np.all( _make_binary(binim.astype(int)*4) == binim )
+    assert np.all( _make_binary(binim.astype(float)*3.4) == binim )
+    assert np.all( _make_binary(binim* np.random.random_sample(binim.shape)) == binim )
+
