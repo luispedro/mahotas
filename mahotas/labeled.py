@@ -494,7 +494,7 @@ def perimeter(bwimage, n=4, mode="constant"):
             (1 + np.sqrt(2)) / 2: (13, 23)
         }
         _perimeter_values = np.zeros(34, float)
-        for v, indices in perimeter_weights.iteritems():
+        for v, indices in perimeter_weights.items():
             for i in indices: _perimeter_values[i] = v
 
     size = min(len(_perimeter_values), len(histogram))
