@@ -9,6 +9,7 @@ from .morph import get_structuring_elem
 from . import _labeled
 from .internal import _get_output
 from ._filters import mode2int, modes, _check_mode
+import mahotas as mh
 
 __all__ = [
     'borders',
@@ -20,6 +21,7 @@ __all__ = [
     'labeled_size',
     'relabel',
     'is_same_labeling',
+    'perimeter',
     'remove_bordering',
     'remove_regions'
     ]
@@ -439,3 +441,61 @@ def labeled_size(labeled):
     from .histogram import fullhistogram
     return fullhistogram(labeled.astype(np.uint32))
 
+
+_perimeter_magic = np.array([
+                [10, 2, 10],
+                [ 2, 1,  2],
+                [10, 2, 10]], np.uint8)
+_perimeter_values = None
+
+# This implementation was adapted from scikit-image's implementation
+def perimeter(bwimage, n=4, mode="constant"):
+    """
+    p = perimeter(bwimage, n=4, mode="constant")
+
+    Calculate total perimeter of all objects in binary image.
+
+    Parameters
+    ----------
+    bwimage : array
+        binary image
+    n : int, optional
+        passed to ``bwperim`` as is
+    mode : str, optional
+        passed to ``bwperim`` as is
+
+    Returns
+    -------
+    p : float
+        total perimeter of all objects in binary image
+
+    See Also
+    --------
+    bwperim : function
+        Finds the perimeter region
+
+    References
+    ----------
+    .. [1] K. Benkrid, D. Crookes. Design and FPGA Implementation of
+           a Perimeter Estimator. The Queen's University of Belfast.
+           http://www.cs.qub.ac.uk/~d.crookes/webpubs/papers/perimeter.doc
+    """
+    global _perimeter_values
+    perim = bwperim(bwimage, n, mode)
+    perim = perim.astype(np.uint8)
+
+    histogram = mh.fullhistogram(
+                    mh.convolve(perim, _perimeter_magic))
+
+    if _perimeter_values is None:
+        perimeter_weights = {
+            1:                 (5, 7, 15, 17, 25, 27),
+            np.sqrt(2):           (21, 33),
+            (1 + np.sqrt(2)) / 2: (13, 23)
+        }
+        _perimeter_values = np.zeros(34, float)
+        for v, indices in perimeter_weights.iteritems():
+            for i in indices: _perimeter_values[i] = v
+
+    size = min(len(_perimeter_values), len(histogram))
+    return np.dot(histogram[:size], _perimeter_values[:size])

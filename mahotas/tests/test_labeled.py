@@ -186,3 +186,10 @@ def test_is_same_labeling():
     ell2[ell == 0] = 1
     
     assert not mh.labeled.is_same_labeling(ell, ell2)
+
+def test_perimeter():
+    for r in (40,80,160):
+        disk = mh.disk(r, 2)
+        p = mahotas.labeled.perimeter(disk)
+        p_exact = r*np.pi*2
+        assert .9 < (p/p_exact)  < 1.1
