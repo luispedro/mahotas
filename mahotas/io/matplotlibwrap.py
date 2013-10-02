@@ -4,8 +4,11 @@
 # 
 # License: MIT (see COPYING file)
 
-from matplotlib import pyplot as plt
 import numpy as np
+
+# Importing matplotlib checks that it is importable without triggering any
+# initialization (unlike importing pyplot)
+import matplotlib
 
 def imread(filename, as_grey=False):
     """
@@ -22,6 +25,7 @@ def imread(filename, as_grey=False):
     -------
       img : ndarray
     """
+    from matplotlib import pyplot as plt
     img = plt.imread(filename)
     if as_grey and len(img.shape) == 3:
         # these are the values that wikipedia says are typical
@@ -41,6 +45,7 @@ def imsave(filename, array):
         path on file system
     array : ndarray-like
     '''
+    from matplotlib import pyplot as plt
     import numpy as np
     if len(array.shape) == 2:
         import warnings
