@@ -1,4 +1,4 @@
-Version 1.0.2+
+Version 1.0.3 2013-10-06 by luispedro
 	* Add border & as_slice arguments to bbox()
 	* Better error message in gaussian_filter
 	* Allow as_rgb() to take integer arguments

@@ -2,6 +2,14 @@
 History
 =======
 
+1.0.3 (2013-10-06)
+~~~~~~~~~~~~~~~~~~
+- Add border & as_slice arguments to bbox()
+- Better error message in gaussian_filter
+- Allow as_rgb() to take integer arguments
+- Extend distance() to n-dimensions
+- Update to newer Numpy APIs (remove direct access to PyArray members)
+
 1.0.2 (July 10 2013)
 ~~~~~~~~~~~~~~~~~~~~
 - Fix requirements filename
