@@ -1,14 +1,23 @@
 debug: mahotas/*.cpp mahotas/*.h mahotas/*.hpp
 	DEBUG=2 python setup.py build --build-lib=.
 
+debug3: mahotas/*.cpp mahotas/*.h mahotas/*.hpp
+	DEBUG=2 python3 setup.py build --build-lib=.
+
 fast: mahotas/*.cpp mahotas/*.h mahotas/*.hpp
 	python setup.py build --build-lib=.
+
+fast3: mahotas/*.cpp mahotas/*.h mahotas/*.hpp
+	python3 setup.py build --build-lib=.
 
 clean:
 	rm -rf build mahotas/*.so mahotas/features/*.so
 
 tests: debug
 	nosetests -vx
+
+tests3: debug3
+	nosetests3 -vx
 
 docs:
 	rm -rf build/docs
