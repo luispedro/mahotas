@@ -10,8 +10,8 @@ before_install:
     - sudo apt-get install -qq python-scipy python-matplotlib python-imaging
     - sudo apt-get install -qq libpng12-dev libtiff4-dev libwebp-dev
 install:
-    - pip install numpy
-    - pip install scipy
-    - pip install imread
+    - pip install numpy --quiet
+    - pip install scipy --quiet
+    - pip install imread --quiet
     - make debug
 script: nosetests
