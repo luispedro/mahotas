@@ -87,6 +87,9 @@ image is exactly the same:
     imshow(photo > T_rc)
     show()
 
+See also the `labeled documentation <labeled.html>`__ which can be very helpful
+in combination with thresholding.
+
 API Documentation
 -----------------
 
