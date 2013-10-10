@@ -107,10 +107,22 @@ You can test your instalation by running::
 
     python -c "import mahotas; mahotas.test()"
 
+If you compiled from source, **you need to do this in another directory** (or
+compile locally, which can be accomplished with ``python setup.py build
+--build-lib=.``).
+
 If something fails, you can obtain more detail by running it again in *verbose
 mode*::
 
     python -c "import mahotas; mahotas.test(verbose=True)"
+
+Visual Studio
+~~~~~~~~~~~~~
+
+For compiling from source in Visual Studio, use::
+
+    python setup.py build_ext -c msvc
+    python setup.py install
 
 Citation
 --------
@@ -152,6 +164,11 @@ debug compile. You can set it to the value ``2`` to get extra checks::
 
 Be careful not to use this in production unless you are chasing a bug. The
 debug modes are pretty slow as they add many runtime checks.
+
+The ``Makefile`` that is shipped with the source of mahotas can be useful too.
+``make debug`` will create a debug build. ``make fast`` will create a non-debug
+build (you need to ``make clean`` in between). ``make test`` will run the test
+suite.
 
 
 Travis Build Status
