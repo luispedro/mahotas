@@ -102,6 +102,7 @@ Jump to detailed `API Documentation <api.html>`__
    classification
    edf
    faq
+   papers
    internals
    principles
    contributing
