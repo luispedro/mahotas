@@ -69,16 +69,20 @@ Filtering Regions
 
 Here is a slightly more complex example. This is in ``demos`` directory as
 ``nuclear.py``. We are going to use this image, a fluorescent microscopy image
-from a `nuclear segmentation benchmark <http://luispedro.org/projects/nuclear-segmentation>`__
+from a `nuclear segmentation benchmark
+<http://luispedro.org/projects/nuclear-segmentation>`__
+
+This image is available as ``mahotas.demos.nuclear_image()``
 
 .. plot::
    :context:
 
     import mahotas as mh
+    import mahotas.demos
     import numpy as np
     from pylab import imshow, show
 
-    f = mh.imread('../../mahotas/demos/data/nuclear.png')
+    f = mh.demos.nuclear_image()
     f = f[:,:,0]
     imshow(f)
     show()
