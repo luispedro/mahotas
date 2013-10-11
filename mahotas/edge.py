@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2013, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # License: MIT (see COPYING file)
@@ -45,7 +45,9 @@ def sobel(img, just_filter=False):
     '''
     # This is based on Octave's implementation,
     # but with some reverse engineering to match Matlab exactly
-    img = img.astype(np.float)
+    img = np.asanyarray(img, dtype=np.float)
+    if img.ndim != 2:
+        raise ValueError('mahotas.sobel: Only available for 2-dimensional images')
     img -= img.min()
     ptp = img.ptp()
     if ptp == 0:

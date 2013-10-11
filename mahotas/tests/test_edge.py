@@ -1,5 +1,7 @@
 from mahotas.edge import sobel
+from nose.tools import raises
 import numpy as np
+
 def test_sobel_shape():
     A = np.arange(100*100)
     A = (A % 15)
@@ -40,3 +42,9 @@ def test_find_edge():
     f = mh.gaussian_filter(f,4)
     fs = sobel(f)
     assert np.all(fs[:,15] > 0)
+
+@raises(ValueError)
+def test_3d_error():
+    import mahotas as mh
+    f = np.zeros((32,16,3))
+    sobel(f)
