@@ -24,10 +24,21 @@
 Thresholding Module
 ===================
 
-Thresholding functions:
+Thresholding functions.
+
+These functions return **the numeric threshold**. In order to obtain a
+*thresholded image*, you can do the following::
+
+    T_otsu = mh.otsu(image)
+    binarized_image = (image > T_otsu)
+
+Functions which have an ``ignore_zeros`` parameters will only consider non-zero
+pixels when computing the thresholding.
 
 :otsu(): Otsu method
 :rc(): Riddler-Calvard's method
+:bernsen: Bernsen thresholding
+:gbernsen: Generalized Bernsen thresholding
 '''
 
 from __future__ import division
@@ -40,6 +51,7 @@ __all__ = [
         'rc',
         'soft_threshold',
         'bernsen',
+        'gbernsen',
     ]
 
 
@@ -118,20 +130,21 @@ def soft_threshold(f, tval):
     '''
     thresholded = soft_threshold(f, tval)
 
-    Soft threshold function
+    Soft threshold function::
 
-                         ^           /
-                         |          /
-                         |         /
-                         |        /
-                         |       /
-     - - - - - - - - - - - - - - - - - ->
-                  /      |
-                 /       |
-                /        |
-               /         |
-              /          |
-             /           |
+                             ^
+                             |           /
+                             |          /
+                             |         /
+                             |        /
+                             |       /
+         - - - - - - - - - - - - - - - - - ->
+                      /      |
+                     /       |
+                    /        |
+                   /         |
+                  /          |
+                 /           |
 
     Parameters
     ----------
