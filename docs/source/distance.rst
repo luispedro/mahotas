@@ -54,7 +54,9 @@ The code is not very complex. Start by loading the image and preprocessing it
 with a Gaussian blur::
 
     import mahotas
-    nuclear = mahotas.imread('mahotas/demos/data/nuclear.png')
+    import mahotas.demos
+
+    nuclear = mahotas.demos.nuclear_image()
     nuclear = nuclear[:,:,0]
     nuclear = mahotas.gaussian_filter(nuclear, 1.)
     threshed  = (nuclear > nuclear.mean())

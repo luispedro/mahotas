@@ -7,10 +7,15 @@ The example in this section is present in the source under
 
 We start with an image, a grey-scale image::
 
+    import mahotas.demos
+    photo = mahotas.demos.load('luispedro')
+    photo = photo.astype(np.uint8)
+
+Before Oct 2013, the ``mahotas.demos.load`` function did not exist and you
+needed to specify the path explicitly::
 
     luispedro_image = '../../mahotas/demos/data/luispedro.jpg'
     photo = mahotas.imread(luispedro_image, as_grey=True)
-    photo = photo.astype(np.uint8)
 
 The reason we convert to ``np.uint8`` is because ``as_grey`` returns floating
 point images (there are good reasons for this and good reasons against it,
@@ -19,12 +24,12 @@ since it's easier to truncate than to go back, it returns ``np.uint8``).
 .. plot::
 
     import mahotas
+    import mahotas.demos
     import numpy as np
     from pylab import imshow, gray, show
     from os import path
 
-    luispedro_image = '../../mahotas/demos/data/luispedro.jpg'
-    photo = mahotas.imread(luispedro_image, as_grey=True)
+    photo = mahotas.demos.load('luispedro', as_grey=True)
     photo = photo.astype(np.uint8)
 
     gray()
@@ -44,12 +49,12 @@ prints ``115``.
 .. plot::
 
     import mahotas
+    import mahotas.demos
     import numpy as np
     from pylab import imshow, gray, show
     from os import path
 
-    luispedro_image = '../../mahotas/demos/data/luispedro.jpg'
-    photo = mahotas.imread(luispedro_image, as_grey=True)
+    photo = mahotas.demos.load('luispedro', as_grey=True)
     photo = photo.astype(np.uint8)
 
 
@@ -72,12 +77,12 @@ image is exactly the same:
 .. plot::
 
     import mahotas
+    import mahotas.demos
     import numpy as np
     from pylab import imshow, gray, show
     from os import path
 
-    luispedro_image = '../../mahotas/demos/data/luispedro.jpg'
-    photo = mahotas.imread(luispedro_image, as_grey=True)
+    photo = mahotas.demos.load('luispedro', as_grey=True)
     photo = photo.astype(np.uint8)
 
 

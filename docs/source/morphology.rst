@@ -15,10 +15,11 @@ Let us first select an interesting image
     :context:
 
     import mahotas
+    import mahotas.demos
     from pylab import gray, imshow, show
     import numpy as np
 
-    luispedro = mahotas.imread('../../mahotas/demos/data/luispedro.jpg')
+    luispedro = mahotas.demos.load('luispedro')
     luispedro = luispedro.max(2)
     T = mahotas.otsu(luispedro)
     lpbin = (luispedro > T)
@@ -27,6 +28,12 @@ Let us first select an interesting image
     imshow(eye)
     show()
 
+
+After Oct 2013, you can get this image with mahotas as::
+
+    import mahotas.demos
+    luispedro = mahotas.demos.load('luispedro')
+    luispedro = luispedro.max(2)
 
 Dilation & Erosion
 ------------------

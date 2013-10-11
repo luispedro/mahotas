@@ -2,7 +2,9 @@
 Finding Wally
 =============
 
-This was originally an `answer on stackoverflow <http://stackoverflow.com/questions/8849869/how-do-i-find-wally-with-python>`__ We can use it as a simple tutorial example.
+This was originally an `answer on stackoverflow
+<http://stackoverflow.com/questions/8849869/how-do-i-find-wally-with-python>`__
+We can use it as a simple tutorial example.
 
 The problem is to find Wally (who goes by Waldo in the US) in the following
 image:
@@ -13,9 +15,16 @@ image:
 
     from pylab import imshow, show
     import mahotas
-    wally = mahotas.imread('../../mahotas/demos/data/DepartmentStore.jpg')
+    import mahotas.demos
+    wally = mahotas.demos.load('Wally')
     imshow(wally)
     show()
+
+From October 11 2013 onwards (version 1.0.4 or later), you can get the Wally
+image from mahotas as::
+
+    import mahotas.demos
+    wally = mahotas.demos.load('Wally')
 
 Can you see him?
 
