@@ -230,37 +230,17 @@ Recent Changes
 
 This version is **1.0 beta**.
 
-0.9.8 (April 22 2013)
-~~~~~~~~~~~~~~~~~~~~~
-- Use matplotlib as IO backend (fallback only)
-- Compute dense SURF features
-- Fix sobel edge filtering (post-processing)
-- Faster 1D convultions (including faster Gaussian filtering)
-- Location independent tests (run mahotas.tests.run() anywhere)
-- Add labeled.is_same_labeling function
-- Post filter SLIC for smoother regions
-- Fix compilation warnings on several platforms
+See the `ChangeLog
+<https://github.com/luispedro/mahotas/blob/master/ChangeLog>`__ for older
+version.
 
-
-0.9.7 (February 03 2013)
-~~~~~~~~~~~~~~~~~~~~~~~~
-- Add ``haralick_features`` function
-- Add ``out`` parameter to morph functions which were missing it
-- Fix erode() & dilate() with empty structuring elements
-- Special case binary erosion/dilation in C-Arrays
-- Fix long-standing warning in TAS on zero inputs
-- Add ``verbose`` argument to tests.run()
-- Add ``circle_se`` to ``morph``
-- Allow ``loc(max|min)`` to take floating point inputs
-- Add Bernsen local thresholding (``bernsen`` and ``gbernsen`` functions)
-
-
-See the ``ChangeLog`` for older version.
+Links
+-----
 
 *Website*: `http://luispedro.org/software/mahotas
 <http://luispedro.org/software/mahotas>`_
 
-*API Docs*: `http://mahotas.readthedocs.org/ <http://mahotas.readthedocs.org/>`__
+*Documentation*: `http://mahotas.readthedocs.org/ <http://mahotas.readthedocs.org/>`__
 
 *Issue Tracker*: `github mahotas issues <https://github.com/luispedro/mahotas/issues>`__
 
@@ -271,4 +251,7 @@ submissions, etc. Or ask on `stackoverflow (tag mahotas)
 
 *Author*: Luis Pedro Coelho (with code by Zachary Pincus [from scikits.image],
 Peter J. Verveer [from scipy.ndimage], and Davis King [from dlib])
+
+`Presentation about mahotas for bioimage informatics
+<http://luispedro.org/files/talks/2013/EuBIAS/mahotas.html>`__
 
