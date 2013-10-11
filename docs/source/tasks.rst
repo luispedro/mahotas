@@ -30,7 +30,7 @@ These can be very complex as they require an understanding of the inner
 workings of mahotas, but that does appeal to a certain personality.
 
 - special case 1-D convolution on C-Arrays in C++. The idea is that you can
-write a tight inner loop in one dimension::
+  write a tight inner loop in one dimension::
 
     void multiply(floating* r, const floating* f, const floating a, const int n, const int r_step, const int f_step) {
         for (int i = 0; i != n; ++i) {

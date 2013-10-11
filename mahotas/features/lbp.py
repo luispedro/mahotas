@@ -44,8 +44,8 @@ def lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=True
         histogram of features. See above for a caveat on the interpretation of
         these.
 
-    Reference
-    ---------
+    References
+    ----------
     Gray Scale and Rotation Invariant Texture Classification with Local Binary Patterns
         Ojala, T. Pietikainen, M. Maenpaa, T. Lecture Notes in Computer Science (Springer)
         2000, ISSU 1842, pages 404-420

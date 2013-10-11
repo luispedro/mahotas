@@ -38,8 +38,8 @@ def distance(bw, metric='euclidean2'):
     dmap : ndarray
         distance map
 
-    Reference
-    ---------
+    References
+    ----------
     For 2-D images, the following algorithm is used:
 
     Felzenszwalb P, Huttenlocher D. *Distance transforms of sampled functions.

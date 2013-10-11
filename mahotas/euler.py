@@ -47,12 +47,13 @@ def euler(f, n=8, mode='constant'):
     euler_nr : int
         Euler number
 
-    Reference
-    ---------
+    References
+    ----------
     http://en.wikipedia.org/wiki/Euler_characteristic
 
-    Reference for Implementation
-    ----------------------------
+    References
+    ----------
+    The following algorithm is used:
 
     *A Fast Algorithm for Computing the Euler Number of an Image and its VLSI
     Implementation*, doi: 10.1109/ICVD.2000.812628

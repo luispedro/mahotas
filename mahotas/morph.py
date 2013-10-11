@@ -305,8 +305,8 @@ def hitmiss(input, Bc, out=None, output=None):
     with ``1``s, while the ``0``s line up with ``0``s (``2``s correspond to
     *don't care*).
 
-    Example
-    -------
+    Examples
+    --------
 
     ::
 

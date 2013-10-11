@@ -130,10 +130,10 @@ This version is **1.0 beta**.
 0.8.1 (June 6 2012)
 ~~~~~~~~~~~~~~~~~~~
 - Fix gaussian_filter bug when order argument was used (reported by John Mark
-Agosta)
+  Agosta)
 - Add morph.cerode
 - Improve regmax() & regmin(). Rename previous implementations to locmax() &
-locmin()
+  locmin()
 - Fix erode() on non-contiguous arrays
 
 0.8 (May 7 2012)
