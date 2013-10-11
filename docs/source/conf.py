@@ -49,7 +49,7 @@ copyright = u'2008-2013, Luis Pedro Coelho'
 # built documents.
 #
 # The short X.Y version.
-version = '0.9'
+version = mahotas_version[:3]
 # The full version, including alpha/beta/rc tags.
 release = mahotas_version
 
@@ -116,7 +116,7 @@ html_theme = 'nature'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['.static']
+html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
