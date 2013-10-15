@@ -55,10 +55,8 @@ def eccentricity(bwimage):
     from .moments import moments
     bwimage = _make_binary(bwimage)
 
-    area = np.sum(bwimage)
-    if area == 0:
-        return 0.
-    hull = np.sum(bwperim(bwimage))
+    if not np.any(bwimage):
+        return 0
 
     cof = mh.center_of_mass(bwimage)
     hull_mu00 = moments(bwimage, 0, 0, cof)
