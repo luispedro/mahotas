@@ -51,7 +51,7 @@ def stretch_rgb(img, arg0=None, arg1=None, dtype=np.uint8):
     if img.ndim == 2:
         return stretch(img, arg0, arg1, dtype)
     elif img.ndim == 3:
-        return np.dstack([stretch(img[:,:,i], arg0, arg1, dtype) for i in xrange(img.shape[2])])
+        return np.dstack([stretch(img[:,:,i], arg0, arg1, dtype) for i in range(img.shape[2])])
     else:
         raise ValueError('mahotas.stretch_rgb: Only works for RGB images')
 
