@@ -23,7 +23,38 @@
 from __future__ import division
 import numpy as np
 
-__all__ = ['stretch', 'as_rgb']
+__all__ = ['stretch', 'stretch_rgb', 'as_rgb']
+
+def stretch_rgb(img, arg0=None, arg1=None, dtype=np.uint8):
+    '''Variation of stretch() function that works per-channel on an RGB image
+
+    Parameters
+    ----------
+    img : ndarray
+        input image. It is *not modified* by this function
+    min : integer, optional
+        minimum value for output [default: 0]
+    max : integer, optional
+        maximum value for output [default: 255]
+    dtype : dtype of output,optional
+         [default: np.uint8]
+
+    Returns
+    -------
+    img': ndarray
+        resulting image. ndarray of same shape as `img` and type `dtype`.
+
+    See Also
+    --------
+    stretch : function
+    '''
+    if img.ndim == 2:
+        return stretch(img, arg0, arg1, dtype)
+    elif img.ndim == 3:
+        return np.dstack([stretch(img[:,:,i], arg0, arg1, dtype) for i in xrange(img.shape[2])])
+    else:
+        raise ValueError('mahotas.stretch_rgb: Only works for RGB images')
+
 
 def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
     '''

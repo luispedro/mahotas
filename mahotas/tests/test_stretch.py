@@ -57,3 +57,18 @@ def test_as_rgb_integer():
     assert np.all( int_rgb[0,0] == (1,2,0) )
     assert np.all( int_rgb[-1,3] == (1,2,0) )
     assert np.all( int_rgb[-2,4] == (1,2,0) )
+
+def test_stretch_rgb():
+    r = np.arange(256).reshape((32,-1))
+    g = 255-r
+    b = r/2
+    s = mh.stretch(np.dstack([r,g,b]))
+    s_rgb = mh.stretch_rgb(np.dstack([r,g,b]))
+    assert not np.all(s == s_rgb)
+    assert np.all(s[:,:,0] == s_rgb[:,:,0])
+    assert np.all(mh.stretch(b) == mh.stretch_rgb(b))
+
+@raises(ValueError)
+def test_stretch_rgb4():
+    mh.stretch_rgb(np.zeros((8,8,3,2)))
+
