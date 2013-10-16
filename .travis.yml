@@ -9,10 +9,9 @@ before_install:
     - sudo apt-get install -qq python-numpy libatlas-dev liblapack-dev gfortran
     - sudo apt-get install -qq python-scipy python-imaging
     - sudo apt-get install -qq libpng12-dev libtiff4-dev libwebp-dev
-    - sudo apt-get install -qq python3-numpy python3-scipy
-install:
     - pip install numpy --quiet
-    - pip install scipy --quiet
-    - pip install imread --quiet
+    - pip install scipy
+install:
+    - pip install imread
     - make debug
 script: nosetests
