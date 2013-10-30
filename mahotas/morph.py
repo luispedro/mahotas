@@ -268,7 +268,17 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
     W = cwatershed(surface, markers, Bc=None, return_lines=False)
     W,WL = cwatershed(surface, markers, Bc=None, return_lines=True)
 
-    Seeded Watershed
+    Seeded watershed in n-dimensions
+    
+    This function computes the watershed transform on the input surface (which
+    may actually be an n-dimensional volume).
+    
+    This function requires initial seed points. A traditional way of
+    initializing watershed is to use regional minima::
+
+        minima = mh.regmin(f)
+        markers,nr_markers = mh.label(minima)
+        W = cwatershed(f, minima)
 
     Parameters
     ----------
