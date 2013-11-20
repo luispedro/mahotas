@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2008-2013, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
 #  in the Software without restriction, including without limitation the rights
 #  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 #  copies of the Software, and to permit persons to whom the Software is
 #  furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 #  all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 #  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 #  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -61,6 +61,24 @@ def otsu(img, ignore_zeros=False):
 
     Calculate a threshold according to the Otsu method.
 
+    Example::
+
+        import mahotas as mh
+        import mahotas.demos
+
+        im = mahotas.demos.nuclear_image()
+        # im is stored as RGB, let's convert to single 2D format:
+        im = im.max(2)
+
+        #Now, we compute Otsu:
+        t = mh.otsu(im)
+
+        # finally, we use the value to form a binary image:
+        bin = (im > t)
+
+    See Wikipedia for details on methods:
+    http://en.wikipedia.org/wiki/Otsu's_method
+
     Parameters
     ----------
     img : an image as a numpy array.
@@ -87,6 +105,21 @@ def rc(img, ignore_zeros=False):
     T = rc(img, ignore_zeros=False)
 
     Calculate a threshold according to the Riddler-Calvard method.
+
+    Example::
+
+        import mahotas as mh
+        import mahotas.demos
+
+        im = mahotas.demos.nuclear_image()
+        # im is stored as RGB, let's convert to single 2D format:
+        im = im.max(2)
+
+        #Now, we compute a threshold:
+        t = mh.rc(im)
+
+        # finally, we use the value to form a binary image:
+        bin = (im > t)
 
     Parameters
     ----------
@@ -155,7 +188,7 @@ def soft_threshold(f, tval):
     -------
     thresholded : ndarray
     '''
-   
+
     f = f * (np.abs(f) > tval)
     f -= tval * (f > tval)
     f += tval * (f < -tval)
