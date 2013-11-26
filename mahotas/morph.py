@@ -73,8 +73,8 @@ def get_structuring_elem(A,Bc):
     elif type(Bc) == int and (len(A.shape), Bc) in translate_sizes:
         Bc = translate_sizes[len(A.shape),Bc]
     elif type(Bc) != int:
-        if len(A.shape) != len(Bc.shape):
-            raise ValueError('morph.get_structuring_elem: Bc does not have the correct number of dimensions.')
+        if A.ndim != Bc.ndim:
+            raise ValueError('morph.get_structuring_elem: Bc does not have the correct number of dimensions. [array has {} coordinates; Bc has {}.]'.format(A.ndim, Bc.ndim))
         Bc = np.asanyarray(Bc, A.dtype)
         if not Bc.flags.contiguous:
             return Bc.copy()
