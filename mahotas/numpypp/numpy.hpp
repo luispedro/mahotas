@@ -61,8 +61,7 @@ struct no_ptr<const T*> { typedef T type; };
 
 template<typename T>
 T ndarray_cast(PyArrayObject* a) {
-    typedef typename no_ptr<T>::type base_type;
-    assert(check_type<base_type>(a));
+    assert(check_type<typename no_ptr<T>::type>(a));
     assert(PyArray_ISALIGNED(a));
     // The reason for the intermediate ``as_voidp`` variable is the following:
     // around version 1.7.0, numpy played with having ``PyArray_DATA`` return
