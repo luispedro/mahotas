@@ -613,7 +613,7 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
             const int cy = centroids[alabels.at(y,x)].y;
             const int cx = centroids[alabels.at(y,x)].x;
             const int j = cy*Nx + cx;
-            if (nlabels[i] != nlabels[j]) {
+            if (find(nlabelsp, i) != find(nlabelsp, j)) {
                 float min_d = inf;
                 int k = -1;
                 for (unsigned ci = 0; ci < centroids.size(); ++ci) {
@@ -628,8 +628,7 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
             }
         }
     }
-
-    // Above, we work with labels in 0...[N-1]
+    // Above, we work with labels in 0..[N-1]. Return should be 1..N
     for (int pos = 0; pos != N; ++pos) ++labels[pos];
     return centroids.size();
 }
