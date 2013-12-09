@@ -47,30 +47,37 @@ def gvoronoi(labeled):
 
 
 def slic(array, spacer=16, m=1.0, max_iters=128):
-    '''
-    segmented, n_segments = slic(array, spacer=16, m=1.0, max_iters=128)
-
-    SLIC Superpixels
+    '''Compute SLIC superpixel oversegmentation
 
     Note: This function operates on the array values. In the original
-    publication, SLIC was applied in L*a*b* space. See the mahotas.color module
-    for color space transformations.
+    publication, SLIC was applied in L*a*b* space.
+
+    To use the original mode, use::
+
+        rgb = mh.demos.load('lena')
+        lab = mh.colors.rgb2lab(rgb)
+        superseg,nr = mh.segmentation.slic(lab)
+
+    See the mahotas.color module for color space transformations
 
     Parameters
     ----------
     array : ndarray
     spacer : int, optional
+        x/y spacing between initial seeds. Initial seeds will be placed at
+        ``array[spacer/2::spacer,spacer/::spacer]``
     m : float, optional
         tradeoff between colour space and spatial distance.
     max_iters : int, optional
         Maximum number of k-means iterations. Generally this does not need to
         be very large because the search is only local and convergence is
-        very fast, in which case, the algorithm has an early exit. (default:
-        128)
+        very fast, in which case, the algorithm will exit early. (default: 128)
 
     Returns
     -------
     segmented : ndarray
+        A segmented area numbered 1..N. The general mahotas convention is that
+        region 0 is background. Thus, 1..N is used here.
     n_segments : int
         Number of segments
 
