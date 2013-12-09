@@ -48,6 +48,7 @@ try:
     from .mahotas_version import __version__
 
     from . import colors
+    from . import demos
     from . import features
     from . import morph
     from . import segmentation
@@ -143,6 +144,7 @@ __all__ = [
     'wavelet_center',
     'wavelet_decenter',
 
+    'demos',
     'morph',
     'features',
     'segmentation',

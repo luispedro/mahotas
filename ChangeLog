@@ -1,6 +1,7 @@
 Version 1.0.3+git
 	* Add mahotas.demos.load()
 	* Add stretch_rgb() function
+	* Add demos to mahotas namespace
 
 Version 1.0.3 2013-10-06 by luispedro
 	* Add border & as_slice arguments to bbox()
