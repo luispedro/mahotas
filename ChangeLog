@@ -1,4 +1,4 @@
-Version 1.0.3+git
+Version 1.0.4 2013-12-15 by luispedro
 	* Add mahotas.demos.load()
 	* Add stretch_rgb() function
 	* Add demos to mahotas namespace

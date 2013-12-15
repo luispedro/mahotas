@@ -192,6 +192,14 @@ You can use it for mahotas or general computer vision in Python questions.
 Recent Changes
 --------------
 
+1.0.4 (2013-12-15)
+~~~~~~~~~~~~~~~~~~
+- Add mahotas.demos.load()
+- Add stretch_rgb() function
+- Add demos to mahotas namespace
+- Fix SLIC superpixels
+
+
 1.0.3 (2013-10-06)
 ~~~~~~~~~~~~~~~~~~
 - Add border & as_slice arguments to bbox()
