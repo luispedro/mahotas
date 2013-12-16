@@ -1,7 +1,7 @@
 // Part of mahotas. See LICENSE file for License
-// Copyright 2008-2012 Luis Pedro Coelho <luis@luispedro.org>
+// Copyright 2008-2013 Luis Pedro Coelho <luis@luispedro.org>
 #include "../utils.hpp"
-
+#include "../numpypp/numpy.hpp"
 
 namespace{
 
@@ -11,15 +11,15 @@ const char TypeErrorMsg[] =
 
 
 inline
-npy_uint32 roll_left(npy_uint32 v, int points) {
-    return (v >> 1) | ( (1 << (points-1)) * (v & 1) );
+npy_uint32 roll_right(npy_uint32 v, int points) {
+    return (v >> 1) | ((v & 1) << (points-1));
 }
 
 inline
 npy_uint32 map(npy_uint32 v, int points) {
     npy_uint32 min = v;
     for (int i = 0; i != points; ++i) {
-        v = roll_left(v, points);
+        v = roll_right(v, points);
         if (v < min) min = v;
     }
     return min;
@@ -34,9 +34,13 @@ PyObject* py_map(PyObject* self, PyObject* args) {
             PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
             return NULL;
     }
-    npy_uint32* data = reinterpret_cast<npy_uint32*>(PyArray_DATA(array));
-    for (int i = 0; i != PyArray_DIM(array, 0); ++i) {
-        data[i] = map(data[i], npoints);
+    const int size = PyArray_DIM(array, 0);
+    npy_uint32* data = numpy::ndarray_cast<npy_uint32*>(array);
+    {
+        gil_release nogil;
+        for (int i = 0; i != size; ++i) {
+            data[i] = map(data[i], npoints);
+        }
     }
     Py_INCREF(array);
     return PyArray_Return(array);
