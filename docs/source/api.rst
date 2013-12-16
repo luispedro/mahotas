@@ -8,3 +8,6 @@ Full API Documentation
 .. automodule:: mahotas.features
     :members:
 
+.. automodule:: mahotas.colors
+    :members:
+
