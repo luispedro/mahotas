@@ -38,6 +38,8 @@ PyObject* py_map(PyObject* self, PyObject* args) {
     npy_uint32* data = numpy::ndarray_cast<npy_uint32*>(array);
     {
         gil_release nogil;
+        // This is not a great implementation, but LBP spends a tiny fraction
+        // of its time here.
         for (int i = 0; i != size; ++i) {
             data[i] = map(data[i], npoints);
         }
