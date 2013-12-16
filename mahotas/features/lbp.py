@@ -52,10 +52,14 @@ def lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=True
     '''
     from ..interpolate import shift
     from mahotas.features import _lbp
+
     if ignore_zeros and preserve_shape:
         raise ValueError('mahotas.features.lbp_transform: *ignore_zeros* and *preserve_shape* cannot both be used together')
 
     image = np.asanyarray(image, dtype=np.float64)
+    if image.ndim != 2:
+        raise ValueError('mahotas.features.lbp_transform: This function is only defined for two dimensional images')
+
     if ignore_zeros:
         Y,X = np.nonzero(image)
         def select(im):
