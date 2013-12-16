@@ -64,3 +64,8 @@ def test_maybe_filter_error():
 def test_short_shift():
     im = np.arange(256).reshape((16,4,-1))
     interpolate.shift(im, [1,0])
+
+def test_shift_uint8():
+    im = np.arange(256).reshape((16,-1))
+    im = im.astype(np.uint8)
+    interpolate.shift(im, [0, np.pi/2], order=1)

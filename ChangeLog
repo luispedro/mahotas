@@ -1,5 +1,6 @@
 Version 1.0.4+git
 	* Better error checking
+	* Fix interpolation of integer images using order 1
 
 Version 1.0.4 2013-12-15 by luispedro
 	* Add mahotas.demos.load()
