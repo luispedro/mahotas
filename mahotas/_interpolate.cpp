@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2005 Peter J. Verveer
- * Copyright (C) 2011-2012 Luis Pedro Coelho
+ * Copyright (C) 2011-2013 Luis Pedro Coelho
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -224,6 +224,8 @@ void zoom_shift(const numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
     const FT *zooms = zoom_ar ? ndarray_cast<const FT*>(zoom_ar) : NULL;
     const FT *shifts = shift_ar ? ndarray_cast<const FT*>(shift_ar) : NULL;
     const int rank = array.ndims();
+    assert(!shift_ar || PyArray_DIM(shift_ar, 0) >= rank);
+    assert(!zoom_ar || PyArray_DIM(zoom_ar, 0) >= rank);
 
     std::vector< std::vector<bool> > zeros;
     /* if the mode is 'constant' we need some temps later: */
@@ -404,12 +406,18 @@ PyObject* py_zoom_shift(PyObject* self, PyObject* args) {
     } else if (!PyArray_ISCARRAY(zooms) || !numpy::equiv_typenums(zooms, array)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
+    } else if (PyArray_DIM(zooms, 0) != PyArray_NDIM(array)) {
+        PyErr_SetString(PyExc_ValueError, "mahotas.zoom_shift: zoom array must have one entry for each dimension");
+        return NULL;
     }
 
     if (!PyArray_Check(shifts)) {
         shifts = 0;
     } else if (!PyArray_ISCARRAY(shifts) || !numpy::equiv_typenums(shifts, array)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    } else if (PyArray_DIM(shifts, 0) != PyArray_NDIM(array)) {
+        PyErr_SetString(PyExc_ValueError, "mahotas.zoom_shift: shift array must have one entry for each dimension");
         return NULL;
     }
     holdref array_hr(array);

@@ -60,3 +60,7 @@ def test_complex():
 def test_maybe_filter_error():
     interpolate._maybe_filter(np.array(3), 1, 'testing', False, np.float32)
 
+@raises(ValueError)
+def test_short_shift():
+    im = np.arange(256).reshape((16,4,-1))
+    interpolate.shift(im, [1,0])
