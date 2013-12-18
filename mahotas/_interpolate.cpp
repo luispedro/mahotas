@@ -229,7 +229,7 @@ void zoom_shift(const numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
 
     std::vector< std::vector<bool> > zeros;
     /* if the mode is 'constant' we need some temps later: */
-    if (mode == EXTEND_CONSTANT) {
+    if (mode == ExtendConstant) {
         for(int r = 0; r < rank; r++) {
             zeros.push_back( std::vector<bool>(output.dim(r)) );
         }

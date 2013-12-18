@@ -67,7 +67,7 @@ int init_filter_offsets(PyArrayObject *array, bool *footprint,
         footprint_size = filter_size;
     }
 
-    if (int(mode) < 0 || int(mode) > EXTEND_LAST) {
+    if (int(mode) < 0 || int(mode) > ExtendLast) {
         throw PythonException(PyExc_RuntimeError, "boundary mode not supported");
     }
     offsets.resize(offsets_size * footprint_size);

@@ -191,7 +191,7 @@ bool border(const numpy::aligned_array<T> array, const numpy::aligned_array<T> f
     gil_release nogil;
     const int N = array.size();
     typename numpy::aligned_array<T>::const_iterator iter = array.begin();
-    filter_iterator<T> fiter(array.raw_array(), filter.raw_array(), EXTEND_CONSTANT, true);
+    filter_iterator<T> fiter(array.raw_array(), filter.raw_array(), ExtendConstant, true);
     const int N2 = fiter.size();
     bool* out = result.data();
     bool any = false;

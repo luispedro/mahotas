@@ -131,7 +131,7 @@ void erode(numpy::aligned_array<T> res, const numpy::aligned_array<T> array, con
     gil_release nogil;
     const int N = res.size();
     typename numpy::aligned_array<T>::const_iterator iter = array.begin();
-    filter_iterator<T> filter(array.raw_array(), Bc.raw_array(), EXTEND_NEAREST, is_bool(T()));
+    filter_iterator<T> filter(array.raw_array(), Bc.raw_array(), ExtendNearest, is_bool(T()));
     const int N2 = filter.size();
     T* rpos = res.data();
     if (!N2) return;
@@ -256,7 +256,7 @@ void locmin_max(numpy::aligned_array<bool> res, const numpy::aligned_array<T> ar
     gil_release nogil;
     const int N = res.size();
     typename numpy::aligned_array<T>::const_iterator iter = array.begin();
-    filter_iterator<T> filter(res.raw_array(), Bc.raw_array(), EXTEND_NEAREST, true);
+    filter_iterator<T> filter(res.raw_array(), Bc.raw_array(), ExtendNearest, true);
     const int N2 = filter.size();
     bool* rpos = res.data();
 

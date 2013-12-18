@@ -21,12 +21,7 @@ typedef enum {
     ExtendConstant = 4,
     ExtendIgnore = 5
 } ExtendMode;
-const ExtendMode EXTEND_NEAREST = ExtendNearest;
-const ExtendMode EXTEND_WRAP = ExtendWrap;
-const ExtendMode EXTEND_REFLECT = ExtendReflect;
-const ExtendMode EXTEND_MIRROR = ExtendMirror;
-const ExtendMode EXTEND_CONSTANT = ExtendConstant;
-const ExtendMode EXTEND_LAST = ExtendIgnore;
+const ExtendMode ExtendLast = ExtendIgnore;
 
 const npy_intp border_flag_value = std::numeric_limits<npy_intp>::max();
 
@@ -125,7 +120,7 @@ struct filter_iterator {
     /* Move to the next point in an array, possible changing the pointer
          to the filter offsets when moving into a different region in the
          array: */
-    filter_iterator(PyArrayObject* array, PyArrayObject* filter, ExtendMode mode = EXTEND_NEAREST, bool compress=true)
+    filter_iterator(PyArrayObject* array, PyArrayObject* filter, ExtendMode mode=ExtendNearest, bool compress=true)
         :filter_data_(numpy::ndarray_cast<T*>(filter))
         ,own_filter_data_(false)
         ,nd_(PyArray_NDIM(array))
