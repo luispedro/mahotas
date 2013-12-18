@@ -98,6 +98,7 @@ Jump to detailed `API Documentation <api.html>`__
    surf
    surfref
    morphology
+   color
    io
    classification
    edf
