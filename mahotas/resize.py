@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2013, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -10,11 +10,13 @@ __all__ = [
     'imresize',
     ]
 
-def imresize(img, nsize, order=3):
-    '''
-    img' = imresize(img, nsize)
 
-    Resizes img
+def imresize(img, nsize, order=3):
+    '''Resizes image
+
+    This function works in two ways: if ``nsize`` is a tuple or list of
+    integers, then the result will be of this size; otherwise, this function
+    behaves the same as ``mh.interpolate.zoom``
 
     Parameters
     ----------
@@ -33,11 +35,11 @@ def imresize(img, nsize, order=3):
 
     See Also
     --------
-    scipy.ndimage.zoom : Similar function
+    zoom : Similar function
     scipy.misc.pilutil.imresize : Similar function
     '''
     from .interpolate import zoom
-    if type(nsize) == tuple:
+    if type(nsize) == tuple or type(nsize) == list:
         if type(nsize[0]) == int:
             nsize = np.array(nsize, dtype=float)
             nsize /= img.shape
