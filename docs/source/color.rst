@@ -19,25 +19,34 @@ For example, the classic lena image is a ``(512,512,3)`` array::
 We can convert it to greyscale as using ``rgb2grey`` (or ``rgb2gray`` if you
 prefer, both work). This conversion uses a visually realistic method (which
 weighs the green channel more heavily as human eyes are more sensitive to it).
+For example::
 
-.. plot::
-   import mahotas mh
-   lena = mh.demos.load('lena')
-
-   lenag = mh.colors.rgb2grey(lena)
-
-   imshow(lenag)
-
-We can also convert to sepia with ``rgb2sepia``:
+    import mahotas mh
+    lena = mh.demos.load('lena')
+    lenag = mh.colors.rgb2grey(lena)
 
 .. plot::
 
-   import mahotas mh
-   lena = mh.demos.load('lena')
+    from pylab import imshow
+    import mahotas mh
+    lena = mh.demos.load('lena')
+    lenag = mh.colors.rgb2grey(lena)
 
-   lenas = mh.colors.rgb2sepia(lena)
+    imshow(lenag)
 
-   imshow(lenas)
+We can also convert to sepia with ``rgb2sepia``::
+
+    lenas = mh.colors.rgb2sepia(lena)
+
+.. plot::
+
+    from pylab import imshow
+    import mahotas mh
+    lena = mh.demos.load('lena')
+
+    lenas = mh.colors.rgb2sepia(lena)
+
+    imshow(lenas)
 
 Other Colour Spaces
 -------------------
