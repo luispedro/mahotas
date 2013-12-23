@@ -187,7 +187,7 @@ def dense(f, spacing, scale=None, is_integral=False, include_interest_point=Fals
     spacing : integer
         Distance between points
     scale : float, optional
-        Scale of interest points. By default, it is set to ``np.sqrt(scaling)``
+        Scale of interest points. By default, it is set to ``np.sqrt(spacing)``
     is_integral : boolean, optional
         Whether `f` is an integral image
     include_interest_point : bool, optional
