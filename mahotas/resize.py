@@ -8,8 +8,63 @@ import numpy as np
 
 __all__ = [
     'imresize',
+    'resize_to',
+    'resize_rgb_to',
     ]
 
+def resize_to(im, nsize, order=3):
+    '''Resize image to a specified new size
+
+    Parameters
+    ----------
+    im : ndarray
+    nsize : sequence of numbers
+        Will be the new size of the array
+    order : integer, optional
+        Spline order to use (default: 3)
+
+    Returns
+    -------
+    im' : ndarray
+
+    See Also
+    --------
+    zoom : Similar function
+    imresize : A more flexible, but also confusing, version of this function
+    resize_rgb_to : A version appropriate for resize RGB images
+    '''
+    from .interpolate import zoom
+    if len(nsize) != im.ndim:
+        raise ValueError('mahotas.resize_to: new size does not have the same dimension as old one')
+    nsize = np.array(nsize, dtype=float)
+    nsize /= im.shape
+    return zoom(im, nsize, order=order)
+
+
+def resize_rgb_to(im, nsize, order=3):
+    '''Resize an RGB image to size ``nsize``
+
+    Parameters
+    ----------
+    im : ndarray
+    nsize : sequence of 2 numbers
+        if nsize is ``(h,w)``, the new image will be ``(h,w,3)``
+    order : integer, optional
+        Spline order to use (default: 3)
+
+    Returns
+    -------
+    im' : ndarray
+
+    See Also
+    --------
+    zoom : Similar function
+    imresize : A more flexible, but also confusing, version of this function
+    resize_to : A generic version of this function
+    '''
+    from .internal import _check_3
+    _check_3(im, 'resize_rgb_to')
+    return np.dstack([resize_to(ch, nsize, order) for ch in im.transpose((2,0,1))])
 
 def imresize(img, nsize, order=3):
     '''Resizes image
