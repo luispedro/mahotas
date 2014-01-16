@@ -108,6 +108,9 @@ def convexhull(bwimg):
 
     Compute the convex hull as a polygon
 
+    This is an implementation of the Graham Scan:
+    http://en.wikipedia.org/wiki/Graham_scan
+
     Parameters
     ----------
     bwimg : ndarray
