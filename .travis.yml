@@ -12,6 +12,10 @@ before_install:
     - pip install numpy --quiet
     - pip install scipy
 install:
+    - pip install coveralls
     - pip install imread
     - make debug
-script: nosetests
+script:
+    coverage run --source=mahotas setup.py test
+after_success:
+    coveralls
