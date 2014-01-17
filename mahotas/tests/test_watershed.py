@@ -1,6 +1,7 @@
 import numpy as np
 import mahotas
 import sys
+from nose.tools import raises
 
 def test_watershed():
     S = np.array([
@@ -45,6 +46,13 @@ def test_watershed2():
     W = mahotas.cwatershed(S, markers)
     assert np.all( (W == 1) | (W == 2) )
 
+@raises(ValueError)
+def test_mismatched_array_markers():
+    S = np.zeros((10,12), np.uint8)
+    markers = np.zeros((8,12), np.uint8)
+    markers[2,2] = 1
+    markers[6,2] = 2
+    mahotas.cwatershed(S, markers)
 
 def test_mix_types():
     f = np.zeros((64,64), np.uint16)
