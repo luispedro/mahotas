@@ -1,0 +1,5 @@
+[run]
+source = mahotas
+
+[report]
+omit = mahotas/demos/*
