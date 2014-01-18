@@ -1,6 +1,6 @@
 # This module was adapted from scipy.ndimage and retains its license
 # Copyright (C) 2003-2005 Peter J. Verveer
-# Copyright (C) 2011-2012 Luis Pedro Coelho
+# Copyright (C) 2011-2014 Luis Pedro Coelho
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -81,12 +81,12 @@ def spline_filter1d(array, order=3, axis=-1, out=None, dtype=np.float64, output=
         The filtered input.
     """
     array = _check_interpolate(array, order, 'spline_filter1d')
-    if isinstance(out, type):
+    if isinstance(out, type): # pragma: no cover
         import warnings
         warnings.warn('mahotas.interpolate.spline_filter1d: Use `dtype` for type instead of `out`', DeprecationWarning)
         dtype = out
         out = None
-    if isinstance(output, type):
+    if isinstance(output, type): # pragma: no cover
         import warnings
         warnings.warn('mahotas.interpolate.spline_filter1d: Use `dtype` for type instead of `output`', DeprecationWarning)
         dtype = output

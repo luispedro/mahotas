@@ -2,4 +2,15 @@
 source = mahotas
 
 [report]
-omit = mahotas/demos/*
+omit =
+    mahotas/demos/*
+    mahotas/bwperim.py
+    mahotas/lbp.py
+    mahotas/surf.py
+    mahotas/texture.py
+    mahotas/tas.py
+    mahotas/tests/__init__.py
+    mahotas/zernike.py
+exclude_lines =
+    pragma: no cover
+
