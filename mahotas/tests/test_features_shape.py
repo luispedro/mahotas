@@ -1,7 +1,8 @@
 import mahotas.features.shape
 import numpy as np
 import mahotas as mh
-from  mahotas.features.shape import roundness
+from mahotas.features.shape import roundness, eccentricity
+
 def test_eccentricity():
     D = mh.disk(32, 2)
     ecc = mahotas.features.shape.eccentricity(D)
@@ -20,3 +21,10 @@ def test_roundness():
     r2 = roundness( (Y ** 2. + 2* X**2.) < 4**2. )
     assert r2 > 0
     assert r2 < r
+
+def test_zeros():
+    assert roundness(np.zeros((10,10))) == 0
+    assert eccentricity(np.zeros((10,10))) == 0
+    I = np.zeros((16,16))
+    I[8:4:12] = 1
+    assert eccentricity(I) == 0
