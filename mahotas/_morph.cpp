@@ -1,4 +1,4 @@
-// Copyright (C) 2008-2013, Luis Pedro Coelho <luis@luispedro.org>
+// Copyright (C) 2008-2014, Luis Pedro Coelho <luis@luispedro.org>
 // vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 // 
 // License: MIT
@@ -443,6 +443,36 @@ PyObject* py_dilate(PyObject* self, PyObject* args) {
 
     Py_XINCREF(output);
     return PyArray_Return(output);
+}
+
+PyObject* py_disk_2d(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    int radius;
+    if (!PyArg_ParseTuple(args,"Oi", &array, &radius)) return NULL;
+    if (!numpy::are_arrays(array) ||
+        PyArray_NDIM(array) != 2 ||
+        !PyArray_ISCARRAY(array) ||
+        !numpy::check_type<bool>(array) ||
+        radius < 0
+    ) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    Py_XINCREF(array);
+    bool* iter = numpy::ndarray_cast<bool*>(array);
+    const int radius2 = radius * radius;
+    const int N0 = PyArray_DIM(array, 0);
+    const int N1 = PyArray_DIM(array, 1);
+    const int c0 = N0/2;
+    const int c1 = N1/2;
+    for (int x0 = 0; x0 != N0; ++x0) {
+        for (int x1 = 0; x1 != N1; ++x1, ++iter) {
+            if ((x0-c0)*(x0-c0) + (x1-c1)*(x1-c1) < radius2) {
+                *iter = true;
+            }
+        }
+    }
+    return PyArray_Return(array);
 }
 
 void close_holes(const numpy::aligned_array<bool> ref, numpy::aligned_array<bool> f, const numpy::aligned_array<bool> Bc) {
@@ -921,6 +951,7 @@ PyObject* py_majority_filter(PyObject* self, PyObject* args) {
 PyMethodDef methods[] = {
   {"subm",(PyCFunction)py_subm, METH_VARARGS, NULL},
   {"dilate",(PyCFunction)py_dilate, METH_VARARGS, NULL},
+  {"disk_2d",(PyCFunction)py_disk_2d, METH_VARARGS, NULL},
   {"erode",(PyCFunction)py_erode, METH_VARARGS, NULL},
   {"close_holes",(PyCFunction)py_close_holes, METH_VARARGS, NULL},
   {"cwatershed",(PyCFunction)py_cwatershed, METH_VARARGS, NULL},

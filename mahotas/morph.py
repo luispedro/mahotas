@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2013, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2014, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT
@@ -115,7 +115,11 @@ def disk(radius, dim=2):
     D : boolean ndarray
     '''
     import numpy as np
+    if dim <= 0:
+        raise ValueError('mahotas.morph.disk: dimension must be positive')
     shape = [(radius*2+1) for _ in range(dim)]
+    if dim == 2:
+        return _morph.disk_2d(np.zeros(shape, bool), radius)
     indices = np.indices(shape, float)
     indices -= radius
     indices **= 2

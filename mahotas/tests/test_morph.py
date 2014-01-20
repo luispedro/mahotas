@@ -219,3 +219,10 @@ def test_disk():
     D = disk(32, 2)
     assert D[32,2]
 
+    @raises(ValueError)
+    def test_negative_dim(dim):
+        disk(3, dim)
+
+    test_negative_dim(-2)
+    test_negative_dim(-1)
+    test_negative_dim(0)
