@@ -12,12 +12,12 @@ from . import _zernike
 
 __all__ = ['zernike', 'zernike_moments']
 
-def zernike(im, degree, radius, cm=None):
+def zernike(im, degree, radius, cm=None): # pragma: no cover
     """
     zvalues = zernike(im, degree, radius, cm={center_of_mass(im)})
     """
     import warnings
-    warnings.warn('mahotas.zernike.zernike: This interface is deprecated. Switch your arguments and use ``zernike_moments``', DeprecationWarning)
+    warnings.warn('mahotas.zernike.zernike: This interface is deprecated. Switch the order of your arguments and use ``zernike_moments``', DeprecationWarning)
     return zernike_moments(im, radius, degree, cm)
 
 def zernike_moments(im, radius, degree=8, cm=None):

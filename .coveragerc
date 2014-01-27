@@ -5,6 +5,7 @@ source = mahotas
 omit =
     mahotas/demos/*
     mahotas/bwperim.py
+    mahotas/freeimage.py
     mahotas/lbp.py
     mahotas/moments.py
     mahotas/surf.py

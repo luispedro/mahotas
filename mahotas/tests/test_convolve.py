@@ -43,7 +43,7 @@ def test_mismatched_dims():
     np.exp(filter,filter)
     mahotas.convolve(f,filter)
 
-def test_convolve1d():
+def test_convolve1d_shape():
     f = np.arange(64*4).reshape((16,-1))
     n = [.5,1.,.5]
     for axis in (0,1):

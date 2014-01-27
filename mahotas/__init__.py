@@ -52,7 +52,7 @@ try:
     from . import features
     from . import morph
     from . import segmentation
-except ImportError:
+except ImportError: # pragma: no cover
     import sys
     _,e,_ = sys.exc_info()
     from sys import stderr

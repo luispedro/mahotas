@@ -1,6 +1,6 @@
 import numpy as np
+import mahotas as mh
 import mahotas
-
 
 def test_grey_erode():
     from mahotas.tests.pymorph_copy import erode as slow_erode
@@ -76,6 +76,12 @@ def test_cdilate():
         g = np.random.random_sample((128,128))
         g = (g > .7)
         assert np.all(mahotas.cdilate(f,g,Bc,n+1) == slow_cdilate(f,g,Bc,n+1))
+
+
+def test_cdilate_large():
+    f = np.zeros((8,8),bool)
+    f[4,4] = 1
+    assert np.all(mh.cdilate(f, 12))
 
 
 def test_erode_slice():
