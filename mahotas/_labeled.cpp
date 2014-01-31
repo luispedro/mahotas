@@ -1,4 +1,4 @@
-/* Copyright (C) 2010-2013  Luis Pedro Coelho <luis@luispedro.org>
+/* Copyright (C) 2010-2014  Luis Pedro Coelho <luis@luispedro.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -480,6 +480,32 @@ struct centroid_info {
     float x;
 };
 
+bool fetch_neighbour(int n, int y, int x, int& ny, int& nx, const int Ny, const int Nx) {
+    ny = y;
+    nx = x;
+    switch(n) {
+        case 0:
+            ++nx;
+            if (nx < Nx) return true;
+            return false;
+        case 1:
+            --nx;
+            if (nx >= 0) return true;
+            return false;
+        case 2:
+            ++ny;
+            if (ny < Ny) return true;
+            return false;
+        case 3:
+            --ny;
+            if (ny >= 0) return true;
+            return false;
+        default:
+            assert(0);
+    }
+}
+
+
 int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int> alabels, const int S, const float m, const int max_iters) {
     assert(alabels.is_carray());
     gil_release no_gil;
@@ -593,18 +619,15 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
 
     for (int y = 0; y != Ny; ++y) {
         for (int x = 0; x != Nx; ++x) {
-#define CHECK(dy,dx) \
-            if ((y + dy) >= 0 && (y + dy) < alabels.dim(0) && (x + dx) >= 0 && (x + dx) < alabels.dim(1)) { \
-                if (alabels.at(y,x) == alabels.at(y+dy,x + dx)) { \
-                    const int i = y*Nx + x; \
-                    const int j = (y+dy)*Nx + x + dx; \
-                    join(nlabelsp, i, j); \
-                } \
+            int nx, ny;
+            for (int n = 0; n != 4; ++n) {
+                if (fetch_neighbour(n, y, x, ny, nx, Ny, Nx) &&
+                    (alabels.at(y,x) == alabels.at(ny,nx))) {
+                    const int i =  y*Nx +  x;
+                    const int j = ny*Nx + nx;
+                    join(nlabelsp, i, j);
+                }
             }
-            CHECK(-1,0)
-            CHECK(0,1)
-            CHECK(0,-1)
-            CHECK(1,0)
         }
     }
     for (int y = 0; y != Ny; ++y) {
