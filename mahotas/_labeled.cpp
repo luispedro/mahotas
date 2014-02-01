@@ -522,6 +522,8 @@ struct SlicPoint {
     int cost;
 };
 
+int diff2(int a, int b) { return (a-b)*(a-b); }
+
 int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int> alabels, const int S, const float m, const int max_iters) {
     assert(alabels.is_carray());
     gil_release no_gil;
@@ -572,11 +574,8 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
                     float l = array.at(y,x,0);
                     float a = array.at(y,x,1);
                     float b = array.at(y,x,2);
-                    const float Ds = (c.y - y)*(c.y - y) +
-                            (c.x - x)*(c.x - x);
-                    const float Dc = (c.l - l)*(c.l - l) +
-                            (c.a - a)*(c.a - a) +
-                            (c.b - b)*(c.b - b);
+                    const float Ds = diff2(y, c.y) + diff2(x, c.x);
+                    const float Dc = diff2(l, c.l) + diff2(a, c.a) + diff2(b, c.b);
                     const float D2 = Dc + Ds*m2S2;
 
                     assert(D2 < inf);
@@ -659,14 +658,14 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
     std::vector<bool> seen(N);
     std::priority_queue<SlicPoint> q;
     for (unsigned ci = 0; ci < centroids.size(); ++ci) {
-        const int cy = centroids[ci].y;
-        const int cx = centroids[ci].x;
-        q.push(SlicPoint(cy, cx, ci, 0));
+        const centroid_info& c = centroids[ci];
+        q.push(SlicPoint(c.y, c.x, ci, 0));
     }
     while (!q.empty()) {
         SlicPoint p = q.top();
         q.pop();
         const int i = p.y*Nx + p.x;
+        const centroid_info& c = centroids[p.ci];
         if (seen[i]) continue;
         seen[i] = true;
         if (!is_connected[i]) {
@@ -677,8 +676,8 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
             if (fetch_neighbour(n, p.y, p.x, ny, nx, Ny, Nx)) {
                 int j = ny*Nx + nx;
                 if (!seen[j] && (!is_connected[j] || alabels.at(ny,nx) == p.ci)) {
-                    const int c = (ny-centroids[p.ci].y)*(ny-centroids[p.ci].y) + (nx-centroids[p.ci].x)*(nx-centroids[p.ci].x);
-                    q.push(SlicPoint(ny, nx, p.ci, c));
+                    const int cost = diff2(ny, c.y) + diff2(nx, c.x);
+                    q.push(SlicPoint(ny, nx, p.ci, cost));
                 }
             }
         }
