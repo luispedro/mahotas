@@ -33,6 +33,7 @@
 #include <cmath>
 #include <vector>
 #include <map>
+#include <queue>
 #include <functional>
 
 #include "numpypp/array.hpp"
@@ -505,6 +506,21 @@ bool fetch_neighbour(int n, int y, int x, int& ny, int& nx, const int Ny, const 
     }
 }
 
+struct SlicPoint {
+    SlicPoint(int y, int x, int ci, int cost)
+        :y(y)
+        ,x(x)
+        ,ci(ci)
+        ,cost(cost)
+        { }
+
+    bool operator < (const SlicPoint& other) const { return this->cost > other.cost; }
+
+    int y;
+    int x;
+    int ci;
+    int cost;
+};
 
 int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int> alabels, const int S, const float m, const int max_iters) {
     assert(alabels.is_carray());
@@ -630,24 +646,40 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
             }
         }
     }
+    std::vector<bool> is_connected(N);
     for (int y = 0; y != Ny; ++y) {
         for (int x = 0; x != Nx; ++x) {
             const int i = y*Nx + x;
             const int cy = centroids[alabels.at(y,x)].y;
             const int cx = centroids[alabels.at(y,x)].x;
             const int j = cy*Nx + cx;
-            if (find(nlabelsp, i) != find(nlabelsp, j)) {
-                float min_d = inf;
-                int k = -1;
-                for (unsigned ci = 0; ci < centroids.size(); ++ci) {
-                    const centroid_info& c = centroids[ci];
-                    const float d = (c.y - y)*(c.y - y) + (c.x - x)*(c.x - x);
-                    if (d < min_d) {
-                        min_d = d;
-                        k = ci;
-                    }
+            is_connected[i] = (find(nlabelsp, i) == find(nlabelsp, j));
+        }
+    }
+    std::vector<bool> seen(N);
+    std::priority_queue<SlicPoint> q;
+    for (unsigned ci = 0; ci < centroids.size(); ++ci) {
+        const int cy = centroids[ci].y;
+        const int cx = centroids[ci].x;
+        q.push(SlicPoint(cy, cx, ci, 0));
+    }
+    while (!q.empty()) {
+        SlicPoint p = q.top();
+        q.pop();
+        const int i = p.y*Nx + p.x;
+        if (seen[i]) continue;
+        seen[i] = true;
+        if (!is_connected[i]) {
+            alabels.at(p.y,p.x) = p.ci;
+        }
+        for (int n = 0; n != 4; ++n) {
+            int ny, nx;
+            if (fetch_neighbour(n, p.y, p.x, ny, nx, Ny, Nx)) {
+                int j = ny*Nx + nx;
+                if (!seen[j] && (!is_connected[j] || alabels.at(ny,nx) == p.ci)) {
+                    const int c = (ny-centroids[p.ci].y)*(ny-centroids[p.ci].y) + (nx-centroids[p.ci].x)*(nx-centroids[p.ci].x);
+                    q.push(SlicPoint(ny, nx, p.ci, c));
                 }
-                alabels.at(y,x) = k;
             }
         }
     }

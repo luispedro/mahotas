@@ -3,6 +3,7 @@ Version 1.0.4+git
 	* Fix interpolation of integer images using order 1
 	* Add resize_to & resize_rgb_to
 	* Add coveralls coverage
+	* Fix SLIC superpixels connectivity
 
 Version 1.0.4 2013-12-15 by luispedro
 	* Add mahotas.demos.load()
