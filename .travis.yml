@@ -7,14 +7,16 @@ virtualenv:
 before_install:
     - sudo apt-get update -qq
     - sudo apt-get install -qq python-numpy libatlas-dev liblapack-dev gfortran
-    - sudo apt-get install -qq python-scipy python-imaging python-matplotlib
+    - sudo apt-get install -qq libfreeimage3
     - sudo apt-get install -qq libpng12-dev libtiff4-dev libwebp-dev
-    - pip install numpy --quiet
-    - pip install matplotlib --quiet
-    - pip install scipy
+
+    - sudo apt-get install -qq python-scipy python-imaging python-matplotlib
+    - sudo apt-get install -qq python3-numpy python3-scipy
+
+    - pip install --use-mirrors matplotlib
+    - pip install --use-mirrors coveralls
+    - pip install --use-mirrors imread
 install:
-    - pip install coveralls
-    - pip install imread
     - make debug
 script:
     coverage run --source=mahotas setup.py test
