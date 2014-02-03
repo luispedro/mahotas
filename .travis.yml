@@ -11,10 +11,10 @@ before_install:
     - sudo apt-get install -qq libpng12-dev libtiff4-dev libwebp-dev
 
     - sudo apt-get install -qq python-scipy python-imaging python-matplotlib
-    - sudo apt-get install -qq python3-numpy python3-scipy
 
-    - pip install --use-mirrors matplotlib
-    - pip install --use-mirrors coveralls
+    - pip install --use-mirrors --quiet numpy
+    - pip install --use-mirrors scipy
+    - pip install --use-mirrors --quiet coveralls
     - pip install --use-mirrors imread
 install:
     - make debug
