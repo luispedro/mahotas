@@ -11,14 +11,18 @@ filename = path.join(
 
 
 def skip_on(etype):
+    from functools import wraps
     def skip_on2(test):
-        try:
-            yield test
-        except e:
-            if isinstance(e, etype):
-                from nose import SkipTest
-                raise SkipTest
-            raise
+        @wraps(test)
+        def execute():
+            try:
+                yield test
+            except e:
+                if isinstance(e, etype):
+                    from nose import SkipTest
+                    raise SkipTest
+                raise
+        return execute
     return skip_on2
 
 
@@ -40,3 +44,4 @@ def test_as_grey():
             'luispedro.jpg')
     im = mh.imread(filename, as_grey=1)
     assert im.ndim == 2
+
