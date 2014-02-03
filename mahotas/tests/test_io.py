@@ -45,3 +45,15 @@ def test_as_grey():
     im = mh.imread(filename, as_grey=1)
     assert im.ndim == 2
 
+@skip_on(ImportError)
+def test_matplotlibwrap():
+    filename = path.join(
+            path.dirname(__file__),
+            '..',
+            'demos',
+            'data',
+            'lena.jpg')
+
+    import mahotas.io.matplotlibwrap
+    im = mahotas.io.matplotlibwrap.imread(filename)
+    assert im.shape == (512,512,3)
