@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2014, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # LICENSE: MIT
@@ -23,7 +23,8 @@ __all__ = [
     'is_same_labeling',
     'perimeter',
     'remove_bordering',
-    'remove_regions'
+    'remove_regions',
+    'remove_regions_where',
     ]
 
 def label(array, Bc=None, out=None, output=None):
@@ -181,6 +182,32 @@ def remove_regions(labeled, regions, inplace=False):
         labeled = labeled.copy()
     _labeled.remove_regions(labeled, regions)
     return labeled
+
+
+def remove_regions_where(labeled, conditions, inplace=False):
+    '''Remove regions based on a boolean array
+
+    A region is removed if ``conditions[region-id]`` evaluates true.
+
+    This function **does not** relabel its arguments. You can use the
+    ``relabel`` function for that::
+
+        removed = relabel(remove_regions_where(labeled, conditions))
+
+    Or, saving one image allocation::
+
+        removed = relabel(remove_regions(labeled, conditions), inplace=True)
+
+    This is the same, but reuses the memory in the relabeling operation.
+
+
+    See Also
+    --------
+    remove_regions : function
+        Variation of this function which uses integer indexing
+    '''
+    regions, = np.where(conditions)
+    return remove_regions(labeled, regions, inplace=inplace)
 
 
 def remove_bordering(labeled, rsize=1, out=None, output=None):

@@ -193,3 +193,15 @@ def test_perimeter():
         p = mahotas.labeled.perimeter(disk)
         p_exact = r*np.pi*2
         assert .9 < (p/p_exact)  < 1.1
+
+
+
+def test_remove_regions_where():
+    np.random.seed(34)
+    for _ in range(4):
+        f = np.random.random_sample((128,128)) > .82
+        labeled, n = mh.labeled.label(f)
+        relabeled = mh.labeled.remove_regions_where(labeled, mh.labeled.labeled_size(labeled) < 2)
+        relabeled,_ = mh.labeled.relabel(relabeled)
+        sizes = mh.labeled.labeled_size(relabeled)
+        assert sizes[1:].min() >= 2

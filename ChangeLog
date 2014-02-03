@@ -4,6 +4,7 @@ Version 1.0.4+git
 	* Add resize_to & resize_rgb_to
 	* Add coveralls coverage
 	* Fix SLIC superpixels connectivity
+	* Add remove_regions_where function
 
 Version 1.0.4 2013-12-15 by luispedro
 	* Add mahotas.demos.load()
