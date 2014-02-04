@@ -14,10 +14,10 @@ def skip_on(etype):
     from functools import wraps
     def skip_on2(test):
         @wraps(test)
-        def execute():
+        def execute(*args, **kwargs):
             try:
-                yield test
-            except e:
+                test(*args, **kwargs)
+            except Exception as e:
                 if isinstance(e, etype):
                     from nose import SkipTest
                     raise SkipTest
@@ -53,7 +53,6 @@ def test_matplotlibwrap():
             'demos',
             'data',
             'lena.jpg')
-
     import mahotas.io.matplotlibwrap
     im = mahotas.io.matplotlibwrap.imread(filename)
     assert im.shape == (512,512,3)
