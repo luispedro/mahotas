@@ -246,7 +246,7 @@ def remove_bordering(labeled, rsize=1, out=None, output=None):
                 if val != 0:
                     invalid.add(val)
         index[dim] = slice(None,None,None)
-    if out is None and output is not None:
+    if out is None and output is not None: #pragma: no cover
         import warnings
         warnings.warn('Using deprecated `output` argument in function `%s`. Please use `out` in the future.' % fname, DeprecationWarning)
         out = output

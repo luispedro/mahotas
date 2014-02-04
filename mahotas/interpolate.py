@@ -137,10 +137,14 @@ def spline_filter(array, order=3, out=None, dtype=np.float64, output=None):
 
     """
     array = _check_interpolate(array, order, 'spline_filter')
-    if isinstance(out, type):
+    if isinstance(out, type): # pragma: no cover
+        import warnings
+        warnings.warn('mahotas.interpolate.spline_filter: Use `dtype` for type instead of `out`', DeprecationWarning)
         dtype = out
         out = None
-    if isinstance(output, type):
+    if isinstance(output, type): # pragma: no cover
+        import warnings
+        warnings.warn('mahotas.interpolate.spline_filter: Use `dtype` for type instead of `output`', DeprecationWarning)
         dtype = output
         output = None
     output = internal._get_output(array, out, 'interpolate.spline_filter', dtype=dtype, output=output)
@@ -205,7 +209,9 @@ def zoom(array, zoom, out=None, order=3, mode='constant', cval=0.0, prefilter=Tr
     if len(zoom) != array.ndim:
         raise ValueError('mahotas.interpolation.zoom: zoom should have one element for each dimension of array')
 
-    if out is None and output is not None:
+    if out is None and output is not None: # pragma: no cover
+        import warnings
+        warnings.warn('mahotas.interpolate.zoom: Use `out` for output parameter instead of `output`', DeprecationWarning)
         out = output
 
     if out is None:
