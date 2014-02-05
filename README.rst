@@ -178,11 +178,29 @@ Travis Build Status
        :target: https://travis-ci.org/luispedro/mahotas
 
 
-Contacts
---------
+Links & Contacts
+----------------
 
-For bug reports and fixes use the `github issue tracker
-<https://github.com/luispedro/mahotas/issues>`__.
+
+*Documentation*: `http://mahotas.readthedocs.org/ <http://mahotas.readthedocs.org/>`__
+
+*Issue Tracker*: `github mahotas issues <https://github.com/luispedro/mahotas/issues>`__
+
+*Mailing List*: Use the `pythonvision mailing list
+<http://groups.google.com/group/pythonvision?pli=1>`_ for questions, bug
+submissions, etc. Or ask on `stackoverflow (tag mahotas)
+<http://stackoverflow.com/questions/tagged/mahotas>`__
+
+*Main Author & Maintainer*: `Luis Pedro Coelho <http://luispedro.org>`__ (follow on `twitter
+<https://twitter.com/luispedrocoelho>`__ or `github
+<https://github.com/luispedro>`__).
+
+Mahotas also includes code by Zachary Pincus [from scikits.image], Peter J.
+Verveer [from scipy.ndimage], and Davis King [from dlib], Christoph Gohlke, as
+well as `others <https://github.com/luispedro/mahotas/graphs/contributors>`__.
+
+`Presentation about mahotas for bioimage informatics
+<http://luispedro.org/files/talks/2013/EuBIAS/mahotas.html>`__
 
 For more general discussion of computer vision in Python, the `pythonvision
 mailing list <http://groups.google.com/group/pythonvision?pli=1>`__ is a much
@@ -230,36 +248,6 @@ Recent Changes
 - Integrate with travis
 - Update citation (include DOI)
 
-0.99 (May 4 2013)
-~~~~~~~~~~~~~~~~~
-- Make matplotlib a soft dependency
-- Add demos.image_path() function
-- Add citation() function
-
-This version is **1.0 beta**.
-
 See the `ChangeLog
 <https://github.com/luispedro/mahotas/blob/master/ChangeLog>`__ for older
 version.
-
-Links
------
-
-*Website*: `http://luispedro.org/software/mahotas
-<http://luispedro.org/software/mahotas>`_
-
-*Documentation*: `http://mahotas.readthedocs.org/ <http://mahotas.readthedocs.org/>`__
-
-*Issue Tracker*: `github mahotas issues <https://github.com/luispedro/mahotas/issues>`__
-
-*Mailing List*: Use the `pythonvision mailing list
-<http://groups.google.com/group/pythonvision?pli=1>`_ for questions, bug
-submissions, etc. Or ask on `stackoverflow (tag mahotas)
-<http://stackoverflow.com/questions/tagged/mahotas>`__
-
-*Author*: Luis Pedro Coelho (with code by Zachary Pincus [from scikits.image],
-Peter J. Verveer [from scipy.ndimage], and Davis King [from dlib])
-
-`Presentation about mahotas for bioimage informatics
-<http://luispedro.org/files/talks/2013/EuBIAS/mahotas.html>`__
-
