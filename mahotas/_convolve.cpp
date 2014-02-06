@@ -23,6 +23,8 @@ template<typename T>
 void convolve1d(const numpy::aligned_array<T> array, const numpy::aligned_array<double> filter, numpy::aligned_array<T> result, ExtendMode mode) {
     gil_release nogil;
     assert(filter.ndims() == 1);
+    assert(result.dim(0) == array.dim(0));
+    assert(result.dim(1) == array.dim(1));
     assert(array.ndims() == 2);
     assert(result.is_carray());
 
@@ -34,6 +36,7 @@ void convolve1d(const numpy::aligned_array<T> array, const numpy::aligned_array<
     const int centre = Nf/2;
 
     for (int y = 0; y != N0; ++y) {
+        if (centre >= N1) break;
         const T* base0 = array.data(y);
         // The two loops (over x & x_) are almost the same.
         // However, combining them, whilst leading to better code,
@@ -55,7 +58,7 @@ void convolve1d(const numpy::aligned_array<T> array, const numpy::aligned_array<
 
     std::vector<npy_intp> offsets;
     offsets.resize(Nf);
-    for (int x_ = 0; x_ != 2*centre; ++x_) {
+    for (int x_ = 0; x_ != 2*centre && x_ < N1; ++x_) {
         const int x = (x_ < centre ? x_ : (N1 - 1) - (x_ - centre));
         for (int j = 0; j != Nf; ++j) {
             offsets[j] = fix_offset(mode, x + (j - centre), N1);
