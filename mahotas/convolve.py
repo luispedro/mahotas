@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2013, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2014, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -101,6 +101,8 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None, output=None)
     if weights.ndim != 1:
         raise ValueError('mahotas.convolve1d: only 1-D sequences allowed')
     _check_mode(mode, cval, 'convolve1d')
+    if len(weights) > f.shape[axis]:
+        raise ValueError('mahotas.convolve1d: array is too small for this convolution (must be at least {} in axis {})'.format(len(weights), axis))
     if f.flags.contiguous:
         weights = weights.astype(np.double)
         indices = [a for a in range(f.ndim) if a != axis] + [axis]

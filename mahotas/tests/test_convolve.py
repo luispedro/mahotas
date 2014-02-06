@@ -240,3 +240,11 @@ def test_convolve1d():
 def test_gaussian_small_sigma():
     im =  np.arange(128*4).reshape((16,-1))
     mh.gaussian_filter(im, .01)
+
+
+@raises(ValueError)
+def test_gaussian_small_image():
+    np.random.seed(123)
+    f = (np.random.random((10,141))*255).astype(np.uint8)
+    mh.gaussian_filter(f, 2.)
+
