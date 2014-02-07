@@ -233,8 +233,8 @@ def test_convolve1d():
             f0w = mh.convolve1d(f, w, 0)
             f1w = mh.convolve1d(f, w, 1)
 
-            assert np.all(fw == f0w)
-            assert np.all(fww == f1w)
+            assert np.all(fw == f1w)
+            assert np.all(fww == f0w)
 
 @raises(ValueError)
 def test_gaussian_small_sigma():
@@ -248,3 +248,18 @@ def test_gaussian_small_image():
     f = (np.random.random((10,141))*255).astype(np.uint8)
     mh.gaussian_filter(f, 2.)
 
+
+def test_convolve1d_axis():
+    f = np.random.random((128,32))
+    w = np.array([.1, .2, .4])
+    fw = mh.convolve1d(f, w, 0)
+    for i in range(32):
+        assert np.allclose(np.correlate(f.T[i], w, 'same')[1:-1], fw[1:-1,i])
+
+def test_convolve_1d_axis_3d():
+    f = np.random.random((128,32,6))
+    w = np.array([.1, .2, .4])
+    fw = mh.convolve1d(f, w, 0)
+    for i in range(f.shape[1]):
+        for j in range(f.shape[2]):
+            assert np.allclose(np.correlate(f[:,i,j], w,'same')[1:-1:] , fw[:,i,j][1:-1])
