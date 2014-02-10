@@ -26,10 +26,10 @@ Read the `principles of mahotas <principles.html>`__
 C++/Python Division
 -------------------
 
-Mahotas is written in C++, but almost always, you call a Python function which
-checks types and then calls the internal function. This is slightly slower, but
-it is easier to develop this way (and, for all but the smallest image, it will
-not matter).
+Mahotas is, for the most part, written in C++, but almost always, you call a
+Python function which checks types and then calls the internal function. This
+is slightly slower, but it is easier to develop this way (and, for all but the
+smallest image, it will not matter).
 
 So each ``module.py`` will have its associated ``_module.cpp``.
 
@@ -101,7 +101,9 @@ In the snippet above, you can see some other C++ machinery:
     GIL after the Python-specific code is done.
 ``array``
     This is a thin wrapper around ``PyArrayObject`` that knows its type and has
-    iterators.
+    iterators. Relying on these objects has the further advantage that in debug
+    mode, it checks bounds for many memory accesses. While this is very costly
+    for everyday usage, it can catch bugs faster than the alternatives.
 ``filter_iterator``
     This is taken from ``scipy.ndimage`` and it is useful to iterate over an
     image and use a centered filter around each pixel (it keeps track of all of
