@@ -101,9 +101,7 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None, output=None)
     if weights.ndim != 1:
         raise ValueError('mahotas.convolve1d: only 1-D sequences allowed')
     _check_mode(mode, cval, 'convolve1d')
-    if len(weights) - 1 > f.shape[axis]:
-        raise ValueError('mahotas.convolve1d: array is too small for this convolution (must be at least {} in axis {}; is just {})'.format(len(weights) - 1, axis, f.shape[axis]))
-    if f.flags.contiguous:
+    if f.flags.contiguous and len(weights) < f.shape[axis]:
         weights = weights.astype(np.double)
         indices = [a for a in range(f.ndim) if a != axis] + [axis]
         rindices = [indices.index(a) for a in range(f.ndim)]
