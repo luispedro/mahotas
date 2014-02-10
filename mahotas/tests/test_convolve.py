@@ -126,6 +126,11 @@ def test_3d_wavelets_error():
     yield call_f, mahotas.ihaar
     yield call_f, lambda im: mahotas.daubechies(im, 'D4')
 
+@raises(ValueError)
+def test_non_valid_daubechies():
+    image = luispedro_jpg()
+    mahotas.daubechies(image, 'D-4')
+
 def test_wavelets_inline():
     def inline(f):
         im = np.arange(16, dtype=float).reshape((4,4))
