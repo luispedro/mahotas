@@ -50,18 +50,20 @@ const char TypeErrorMsg[] =
 
 
 // This is a standard union-find structure
-int find(int* data, int i) {
+template<typename It>
+int find(It data, int i) {
     if (data[i] == i) return i;
     int j = find(data, data[i]);
     data[i] = j;
     return j;
 }
-void compress(int* data, int i) {
+template<typename It>
+void compress(It data, int i) {
     find(data,i);
 }
 
-
-void join(int* data, int i, int j) {
+template<typename It>
+void join(It data, int i, int j) {
     i = find(data, i);
     j = find(data, j);
     assert(i >= 0);
@@ -630,7 +632,7 @@ int slic(const numpy::aligned_array<npy_float32> array, numpy::aligned_array<int
     }
 
     for (int i = 0; i != N; ++i) nlabels[i] = i;
-    int * nlabelsp = &nlabels[0];
+    std::vector<int>::iterator nlabelsp = nlabels.begin();
 
     for (int y = 0; y != Ny; ++y) {
         for (int x = 0; x != Nx; ++x) {
