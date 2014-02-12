@@ -1,4 +1,4 @@
-Version 1.0.4+git
+Version 1.1.0 2014-02-12 by luispedro
 	* Better error checking
 	* Fix interpolation of integer images using order 1
 	* Add resize_to & resize_rgb_to

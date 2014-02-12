@@ -210,6 +210,19 @@ You can use it for mahotas or general computer vision in Python questions.
 Recent Changes
 --------------
 
+1.1.0 (February 12 2014)
+~~~~~~~~~~~~~~~~~~~~~~~~
+- Better error checking
+- Fix interpolation of integer images using order 1
+- Add resize_to & resize_rgb_to
+- Add coveralls coverage
+- Fix SLIC superpixels connectivity
+- Add remove_regions_where function
+- Fix hard crash in convolution
+- Fix axis handling in convolve1d
+- Add normalization to moments calculation
+
+
 1.0.4 (2013-12-15)
 ~~~~~~~~~~~~~~~~~~
 - Add mahotas.demos.load()
