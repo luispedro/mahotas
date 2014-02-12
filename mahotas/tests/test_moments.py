@@ -1,4 +1,5 @@
 import numpy as np
+import mahotas as mh
 from mahotas.features.moments import moments
 
 def _slow(A, p0, p1, cm):
@@ -27,3 +28,12 @@ def test_against_slow():
     yield perform, 1, 2, (0, 0), A
     yield perform, 1, 0, (0, 0), A
 
+
+def test_normalize():
+    A,B = np.meshgrid(np.arange(128),np.arange(128))
+    for p0,p1 in [(1,1), (1,2), (2,1), (2,2)]:
+        def f(im):
+            return moments(im, p0, p1, cm=mh.center_of_mass(im), normalize=1)
+        im = A+B
+        fs = [f(im), f(im[::2]), f(im[:,::2]), f(im[::2, ::2])]
+        assert np.var(fs) < np.mean(np.abs(fs))/10

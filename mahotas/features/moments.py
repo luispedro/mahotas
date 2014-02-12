@@ -7,7 +7,7 @@ from __future__ import division
 import numpy as np
 
 __all__ = ['moments']
-def moments(img, p0, p1, cm=None, convert_to_float=True):
+def moments(img, p0, p1, cm=None, convert_to_float=True, normalize=False, normalise=False):
     '''
     m = moments(img, p0, p1, cm=(0, 0), convert_to_float=True)
 
@@ -38,6 +38,8 @@ def moments(img, p0, p1, cm=None, convert_to_float=True):
         center of mass (default: 0,0)
     convert_to_float : boolean, optional
         whether to convert to floating point (default: True)
+    normalize : boolean, optional
+        whether to normalize to size of image (default: False)
 
     Returns
     -------
@@ -48,17 +50,23 @@ def moments(img, p0, p1, cm=None, convert_to_float=True):
     ----
       It only works for 2-D images
     '''
+    if normalise:
+        normalize = True
     if not np.issubdtype(img.dtype, float) and convert_to_float:
         img = img.astype(np.float64)
     r,c = img.shape
-    p = np.arange(c)
+    p = np.arange(c, dtype=float)
     if cm is not None:
         p -= cm[1]
     p **= p0
+    if normalize:
+        p /= p.sum()
     inter = np.dot(img, p)
-    p = np.arange(r)
+    p = np.arange(r, dtype=float)
     if cm is not None:
         p -= cm[0]
     p **= p1
+    if normalize:
+        p /= p.sum()
     return np.dot(inter, p)
 
