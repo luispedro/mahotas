@@ -41,6 +41,7 @@
 #include "numpypp/dispatch.hpp"
 #include "utils.hpp"
 #include "_filters.h"
+#include "debug.h"
 
 namespace{
 
@@ -74,7 +75,7 @@ void join(It data, int i, int j) {
 int label(numpy::aligned_array<int> labeled, const numpy::aligned_array<int> Bc) {
     gil_release nogil;
     const int N = labeled.size();
-    int* data = labeled.data();
+    get_pointer_type<int>::ptr data = as_checked_ptr(labeled.data(), N);
     for (int i = 0; i != N; ++i) {
         data[i] = (data[i] ? i : -1);
     }
