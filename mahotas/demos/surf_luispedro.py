@@ -1,20 +1,12 @@
 from __future__ import print_function
 import numpy as np
-import mahotas
+import mahotas as mh
 from mahotas.features import surf
 from pylab import *
 
 from os import path
 
-try:
-    luispedro_image = path.join(
-                    path.dirname(path.abspath(__file__)),
-                    'data',
-                    'luispedro.jpg')
-except NameError:
-    luispedro_image = 'data/luispedro.jpg'
-
-f = mahotas.imread(luispedro_image, as_grey=True)
+f = mh.demos.load('luispedro', as_grey=True)
 f = f.astype(np.uint8)
 spoints = surf.surf(f, 4, 6, 2)
 print("Nr points:", len(spoints))
