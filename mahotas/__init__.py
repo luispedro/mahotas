@@ -36,7 +36,22 @@ try:
     from .histogram import fullhistogram
     from .labeled import border, borders, bwperim, label, labeled_sum
     from .features.moments import moments
-    from .morph import cerode, close, close_holes, get_structuring_elem, disk, dilate, cdilate, hitmiss, erode, cwatershed, majority_filter, open, regmin, regmax
+    from .morph import cdilate, \
+                        cerode, \
+                        close, \
+                        close_holes, \
+                        cwatershed, \
+                        disk, \
+                        dilate, \
+                        erode, \
+                        get_structuring_elem, \
+                        hitmiss, \
+                        locmax, \
+                        locmin, \
+                        majority_filter, \
+                        open, \
+                        regmin, \
+                        regmax
     from .resize import imresize
     from .stretch import stretch, stretch_rgb, as_rgb
     from .thin import thin

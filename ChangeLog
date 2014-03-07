@@ -1,3 +1,6 @@
+Version 1.1.0+
+	* Export locmax|locmin at the mahotas namespace level
+
 Version 1.1.0 2014-02-12 by luispedro
 	* Better error checking
 	* Fix interpolation of integer images using order 1
