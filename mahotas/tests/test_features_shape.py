@@ -28,3 +28,20 @@ def test_zeros():
     I = np.zeros((16,16))
     I[8:4:12] = 1
     assert eccentricity(I) == 0
+
+def test_ellipse_axes():
+    Y,X = np.mgrid[:1024,:1024]
+    Y = Y/1024.
+    X = X/1024.
+    im = ((2.*(Y - .5)**2 + (X - .5)**2) < .2)
+    maj,min = mh.features.ellipse_axes(im)
+    assert np.abs(2 - (maj/min)**2) < .01
+
+    maj2,min2 = mh.features.ellipse_axes(im.T)
+
+    assert np.abs(maj - maj2) < .001
+    assert np.abs(min - min2) < .001
+
+    im = (((Y - .5)**2 + (X - .5)**2) < .2)
+    maj,min = mh.features.ellipse_axes(im)
+    assert np.abs(1 - (maj/min)**2) < .01
