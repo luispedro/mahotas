@@ -43,21 +43,27 @@ threshold).
 
 ::
 
-    import numpy as np
-    import mahotas
-    import pylab
+    # import using ``mh`` abbreviation which is common:
+    import mahotas as mh
 
-    img = mahotas.imread('test.jpeg')
-    T_otsu = mahotas.thresholding.otsu(img)
-    seeds,_ = mahotas.label(img > T_otsu)
-    labeled = mahotas.cwatershed(img.max() - img, seeds)
+    # Load one of the demo images
+    im = mh.demos.load('nuclear')
+
+    # Automatically compute a threshold
+    T_otsu = mh.thresholding.otsu(im)
+
+    # Label the thresholded image (thresholding is done with numpy operations
+    seeds,nr_regions = mh.label(im > T_otsu)
+
+    # Call seeded watershed to expand the threshold
+    labeled = mh.cwatershed(im.max() - im, seeds)
 
 Here is a very simple example of using ``mahotas.distance`` (which computes a
 distance map)::
 
     import pylab as p
     import numpy as np
-    import mahotas
+    import mahotas as mh
 
     f = np.ones((256,256), bool)
     f[200:,240:] = False
@@ -65,7 +71,7 @@ distance map)::
     # f is basically True with the exception of two islands: one in the lower-right
     # corner, another, middle-left
 
-    dmap = mahotas.distance(f)
+    dmap = mh.distance(f)
     p.imshow(dmap)
     p.show()
 
@@ -73,20 +79,34 @@ distance map)::
 
 How to invoke thresholding functions::
 
-    import mahotas
+    import mahotas as mh
     import numpy as np
     from pylab import imshow, gray, show, subplot
     from os import path
 
-    photo = mahotas.imread('luispedro.org', as_grey=True)
+    # Load photo of mahotas' author in greyscale
+    photo = mh.demos.load('luispedro', as_grey=True)
+
+    # Convert to integer values (using numpy operations)
     photo = photo.astype(np.uint8)
 
-    T_otsu = mahotas.otsu(photo)
+    # Compute Otsu threshold
+    T_otsu = mh.otsu(photo)
     thresholded_otsu = (photo > T_otsu)
 
-    T_rc = mahotas.rc(photo)
+    # Compute Riddler-Calvard threshold
+    T_rc = mh.rc(photo)
     thresholded_rc = (photo > T_rc)
 
+    # Now call pylab functions to display the image
+    gray()
+    subplot(2,1,1)
+    imshow(thresholded_otsu)
+    subplot(2,1,2)
+    imshow(thresholded_rc)
+    show()
+
+As you can see, we rely on numpy/matplotlib for many operations.
 
 Install
 -------
