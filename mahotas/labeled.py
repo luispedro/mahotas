@@ -222,9 +222,9 @@ def remove_bordering(labeled, rsize=1, out=None, output=None):
     ----------
     labeled : ndarray
         Labeled array
-    rsize : int, optional
+    rsize : int or tuple, optional
         Minimum distance to the border (in Manhatan distance) to allow an
-        object to survive.
+        object to survive. May be int or tuple with len == labeled.ndim.
     out : ndarray, optional
         If ``im`` is passed as ``out``, then it operates inline.
 
@@ -236,10 +236,12 @@ def remove_bordering(labeled, rsize=1, out=None, output=None):
     im = labeled
     invalid = set()
     index = [slice(None,None,None) for _ in range(im.ndim)]
+    if type(rsize) is not tuple:
+        rsize = (rsize,)*im.ndim
     for dim in range(im.ndim):
         for bordering in (
-                    slice(rsize),
-                    slice(-rsize, None)
+                    slice(rsize[dim]),
+                    slice(im.shape[dim]-rsize[dim], None)
                         ):
             index[dim] = bordering
             for val in np.unique(im[tuple(index)].ravel()):
