@@ -1,4 +1,4 @@
-// Copyright (C) 2010-2013 Luis Pedro Coelho <luis@luispedro.org>
+// Copyright (C) 2010-2014 Luis Pedro Coelho <luis@luispedro.org>
 //
 // License: MIT (Check COPYING file)
 
@@ -551,7 +551,7 @@ PyObject* py_rank_filter(PyObject* self, PyObject* args) {
 }
 
 template <typename T>
-void template_match(numpy::aligned_array<T> res, const numpy::aligned_array<T> f, const numpy::aligned_array<T> t, int mode) {
+void template_match(numpy::aligned_array<T> res, const numpy::aligned_array<T> f, const numpy::aligned_array<T> t, int mode, bool just_equality) {
     gil_release nogil;
     const int N = res.size();
     typename numpy::aligned_array<T>::const_iterator iter = f.begin();
@@ -568,6 +568,10 @@ void template_match(numpy::aligned_array<T> res, const numpy::aligned_array<T> f
             if (fiter.retrieve(iter, j, val)) {
                 const T tj = fiter[j];
                 const T delta = (val > tj ? val - tj : tj - val);
+                if (just_equality && delta) {
+                    diff2 = 1;
+                    break;
+                }
                 diff2 += delta*delta;
             }
         }
@@ -579,8 +583,9 @@ PyObject* py_template_match(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* template_;
     int mode;
+    int just_equality;
     PyArrayObject* output;
-    if (!PyArg_ParseTuple(args, "OOOi", &array, &template_, &output, &mode)) return NULL;
+    if (!PyArg_ParseTuple(args, "OOOii", &array, &template_, &output, &mode, &just_equality)) return NULL;
     if (!numpy::are_arrays(array, template_, output) ||
         !numpy::equiv_typenums(array, template_, output) ||
         !PyArray_ISCARRAY(output)) {
@@ -590,7 +595,7 @@ PyObject* py_template_match(PyObject* self, PyObject* args) {
     holdref r(output);
 
 #define HANDLE(type) \
-        template_match<type>(numpy::aligned_array<type>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(template_), mode);
+        template_match<type>(numpy::aligned_array<type>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(template_), mode, just_equality);
     SAFE_SWITCH_ON_TYPES_OF(array);
 #undef HANDLE
 

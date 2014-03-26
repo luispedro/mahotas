@@ -28,7 +28,7 @@ Citation:
 try:
     from .bbox import bbox, croptobbox
     from .center_of_mass import center_of_mass
-    from .convolve import convolve, convolve1d, median_filter, rank_filter, template_match, gaussian_filter1d, gaussian_filter
+    from .convolve import convolve, convolve1d, find, median_filter, rank_filter, template_match, gaussian_filter1d, gaussian_filter
     from .convolve import haar, ihaar, daubechies, idaubechies, wavelet_center, wavelet_decenter
     from .distance import distance
     from .edge import sobel

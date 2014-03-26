@@ -2,6 +2,7 @@ Version 1.1.0+
 	* Export locmax|locmin at the mahotas namespace level
 	* Break away ellipse_axes from eccentricity code as it can be useful on
 	its own
+	* Add find() function
 
 Version 1.1.0 2014-02-12 by luispedro
 	* Better error checking
