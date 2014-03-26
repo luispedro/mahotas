@@ -1,7 +1,7 @@
 import numpy as np
 import mahotas as mh
 def test_find():
-    for _ in xrange(16):
+    for _ in range(16):
         f = np.random.random((128,128))
         c0,c1 = 43,23
         for h,w in [(12,56),
