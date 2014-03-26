@@ -195,14 +195,16 @@ def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None, output=None):
 
 
 def template_match(f, template, mode='reflect', cval=0., out=None, output=None):
-    '''
-    match = template_match(f, template, mode='reflect', cval=0., out={np.empty_like(f)})
+    '''Match template to image
 
-    Match template.
+    match = template_match(f, template, mode='reflect', cval=0., out={np.empty_like(f)})
 
     The value at ``match[i,j]`` will be the difference (in squared euclidean
     terms), between `template` and a same sized window on `f` centered on that
     point.
+
+    Note that the computation is performed using the same dtype as ``f``. Thus
+    is may overflow if the template is large.
 
     Parameters
     ----------
