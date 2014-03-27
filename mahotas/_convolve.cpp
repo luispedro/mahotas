@@ -603,6 +603,60 @@ PyObject* py_template_match(PyObject* self, PyObject* args) {
     return PyArray_Return(output);
 }
 
+template <typename T>
+void find2d(const numpy::aligned_array<T> array, const numpy::aligned_array<T> target, numpy::aligned_array<bool> out) {
+    gil_release nogil;
+    const int N0 = array.dim(0);
+    const int N1 = array.dim(1);
+
+    const int Nt0 = target.dim(0);
+    const int Nt1 = target.dim(1);
+    assert(out.is_carray());
+    bool* rpos = out.data();
+    std::fill(rpos, rpos + N0*N1, false);
+
+    for (int y = 0; y < N0 - Nt0; ++y) {
+        for (int x = 0; x < N1 - Nt1; ++x) {
+            for (int sy = 0; sy < Nt0; ++sy) {
+                for (int sx = 0; sx < Nt1; ++sx) {
+                    if (array.at(y + sy,x + sx) != target.at(sy,sx)) {
+                        goto next_pos;
+                    }
+                }
+            }
+            out.at(y, x) = true;
+            next_pos:
+                ;
+        }
+    }
+}
+
+PyObject* py_find2d(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* target;
+    PyArrayObject* output;
+    if (!PyArg_ParseTuple(args,"OOO", &array, &target, &output)) return NULL;
+    if (!numpy::are_arrays(array, target, output) ||
+            !numpy::same_shape(output, array) ||
+            !numpy::equiv_typenums(array, target) ||
+            !numpy::check_type<bool>(output) ||
+            !PyArray_ISCARRAY(output)) {
+            PyErr_SetString(PyExc_RuntimeError, OutputErrorMsg);
+            return NULL;
+    }
+    holdref outref(output);
+
+#define HANDLE(type) \
+    find2d<type>(numpy::aligned_array<type>(array), numpy::aligned_array<type>(target), numpy::aligned_array<bool>(output));
+
+    SAFE_SWITCH_ON_TYPES_OF(array);
+#undef HANDLE
+
+    Py_INCREF(output);
+    return PyArray_Return(output);
+}
+
+
 PyMethodDef methods[] = {
   {"convolve",(PyCFunction)py_convolve, METH_VARARGS, NULL},
   {"convolve1d",(PyCFunction)py_convolve1d, METH_VARARGS, NULL},
@@ -614,6 +668,7 @@ PyMethodDef methods[] = {
   {"ihaar",(PyCFunction)py_ihaar, METH_VARARGS, NULL},
   {"rank_filter",(PyCFunction)py_rank_filter, METH_VARARGS, NULL},
   {"template_match",(PyCFunction)py_template_match, METH_VARARGS, NULL},
+  {"find2d",(PyCFunction)py_find2d, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 

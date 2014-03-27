@@ -233,26 +233,19 @@ def template_match(f, template, mode='reflect', cval=0., out=None, output=None):
     _check_mode(mode, cval, 'template_match')
     return _convolve.template_match(f, template, output, mode2int[mode], 0)
 
-def find(f, template, mode='reflect', cval=0.):
+def find(f, template):
     '''Match template to image exactly
 
-    coordinates = find(f, template, mode='reflect', cval=0.)
+    coordinates = find(f, template)
 
     The output is in the same format as the ``np.where`` function.
 
     Parameters
     ----------
     f : ndarray
-        input. Any dimension is supported
+        input. Currently, only 2-dimensional images are supported.
     template : ndarray
         Template to match. Must be explicitly passed, no default.
-    mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore' }
-        How to handle borders. Note that the default is ignore!
-    cval : double, optional
-        If `mode` is constant, which constant to use (default: 0.0)
-    out : ndarray, optional
-        Output array. Must have same shape and dtype as `f` as well as be
-        C-contiguous.
 
     Returns
     -------
@@ -261,16 +254,13 @@ def find(f, template, mode='reflect', cval=0.):
         output of ``np.where``, but in an ndarray.
 
     '''
+    if f.ndim != 2:
+        raise ValueError('mahotas.find: Cannot handle multi-dimensional images')
     template = template.astype(f.dtype)
-    output = _get_output(f, None, 'find')
-    _check_mode(mode, cval, 'find')
-    match = _convolve.template_match(f, template, output, mode2int[mode], 1)
+    out = np.empty(f.shape, bool)
+    match = _convolve.find2d(f, template, out)
+    return np.array(np.where(match))
 
-    # We now need to adjust the positions
-    coords = np.where(match == 0)
-    coords = np.array(coords).T
-    coords -= np.array(template.shape)//2
-    return coords.T
 
 def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., out=None, output=None):
     """
