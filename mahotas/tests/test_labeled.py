@@ -205,3 +205,16 @@ def test_remove_regions_where():
         relabeled,_ = mh.labeled.relabel(relabeled)
         sizes = mh.labeled.labeled_size(relabeled)
         assert sizes[1:].min() >= 2
+
+def test_remove_bordering_tuple():
+    import mahotas as mh
+    import numpy as np
+    f = np.zeros((32,32))
+    f[0,0] = 1
+    f[2,4] = 2
+    f.T[4,2] = 3
+    f[8,8] = 4
+    assert np.any(mh.labeled.remove_bordering(f) == 3)
+    assert np.any(mh.labeled.remove_bordering(f, (2,4)) == 4)
+    assert np.any(mh.labeled.remove_bordering(f, (2,4)) == 3)
+    assert not np.any(mh.labeled.remove_bordering(f, (4,2)) == 3)
