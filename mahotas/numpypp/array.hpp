@@ -1,6 +1,6 @@
 #ifndef MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_
 #define MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_
-/* Copyright 2008-2013 (C)
+/* Copyright 2008-2014 (C)
  * Luis Pedro Coelho <luis@luispedro.org>
  * License: MIT
  */
@@ -13,8 +13,6 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
-
-#include <stdio.h>
 
 #include "numpy.hpp"
 
