@@ -550,6 +550,52 @@ PyObject* py_rank_filter(PyObject* self, PyObject* args) {
     return PyArray_Return(output);
 }
 
+template<typename T>
+void mean_filter(numpy::aligned_array<double> res, const numpy::aligned_array<T> array, const numpy::aligned_array<T> Bc, const int mode, const double cval) {
+    gil_release nogil;
+    const int N = res.size();
+    typename numpy::aligned_array<T>::const_iterator iter = array.begin();
+    filter_iterator<T> fiter(array.raw_array(), Bc.raw_array(), ExtendMode(mode), true);
+    const int N2 = fiter.size();
+    double* rpos = res.data();
+
+    for (int i = 0; i != N; ++i, ++rpos, fiter.iterate_both(iter)) {
+        int n = N2;
+        double sum = 0;
+        for (int j = 0; j != N2; ++j) {
+            T val;
+            if (fiter.retrieve(iter, j, val)) sum += val;
+            else if (mode == ExtendConstant) sum += cval;
+            else --n;
+        }
+        *rpos = sum/n;
+    }
+}
+PyObject* py_mean_filter(PyObject* self, PyObject* args) {
+    PyArrayObject* array;
+    PyArrayObject* Bc;
+    PyArrayObject* output;
+    int mode;
+    double cval;
+    if (!PyArg_ParseTuple(args, "OOOid", &array, &Bc, &output, &mode, &cval) ||
+        !numpy::are_arrays(array, Bc, output) ||
+        !numpy::equiv_typenums(array, Bc) ||
+        !numpy::check_type<double>(output) ||
+        !PyArray_ISCARRAY(output)) {
+        PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+        return NULL;
+    }
+    holdref r(output);
+
+#define HANDLE(type) \
+        mean_filter<type>(numpy::aligned_array<double>(output), numpy::aligned_array<type>(array), numpy::aligned_array<type>(Bc), mode, cval);
+    SAFE_SWITCH_ON_TYPES_OF(array);
+#undef HANDLE
+
+    Py_INCREF(output);
+    return PyArray_Return(output);
+}
+
 template <typename T>
 void template_match(numpy::aligned_array<T> res, const numpy::aligned_array<T> f, const numpy::aligned_array<T> t, int mode, bool just_equality) {
     gil_release nogil;
@@ -667,6 +713,7 @@ PyMethodDef methods[] = {
   {"haar",(PyCFunction)py_haar, METH_VARARGS, NULL},
   {"ihaar",(PyCFunction)py_ihaar, METH_VARARGS, NULL},
   {"rank_filter",(PyCFunction)py_rank_filter, METH_VARARGS, NULL},
+  {"mean_filter",(PyCFunction)py_mean_filter, METH_VARARGS, NULL},
   {"template_match",(PyCFunction)py_template_match, METH_VARARGS, NULL},
   {"find2d",(PyCFunction)py_find2d, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},

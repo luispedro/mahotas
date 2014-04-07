@@ -158,6 +158,41 @@ def median_filter(f, Bc=None, mode='reflect', cval=0.0, out=None, output=None):
     _check_mode(mode, cval, 'median_filter')
     return _convolve.rank_filter(f, Bc, output, int(rank), mode2int[mode])
 
+def mean_filter(f, Bc, mode='ignore', cval=0.0, out=None):
+    '''mean = mean_filter(f, Bc, mode='ignore', cval=0.0, out=None)
+
+    Mean filter. The value at ``mean[i,j]`` will be the mean of the values in
+    the neighbourhood defined by ``Bc``.
+
+    Parameters
+    ----------
+    f : ndarray
+        input. Any dimension is supported
+    Bc : ndarray
+        Defines the neighbourhood. Must be explicitly passed, no default.
+    mode : {'reflect', 'nearest', 'wrap', 'mirror', 'constant', 'ignore' [ignore]}
+        How to handle borders. The default is to ignore points beyond the
+        border, so that the means computed near the border include fewer elements.
+    cval : double, optional
+        If `mode` is constant, which constant to use (default: 0.0)
+    out : ndarray, optional
+        Output array. Must be a double array with the same shape as `f` as well
+        as be C-contiguous.
+
+    Returns
+    -------
+    mean : ndarray of type double and same shape as ``f``
+
+    See Also
+    --------
+    median_filter : An alternative filtering method
+    '''
+    Bc = morph.get_structuring_elem(f, Bc)
+    out = _get_output(f, out, 'mean_filter', dtype=np.float64)
+    _check_mode(mode, cval, 'mean_filter')
+    return _convolve.mean_filter(f, Bc, out, mode2int[mode], cval)
+
+
 def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None, output=None):
     '''
     ranked = rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None)
