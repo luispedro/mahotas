@@ -1,5 +1,6 @@
 import numpy as np
 import mahotas
+import mahotas as mh
 import sys
 from nose.tools import raises
 
@@ -64,3 +65,26 @@ def test_mix_types():
     a,b = mahotas.cwatershed(f, markers, return_lines=1)
 
 
+def test_overflow():
+    '''Test whether we can force an overflow in the output of cwatershed
+
+    This was reported as issue #41 on github:
+
+    https://github.com/luispedro/mahotas/issues/41
+    '''
+    f = np.random.random((128,64))
+    f *= 255 
+    f = f.astype(np.uint8)
+    for max_n in [127, 240, 280]:
+        markers = np.zeros(f.shape, np.int)
+        for i in range(max_n):
+            while True:
+                a = np.random.randint(f.shape[0])
+                b = np.random.randint(f.shape[1])
+                if markers[a,b] == 0:
+                    markers[a,b] = i + 1
+                    break
+                
+        r = mh.cwatershed(f, markers)
+        assert markers.max() == max_n
+        assert r.max() == max_n
