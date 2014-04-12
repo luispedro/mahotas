@@ -284,6 +284,7 @@ def find(f, template):
 
     Returns
     -------
+    match : np.array
     coordinates : np.array
         These are the coordinates of the match. The format is similar to the
         output of ``np.where``, but in an ndarray.
@@ -293,8 +294,7 @@ def find(f, template):
         raise ValueError('mahotas.find: Cannot handle multi-dimensional images')
     template = template.astype(f.dtype)
     out = np.empty(f.shape, bool)
-    match = _convolve.find2d(f, template, out)
-    return np.array(np.where(match))
+    return _convolve.find2d(f, template, out)
 
 
 def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., out=None, output=None):
