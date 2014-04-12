@@ -296,15 +296,15 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
 
     Returns
     -------
-    W : Regions image (i.e., W[i,j] == region for pixel (i,j))
+    W : integer ndarray
+        Regions image (i.e., W[i,j] == region for pixel (i,j))
     WL : Lines image (`if return_lines==True`)
     '''
     _verify_is_integer_type(surface, 'cwatershed')
     _verify_is_integer_type(markers, 'cwatershed')
+    markers = markers.astype(np.int32)
     if surface.shape != markers.shape:
         raise ValueError('morph.cwatershed: Markers array should have the same shape as value array.')
-    if markers.dtype != surface.dtype:
-        markers = markers.astype(surface.dtype)
     Bc = get_structuring_elem(surface, Bc)
     return _morph.cwatershed(surface, markers, Bc, bool(return_lines))
 

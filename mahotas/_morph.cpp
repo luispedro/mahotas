@@ -585,16 +585,16 @@ struct NeighbourElem {
 };
 
 template<typename BaseType>
-void cwatershed(numpy::aligned_array<BaseType> res,
+void cwatershed(numpy::aligned_array<npy_int32> res,
                         numpy::aligned_array<bool>* lines,
                         const numpy::aligned_array<BaseType> array,
-                        const numpy::aligned_array<BaseType> markers,
+                        const numpy::aligned_array<npy_int32> markers,
                         const numpy::aligned_array<BaseType> Bc) {
     gil_release nogil;
     const int N = res.size();
     const int N2 = Bc.size();
     assert(res.is_carray());
-    BaseType* rdata = res.data();
+    npy_int32* rdata = res.data();
     std::vector<NeighbourElem> neighbours;
     const numpy::position centre = central_position(Bc);
     typename numpy::aligned_array<BaseType>::const_iterator Bi = Bc.begin();
@@ -617,7 +617,7 @@ void cwatershed(numpy::aligned_array<BaseType> res,
 
     std::priority_queue<MarkerInfo> hqueue;
 
-    typename numpy::aligned_array<BaseType>::const_iterator miter = markers.begin();
+    typename numpy::aligned_array<npy_int32>::const_iterator miter = markers.begin();
     for (int i = 0; i != N; ++i, ++miter) {
         if (*miter) {
             assert(markers.validposition(miter.position()));
@@ -685,14 +685,14 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
         return NULL;
     }
     if (!numpy::are_arrays(array, markers, Bc) ||
-        !numpy::equiv_typenums(array, markers)) {
-        PyErr_SetString(PyExc_RuntimeError, "mahotas._cwatershed: markers and f should have equivalent types.");
+        !numpy::check_type<npy_int32>(markers)) {
+        PyErr_SetString(PyExc_RuntimeError, "mahotas._cwatershed: markers should be an int32 array.");
         return NULL;
     }
     PyArrayObject* res_a = (PyArrayObject*)PyArray_SimpleNew(
                                                     PyArray_NDIM(array),
                                                     PyArray_DIMS(array),
-                                                    PyArray_TYPE(array));
+                                                    NPY_INT32);
     if (!res_a) return NULL;
     PyArrayObject* lines =  0;
     numpy::aligned_array<bool>* lines_a = 0;
@@ -702,7 +702,7 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
         lines_a = new numpy::aligned_array<bool>(lines);
     }
 #define HANDLE(type) \
-    cwatershed<type>(numpy::aligned_array<type>(res_a),lines_a,numpy::aligned_array<type>(array),numpy::aligned_array<type>(markers),numpy::aligned_array<type>(Bc));
+    cwatershed<type>(numpy::aligned_array<npy_int32>(res_a),lines_a,numpy::aligned_array<type>(array),numpy::aligned_array<npy_int32>(markers),numpy::aligned_array<type>(Bc));
     SAFE_SWITCH_ON_INTEGER_TYPES_OF(array);
 #undef HANDLE
     if (return_lines) {
