@@ -288,7 +288,8 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
     ----------
     surface : image
     markers : image
-        initial markers (must be a labeled image)
+        initial markers (must be a labeled image, i.e., one where 0 represents
+        the background and higher integers represent different regions)
     Bc : ndarray, optional
         structuring element (default: 3x3 cross)
     return_lines : boolean, optional
@@ -296,13 +297,13 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
 
     Returns
     -------
-    W : integer ndarray
+    W : integer ndarray (int64 ints)
         Regions image (i.e., W[i,j] == region for pixel (i,j))
     WL : Lines image (`if return_lines==True`)
     '''
     _verify_is_integer_type(surface, 'cwatershed')
     _verify_is_integer_type(markers, 'cwatershed')
-    markers = markers.astype(np.int32)
+    markers = markers.astype(np.int64)
     if surface.shape != markers.shape:
         raise ValueError('morph.cwatershed: Markers array should have the same shape as value array.')
     Bc = get_structuring_elem(surface, Bc)
