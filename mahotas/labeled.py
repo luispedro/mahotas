@@ -360,7 +360,7 @@ def bwperim(bw, n=4, mode="constant"):
 
 def _check_array_labeled(array, labeled, funcname):
     if labeled.dtype != np.intc or not labeled.flags.carray:
-        raise ValueError('mahotas.labeled.%s: labeled is not as expected' % funcname)
+        raise ValueError('mahotas.labeled.%s: labeled must be a C-array of type int' % funcname)
     if array.shape != labeled.shape:
         raise ValueError('mahotas.labeled.%s: `array` is not the same size as `labeled`' % funcname)
 
