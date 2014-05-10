@@ -127,16 +127,10 @@ def test_remove_bordering():
         assert np.all(removed2 == removed)
 
 @raises(ValueError)
-def test_check_array_labeled_not_int():
-    arr = np.zeros((4,4))
-    lab = np.zeros((4,4), dtype=np.float32)
-    mahotas.labeled._check_array_labeled(arr, lab, 'testing')
-
-@raises(ValueError)
 def test_check_array_labeled_not_same_shape():
     arr = np.zeros((4,7))
     lab = np.zeros((4,3), dtype=np.intc)
-    mahotas.labeled._check_array_labeled(arr, lab, 'testing')
+    mahotas.labeled._as_labeled(arr, lab, 'testing')
 
 def _nelems(arr):
     return len(set(map(int, arr.ravel())))
@@ -218,3 +212,32 @@ def test_remove_bordering_tuple():
     assert np.any(mh.labeled.remove_bordering(f, (2,4)) == 4)
     assert np.any(mh.labeled.remove_bordering(f, (2,4)) == 3)
     assert not np.any(mh.labeled.remove_bordering(f, (4,2)) == 3)
+
+def test_as_labeled():
+
+    from mahotas.labeled import _as_labeled
+    arr = np.zeros((64,64))
+    labeled = np.zeros((64,64), dtype=np.intc)
+    funcname = 'testing'
+
+    assert _as_labeled(arr, labeled, funcname, inplace=True) is labeled
+    assert _as_labeled(arr, labeled, funcname) is labeled
+
+    lab2 = _as_labeled(arr, labeled, funcname, inplace=False)
+    assert lab2 is not labeled
+    assert np.all(labeled == lab2)
+
+    assert _as_labeled(arr[::2], labeled[::2], funcname, inplace=False) is not labeled
+    assert _as_labeled(arr[::2], labeled[::2], funcname, inplace=None) is not labeled
+    assert _as_labeled(arr[::2], labeled[::2], funcname) is not labeled
+
+    @raises(ValueError)
+    def t():
+        _as_labeled(arr[::2], labeled[::2], funcname, inplace=True)
+    t()
+
+    @raises(ValueError)
+    def t():
+        _as_labeled(arr[::2], labeled, funcname)
+    t()
+

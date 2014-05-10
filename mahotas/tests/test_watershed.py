@@ -88,3 +88,11 @@ def test_overflow():
         r = mh.cwatershed(f, markers)
         assert markers.max() == max_n
         assert r.max() == max_n
+
+
+def test_watershed_labeled():
+    import mahotas as mh
+    dna = mh.demos.load('nuclear').max(2)
+    labeled = mh.cwatershed(dna, mh.regmax(dna))
+    sizes = mh.labeled.labeled_sum(dna, labeled)
+    assert len(sizes) == labeled.max() + 1

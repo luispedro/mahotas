@@ -5,6 +5,7 @@ Version 1.1.0+
 	* Add find() function
 	* add mean_filter() function
 	* Fix cwatershed() overflow possibility
+	* Make labeled functions more flexible in accepting more types
 
 Version 1.1.0 2014-02-12 by luispedro
 	* Better error checking

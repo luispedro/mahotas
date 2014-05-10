@@ -95,9 +95,7 @@ def relabel(labeled, inplace=False):
     --------
     label : function
     '''
-    _check_array_labeled(labeled, labeled, 'relabel')
-    if not inplace:
-        labeled = labeled.copy()
+    labeled = _as_labeled(labeled, labeled, 'relabel', inplace=inplace)
     n = _labeled.relabel(labeled)
     return labeled, n
 
@@ -175,11 +173,9 @@ def remove_regions(labeled, regions, inplace=False):
         After removing unecessary regions, it is often a good idea to relabel
         your label image.
     '''
-    _check_array_labeled(labeled, labeled, 'remove_regions')
+    labeled = _as_labeled(labeled, labeled, 'remove_regions', inplace=inplace)
     regions = np.asarray(regions, dtype=np.intc)
     regions = np.unique(regions)
-    if not inplace:
-        labeled = labeled.copy()
     _labeled.remove_regions(labeled, regions)
     return labeled
 
@@ -358,19 +354,33 @@ def bwperim(bw, n=4, mode="constant"):
     bw = (bw != 0)
     return bw&borders(bw, n, mode=mode)
 
-def _check_array_labeled(array, labeled, funcname):
-    if labeled.dtype != np.intc or not labeled.flags.carray:
+def _as_labeled(array, labeled, funcname, inplace='unused'):
+    '''
+
+    labeled = _as_labeled(array, labeled, funcname, inplace='unused')
+
+    Parameters
+    ----------
+    array : ndarray
+    labeled : ndarray
+    funcname : str
+    inplace : bool or str, optional
+        handles ``inplace`` arguments
+    '''
+    if inplace == 'unused':
+        labeled = np.require(labeled, dtype=np.intc, requirements="CW")
+    elif not inplace:
+        labeled = np.array(labeled, dtype=np.intc)
+    elif labeled.dtype != np.intc or not labeled.flags.carray:
         raise ValueError('mahotas.labeled.%s: labeled must be a C-array of type int' % funcname)
+
     if array.shape != labeled.shape:
         raise ValueError('mahotas.labeled.%s: `array` is not the same size as `labeled`' % funcname)
+    return labeled
+
 
 def _convert_labeled(labeled):
-    labeled = np.asanyarray(labeled)
-    if labeled.dtype != np.intc:
-        labeled = labeled.astype(np.intc)
-    if not labeled.flags.carray:
-        return labeled.copy()
-    return labeled
+    return np.require(labeled, dtype=np.intc, requirements="CW")
 
 def labeled_sum(array, labeled):
     '''
@@ -389,7 +399,7 @@ def labeled_sum(array, labeled):
     -------
     sums : 1-d ndarray of ``array.dtype``
     '''
-    _check_array_labeled(array, labeled, 'labeled_sum')
+    labeled = _as_labeled(array, labeled, 'labeled_sum')
     maxv = labeled.max() + 1
     output = np.empty(maxv, dtype=array.dtype)
     _labeled.labeled_sum(array, labeled, output)
@@ -413,7 +423,7 @@ def labeled_max(array, labeled):
     -------
     mins : 1-d ndarray of ``array.dtype``
     '''
-    _check_array_labeled(array, labeled, 'labeled_max')
+    labeled = _as_labeled(array, labeled, 'labeled_max')
     maxv = labeled.max() + 1
     output = np.empty(maxv, dtype=array.dtype)
     _labeled.labeled_max_min(array, labeled, output, True)
@@ -437,7 +447,7 @@ def labeled_min(array, labeled):
     -------
     maxs : 1-d ndarray of ``array.dtype``
     '''
-    _check_array_labeled(array, labeled, 'labeled_min')
+    labeled = _as_labeled(array, labeled, 'labeled_min')
     maxv = labeled.max() + 1
     output = np.empty(maxv, dtype=array.dtype)
     _labeled.labeled_max_min(array, labeled, output, False)
