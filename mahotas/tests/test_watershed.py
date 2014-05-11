@@ -92,7 +92,24 @@ def test_overflow():
 
 def test_watershed_labeled():
     import mahotas as mh
-    dna = mh.demos.load('nuclear').max(2)
-    labeled = mh.cwatershed(dna, mh.regmax(dna))
-    sizes = mh.labeled.labeled_sum(dna, labeled)
+    S = np.array([
+        [0,0,0,0],
+        [0,1,2,1],
+        [1,1,1,1],
+        [0,0,1,0],
+        [1,1,1,1],
+        [1,2,2,1],
+        [1,1,2,2]
+        ])
+    M = np.array([
+        [0,0,0,0],
+        [0,0,1,0],
+        [0,0,0,0],
+        [0,0,0,0],
+        [0,0,0,0],
+        [0,2,0,0],
+        [0,0,0,0],
+        ])
+    labeled = mh.cwatershed(S, M)
+    sizes = mh.labeled.labeled_sum(S, labeled)
     assert len(sizes) == labeled.max() + 1
