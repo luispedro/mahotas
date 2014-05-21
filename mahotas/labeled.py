@@ -246,7 +246,7 @@ def remove_bordering(labeled, rsize=1, out=None, output=None):
         index[dim] = slice(None,None,None)
     if out is None and output is not None: #pragma: no cover
         import warnings
-        warnings.warn('Using deprecated `output` argument in function `%s`. Please use `out` in the future.' % fname, DeprecationWarning)
+        warnings.warn('Using deprecated `output` argument in function `%s`. Please use `out` in the future.' % 'remove_bordering', DeprecationWarning)
         out = output
     if out is None:
         out = im.copy()
