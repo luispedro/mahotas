@@ -24,7 +24,9 @@ def zernike_moments(im, radius, degree=8, cm=None):
     """
     zvalues = zernike_moments(im, radius, degree=8, cm={center_of_mass(im)})
 
-    Zernike moments through ``degree``
+    Zernike moments through ``degree``. These are computed on a circle of
+    radius ``radius`` centered around ``cm`` (or the center of mass of the
+    image, if the ``cm`` argument is not used).
 
     Returns a vector of absolute Zernike moments through ``degree`` for the
     image ``im``.
@@ -34,7 +36,9 @@ def zernike_moments(im, radius, degree=8, cm=None):
     im : 2-ndarray
         input image
     radius : integer
-        the maximum radius for the Zernike polynomials, in pixels
+        the maximum radius for the Zernike polynomials, in pixels. Note that
+        the area outside the circle (centered on center of mass) defined by
+        this radius is ignored.
     degree : integer, optional
         Maximum degree to use (default: 8)
     cm : pair of floats, optional
