@@ -9,6 +9,11 @@ Here is a list of papers I found using mahotas in reverse chronological order
 (newest first; the oldest predate the mahotas paper and were found with
 google):
 
+#.  Irina Gladkova, Yury Kihai, Alexander Ignatov, Fazlul Shahriar, and Boris
+    Petrenko. *Exploring pattern recognition enhancements to ACSPO clear-sky
+    mask for VIIRS: potential and limitations* Proc. SPIE 9111, Ocean Sensing
+    and Monitoring VI, 91110G (May 23, 2014); `doi:10.1117/12.2053474
+    <http://doi.org/10.1117/12.2053474>`__
 #.  Carl-Magnus Svensson, Solveigh Krusekopf, Jörg Lücke and Marc Thilo Figge.
     *Automated detection of circulating tumor cells with naive Bayesian
     classifiers* Cytometry Part A Volume 85, Issue 6, pages 501–511, June 2014
