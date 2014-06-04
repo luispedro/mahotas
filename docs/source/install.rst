@@ -38,12 +38,18 @@ packages).
 Packaged Versions
 -----------------
 
+WinPython
+~~~~~~~~~
+
+`WinPython <http://winpython.sourceforge.net/>`__ ships with `mahotas as a
+standard package <http://sourceforge.net/p/winpython/wiki/PackageIndex_27/>`__
+
 Python(x, y)
 ~~~~~~~~~~~~
 
 If you use `Python(x, y) <http://pythonxy.com/>`__, which is often a good
-solution, you can find mahotas in the `Additional Plugins
-<http://code.google.com/p/pythonxy/wiki/AdditionalPlugins>`__ page.
+solution, then you probably have it already as `mahotas is a standard plugin
+<https://code.google.com/p/pythonxy/wiki/StandardPlugins>`__.
 
 FreeBSD
 ~~~~~~~
