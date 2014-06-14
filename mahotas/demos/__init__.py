@@ -40,6 +40,7 @@ def load(image_name, as_grey=None):
     _demo_images  = {
         'wally' : 'DepartmentStore.jpg',
         'departmentstore' : 'DepartmentStore.jpg',
+        'lenna' : 'lena.jpg',
         'lena' : 'lena.jpg',
         'luispedro' : 'luispedro.jpg',
         'nuclear' : 'nuclear.png',
