@@ -56,12 +56,12 @@ __all__ = [
 try:
     try:
         from imread import imread, imsave
-    except:
+    except: # pragma: no cover
         try:
             from .freeimage import imread, imsave
         except:
             from .matplotlibwrap import imread, imsave
-except:
+except: # pragma: no cover
     import sys
     _,e,_ = sys.exc_info()
     _error_message %= e
