@@ -3,12 +3,20 @@ from mahotas.io import error_imread, error_imsave
 from nose.tools import raises
 from os import path
 import mahotas as mh
+from nose.tools import with_setup
+
+_testimgname = '/tmp/mahotas_test.png'
+def _remove_image(filename=_testimgname):
+    import os
+    try:
+        os.unlink(filename)
+    except OSError:
+        pass
 
 filename = path.join(
             path.dirname(__file__),
             'data',
             'rgba.png')
-
 
 def skip_on(etype):
     from functools import wraps
@@ -46,6 +54,7 @@ def test_as_grey():
     assert im.ndim == 2
 
 @skip_on(ImportError)
+@with_setup(teardown=_remove_image)
 def test_matplotlibwrap():
     filename = path.join(
             path.dirname(__file__),
@@ -53,6 +62,14 @@ def test_matplotlibwrap():
             'demos',
             'data',
             'lena.jpg')
-    import mahotas.io.matplotlibwrap
-    im = mahotas.io.matplotlibwrap.imread(filename)
-    assert im.shape == (512,512,3)
+    from mahotas.io import matplotlibwrap
+    matp = matplotlibwrap.imread(filename)
+    imr = mh.imread(filename)
+
+    assert matp.shape == (512,512,3)
+    assert np.all(matp == imr)
+    matplotlibwrap.imsave(_testimgname, matp)
+    reread = mh.imread(_testimgname)
+    assert np.all(matp == reread[:,:,:3])
+
+
