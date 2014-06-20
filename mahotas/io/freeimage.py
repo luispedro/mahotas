@@ -761,6 +761,8 @@ def imread(filename, as_grey=False):
 
     Reads an image from file `filename`
 
+    Implementation is based on FreeImage.
+
     Parameters
     ----------
       filename : file name
@@ -785,6 +787,8 @@ def imsave(filename, img):
     Save image to disk
 
     Image type is inferred from filename
+
+    Implementation is based on FreeImage.
 
     Parameters
     ----------
