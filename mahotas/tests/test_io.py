@@ -63,13 +63,14 @@ def test_matplotlibwrap():
             'data',
             'lena.jpg')
     from mahotas.io import matplotlibwrap
+    from imread import imread
     matp = matplotlibwrap.imread(filename)
-    imr = mh.imread(filename)
+    imr = imread(filename)
 
     assert matp.shape == (512,512,3)
     assert np.all(matp == imr)
     matplotlibwrap.imsave(_testimgname, matp)
-    reread = mh.imread(_testimgname)
+    reread = imread(_testimgname)
     assert np.all(matp == reread[:,:,:3])
 
 
