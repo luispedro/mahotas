@@ -11,10 +11,7 @@ before_install:
 
     - sudo apt-get install -qq python-scipy python-imaging python-matplotlib
 
-    - pip install --use-mirrors --quiet numpy
-    - pip install --use-mirrors scipy
-    - pip install --use-mirrors --quiet coveralls
-    - pip install --use-mirrors imread
+    - pip install -r tests-requirements.txt
 install:
     - make debug
 script:
