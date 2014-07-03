@@ -61,7 +61,7 @@ def test_matplotlibwrap():
             '..',
             'demos',
             'data',
-            'lena.jpg')
+            'lena.png')
     from mahotas.io import matplotlibwrap
     from imread import imread
     matp = matplotlibwrap.imread(filename)
