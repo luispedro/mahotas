@@ -1,5 +1,7 @@
 numpy
 scipy
 imread
+matplotlib
+PIL
 coveralls
 nose
