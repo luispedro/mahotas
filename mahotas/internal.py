@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2011-2014, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -166,3 +166,6 @@ def _check_3(arr, funcname):
     if arr.ndim != 3 or arr.shape[2] != 3:
         raise ValueError('mahotas.%s: this function expects an array of shape (h, w, 3), received an array of shape %s.' % (funcname, arr.shape))
 
+def _check_2(arr, funcname):
+    if arr.ndim != 2:
+        raise ValueError('mahotas.%s: this function can only handle 2D arrays (passed array with shape %s).' % (funcname, arr.shape))
