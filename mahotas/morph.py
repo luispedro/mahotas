@@ -6,7 +6,7 @@
 from __future__ import division
 import numpy as np
 
-from .internal import _get_output, _verify_is_integer_type
+from .internal import _get_output, _verify_is_integer_type, _check_2
 from . import _morph
 
 __all__ = [
@@ -273,10 +273,10 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
     W,WL = cwatershed(surface, markers, Bc=None, return_lines=True)
 
     Seeded watershed in n-dimensions
-    
+
     This function computes the watershed transform on the input surface (which
     may actually be an n-dimensional volume).
-    
+
     This function requires initial seed points. A traditional way of
     initializing watershed is to use regional minima::
 
@@ -478,6 +478,7 @@ def close_holes(ref, Bc=None):
     closed : ndarray
         superset of `ref` (i.e. with closed holes)
     '''
+    _check_2(ref, 'close_holes')
     ref = np.ascontiguousarray(ref, dtype=np.bool_)
     Bc = get_structuring_elem(ref, Bc)
     return _morph.close_holes(ref, Bc)
