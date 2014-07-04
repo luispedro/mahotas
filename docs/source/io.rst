@@ -20,12 +20,11 @@ It can use the following backends (it tries them in the following order):
     Freeimage can read and write many formats. Unfortunately, it is harder to
     install and it is not as well-maintained as imread.
 
-3.  As a final fallback, it tries to use `matplotlib
-    <http://matplotlib.org/>`__, which has builtin PNG support and wraps PIL
-    for other formats.
-
 Thus, to use the ``imread`` or ``imsave`` functions, you need to install one of
-the packages above.
+the packages above. At one point, mahotas supported wrapping matplotlib, but
+their image loading methods are unreliable as it uses other packages itself.
+Thus, depending on what you had installed, the resulting images would be
+different.
 
 If you are running on Windows, you may wish to try `Christoph Gohlke's packages
 <http://www.lfd.uci.edu/~gohlke/pythonlibs/#mahotas>`__.
