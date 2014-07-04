@@ -177,13 +177,18 @@ Development
 Development happens on github (`http://github.com/luispedro/mahotas <https://github.com/luispedro/mahotas>`__).
 
 You can set the ``DEBUG`` environment variable before compilation to get a
-debug compile. You can set it to the value ``2`` to get extra checks::
+debug version::
+
+    export DEBUG=1
+    python setup.py test
+
+You can set it to the value ``2`` to get extra checks::
 
     export DEBUG=2
     python setup.py test
 
-Be careful not to use this in production unless you are chasing a bug. The
-debug modes are pretty slow as they add many runtime checks.
+Be careful not to use this in production unless you are chasing a bug. Debug
+level 2 is very slow as it adds many runtime checks.
 
 The ``Makefile`` that is shipped with the source of mahotas can be useful too.
 ``make debug`` will create a debug build. ``make fast`` will create a non-debug
