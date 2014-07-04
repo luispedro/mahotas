@@ -210,6 +210,10 @@ You can use it for mahotas or general computer vision in Python questions.
 Recent Changes
 --------------
 
+1.1.1 (July 04 2014)
+~~~~~~~~~~~~~~~~~~~~
+- Fix crash in close_holes function
+
 1.1.0 (February 12 2014)
 ~~~~~~~~~~~~~~~~~~~~~~~~
 - Better error checking
