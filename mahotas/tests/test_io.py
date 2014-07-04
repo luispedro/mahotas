@@ -53,23 +53,3 @@ def test_as_grey():
     im = mh.imread(filename, as_grey=1)
     assert im.ndim == 2
 
-@skip_on(ImportError)
-@with_setup(teardown=_remove_image)
-def test_matplotlibwrap():
-    filename = path.join(
-            path.dirname(__file__),
-            '..',
-            'demos',
-            'data',
-            'lena.jpg')
-    from mahotas.io import matplotlibwrap
-    matp = matplotlibwrap.imread(filename)
-    imr = mh.imread(filename)
-
-    assert matp.shape == (512,512,3)
-    assert np.all(matp == imr)
-    matplotlibwrap.imsave(_testimgname, matp)
-    reread = mh.imread(_testimgname)
-    assert np.all(matp == reread[:,:,:3])
-
-
