@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2009-2014, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,7 +31,6 @@ On linux, the package is often called python-setuptools''')
     from sys import exit
     exit(1)
 import os
-import numpy.distutils.core as numpyutils
 
 
 exec(compile(open('mahotas/mahotas_version.py').read(),
@@ -70,7 +69,7 @@ extensions = {
     'mahotas.features._zernike': ['mahotas/features/_zernike.cpp'],
 }
 
-ext_modules = [numpyutils.Extension(key, sources=sources, undef_macros=undef_macros, define_macros=define_macros) for key,sources in extensions.items()]
+ext_modules = [setuptools.Extension(key, sources=sources, undef_macros=undef_macros, define_macros=define_macros) for key,sources in extensions.items()]
 
 packages = setuptools.find_packages()
 
@@ -100,7 +99,7 @@ classifiers = [
 'License :: OSI Approved :: MIT License',
 ]
 
-numpyutils.setup(name = 'mahotas',
+setuptools.setup(name = 'mahotas',
       version = __version__,
       description = 'Mahotas: Computer Vision Library',
       long_description = long_description,
