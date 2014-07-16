@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2009-2014, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
 #  in the Software without restriction, including without limitation the rights
 #  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 #  copies of the Software, and to permit persons to whom the Software is
 #  furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 #  all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 #  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 #  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,8 +22,14 @@
 
 from __future__ import division
 import numpy as np
+from .internal import _check_2
 
-__all__ = ['stretch', 'stretch_rgb', 'as_rgb']
+__all__ = [
+        'as_rgb',
+        'overlay',
+        'stretch',
+        'stretch_rgb',
+        ]
 
 def stretch_rgb(img, arg0=None, arg1=None, dtype=np.uint8):
     '''Variation of stretch() function that works per-channel on an RGB image
@@ -166,3 +172,32 @@ def as_rgb(r, g, b):
         return stretch(c)
     return np.dstack([s(r), s(g), s(b)])
 
+
+def overlay(gray, red=None, green=None, blue=None):
+    '''
+    Create an image which is greyscale, but with possible boolean overlays.
+
+    Parameters
+    ----------
+    gray: ndarray
+        Should be a greyscale image
+
+    red,green,blue : ndarray, optional
+        boolean arrays
+
+    Returns
+    -------
+    overlaid : ndarray
+        Colour image
+    '''
+    _check_2(gray, 'overlay')
+    def _v(ch):
+        if ch is None:
+            return gray
+        ch = ch.astype(bool)
+        ch = 255*ch
+        return np.maximum(gray, ch)
+    r = _v(red)
+    g = _v(green)
+    b = _v(blue)
+    return np.dstack([r,g,b]).astype(gray.dtype)

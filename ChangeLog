@@ -8,6 +8,8 @@ Version 1.1.0+
 	* Make labeled functions more flexible in accepting more types
 	* Fix crash in close_holes() with nD images (for n > 2)
 	* Remove matplotlibwrap
+	* Use standard setuptools for building (instead of numpy.distutils)
+	* Add overlay() function
 
 Version 1.1.0 2014-02-12 by luispedro
 	* Better error checking

@@ -72,3 +72,14 @@ def test_stretch_rgb():
 def test_stretch_rgb4():
     mh.stretch_rgb(np.zeros((8,8,3,2)))
 
+
+def test_overlay():
+    im = mh.demos.load('luispedro', as_grey=1)
+    im = mh.stretch(im)
+    assert np.all(mh.overlay(im).max(2) == im)
+    edges = mh.sobel(im)
+
+    im3 = mh.overlay(im, green=edges)
+    assert np.all(im3[:,:,0] == im)
+    assert np.all(im3[:,:,2] == im)
+    assert np.all(im3[:,:,1] >= im )

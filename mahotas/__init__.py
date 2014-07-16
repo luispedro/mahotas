@@ -53,7 +53,10 @@ try:
                         regmin, \
                         regmax
     from .resize import imresize
-    from .stretch import stretch, stretch_rgb, as_rgb
+    from .stretch import as_rgb, \
+                        overlay, \
+                        stretch, \
+                        stretch_rgb
     from .thin import thin
     from .thresholding import otsu, rc
     from .io import imread, imsave
