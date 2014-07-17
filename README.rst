@@ -235,6 +235,24 @@ You can use it for mahotas or general computer vision in Python questions.
 Recent Changes
 --------------
 
+Version 1.2 (July 17 2014)
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Export locmax|locmin at the mahotas namespace level
+- Break away ellipse_axes from eccentricity code as it can be useful on
+  its own
+- Add ``find()`` function
+- Add ``mean_filter()`` function
+- Fix ``cwatershed()`` overflow possibility
+- Make labeled functions more flexible in accepting more types
+- Fix crash in ``close_holes()`` with nD images (for n > 2)
+- Remove matplotlibwrap
+- Use standard setuptools for building (instead of numpy.distutils)
+- Add ``overlay()`` function
+
+Version 1.1.1 (July 4 2014)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Fix crash in close_holes() with nD images (for n > 2)
+
 1.1.0 (February 12 2014)
 ~~~~~~~~~~~~~~~~~~~~~~~~
 - Better error checking
@@ -276,15 +294,6 @@ Recent Changes
 - Work around matplotlib.imsave's implementation of greyscale
 - Fix Haralick bug (report & patch by Tony S Yu)
 - Add count_binary1s() function
-
-1.0 (May 21 2013)
-~~~~~~~~~~~~~~~~~
-- Make matplotlib a soft dependency
-- Add demos.image_path() function
-- Add citation() function
-- Fix a few corner cases in texture analysis
-- Integrate with travis
-- Update citation (include DOI)
 
 See the `ChangeLog
 <https://github.com/luispedro/mahotas/blob/master/ChangeLog>`__ for older
