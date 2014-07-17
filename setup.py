@@ -31,6 +31,7 @@ On linux, the package is often called python-setuptools''')
     from sys import exit
     exit(1)
 import os
+import numpy
 
 
 exec(compile(open('mahotas/mahotas_version.py').read(),
@@ -69,7 +70,7 @@ extensions = {
     'mahotas.features._zernike': ['mahotas/features/_zernike.cpp'],
 }
 
-ext_modules = [setuptools.Extension(key, sources=sources, undef_macros=undef_macros, define_macros=define_macros) for key,sources in extensions.items()]
+ext_modules = [setuptools.Extension(key, sources=sources, undef_macros=undef_macros, define_macros=define_macros, include_dirs=[numpy.get_include()]) for key,sources in extensions.items()]
 
 packages = setuptools.find_packages()
 
