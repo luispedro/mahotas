@@ -1,3 +1,7 @@
+Version 1.2.1 2014-07-21 by luispedro
+	* Explicitly set numpy.include_dirs() in setup.py [patch by Andrew
+	Stromnov on github]
+
 Version 1.2 2014-07-17 by luispedro
 	* Export locmax|locmin at the mahotas namespace level
 	* Break away ellipse_axes from eccentricity code as it can be useful on

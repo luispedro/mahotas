@@ -235,6 +235,10 @@ You can use it for mahotas or general computer vision in Python questions.
 Recent Changes
 --------------
 
+Version 1.2.1 (July 21 2014)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Explicitly set numpy.include_dirs() in setup.py [patch by Andrew Stromnov]
+
 Version 1.2 (July 17 2014)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Export locmax|locmin at the mahotas namespace level
