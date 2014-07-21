@@ -20,6 +20,14 @@ If you prefer, you can download the source from `PyPI
 
 You will need to have ``numpy`` and a ``C++`` compiler.
 
+Visual Studio
+~~~~~~~~~~~~~
+
+For compiling from source in Visual Studio, use::
+
+    python setup.py build_ext -c msvc
+    python setup.py install
+
 
 Bleeding Edge (Development)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -28,15 +36,16 @@ Development happens on `github <https://github.com/luispedro/mahotas>`__. You
 can get the development source there. Watch out that *these versions are more
 likely to have problems*.
 
+Packaged Versions
+-----------------
+
 On Windows
-----------
+~~~~~~~~~~
 
 On Windows, Christoph Gohlke does an excelent job maintaining `binary packages
 of mahotas <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`__ (and several other
 packages).
 
-Packaged Versions
------------------
 
 WinPython
 ~~~~~~~~~
@@ -62,6 +71,15 @@ MacPorts
 
 For Macports, mahotas is available as `py27-mahotas
 <https://trac.macports.org/browser/trunk/dports/python/py-mahotas/Portfile>`__.
+
+conda
+~~~~~
+
+Mahotas is not a part of standard conda packages, but on 64 bit Linux, you can
+get it `from this repository <https://binstar.org/luispedro/mahotas>`__ with::
+
+    conda install -c https://conda.binstar.org/luispedro mahotas
+
 
 Frugalware Linux
 ~~~~~~~~~~~~~~~~

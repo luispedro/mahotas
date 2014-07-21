@@ -112,37 +112,17 @@ Install
 -------
 
 You will need python (naturally), numpy, and a C++ compiler. Then you should be
-able to either
-
-Download the source and then run::
-
-    python setup.py install
-
-or use one of::
+able to use::
 
     pip install mahotas
-    easy_install mahotas
 
 You can test your instalation by running::
 
     python -c "import mahotas; mahotas.test()"
 
-If you compiled from source, **you need to do this in another directory** (or
-compile locally, which can be accomplished with ``python setup.py build
---build-lib=.``).
 
-If something fails, you can obtain more detail by running it again in *verbose
-mode*::
-
-    python -c "import mahotas; mahotas.test(verbose=True)"
-
-Visual Studio
-~~~~~~~~~~~~~
-
-For compiling from source in Visual Studio, use::
-
-    python setup.py build_ext -c msvc
-    python setup.py install
+If you run into issues, the manual has more `extensive documentation on mahotas
+intallation <http://mahotas.readthedocs.org/en/latest/install.html>`__
 
 Citation
 --------
