@@ -22,7 +22,7 @@ __all__ = [
         'hitmiss',
         'locmax',
         'locmin',
-        'majority_filter'
+        'majority_filter',
         'open',
         'regmax',
         'regmin',
