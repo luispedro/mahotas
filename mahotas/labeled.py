@@ -8,7 +8,7 @@ import numpy as np
 from .morph import get_structuring_elem
 from . import _labeled
 from .internal import _get_output
-from ._filters import mode2int, modes, _check_mode
+from ._filters import _checked_mode2int
 import mahotas as mh
 
 __all__ = [
@@ -317,7 +317,7 @@ def borders(labeled, Bc=None, out=None, output=None, mode='constant'):
     Bc = get_structuring_elem(labeled, Bc)
     output = _get_output(labeled, out, 'labeled.borders', bool, output=output)
     output.fill(False)
-    return _labeled.borders(labeled, Bc, output, mode2int[mode])
+    return _labeled.borders(labeled, Bc, output, _checked_mode2int(mode, 0.0, 'borders'))
 
 
 def bwperim(bw, n=4, mode="constant"):
