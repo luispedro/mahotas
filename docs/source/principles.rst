@@ -59,7 +59,7 @@ Mahotas tries to avoid dependencies.
 
 Right now, building mahotas depends on a C++ compiler, numpy. These are
 unlikely to ever change. To run mahotas, we need numpy. In order to read
-images, we need one of (1) imread, (2) FreeImage, or (3) matplotlib.
+images, we need one of (1) imread or (2) FreeImage.
 
 The imread/freeimage dependency is a soft dependency: everything, except for imread
 works without it. The code is written to ensure that ``import``-ing mahotas

@@ -59,13 +59,15 @@ Imread cannot find FreeImage
 Mahotas itself does not have the functionality to read in images (see the `I/O
 section <io.html>`__.
 
-Functions such as ``imread`` are just a wrapper around one of 3 backends:
+Functions such as ``imread`` are just a wrapper around one of 2 backends:
 
 1. mahotas-imread (i.e., https://pypi.python.org/pypi/imread)
 2. FreeImage
-3. matplotlib (which only supports PNG & JPEG)
 
-Thus, you need to install one of the packages above.
+Thus, you need to install one of the packages above. At one point, mahotas
+supported wrapping matplotlib, but their image loading methods are unreliable
+as it uses other packages itself.  Thus, depending on what you had installed,
+the resulting images would be different.
 
 If you are running on Windows, you may wish to try `Christoph Gohlke's packages
 <http://www.lfd.uci.edu/~gohlke/pythonlibs/#mahotas>`__.
