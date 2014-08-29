@@ -4,6 +4,19 @@ Mahotas
 Python Computer Vision Library
 ------------------------------
 
+
+|Travis|_
+|Downloads|_
+|License|_
+
+.. |Travis| image:: https://api.travis-ci.org/luispedro/mahotas.png
+.. |Downloads| image:: https://pypip.in/d/mahotas/badge.png
+.. |License| image:: https://pypip.in/license/mahotas/badge.png
+.. _Travis: https://travis-ci.org/luispedro/mahotas
+.. _Downloads: https://pypi.python.org/pypi/mahotas
+.. _License: http://opensource.org/licenses/MIT
+
+
 Mahotas is a library of fast computer vision algorithms (all implemented in
 C++) operates over numpy arrays for convenience.
 
@@ -174,13 +187,6 @@ The ``Makefile`` that is shipped with the source of mahotas can be useful too.
 ``make debug`` will create a debug build. ``make fast`` will create a non-debug
 build (you need to ``make clean`` in between). ``make test`` will run the test
 suite.
-
-
-Travis Build Status
-~~~~~~~~~~~~~~~~~~~
-
-.. image:: https://travis-ci.org/luispedro/mahotas.png
-       :target: https://travis-ci.org/luispedro/mahotas
 
 
 Links & Contacts
