@@ -1,3 +1,6 @@
+Version 1.2.1+
+	* Add minlength argument to labeled_sum
+
 Version 1.2.1 2014-07-21 by luispedro
 	* Explicitly set numpy.include_dirs() in setup.py [patch by Andrew
 	Stromnov on github]

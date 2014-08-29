@@ -382,9 +382,9 @@ def _as_labeled(array, labeled, funcname, inplace='unused'):
 def _convert_labeled(labeled):
     return np.require(labeled, dtype=np.intc, requirements="CW")
 
-def labeled_sum(array, labeled):
+def labeled_sum(array, labeled, minlength=None):
     '''
-    sums = labeled_sum(array, labeled)
+    sums = labeled_sum(array, labeled, minlength=None)
 
     Labeled sum. sum will be an array of size ``labeled.max() + 1``, where
     ``sum[i]`` is equal to ``np.sum(array[labeled == i])``.
@@ -394,6 +394,9 @@ def labeled_sum(array, labeled):
     array : ndarray of any type
     labeled : int ndarray
         Label map. This is the same type as returned from ``mahotas.label()``
+    minlength : int, optional
+        Minimum size of return array. If labeled has fewer than ``minlength``
+        regions, 0s are added to the result.  (optional)
 
     Returns
     -------
@@ -401,6 +404,8 @@ def labeled_sum(array, labeled):
     '''
     labeled = _as_labeled(array, labeled, 'labeled_sum')
     maxv = labeled.max() + 1
+    if minlength is not None:
+        maxv = max(maxv, minlength)
     output = np.empty(maxv, dtype=array.dtype)
     _labeled.labeled_sum(array, labeled, output)
     return output
@@ -408,7 +413,7 @@ def labeled_sum(array, labeled):
 
 def labeled_max(array, labeled):
     '''
-    mins = labeled_max(array, labeled)
+    mins = labeled_max(array, labeled, minlength=None)
 
     Labeled minimum. ``mins`` will be an array of size ``labeled.max() + 1``, where
     ``mins[i]`` is equal to ``np.min(array[labeled == i])``.

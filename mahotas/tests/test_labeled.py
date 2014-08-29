@@ -76,6 +76,17 @@ def test_sum_labeled():
         slow = slow_labeled_sum(f, labeled)
         assert np.allclose(fast, slow)
 
+def test_sum_minlength_arg():
+    for _ in range(8):
+        f = mh.dilate(np.random.random_sample((64,64)) > .8)
+        labeled, n = mh.labeled.label(f)
+        sizes = mh.labeled.labeled_sum(f, labeled)
+        sizes2 = mh.labeled.labeled_sum(f, labeled, minlength=(n+23))
+        assert len(sizes) == (n+1)
+        assert len(sizes2) == (n+23)
+        assert np.all(sizes == sizes2[:n+1])
+
+
 def test_max_labeled():
     np.random.seed(334)
     for i in range(16):
