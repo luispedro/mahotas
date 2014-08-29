@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2013, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2014, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -7,7 +7,6 @@
 import numpy as np
 from . import _texture
 from ..internal import _verify_is_integer_type
-import math
 
 __all__ = [
     'haralick',
