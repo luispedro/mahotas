@@ -1,5 +1,6 @@
 Version 1.2.1+
 	* Add minlength argument to labeled_sum
+	* Generalize regmax/regmin to work with floating point images
 
 Version 1.2.1 2014-07-21 by luispedro
 	* Explicitly set numpy.include_dirs() in setup.py [patch by Andrew

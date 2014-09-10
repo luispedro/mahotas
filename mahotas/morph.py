@@ -622,7 +622,6 @@ def regmin(f, Bc=None, out=None, output=None):
     locmin : function
         Local minima
     '''
-    _verify_is_integer_type(f, 'regmin')
     Bc = get_structuring_elem(f, Bc)
     Bc = _remove_centre(Bc.copy())
     output = _get_output(f, out, 'regmin', np.bool_, output=output)
@@ -666,7 +665,6 @@ def regmax(f, Bc=None, out=None, output=None):
     locmax : function
         Local maxima. The local maxima are a superset of the regional maxima
     '''
-    _verify_is_integer_type(f, 'regmax')
     Bc = get_structuring_elem(f, Bc)
     Bc = _remove_centre(Bc.copy())
     output = _get_output(f, out, 'regmax', np.bool_, output=output)

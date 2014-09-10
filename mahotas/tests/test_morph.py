@@ -80,10 +80,11 @@ def test_locmin_max():
 def test_regmax_min():
     from mahotas.morph import locmax, locmin, regmax, regmin
     np.random.seed(123)
-    for i in range(4):
+    for i in range(8):
         A = np.random.random_sample((64,64))
         A *= 255
-        A = A.astype(np.uint8)
+        if (i % 2) == 1:
+            A = A.astype(np.uint8)
 
         loc = locmax(A)
         reg = regmax(A)
