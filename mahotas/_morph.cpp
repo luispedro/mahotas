@@ -555,12 +555,13 @@ PyObject* py_close_holes(PyObject* self, PyObject* args) {
     return PyArray_Return(res_a);
 }
 
+template <typename CostType>
 struct MarkerInfo {
-    int cost;
+    CostType cost;
     int idx;
     int position;
     int margin;
-    MarkerInfo(int cost, int idx, int position, int margin)
+    MarkerInfo(CostType cost, int idx, int position, int margin)
         :cost(cost)
         ,idx(idx)
         ,position(position)
@@ -615,7 +616,7 @@ void cwatershed(numpy::aligned_array<npy_int64> res,
     enum { white, grey, black };
     std::vector<unsigned char> status(array.size(), static_cast<unsigned char>(white));
 
-    std::priority_queue<MarkerInfo> hqueue;
+    std::priority_queue<MarkerInfo<BaseType> > hqueue;
 
     typename numpy::aligned_array<npy_int64>::const_iterator miter = markers.begin();
     for (int i = 0; i != N; ++i, ++miter) {
@@ -624,18 +625,18 @@ void cwatershed(numpy::aligned_array<npy_int64> res,
             const numpy::position mpos = miter.position();
             const int margin = margin_of(mpos, markers);
 
-            hqueue.push(MarkerInfo(array.at(mpos), idx++, markers.pos_to_flat(mpos), margin));
+            hqueue.push(MarkerInfo<BaseType>(array.at(mpos), idx++, markers.pos_to_flat(mpos), margin));
             res.at(mpos) = *miter;
             status[markers.pos_to_flat(mpos)] = grey;
         }
     }
 
     while (!hqueue.empty()) {
-        const MarkerInfo next = hqueue.top();
+        const MarkerInfo<BaseType> next = hqueue.top();
         hqueue.pop();
         status[next.position] = black;
         int margin = next.margin;
-        for (std::vector<NeighbourElem>::const_iterator neighbour = neighbours.begin(),
+        for (typename std::vector<NeighbourElem>::const_iterator neighbour = neighbours.begin(),
                             past = neighbours.end();
                     neighbour != past;
                     ++neighbour) {
@@ -661,7 +662,7 @@ void cwatershed(numpy::aligned_array<npy_int64> res,
                 case white: {
                     const BaseType ncost = array.at_flat(npos);
                     rdata[npos] = rdata[next.position];
-                    hqueue.push(MarkerInfo(ncost, idx++, npos, nmargin));
+                    hqueue.push(MarkerInfo<BaseType>(ncost, idx++, npos, nmargin));
                     status[npos] = grey;
                     break;
                 }
@@ -703,7 +704,7 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
     }
 #define HANDLE(type) \
     cwatershed<type>(numpy::aligned_array<npy_int64>(res_a),lines_a,numpy::aligned_array<type>(array),numpy::aligned_array<npy_int64>(markers),numpy::aligned_array<type>(Bc));
-    SAFE_SWITCH_ON_INTEGER_TYPES_OF(array);
+    SAFE_SWITCH_ON_TYPES_OF(array);
 #undef HANDLE
     if (return_lines) {
         delete lines_a;

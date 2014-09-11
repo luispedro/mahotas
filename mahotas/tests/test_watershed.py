@@ -56,6 +56,7 @@ def test_mismatched_array_markers():
     mahotas.cwatershed(S, markers)
 
 def test_mix_types():
+    "[watershed regression]: Mixing types of surface and marker arrays used to cause crash"
     f = np.zeros((64,64), np.uint16)
     f += (np.indices(f.shape)[1]**2).astype(np.uint16)
     f += ((np.indices(f.shape)[0]-23)**2).astype(np.uint16)
@@ -66,7 +67,7 @@ def test_mix_types():
 
 
 def test_overflow():
-    '''Test whether we can force an overflow in the output of cwatershed
+    '''[watershed regression]: Try to force overflow on the output
 
     This was reported as issue #41 on github:
 
@@ -113,3 +114,15 @@ def test_watershed_labeled():
     labeled = mh.cwatershed(S, M)
     sizes = mh.labeled.labeled_sum(S, labeled)
     assert len(sizes) == labeled.max() + 1
+
+
+def test_float_input():
+    "[watershed]: Compare floating point input with integer input"
+    f = np.random.random((128,64))
+    f = mh.gaussian_filter(f, 8.)
+    f = mh.gaussian_filter(f, 8.)
+    markers,_ = mh.label(mh.regmin(f))
+    f = np.round(f * 2**30)
+    wf = mh.cwatershed(f / 2**30., markers)
+    w32 = mh.cwatershed(f.astype(np.int32), markers)
+    assert (wf == w32).mean() > .999
