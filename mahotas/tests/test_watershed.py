@@ -3,30 +3,30 @@ import mahotas
 import mahotas as mh
 import sys
 from nose.tools import raises
+S = np.array([
+    [0,0,0,0],
+    [0,1,2,1],
+    [1,1,1,1],
+    [0,0,1,0],
+    [1,1,1,1],
+    [1,2,2,1],
+    [1,1,2,2]
+    ])
+M = np.array([
+    [0,0,0,0],
+    [0,0,1,0],
+    [0,0,0,0],
+    [0,0,0,0],
+    [0,0,0,0],
+    [0,2,0,0],
+    [0,0,0,0],
+    ])
 
 def test_watershed():
-    S = np.array([
-        [0,0,0,0],
-        [0,1,2,1],
-        [1,1,1,1],
-        [0,0,1,0],
-        [1,1,1,1],
-        [1,2,2,1],
-        [1,1,2,2]
-        ])
-    M = np.array([
-        [0,0,0,0],
-        [0,0,1,0],
-        [0,0,0,0],
-        [0,0,0,0],
-        [0,0,0,0],
-        [0,2,0,0],
-        [0,0,0,0],
-        ])
-    def cast_test(M,S,dtype):
-        M = M.astype(dtype)
-        S = S.astype(dtype)
-        W = mahotas.cwatershed(2-S,M)
+    def cast_test(dtype):
+        St = S.astype(dtype)
+        Mt = M.astype(int)
+        W = mahotas.cwatershed(2-St,Mt)
         assert sys.getrefcount(W) == 2
         assert np.all(W == np.array([[1, 1, 1, 1],
                [1, 1, 1, 1],
@@ -35,8 +35,17 @@ def test_watershed():
                [2, 2, 2, 2],
                [2, 2, 2, 2],
                [2, 2, 2, 2]]))
-    for d in [np.uint8, np.int8, np.uint16, np.int16, np.int32, np.uint32,int]:
-        yield cast_test, M, S, d
+    for d in [np.uint8, np.int8, np.uint16, np.int16, np.int32, np.uint32,int,
+                 np.float32, np.float64, np.float128, float]:
+        yield cast_test, d
+
+
+@raises(TypeError)
+def test_float16():
+    dtype = np.float16
+    St = S.astype(dtype)
+    Mt = M.astype(int)
+    mh.cwatershed(2-St,Mt)
 
 
 def test_watershed2():

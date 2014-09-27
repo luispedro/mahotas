@@ -1,6 +1,6 @@
 #ifndef MAHOTAS_NUMPYPP_NUMPY_HPP_INCLUDE_GUARD_LPC_
 #define MAHOTAS_NUMPYPP_NUMPY_HPP_INCLUDE_GUARD_LPC_
-/* Copyright 2010-2012 (C)
+/* Copyright 2010-2014 (C)
  * Luis Pedro Coelho <luis@luispedro.org>
  * License: MIT
  */
@@ -41,6 +41,7 @@ DECLARE_DTYPE_CODE(unsigned long, NPY_ULONG)
 DECLARE_DTYPE_CODE(long long, NPY_LONGLONG)
 DECLARE_DTYPE_CODE(unsigned long long, NPY_ULONGLONG)
 DECLARE_DTYPE_CODE(double, NPY_DOUBLE)
+DECLARE_DTYPE_CODE(npy_float128, NPY_FLOAT128)
 DECLARE_DTYPE_CODE(std::complex<float>, NPY_CFLOAT)
 DECLARE_DTYPE_CODE(std::complex<double>, NPY_CDOUBLE)
 DECLARE_DTYPE_CODE(unsigned int, NPY_UINT)

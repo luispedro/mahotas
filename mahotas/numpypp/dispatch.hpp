@@ -1,3 +1,7 @@
+/* Copyright 2010-2014 (C)
+ * Luis Pedro Coelho <luis@luispedro.org>
+ * License: MIT
+ */
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 #define HANDLE_INTEGER_TYPES() \
@@ -13,16 +17,24 @@ typedef unsigned short ushort;
 
 #define HANDLE_FLOAT_TYPES() \
     case NPY_FLOAT: HANDLE(float); break; \
-    case NPY_DOUBLE: HANDLE(double); break;
+    case NPY_DOUBLE: HANDLE(double); break; \
+    case NPY_FLOAT128: HANDLE(npy_float128); break;
 
 #define HANDLE_TYPES() \
     HANDLE_INTEGER_TYPES() \
     HANDLE_FLOAT_TYPES()
 
+#define HANDLE_FLOAT16() \
+    case NPY_FLOAT16: \
+        PyErr_SetString(PyExc_TypeError, "Mahotas does not support float16. " \
+                            "Please convert your data before calling mahotas functions."); \
+        return NULL;
+
 #define SAFE_SWITCH_ON_TYPES_OF(array) \
     try { \
         switch(PyArray_TYPE(array)) { \
                 HANDLE_TYPES();\
+                HANDLE_FLOAT16(); \
                 default: \
                 PyErr_SetString(PyExc_RuntimeError, "Dispatch on types failed!"); \
                 return NULL; \
@@ -45,9 +57,10 @@ typedef unsigned short ushort;
     try { \
         switch(PyArray_TYPE(array)) { \
                 HANDLE_FLOAT_TYPES();\
+                HANDLE_FLOAT16(); \
                 default: \
-                PyErr_SetString(PyExc_RuntimeError, "Dispatch on types failed!"); \
-                return NULL; \
+                    PyErr_SetString(PyExc_RuntimeError, "Dispatch on types failed!"); \
+                    return NULL; \
         } \
     } \
     CATCH_PYTHON_EXCEPTIONS
