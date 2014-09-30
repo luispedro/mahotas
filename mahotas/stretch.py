@@ -68,8 +68,11 @@ def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
     img' = stretch(img, max, [dtype=np.uint8])
     img' = stretch(img, min, max, [dtype=np.uint8])
 
-    Contrast stretch the image to the range [0, max] (first form) or
-        [min, max] (second form).
+    Contrast stretch the image to the range [0, max] (first form) or [min, max]
+    (second form). The method is simple linear stretching according to the
+    formula::
+
+        p' = max * (p - img.min())/img.ptp() + min
 
     Parameters
     ----------
