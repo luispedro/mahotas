@@ -69,6 +69,7 @@ try:
     from . import demos
     from . import features
     from . import morph
+    from . import polygon
     from . import segmentation
 except ImportError: # pragma: no cover
     import sys
@@ -165,6 +166,7 @@ __all__ = [
     'demos',
     'morph',
     'features',
+    'polygon',
     'segmentation',
 
     'test',
