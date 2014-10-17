@@ -45,7 +45,7 @@ def sobel(img, just_filter=False):
     '''
     # This is based on Octave's implementation,
     # but with some reverse engineering to match Matlab exactly
-    img = np.asanyarray(img, dtype=np.float)
+    img = np.array(img, dtype=np.float)
     if img.ndim != 2:
         raise ValueError('mahotas.sobel: Only available for 2-dimensional images')
     img -= img.min()

@@ -1,5 +1,6 @@
 from mahotas.edge import sobel
 from nose.tools import raises
+import mahotas as mh
 import numpy as np
 
 def test_sobel_shape():
@@ -36,12 +37,19 @@ def test_zero_images():
     assert np.isnan(sobel(np.zeros((16,16)))).sum() == 0
     assert sobel(np.zeros((16,16)), just_filter=True).sum() == 0
 
+
+def test_sobel_pure():
+    f = np.random.random((64, 128))
+    f2 = f.copy()
+    _ = mh.sobel(f)
+    assert np.all(f == f2)
+
+
 def test_find_edge():
-    import mahotas as mh
     f = np.zeros((32,48))
     f[:,16:] = 255
     f = mh.gaussian_filter(f,4)
-    fs = sobel(f)
+    fs = mh.sobel(f)
     assert np.all(fs[:,15] > 0)
 
 @raises(ValueError)
