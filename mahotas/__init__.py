@@ -147,6 +147,8 @@ __all__ = [
     'imsave',
     'label',
     'labeled_sum',
+    'locmax',
+    'locmin',
     'majority_filter',
     'median_filter',
     'moments',
