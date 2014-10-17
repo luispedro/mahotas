@@ -47,13 +47,12 @@ def test_sobel_pure():
 
 def test_find_edge():
     f = np.zeros((32,48))
-    f[:,16:] = 255
+    f[:,16:] = 1
     f = mh.gaussian_filter(f,4)
     fs = mh.sobel(f)
     assert np.all(fs[:,15] > 0)
 
 @raises(ValueError)
 def test_3d_error():
-    import mahotas as mh
     f = np.zeros((32,16,3))
     sobel(f)

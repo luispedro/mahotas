@@ -4,6 +4,7 @@ Version 1.2.1+
 	* Allow floating point inputs to ``cwatershed()``
 	* Correctly check for float16 & float128 inputs
 	* Make sobel into a pure function (i.e., do not normalize its input)
+	* Fix sobel filtering
 
 Version 1.2.1 2014-07-21 by luispedro
 	* Explicitly set numpy.include_dirs() in setup.py [patch by Andrew

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2013, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2014, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # License: MIT (see COPYING file)
 
 from __future__ import division
 import numpy as np
+import mahotas as mh
 from . import convolve
 
 _hsobel_filter = np.array([
@@ -63,12 +64,7 @@ def sobel(img, just_filter=False):
     if just_filter:
         return filtered
     thresh = 2*np.sqrt(filtered.mean())
-    filtered *= (np.sqrt(filtered) > thresh)
-
-    r,c = filtered.shape
-    x = (filtered > np.hstack((np.zeros((r,1)),filtered[:,:-1]))) & (filtered > np.hstack((filtered[:,1:], np.zeros((r,1)))))
-    y = (filtered > np.vstack((np.zeros(c),filtered[:-1,:]))) & (filtered > np.vstack((filtered[1:,:], np.zeros(c))))
-    return x | y
+    return mh.regmax(filtered) * (np.sqrt(filtered) > thresh)
 
 
 
