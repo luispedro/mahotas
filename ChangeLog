@@ -1,4 +1,4 @@
-Version 1.2.1+
+Version 1.2.2 2014-10-19 by luispedro
 	* Add minlength argument to labeled_sum
 	* Generalize regmax/regmin to work with floating point images
 	* Allow floating point inputs to ``cwatershed()``

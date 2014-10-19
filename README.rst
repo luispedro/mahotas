@@ -221,6 +221,15 @@ You can use it for mahotas or general computer vision in Python questions.
 Recent Changes
 --------------
 
+Version 1.2.2 (October 19 2014)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Add minlength argument to labeled_sum
+- Generalize regmax/regmin to work with floating point images
+- Allow floating point inputs to ``cwatershed()``
+- Correctly check for float16 & float128 inputs
+- Make sobel into a pure function (i.e., do not normalize its input)
+- Fix sobel filtering
+
 Version 1.2.1 (July 21 2014)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Explicitly set numpy.include_dirs() in setup.py [patch by Andrew Stromnov]
@@ -254,36 +263,6 @@ Version 1.1.1 (July 4 2014)
 - Fix hard crash in convolution
 - Fix axis handling in convolve1d
 - Add normalization to moments calculation
-
-
-1.0.4 (2013-12-15)
-~~~~~~~~~~~~~~~~~~
-- Add mahotas.demos.load()
-- Add stretch_rgb() function
-- Add demos to mahotas namespace
-- Fix SLIC superpixels
-
-
-1.0.3 (2013-10-06)
-~~~~~~~~~~~~~~~~~~
-- Add border & as_slice arguments to bbox()
-- Better error message in gaussian_filter
-- Allow as_rgb() to take integer arguments
-- Extend distance() to n-dimensions
-- Update to newer Numpy APIs (remove direct access to PyArray members)
-
-1.0.2 (July 10 2013)
-~~~~~~~~~~~~~~~~~~~~
-- Fix requirements filename
-
-1.0.1 (July 9 2013)
-~~~~~~~~~~~~~~~~~~~
-- Add lbp_transform() function
-- Add rgb2sepia function
-- Add mahotas.demos.nuclear_image() function
-- Work around matplotlib.imsave's implementation of greyscale
-- Fix Haralick bug (report & patch by Tony S Yu)
-- Add count_binary1s() function
 
 See the `ChangeLog
 <https://github.com/luispedro/mahotas/blob/master/ChangeLog>`__ for older

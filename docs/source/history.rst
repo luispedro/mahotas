@@ -2,6 +2,16 @@
 History
 =======
 
+Version 1.2.2 (October 19 2014)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Add minlength argument to labeled_sum
+- Generalize regmax/regmin to work with floating point images
+- Allow floating point inputs to ``cwatershed()``
+- Correctly check for float16 & float128 inputs
+- Make sobel into a pure function (i.e., do not normalize its input)
+- Fix sobel filtering
+
+
 Version 1.2.1 (July 21 2014)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Explicitly set numpy.include_dirs() in setup.py [patch by Andrew Stromnov]
