@@ -15,10 +15,17 @@ typedef unsigned short ushort;
     case NPY_LONG: HANDLE(npy_long); break; \
     case NPY_ULONG: HANDLE(npy_ulong); break;
 
+#if defined(NPY_FLOAT128)
+#define HANDLE_FLOAT128() case NPY_FLOAT128: HANDLE(npy_float128)
+#else
+#define HANDLE_FLOAT128()
+#endif
+
 #define HANDLE_FLOAT_TYPES() \
     case NPY_FLOAT: HANDLE(float); break; \
     case NPY_DOUBLE: HANDLE(double); break; \
-    case NPY_FLOAT128: HANDLE(npy_float128); break;
+    HANDLE_FLOAT128(); \
+    break;
 
 #define HANDLE_TYPES() \
     HANDLE_INTEGER_TYPES() \
