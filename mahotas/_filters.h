@@ -132,7 +132,7 @@ struct filter_iterator {
             footprint = new bool[filter_size];
             typename numpy::aligned_array<T>::iterator fiter = filter_array.begin();
             for (int i = 0; i != filter_size; ++i, ++fiter) {
-                footprint[i] = bool(*fiter);
+                footprint[i] = !!(*fiter);
             }
         }
         size_ = init_filter_offsets(array, footprint, PyArray_DIMS(filter), 0,
