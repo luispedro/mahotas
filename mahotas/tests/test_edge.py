@@ -50,7 +50,7 @@ def test_find_edge():
     f[:,16:] = 1
     f = mh.gaussian_filter(f,4)
     fs = mh.sobel(f)
-    assert np.all(fs[:,15] > 0)
+    assert np.sum(fs[:,15:17] > 0) >= 32
 
 @raises(ValueError)
 def test_3d_error():
