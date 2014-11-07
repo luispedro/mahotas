@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2006-2014, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -74,6 +74,7 @@ def zernike_moments(im, radius, degree=8, cm=None):
     Dn = Xn**2
     Dn += Yn**2
     np.sqrt(Dn, Dn)
+    np.maximum(Dn, 1e-9, out=Dn)
     k = (Dn <= 1.)
     k &= (P > 0)
 
