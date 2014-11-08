@@ -14,7 +14,7 @@ struct checked_pointer {
     { }
 
     T& operator [] (unsigned ix) {
-        assert(ix < n_);
+        assert(ix < unsigned(n_));
         return base_[ix];
     }
 
