@@ -1,6 +1,7 @@
-Version 1.2.2+
+Version 1.2.3 2014-11-08 by luispedro
 	* Export mean_filter at top level
 	* Fix to Zernike moments computation (reported by Sergey Demurin)
+	* Fix compilation in platforms without npy_float128 (patch by Gabi Davar)
 
 Version 1.2.2 2014-10-19 by luispedro
 	* Add minlength argument to labeled_sum

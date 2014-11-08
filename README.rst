@@ -221,6 +221,13 @@ You can use it for mahotas or general computer vision in Python questions.
 Recent Changes
 --------------
 
+Version 1.2.3 (November 8 2014)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Export mean_filter at top level
+- Fix to Zernike moments computation (reported by Sergey Demurin)
+- Fix compilation in platforms without npy_float128 (patch by Gabi Davar)
+
+
 Version 1.2.2 (October 19 2014)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Add minlength argument to labeled_sum
