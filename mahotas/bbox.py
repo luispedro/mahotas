@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2013, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2014, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # License: MIT (see COPYING file)
@@ -23,7 +23,10 @@ def bbox(img, border=None, as_slice=False):
     -------
     min1,max1,min2,max2 : int,int,int,int
         These are such that ``img[min1:max1, min2:max2]`` contains all non-zero
-        pixels
+        pixels. Returned when ``as_slice`` is false (the default)
+    s : slice
+        A slice representation of the bounding box. Returned when ``as_slice``
+        is true
     """
     if not img.shape:
         return np.array([], dtype=np.intp)
