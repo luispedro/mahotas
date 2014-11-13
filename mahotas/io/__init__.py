@@ -1,8 +1,10 @@
+
 _error_message = '''
 mahotas.%%s depends on one of (in order of preference):
 
 1. imread
 2. freeimage
+3. pillow (PIL)
 
 None of which could be found!
 
@@ -56,7 +58,10 @@ try:
     try:
         from imread import imread, imsave
     except: # pragma: no cover
-        from .freeimage import imread, imsave
+        try:
+            from .pil import imread, imsave
+        except:
+            from .freeimage import imread, imsave
 except: # pragma: no cover
     import sys
     _,e,_ = sys.exc_info()

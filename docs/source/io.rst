@@ -20,6 +20,8 @@ It can use the following backends (it tries them in the following order):
     Freeimage can read and write many formats. Unfortunately, it is harder to
     install and it is not as well-maintained as imread.
 
+3.  Finally, it tries to load `pillow <https://pillow.readthedocs.org/>`__.
+
 Thus, to use the ``imread`` or ``imsave`` functions, you need to install one of
 the packages above. At one point, mahotas supported wrapping matplotlib, but
 their image loading methods are unreliable as it uses other packages itself.
