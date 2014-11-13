@@ -1,3 +1,4 @@
+
 _error_message = '''
 mahotas.%%s depends on one of (in order of preference):
 
@@ -56,7 +57,10 @@ try:
     try:
         from imread import imread, imsave
     except: # pragma: no cover
-        from .freeimage import imread, imsave
+        try:
+            from .pil import imread, imsave
+        except:
+            from .freeimage import imread, imsave
 except: # pragma: no cover
     import sys
     _,e,_ = sys.exc_info()

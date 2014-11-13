@@ -53,3 +53,17 @@ def test_as_grey():
     im = mh.imread(filename, as_grey=1)
     assert im.ndim == 2
 
+
+@skip_on(ImportError)
+def test_pil():
+    import mahotas as mh
+    import numpy as np
+    from mahotas.io import pil
+    lena = mh.demos.load('lena')
+    filename = path.join(
+            path.dirname(__file__),
+            '..',
+            'demos',
+            'data',
+            'lena.jpg')
+    assert np.all( pil.imread(filename) == lena )
