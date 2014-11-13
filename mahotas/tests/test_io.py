@@ -67,3 +67,4 @@ def test_pil():
             'data',
             'lena.jpg')
     assert np.all( pil.imread(filename) == lena )
+    assert pil.imread(filename, as_grey=1).ndim == 2

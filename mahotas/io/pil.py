@@ -1,7 +1,8 @@
 import numpy as np
+import mahotas as mh
 from PIL import Image
 
-def imread(filename):
+def imread(filename, as_grey=False):
     '''Read an image into a ndarray from a file.
 
     This function depends on PIL (or Pillow) being installed.
@@ -10,9 +11,14 @@ def imread(filename):
     ----------
     filename : str
         filename
+    as_grey : boolean, optional
+        Whether to convert to grey scale image (default: no)
     '''
-    array = Image.open(filename)
-    return np.array(array)
+    im = Image.open(filename)
+    array = np.array(im)
+    if as_grey and array.ndim != 2:
+        array = mh.colors.rgb2grey(array)
+    return array
 
 def imsave(filename, array):
     '''
