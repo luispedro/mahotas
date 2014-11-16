@@ -4,6 +4,7 @@ mahotas.%%s depends on one of (in order of preference):
 
 1. imread
 2. freeimage
+3. pillow (PIL)
 
 None of which could be found!
 
