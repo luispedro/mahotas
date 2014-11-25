@@ -655,7 +655,7 @@ bool arrays_of_same_shape_type(PyArrayObject* a, PyArrayObject* b) {
 }
 
 inline
-bool equiv_typenums(PyArrayObject* a, PyArrayObject* b) { return PyArray_EquivTypenums(PyArray_TYPE(a), PyArray_TYPE(b)); }
+bool equiv_typenums(PyArrayObject* a, PyArrayObject* b) { return !!PyArray_EquivTypenums(PyArray_TYPE(a), PyArray_TYPE(b)); }
 
 inline
 bool equiv_typenums(PyArrayObject* a, PyArrayObject* b, PyArrayObject* c) { return equiv_typenums(a, b) && equiv_typenums(a, c); }
