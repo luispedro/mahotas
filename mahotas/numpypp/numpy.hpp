@@ -49,7 +49,7 @@ DECLARE_DTYPE_CODE(std::complex<double>, NPY_CDOUBLE)
 DECLARE_DTYPE_CODE(unsigned int, NPY_UINT)
 
 template<typename T>
-bool check_type(PyArrayObject* a) { return PyArray_EquivTypenums(PyArray_TYPE(a), dtype_code<T>()); }
+bool check_type(PyArrayObject* a) { return !!PyArray_EquivTypenums(PyArray_TYPE(a), dtype_code<T>()); }
 
 template<typename T>
 bool check_type(PyObject* a) { return check_type<T>(reinterpret_cast<PyArrayObject*>(a)); }

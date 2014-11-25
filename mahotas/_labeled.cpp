@@ -375,7 +375,7 @@ PyObject* py_border(PyObject* self, PyObject* args) {
 
     bool has_any;
 #define HANDLE(type) \
-    has_any = border<type>( \
+    has_any = !!border<type>( \
                 numpy::aligned_array<type>(array), \
                 numpy::aligned_array<type>(filter), \
                 numpy::aligned_array<bool>(output), \
