@@ -127,8 +127,6 @@ def disk(radius, dim=2):
 
 def dilate(A, Bc=None, out=None, output=None):
     '''
-    dilated = dilate(A, Bc={3x3 cross}, out={np.empty_like(A)})
-
     Morphological dilation.
 
     The type of operation depends on the ``dtype`` of ``A``! If boolean, then
@@ -143,6 +141,11 @@ def dilate(A, Bc=None, out=None, output=None):
     Bc : ndarray, optional
         Structuring element. By default, use a cross (see
         ``get_structuring_elem`` for details on the default).
+    out : ndarray, optional
+        output array. If used, this must be a C-array of the same ``dtype`` as
+        ``A``. Otherwise, a new array is allocated.
+    output : deprecated
+        Do not use
 
     Returns
     -------
@@ -347,7 +350,10 @@ def hitmiss(input, Bc, out=None, output=None):
         This is interpreted as a binary array.
     Bc : ndarray
         hit & miss template, values must be one of (0, 1, 2)
-    out : output array
+    out : ndarray, optional
+        Used for output. Must be Boolean ndarray of same size as `input`
+    output : deprecated
+        Do not use
 
     Returns
     -------
@@ -403,6 +409,8 @@ def open(f, Bc=None, out=None, output=None):
         Structuring element (default: 3x3 elementary cross).
     out : ndarray, optional
         Output array
+    output : deprecated
+        Do not use
 
     Returns
     -------
@@ -442,6 +450,8 @@ def close(f, Bc=None, out=None, output=None):
         Structuring element. (Default: 3x3 elementary cross).
     out : ndarray, optional
         Output array
+    output : deprecated
+        Do not use
 
     Returns
     -------
@@ -500,6 +510,8 @@ def majority_filter(img, N=3, out=None, output=None):
         size of filter (must be odd integer), defaults to 3.
     out : ndarray, optional
         Used for output. Must be Boolean ndarray of same size as `img`
+    output : deprecated
+        Do not use
 
     Returns
     -------
@@ -535,6 +547,8 @@ def locmax(f, Bc=None, out=None, output=None):
         structuring element
     out : ndarray, optional
         Used for output. Must be Boolean ndarray of same size as `f`
+    output : deprecated
+        Do not use
 
     Returns
     -------
@@ -580,6 +594,8 @@ def locmin(f, Bc=None, out=None, output=None):
         structuring element
     out : ndarray, optional
         Used for output. Must be Boolean ndarray of same size as `f`
+    output : deprecated
+        Do not use
 
     Returns
     -------
@@ -610,6 +626,8 @@ def regmin(f, Bc=None, out=None, output=None):
         structuring element
     out : ndarray, optional
         Used for output. Must be Boolean ndarray of same size as `f`
+    output : deprecated
+        Do not use
 
     Returns
     -------
@@ -653,6 +671,8 @@ def regmax(f, Bc=None, out=None, output=None):
         structuring element
     out : ndarray, optional
         Used for output. Must be Boolean ndarray of same size as `f`
+    output : deprecated
+        Do not use
 
     Returns
     -------
