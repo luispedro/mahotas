@@ -2,6 +2,11 @@
 History
 =======
 
+Version 1.2.4 (December 23 2014)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Add PIL based IO
+
+
 Version 1.2.3 (November 8 2014)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Export mean_filter at top level

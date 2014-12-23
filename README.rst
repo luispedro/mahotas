@@ -221,6 +221,10 @@ You can use it for mahotas or general computer vision in Python questions.
 Recent Changes
 --------------
 
+Version 1.2.4 (December 23 2014)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Add PIL based IO
+
 Version 1.2.3 (November 8 2014)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Export mean_filter at top level
