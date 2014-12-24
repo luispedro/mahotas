@@ -12,6 +12,7 @@ from ._filters import _checked_mode2int
 import mahotas as mh
 
 __all__ = [
+    'bbox',
     'borders',
     'border',
     'bwperim',
@@ -539,3 +540,34 @@ def perimeter(bwimage, n=4, mode="constant"):
 
     size = min(34, len(histogram))
     return np.dot(histogram[:size], _perimeter_values[:size])
+
+
+def bbox(f):
+    '''
+    Bounding boxes of all objects in a labeled array.
+
+    After::
+
+        bboxes = mh.labeled.bbox(f)
+
+    ``bboxes[34]`` will contain the bounding box of ``(f == 34)``.
+
+    Parameters
+    --------
+    f : integer ndarray
+
+
+    Returns
+    -------
+    bboxes : ndarray
+
+    See Also
+    --------
+    mh.bbox : the binary version of this function
+    '''
+    import mahotas._bbox
+    n = f.max()
+    output = np.empty( f.ndim * 2 * (n+1), np.intp)
+    output = mahotas._bbox.bbox_labeled(f, output)
+    output = output.reshape((n+1, 2*f.ndim))
+    return output

@@ -252,3 +252,14 @@ def test_as_labeled():
         _as_labeled(arr[::2], labeled, funcname)
     t()
 
+
+def test_labeled_bbox():
+    f = np.random.random((128,128))
+    f = f > .8
+    f,n = mh.label(f)
+
+
+    result = mh.labeled.bbox(f)
+    for _ in range(32):
+        ix = np.random.randint(n+1)
+        assert np.all(result[ix] == mh.bbox(f == ix))

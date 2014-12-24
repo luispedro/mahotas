@@ -1,3 +1,6 @@
+Version 1.2.4+
+	* Add labeled.bbox function
+
 Version 1.2.4 2014-12-23 by luispedro
 	* Add PIL based IO
 

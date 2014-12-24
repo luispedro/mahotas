@@ -664,6 +664,10 @@ inline
 bool equiv_typenums(PyArrayObject* a, PyArrayObject* b, PyArrayObject* c, PyArrayObject* d) {
     return equiv_typenums(a, b) && equiv_typenums(a, c) && equiv_typenums(a, d);
 }
+
+inline
+bool is_carray(PyArrayObject* a) { return are_arrays(a) && PyArray_ISCARRAY(a); }
+
 } // namespace numpy
 
 #endif // MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_
