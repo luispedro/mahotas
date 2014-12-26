@@ -260,6 +260,8 @@ def test_labeled_bbox():
 
 
     result = mh.labeled.bbox(f)
+    result_as = mh.labeled.bbox(f, as_slice=True)
     for _ in range(32):
         ix = np.random.randint(n+1)
         assert np.all(result[ix] == mh.bbox(f == ix))
+        assert np.all(result_as[ix] == mh.bbox(f == ix, as_slice=True))

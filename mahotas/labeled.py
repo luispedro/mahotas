@@ -542,7 +542,7 @@ def perimeter(bwimage, n=4, mode="constant"):
     return np.dot(histogram[:size], _perimeter_values[:size])
 
 
-def bbox(f):
+def bbox(f, as_slice=False):
     '''
     Bounding boxes of all objects in a labeled array.
 
@@ -555,7 +555,9 @@ def bbox(f):
     Parameters
     --------
     f : integer ndarray
-
+    as_slice : boolean, optional
+        Whether to return slice objects instead of integer coordinates
+        (default: False).
 
     Returns
     -------
@@ -570,4 +572,6 @@ def bbox(f):
     output = np.empty( f.ndim * 2 * (n+1), np.intp)
     output = mahotas._bbox.bbox_labeled(f, output)
     output = output.reshape((n+1, 2*f.ndim))
+    if as_slice:
+        output = [tuple([slice(s,e) for s,e in r.reshape((2,-1))]) for r in output]
     return output
