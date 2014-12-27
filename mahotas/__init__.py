@@ -19,6 +19,8 @@ watershed
 imread/imsave
     read/write image
 
+Documentation: http://mahotas.readthedocs.org/
+
 Citation:
 
     Coelho, Luis Pedro, 2013. Mahotas: Open source software for scriptable
@@ -133,15 +135,18 @@ __all__ = [
     'cerode',
     'close',
     'close_holes',
+    'colors',
     'convolve',
     'convolve1d',
     'croptobbox',
     'cwatershed',
     'daubechies',
     'dilate',
+    'disk',
     'distance',
     'erode',
     'euler',
+    'find',
     'fullhistogram',
     'gaussian_filter',
     'gaussian_filter1d',
@@ -163,12 +168,14 @@ __all__ = [
     'moments',
     'open',
     'otsu',
+    'overlay',
     'rank_filter',
     'rc',
     'regmax',
     'regmin',
     'sobel',
     'stretch',
+    'stretch_rgb',
     'template_match',
     'thin',
     'wavelet_center',
@@ -183,7 +190,7 @@ __all__ = [
     'test',
 
     'citation',
-    'citation_text'
+    'citation_text',
     '__version__',
     ]
 
