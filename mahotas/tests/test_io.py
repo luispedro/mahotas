@@ -3,15 +3,7 @@ from mahotas.io import error_imread, error_imsave
 from nose.tools import raises
 from os import path
 import mahotas as mh
-from nose.tools import with_setup
 
-_testimgname = '/tmp/mahotas_test.png'
-def _remove_image(filename=_testimgname):
-    import os
-    try:
-        os.unlink(filename)
-    except OSError:
-        pass
 
 filename = path.join(
             path.dirname(__file__),
