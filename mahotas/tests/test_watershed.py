@@ -35,8 +35,11 @@ def test_watershed():
                [2, 2, 2, 2],
                [2, 2, 2, 2],
                [2, 2, 2, 2]]))
-    for d in [np.uint8, np.int8, np.uint16, np.int16, np.int32, np.uint32,int,
-                 np.float32, np.float64, np.float128, float]:
+    types = [np.uint8, np.int8, np.uint16, np.int16, np.int32, np.uint32,int,
+                 np.float32, np.float64, np.float128, float]
+    if hasattr(np, 'float128'):
+        types.append(np.float128)
+    for d in types:
         yield cast_test, d
 
 
