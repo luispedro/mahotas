@@ -602,7 +602,7 @@ def write(array, filename, flags=0):
         _FI.FreeImage_Unload(bitmap)
 
 
-def write_multipage(arrays, filename, flags=0):
+def write_multipage(arrays, filename, flags=0, keep_cache_in_memory=True):
     """Write a list of (width, height) or (nchannels, width, height)
     arrays to a multipage greyscale, RGB, or RGBA image, with file type
     deduced from the filename.
@@ -614,7 +614,6 @@ def write_multipage(arrays, filename, flags=0):
             'mahotas.freeimage: cannot determine type of file %s' % filename)
     create_new = True
     read_only = False
-    keep_cache_in_memory = True
     multibitmap = _FI.FreeImage_OpenMultiBitmap(
         ftype, _bytestr(filename), create_new, read_only,
         keep_cache_in_memory, 0)
