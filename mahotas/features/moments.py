@@ -57,14 +57,14 @@ def moments(img, p0, p1, cm=None, convert_to_float=True, normalize=False, normal
     r,c = img.shape
     p = np.arange(c, dtype=float)
     if cm is not None:
-        p -= cm[1]
+        p -= cm[0]
     p **= p0
     if normalize:
         p /= p.sum()
     inter = np.dot(img, p)
     p = np.arange(r, dtype=float)
     if cm is not None:
-        p -= cm[0]
+        p -= cm[1]
     p **= p1
     if normalize:
         p /= p.sum()
