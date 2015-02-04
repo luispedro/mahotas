@@ -4,12 +4,12 @@ from mahotas.features.moments import moments
 
 def _slow(A, p0, p1, cm):
     c0,c1 = cm
-    I,J = np.meshgrid(np.arange(A.shape[1],dtype=float), np.arange(A.shape[0], dtype=float))
-    I -= c1
-    J -= c0
+    I,J = np.meshgrid(np.arange(A.shape[0],dtype=float), np.arange(A.shape[1], dtype=float))
+    I -= c0
+    J -= c1
     I **= p0
     J **= p1
-    return (I * J * A).sum()
+    return (I.T * J.T * A).sum()
 
 def test_smoke():
     assert moments(np.zeros((100,23)), 2, 2) == 0.0
@@ -37,3 +37,25 @@ def test_normalize():
         im = A+B
         fs = [f(im), f(im[::2]), f(im[:,::2]), f(im[::2, ::2])]
         assert np.var(fs) < np.mean(np.abs(fs))/10
+
+def test_moments01():
+    im = np.zeros((16,16))
+    im += np.arange(16)
+    im -= im.mean()
+    assert np.abs(mh.moments(im , 1, 0)) < 0.1
+
+def test_expression():
+    import mahotas as mh
+    import numpy as np
+    im = (np.zeros((12,16)) + np.arange(16))
+    im -= im.mean()
+    c0,c1 = 4,7
+    p0,p1 = 2, 3
+    for p0,p1 in [(0,1),
+                    (1,0),
+                    (1,2),
+                    (3,2),
+                    (2,0)]:
+        sum_r = sum((im[i,j] * (i - c0)**p0 * (j - c1)**p1) for i in range(im.shape[0]) for j in range(im.shape[1]))
+        mm_r = mh.moments(im , p0, p1, cm=(c0,c1))
+        assert np.abs(mm_r - sum_r) < 1.
