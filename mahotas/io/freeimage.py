@@ -625,6 +625,7 @@ def write_multipage(arrays, filename, flags=0, keep_cache_in_memory=True):
         for array in arrays:
             bitmap, _ = _array_to_bitmap(array)
             _FI.FreeImage_AppendPage(multibitmap, bitmap)
+            _FI.FreeImage_Unload(bitmap)
     finally:
         _FI.FreeImage_CloseMultiBitmap(multibitmap, flags)
 
