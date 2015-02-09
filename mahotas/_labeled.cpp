@@ -506,6 +506,7 @@ bool fetch_neighbour(int n, int y, int x, int& ny, int& nx, const int Ny, const 
             return false;
         default:
             assert(0);
+            return false; // Get rid of "control reaches end of unreachable function" warning
     }
 }
 
