@@ -16,7 +16,7 @@ before_install:
 
 install:
     - conda create  --yes -n condaenv python=$TRAVIS_PYTHON_VERSION numpy=1.9
-    - conda install --yes -n condaenv python=$TRAVIS_PYTHON_VERSION scipy matplotlib PIL nose pip
+    - conda install --yes -n condaenv scipy matplotlib pillow nose pip
     - source activate condaenv
     - pip install --quiet coveralls
     - pip install --quiet imread
