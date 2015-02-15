@@ -2,6 +2,7 @@ Version 1.2.4+
 	* Improve memory handling in freeimage.write_multipage
 	* Fix moments parameter swap
 	* Add labeled.bbox function
+	* Add `return_mean` and `return_mean_ptp` arguments to haralick function
 
 Version 1.2.4 2014-12-23 by luispedro
 	* Add PIL based IO

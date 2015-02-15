@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2014, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2015, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -19,7 +19,7 @@ def _entropy(p):
     return -np.dot(np.log2(p+(p==0)),p)
 
 
-def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False):
+def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False, return_mean=False, return_mean_ptp=False):
     '''
     feats = haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False)
 
@@ -67,13 +67,22 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_fe
         replicate someone else's wrong implementation.
     compute_14th_feature : bool, optional
         whether to compute & return the 14-th feature
+    return_mean : bool, optional
+        When set, the function returns the mean across all the directions
+        (default: False).
+    return_mean_ptp : bool, optional
+        When set, the function returns the mean and ptp (point-to-point, i.e.,
+        difference between max() and min()) across all the directions (default:
+        False).
 
     Returns
     -------
     feats : ndarray of np.double
         A 4x13 or 4x14 feature vector (one row per direction) if `f` is 2D,
         13x13 or 13x14 if it is 3D. The exact number of features depends on the
-        value of ``compute_14th_feature``
+        value of ``compute_14th_feature`` Also, if either ``return_mean`` or
+        ``return_mean_ptp`` is set, then a single dimensional array is
+        returned.
     '''
     _verify_is_integer_type(f, 'mahotas.haralick')
 
@@ -89,9 +98,15 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_fe
         for dir in range(nr_dirs):
             cooccurence(f, dir, cmat, symmetric=True)
             yield cmat
-    return haralick_features(all_cmatrices(), ignore_zeros=ignore_zeros, preserve_haralick_bug=preserve_haralick_bug, compute_14th_feature=compute_14th_feature)
+    return haralick_features(all_cmatrices(),
+                        ignore_zeros=ignore_zeros,
+                        preserve_haralick_bug=preserve_haralick_bug,
+                        compute_14th_feature=compute_14th_feature,
+                        return_mean=return_mean,
+                        return_mean_ptp=return_mean_ptp,
+                        )
 
-def haralick_features(cmats, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False):
+def haralick_features(cmats, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False, return_mean=False, return_mean_ptp=False):
     '''
     features = haralick_features(cmats, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False)
 
@@ -142,19 +157,30 @@ def haralick_features(cmats, ignore_zeros=False, preserve_haralick_bug=False, co
         replicate someone else's wrong implementation.
     compute_14th_feature : bool, optional
         whether to compute & return the 14-th feature
+    return_mean : bool, optional
+        When set, the function returns the mean across all the directions
+        (default: False).
+    return_mean_ptp : bool, optional
+        When set, the function returns the mean and ptp (point-to-point, i.e.,
+        difference between max() and min()) across all the directions (default:
+        False).
 
     Returns
     -------
     feats : ndarray of np.double
         A 4x13 or 4x14 feature vector (one row per direction) if `f` is 2D,
         13x13 or 13x14 if it is 3D. The exact number of features depends on the
-        value of ``compute_14th_feature``
+        value of ``compute_14th_feature`` Also, if either ``return_mean`` or
+        ``return_mean_ptp`` is set, then a single dimensional array is
+        returned.
 
     See Also
     --------
     haralick : function
         compute Haralick features for an image
     '''
+    if return_mean and return_mean_ptp:
+        raise ValueError("mahotas.haralick_features: Cannot set both `return_mean` and `return_mean_ptp`")
     features = []
     for cmat in cmats:
         feats = np.zeros(13 + bool(compute_14th_feature), np.double)
@@ -255,7 +281,15 @@ def haralick_features(cmats, ignore_zeros=False, preserve_haralick_bug=False, co
                 feats[13] = 0
         features.append(feats)
 
-    return np.array(features)
+    features = np.array(features)
+    if return_mean:
+        return features.mean(axis=0)
+    if return_mean_ptp:
+        mean = features.mean(axis=0)
+        ptp = features.ptp(axis=0)
+        return np.concatenate((mean,ptp))
+
+    return features
 
 
 haralick_labels = ["Angular Second Moment",
