@@ -179,8 +179,8 @@ struct filter_iterator {
 
     template <typename OtherIterator>
     bool retrieve(const OtherIterator& iterator, const npy_intp j, T& array_val) {
-        if (this->cur_offsets_idx_[j] == border_flag_value) return false;
         assert((j >= 0) && (j < size_));
+        if (this->cur_offsets_idx_[j] == border_flag_value) return false;
         array_val = *( (&*iterator) + this->cur_offsets_idx_[j]);
         return true;
     }
