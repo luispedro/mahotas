@@ -725,15 +725,15 @@ PyObject* py_slic(PyObject* self, PyObject* args) {
 }
 
 PyMethodDef methods[] = {
-  {"label",(PyCFunction)py_label, METH_VARARGS, NULL},
-  {"relabel",(PyCFunction)py_relabel, METH_VARARGS, NULL},
-  {"is_same_labeling",(PyCFunction)py_is_same_labeling, METH_VARARGS, NULL},
-  {"remove_regions",(PyCFunction)py_remove_regions, METH_VARARGS, NULL},
-  {"borders",(PyCFunction)py_borders, METH_VARARGS, NULL},
-  {"border",(PyCFunction)py_border, METH_VARARGS, NULL},
-  {"labeled_sum",(PyCFunction)py_labeled_sum, METH_VARARGS, NULL},
-  {"labeled_max_min",(PyCFunction)py_labeled_max_min, METH_VARARGS, NULL},
-  {"slic",(PyCFunction)py_slic, METH_VARARGS, NULL},
+  {"label",             (PyCFunction)py_label, METH_VARARGS, NULL},
+  {"relabel",           (PyCFunction)py_relabel, METH_VARARGS, NULL},
+  {"is_same_labeling",  (PyCFunction)py_is_same_labeling, METH_VARARGS, NULL},
+  {"remove_regions",    (PyCFunction)py_remove_regions, METH_VARARGS, NULL},
+  {"borders",           (PyCFunction)py_borders, METH_VARARGS, NULL},
+  {"border",            (PyCFunction)py_border, METH_VARARGS, NULL},
+  {"labeled_sum",       (PyCFunction)py_labeled_sum, METH_VARARGS, NULL},
+  {"labeled_max_min",   (PyCFunction)py_labeled_max_min, METH_VARARGS, NULL},
+  {"slic",              (PyCFunction)py_slic, METH_VARARGS, NULL},
   {NULL, NULL,0,NULL},
 };
 
