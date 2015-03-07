@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2013, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2015, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -6,9 +6,12 @@
 from __future__ import division
 import numpy as np
 from . import _surf
-from ..internal import _verify_is_integer_type
 
-__all__ = ['integral', 'surf']
+__all__ = [
+        'dense',
+        'integral',
+        'surf',
+        ]
 
 def integral(f, in_place=False, dtype=np.double):
     '''
@@ -75,6 +78,7 @@ def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_p
         of those may be filtered out.
     descriptor_only : boolean, optional
         If ``descriptor_only``, then returns only the 64-element descriptors
+        (default is ``False``).
 
     Returns
     -------
