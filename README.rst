@@ -18,12 +18,12 @@ Python Computer Vision Library
 
 
 Mahotas is a library of fast computer vision algorithms (all implemented in
-C++) operates over numpy arrays for convenience.
+C++) operating over numpy arrays.
 
 Notable algorithms:
  - watershed.
  - convex points calculations.
- - hit & miss. thinning.
+ - hit & miss, thinning.
  - Zernike & Haralick, LBP, and TAS features.
  - freeimage based numpy image loading (requires freeimage libraries to be
    installed).
@@ -32,6 +32,7 @@ Notable algorithms:
  - convolution.
  - Sobel edge detection.
  - spline interpolation
+ - SLIC super pixels.
 
 Mahotas currently has over 100 functions for image processing and computer
 vision and it keeps growing.
@@ -50,9 +51,9 @@ details below under Citation_) if you use it in a publication.
 Examples
 --------
 
-This is a simple example of loading a file (called `test.jpeg`) and calling
-`watershed` using above threshold regions as a seed (we use Otsu to define
-threshold).
+This is a simple example (using an example file that is shipped with mahotas)
+of calling `watershed` using above threshold regions as a seed (we use Otsu to
+define threshold).
 
 ::
 
@@ -129,13 +130,13 @@ able to use::
 
     pip install mahotas
 
-You can test your instalation by running::
+You can test your installation by running::
 
-    python -c "import mahotas; mahotas.test()"
-
+    python -c "import mahotas as mh; mh.test()"
 
 If you run into issues, the manual has more `extensive documentation on mahotas
-intallation <http://mahotas.readthedocs.org/en/latest/install.html>`__
+installation <http://mahotas.readthedocs.org/en/latest/install.html>`__,
+including how to find pre-built for several platforms.
 
 Citation
 --------
@@ -167,7 +168,8 @@ You can access this information using the ``mahotas.citation()`` function.
 Development
 -----------
 
-Development happens on github (`http://github.com/luispedro/mahotas <https://github.com/luispedro/mahotas>`__).
+Development happens on github (`http://github.com/luispedro/mahotas
+<https://github.com/luispedro/mahotas>`__).
 
 You can set the ``DEBUG`` environment variable before compilation to get a
 debug version::
