@@ -39,8 +39,8 @@ template <typename T>
 double sum_rect(numpy::aligned_array<T> integral, int y0, int x0, int y1, int x1) {
     y0 = std::max<int>(y0-1, 0);
     x0 = std::max<int>(x0-1, 0);
-    y1 = std::min<int>(y1-1, integral.dim(0));
-    x1 = std::min<int>(x1-1, integral.dim(1));
+    y1 = std::min<int>(y1-1, integral.dim(0) - 1);
+    x1 = std::min<int>(x1-1, integral.dim(1) - 1);
 
     const T A = integral.at(y0,x0);
     const T B = integral.at(y0,x1);

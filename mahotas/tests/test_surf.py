@@ -22,7 +22,7 @@ def test_integral2():
 
 def test_sum_rect():
     f = np.arange(800*160).reshape((800,160)) % 7
-    fi = surf.integral(f.copy()) 
+    fi = surf.integral(f.copy())
 
     np.random.seed(22)
     for i in range(100):
@@ -31,6 +31,13 @@ def test_sum_rect():
         x0 = np.random.randint(1,150)
         x1 = np.random.randint(x0+1, 159)
         assert _surf.sum_rect(fi, y0, x0, y1, x1) == f[y0:y1, x0:x1].sum()
+
+def test_sum_rect_edge():
+    # regression
+    # https://github.com/luispedro/mahotas/issues/58
+    f = np.arange(80*60).reshape((80,60)) % 7
+    fi = surf.integral(f.copy())
+    _surf.sum_rect(fi, 0, 0, 81, 61)
 
 def test_surf_guassians():
     f = np.zeros((1024,1024))
