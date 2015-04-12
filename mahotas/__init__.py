@@ -41,7 +41,7 @@ try:
                             gaussian_filter
     from .convolve import haar, ihaar, daubechies, idaubechies, wavelet_center, wavelet_decenter
     from .distance import distance
-    from .edge import sobel
+    from .edge import sobel, dog
     from .euler import euler
     from .histogram import fullhistogram
     from .labeled import border, borders, bwperim, label, labeled_sum
@@ -174,6 +174,7 @@ __all__ = [
     'regmax',
     'regmin',
     'sobel',
+    'dog',
     'stretch',
     'stretch_rgb',
     'template_match',
