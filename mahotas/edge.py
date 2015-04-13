@@ -69,7 +69,7 @@ def sobel(img, just_filter=False):
     thresh = 2*np.sqrt(filtered.mean())
     return mh.regmax(filtered) * (np.sqrt(filtered) > thresh)
 
-def dog(img, sigma1 = 2, just_filter = False):
+def dog(img, sigma1 = 2, multiplier = 1.001, just_filter = False):
     '''
     edges = dog(img, sigma1 = 2, thresh= None, just_filter = False)
 
@@ -80,8 +80,9 @@ def dog(img, sigma1 = 2, just_filter = False):
     Parameters
     ----------
     img : Any 2D-ndarray
-    sigma1 :  the sigma value of the first Gaussian filter. The second filter 
+    sigma1 : the sigma value of the first Gaussian filter. The second filter 
         will have sigma value 1.001*sigma1
+    multiplier : the multiplier to get sigma2. sigma2 = sigma1 * multiplier
     just_filter : boolean, optional
         If true, then return the result of filtering the image with the DoG
         filters, no zero-crossing is detected (default is False).
@@ -96,7 +97,7 @@ def dog(img, sigma1 = 2, just_filter = False):
     if img.ndim != 2:
         raise ValueError('mahotas.dog: Only available for 2-dimensional images')
 
-    sigma2 = sigma1 * 1.001
+    sigma2 = sigma1 * multiplier
     
     G1 = gaussian_filter(img, sigma1, mode = 'nearest')
     G2 = gaussian_filter(img, sigma2, mode = 'nearest')
