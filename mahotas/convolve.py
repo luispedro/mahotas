@@ -25,6 +25,7 @@ __all__ = [
     'gaussian_filter',
     'wavelet_center',
     'wavelet_decenter',
+    'laplacian_2D'
     ]
 
 def convolve(f, weights, mode='reflect', cval=0.0, out=None, output=None):
@@ -637,3 +638,39 @@ def ihaar(f, preserve_energy=True, inline=False):
     if preserve_energy:
         f *= 2.0
     return f
+
+def laplacian_2D(array, alpha = 0.2):
+    """
+    filtered = laplacian_2D(array, alpha = 0.2)
+
+    2D Laplacian filter.
+
+    Parameters
+    ----------
+    array : ndarray
+        input 2D array. If the array is an integer array, it will be converted 
+        to a double array.
+    alpha : scalar or sequence of scalars
+        controls the shape of Laplacian operator. Must be 0-1. A larger values 
+        makes the operator empahsize the diagonal direction.
+
+    Returns
+    -------
+    filtered : ndarray
+        Filtered version of `array`
+    """
+    array = np.array(array, dtype=np.float)
+    if array.ndim != 2:
+        raise ValueError('mahotas.laplacian_2D: Only available for 2-dimensional arrays')
+        
+    alpha = max(0, min(alpha,1));
+    ver_hor_weight = (1. - alpha) / (alpha + 1.)
+    diag_weight = alpha / (alpha + 1.)
+    center = -4. / (alpha + 1.)
+    weights = np.array([
+    [diag_weight, ver_hor_weight, diag_weight],
+    [ver_hor_weight, center, ver_hor_weight],
+    [diag_weight, ver_hor_weight, diag_weight]])
+    
+    output = convolve(array, weights, mode='nearest')
+    return output

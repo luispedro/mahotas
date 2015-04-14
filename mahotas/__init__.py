@@ -38,7 +38,8 @@ try:
                             rank_filter, \
                             template_match, \
                             gaussian_filter1d, \
-                            gaussian_filter
+                            gaussian_filter, \
+                            laplacian_2D
     from .convolve import haar, ihaar, daubechies, idaubechies, wavelet_center, wavelet_decenter
     from .distance import distance
     from .edge import sobel, dog
@@ -144,6 +145,7 @@ __all__ = [
     'dilate',
     'disk',
     'distance',
+    'dog',
     'erode',
     'euler',
     'find',
@@ -160,6 +162,7 @@ __all__ = [
     'imsave',
     'label',
     'labeled_sum',
+    'laplacian_2D',
     'locmax',
     'locmin',
     'majority_filter',
@@ -174,7 +177,6 @@ __all__ = [
     'regmax',
     'regmin',
     'sobel',
-    'dog',
     'stretch',
     'stretch_rgb',
     'template_match',
