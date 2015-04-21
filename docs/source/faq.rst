@@ -25,23 +25,25 @@ In any case, we all use the same data format: numpy arrays. It is very easy
 you want from each. All the packages use function based interfaces which make
 it easy to mix-and-match.
 
-I ran out of memory computing Haralick features on 16 bit images. Is it not
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-supported?
-~~~~~~~~~~~
+I ran out of memory computing Haralick features on 16 bit images. Is it not supported?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Yes, it is. However, in order to compute Haralick features, first a
-cooccurrence matrix is computed. This matrix has the size ``(ngrey, ngrey)``
-where ``ngrey`` is the largest grey value in the input. Thus, if your image has
-a very high dynamic range, you may not have the resources to compute the
-matrix.
+Yes, it is supported, but your machine may not be big enough to do the
+computation. In order to compute Haralick features, first a cooccurrence matrix
+is computed. This matrix has the size ``(ngrey, ngrey)`` where ``ngrey`` is the
+largest grey value in the input. Thus, if your image has a very high dynamic
+range (i.e., ``ngrey`` is large), you may not have the resources to compute the
+cooccurrence matrix.
 
-It is often a good idea to contrast stretch your images anyway. For example,
-using the following code, stretches your images to the 0-255 range::
+It is often a good idea to contrast stretch your images. For example, using the
+following code, stretches your images to the 0-255 range::
 
     im_stretched = mh.stretch(im)
     features = mh.features.haralic(im_stretched)
 
+16 bit images where the dynamic range is not too large (for example, some
+imaging equipment can only really produce 12 bits, so ``ngrey < 4096``) are not
+a problem.
 
 What are the parameters to Local Binary Patterns?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
