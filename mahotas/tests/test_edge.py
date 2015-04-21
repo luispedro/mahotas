@@ -50,9 +50,19 @@ def test_find_edge():
     f[:,16:] = 1
     f = mh.gaussian_filter(f,4)
     fs = mh.sobel(f)
-    assert np.sum(fs[:,15:17] > 0) >= 32
+    assert np.all(fs[:,15] > 0)
 
 @raises(ValueError)
 def test_3d_error():
     f = np.zeros((32,16,3))
     sobel(f)
+
+
+def test_dog():
+    im = mh.demos.load('lena')
+    im = im.mean(2)
+    edges = mh.dog(im)
+    assert edges.shape == im.shape
+    assert edges.any()
+    edges1 = mh.dog(im, sigma1=1.)
+    assert np.any(edges != edges1)
