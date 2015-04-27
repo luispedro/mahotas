@@ -432,6 +432,7 @@ def _wavelet_array(f, inline, func):
 def _wavelet_center_compute(oshape, border=0, dtype=None, cval=0.0):
     for c in range(1, 16+border):
         nshape = 2**(np.floor(np.log2(oshape))+c)
+        nshape = nshape.astype(int)
         delta = nshape - oshape
         delta //= 2
         if np.min(delta) <= border:

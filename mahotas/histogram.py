@@ -66,7 +66,7 @@ def fullhistogram(img):
         zeros = img.size - ones
         return np.array([zeros, ones], np.uintc)
 
-    histogram = np.zeros(img.max() + 1, np.uintc)
+    histogram = np.zeros(int(img.max()) + 1, np.uintc)
     _histogram.histogram(img, histogram)
     return histogram
 

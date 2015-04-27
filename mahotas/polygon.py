@@ -100,7 +100,7 @@ def fill_polygon(polygon, canvas, color=1):
         nodes.sort()
         for n,nn in zip(nodes[::2],nodes[1::2]):
             nn += 1
-            canvas[y,n:nn] = color
+            canvas[y, int(n):int(nn)] = color
 
 def convexhull(bwimg):
     '''
