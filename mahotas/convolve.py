@@ -154,6 +154,8 @@ def median_filter(f, Bc=None, mode='reflect', cval=0.0, out=None, output=None):
         Bc = np.ones((3,) * len(f.shape), f.dtype)
     elif f.dtype != Bc.dtype:
         Bc = Bc.astype(f.dtype)
+    if f.ndim != Bc.ndim:
+        raise ValueError('mahotas.median_filter: `f` and `Bc` must have the same number of dimensions')
     rank = Bc.sum()//2
     output = _get_output(f, out, 'median_filter', output=output)
     _check_mode(mode, cval, 'median_filter')

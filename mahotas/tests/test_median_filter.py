@@ -1,5 +1,7 @@
 import numpy as np
 from mahotas.convolve import median_filter, rank_filter
+from nose.tools import raises
+
 def test_median_filter():
     A = np.zeros((128,128), bool)
     A[3::3,3::3] = 1
@@ -36,3 +38,9 @@ def test_uint8():
     f = np.arange(64*4).reshape((16,-1))
     median_filter(f.astype(np.uint8), np.ones((5,5)))
 
+@raises(ValueError)
+def test_mismatched_ndim():
+    a = np.zeros((8,8))
+    a[:2] = 2
+    a = np.array([a])
+    median_filter(a > 0, np.ones((3,3)))
