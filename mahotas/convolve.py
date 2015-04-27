@@ -110,7 +110,7 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None):
         oshape = f.shape
         f = f.transpose(indices)
         tshape = f.shape
-        f = f.reshape((f.shape[0],-1))
+        f = f.reshape((-1, f.shape[-1]))
 
         out = _get_output(f, out, 'convolve1d')
         _convolve.convolve1d(f, weights, out, mode2int[mode])

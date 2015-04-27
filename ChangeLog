@@ -6,6 +6,7 @@ Version 1.2.4+
 	* Add difference of Gaussians filter (by Jianyu Wang)
 	* Add Laplacian filter (by Jianyu Wang)
 	* Fix crash in median_filter when mismatched arguments are passed
+	* Fix gaussian_filter1d for ndim > 2
 
 Version 1.2.4 2014-12-23 by luispedro
 	* Add PIL based IO

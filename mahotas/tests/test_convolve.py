@@ -268,3 +268,21 @@ def test_convolve_1d_axis_3d():
     for i in range(f.shape[1]):
         for j in range(f.shape[2]):
             assert np.allclose(np.correlate(f[:,i,j], w,'same')[1:-1:] , fw[:,i,j][1:-1])
+
+
+def test_gaussian_filter1d_higher_dims():
+    a = np.zeros((120,120))
+    a[:60] = 2
+    a1 = mh.gaussian_filter1d(a, 1., axis=0)
+
+    for a3 in ([a], [a,a], [a,a,a]):
+        a1_3d = mh.gaussian_filter1d(np.array(a3), 1., axis=1)
+        a1_3dm = a1_3d.max(0)
+        assert np.allclose(a1, a1_3dm)
+        assert np.abs(a1-a1_3dm).max() < 0.01
+
+    a1_4d = mh.gaussian_filter1d(np.array([[a], [a], [a]]), 1., axis=2)
+    a1_4dm = a1_4d.max(0).max(0)
+    assert np.allclose(a1, a1_4dm)
+    assert np.abs(a1-a1_4dm).max() < 0.01
+
