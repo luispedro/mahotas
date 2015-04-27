@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2014, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2015, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -64,7 +64,7 @@ def convolve(f, weights, mode='reflect', cval=0.0, out=None, output=None):
     return _convolve.convolve(f, weights, output, mode2int[mode])
 
 
-def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None, output=None):
+def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None):
     '''
     convolved = convolve1d(f, weights, axis, mode='reflect', cval=0.0, out={new array})
 
@@ -122,7 +122,7 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None, output=None)
         index = [None] * f.ndim
         index[axis] = slice(0, None)
         weights = weights[tuple(index)]
-        return convolve(f, weights, mode=mode, cval=cval, output=output)
+        return convolve(f, weights, mode=mode, cval=cval, out=out)
 
 
 def median_filter(f, Bc=None, mode='reflect', cval=0.0, out=None, output=None):
