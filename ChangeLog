@@ -1,4 +1,4 @@
-Version 1.2.4+
+Version 1.3.0 2014-05-28 by luispedro
 	* Improve memory handling in freeimage.write_multipage
 	* Fix moments parameter swap
 	* Add labeled.bbox function

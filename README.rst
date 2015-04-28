@@ -223,6 +223,18 @@ You can use it for mahotas or general computer vision in Python questions.
 Recent Changes
 --------------
 
+Version 1.3.0 (April 28 2015)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Improve memory handling in freeimage.write_multipage
+- Fix moments parameter swap
+- Add labeled.bbox function
+- Add `return_mean` and `return_mean_ptp` arguments to haralick function
+- Add difference of Gaussians filter (by Jianyu Wang)
+- Add Laplacian filter (by Jianyu Wang)
+- Fix crash in median_filter when mismatched arguments are passed
+- Fix gaussian_filter1d for ndim > 2
+
+
 Version 1.2.4 (December 23 2014)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Add PIL based IO
