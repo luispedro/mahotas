@@ -82,7 +82,8 @@ void fill_data(PyArrayObject* array, structure_element& elem, const bool flip, c
 PyObject* py_thin(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* buffer;
-    if (!PyArg_ParseTuple(args,"OO", &array, &buffer)) return NULL;
+    int max_iter;
+    if (!PyArg_ParseTuple(args,"OOi", &array, &buffer, &max_iter)) return NULL;
     if (!numpy::are_arrays(array, buffer) ||
         !numpy::check_type<bool>(array) ||
         !numpy::check_type<bool>(buffer) ||
@@ -106,8 +107,9 @@ PyObject* py_thin(PyObject* self, PyObject* args) {
 
 
         const npy_int N = PyArray_SIZE(array);
-        bool any_change;
-        do {
+        bool any_change = true;
+        int n = 0;
+        while (any_change && ((max_iter < 0) || n++ < max_iter)) {
             any_change = false;
             for (int i = 0; i != Nr_Elements; ++i) {
                 fast_hitmiss(array, elems[i], buffer);
@@ -122,7 +124,7 @@ PyObject* py_thin(PyObject* self, PyObject* args) {
                     ++pb;
                 }
             }
-        } while (any_change);
+        }
 
     }
 

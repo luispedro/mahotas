@@ -1,7 +1,7 @@
 import numpy as np
 import mahotas.thin
 
-def slow_thin(binimg):
+def slow_thin(binimg, n=-1):
     """
     This was the old implementation
     """
@@ -52,12 +52,16 @@ def slow_thin(binimg):
     imagebuf = np.zeros((r+2,c+2), np.uint8)
     prev = np.zeros((r+2,c+2), np.uint8)
     image_exp[1:r+1, 1:c+1] = binimg[min0:max0,min1:max1]
+    n_iter = 0
     while True:
         prev[:] = image_exp[:]
         for elem in _struct_elems:
             newimg = hitmiss(image_exp, elem, imagebuf)
             image_exp -= newimg
         if np.all(prev == image_exp):
+            break
+        n_iter += 1
+        if (n > 0) and (n_iter == n):
             break
     res[min0:max0,min1:max1] = image_exp[1:r+1, 1:c+1]
     return res
@@ -84,4 +88,9 @@ def test_compare():
 
     A[60:80,60:80] = 1
     yield compare, A
+
+    W = mahotas.thin(A, 2)
+    W2 = slow_thin(A, 2)
+    assert np.all(W == W2)
+
 

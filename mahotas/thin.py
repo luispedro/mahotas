@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2010  Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2006-2015  Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -9,7 +9,7 @@ import numpy as np
 
 __all__ = ['thin']
 
-def thin(binimg):
+def thin(binimg, max_iter=-1):
     """
     skel = thin(binimg)
 
@@ -17,7 +17,11 @@ def thin(binimg):
 
     Parameters
     ----------
-    binimg : Binary input image
+    binimg : ndarray
+        Binary input image
+    max_iter : int, optional
+        Maximum number of iterations (set to a negative number, the default, to
+        run full skeletonization)
 
     Returns
     -------
@@ -34,7 +38,7 @@ def thin(binimg):
     image_exp[1:r+1, 1:c+1] = binimg[min0:max0,min1:max1]
     imagebuf = np.empty((r+2,c+2), bool)
 
-    _thin(image_exp, imagebuf)
+    _thin(image_exp, imagebuf, int(max_iter))
     res[min0:max0,min1:max1] = image_exp[1:r+1, 1:c+1]
     return res
 
