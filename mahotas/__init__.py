@@ -118,12 +118,19 @@ In BibTex format:
 }
 '''
 
-def citation(print_out=True):
+short_citation_text = \
+'''
+If you use mahotas in a scientific publication, please cite
+    Coelho, LP (2013). http://dx.doi.org/10.5334/jors.ac
+'''
+
+def citation(print_out=True, short=False):
+    text = (short_citation_text if short else citation_text)
     if print_out:
         # Use a Python2/3 compatible form of printing:
         from sys import stdout
-        stdout.write(citation_text)
-    return citation_text
+        stdout.write(text)
+    return text
 
 __all__ = [
     'as_rgb',
