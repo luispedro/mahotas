@@ -265,3 +265,21 @@ def test_labeled_bbox():
         ix = np.random.randint(n+1)
         assert np.all(result[ix] == mh.bbox(f == ix))
         assert np.all(result_as[ix] == mh.bbox(f == ix, as_slice=True))
+
+def test_labeled_bbox_zeros():
+    'Issue #61'
+    def nozeros_test(f):
+        result = mh.labeled.bbox(f)
+        result_as = mh.labeled.bbox(f, as_slice=True)
+        assert not np.all(result == 0)
+        for ix in range(4):
+            assert np.all(result[ix] == mh.bbox(f == ix))
+            assert np.all(result_as[ix] == mh.bbox(f == ix, as_slice=True))
+
+    f = np.array([
+        [2,1,1],
+        [2,2,1],
+        [2,2,3]])
+    f3 = np.array([f])
+    yield nozeros_test, f
+    yield nozeros_test, f3

@@ -1,4 +1,4 @@
-// Copyright (C) 2010-2014  Luis Pedro Coelho <luis@luispedro.org>
+// Copyright (C) 2010-2015  Luis Pedro Coelho <luis@luispedro.org>
 //
 // License: MIT (see COPYING file)
 
@@ -193,8 +193,15 @@ PyObject* py_bbox_labeled(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
         return NULL;
     }
-    if (extrema_v[1] == 0) {
-        PyArray_FILLWBYTE(output, 0);
+    // For every possible label, check if it is absent:
+    // If so, set all elements to zero
+    for (int i = 0; i != osize; i += 2*nd) { // There are osize/(2*nd) possible labels
+        if (extrema_v[i + 1] == 0) {
+            for (int j = 0; j != 2*nd; ++j ) {
+                extrema_v[i + j] = 0;
+            }
+        }
+
     }
     Py_INCREF(output);
     return PyArray_Return(output);

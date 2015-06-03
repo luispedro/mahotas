@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2014, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2015, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # LICENSE: MIT
@@ -573,5 +573,5 @@ def bbox(f, as_slice=False):
     output = mahotas._bbox.bbox_labeled(f, output)
     output = output.reshape((n+1, 2*f.ndim))
     if as_slice:
-        output = [tuple([slice(s,e) for s,e in r.reshape((2,-1))]) for r in output]
+        output = [tuple([slice(s,e) for s,e in r.reshape((-1,2))]) for r in output]
     return output

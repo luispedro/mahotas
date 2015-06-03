@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2014, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2015, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # License: MIT (see COPYING file)
@@ -39,7 +39,7 @@ def bbox(img, border=None, as_slice=False):
         max2 += border
         r = min1,max1,min2,max2
     if as_slice:
-        return (slice(r[0],r[1]),slice(r[2],r[3]))
+        r = tuple([slice(s,e) for s,e in r.reshape((-1,2))])
     return r
 
 def croptobbox(img, border=None):
