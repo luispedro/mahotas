@@ -119,8 +119,7 @@ In BibTex format:
 '''
 
 short_citation_text = \
-'''
-If you use mahotas in a scientific publication, please cite
+'''If you use mahotas in a scientific publication, please cite
     Coelho, LP (2013). http://dx.doi.org/10.5334/jors.ac
 '''
 

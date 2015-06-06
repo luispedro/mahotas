@@ -3,6 +3,7 @@ Version 1.3.0+
 	* Add `max_iter` argument to thin() function
 	* Fixed labeled.bbox when there is no background (issue #61, reported by
 	Daniel Haehn)
+	* Added ``mahotas-features.py`` script
 
 Version 1.3.0 2014-05-28 by luispedro
 	* Improve memory handling in freeimage.write_multipage
