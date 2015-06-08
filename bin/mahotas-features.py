@@ -12,9 +12,17 @@ LIGHT_PURPLE = '\033[94m'
 PURPLE = '\033[95m'
 END = '\033[0m'
 
-def print_error(text):
-    'Prints error message'
-    if sys.stderr.isatty():
+def print_error(text, color=True):
+    '''Prints error message
+
+    Arguments
+    ---------
+    text : str
+        Error message
+    color : bool, optional
+        Whether to print in colour.
+    '''
+    if color and sys.stderr.isatty():
         sys.stderr.write("{}ERROR: {}{}\n".format(RED, text, END))
     else:
         sys.stderr.write("ERROR: {}\n".format(text))
@@ -36,7 +44,7 @@ def read_bw(fname, options):
     im = mh.imread(fname)
     if im.ndim == 2:
         return im
-    print_error("{} is not a greyscale image".format(fname))
+    print_error("{} is not a greyscale image".format(fname), not options.no_color)
     sys.exit(1)
 
 def main():
@@ -50,6 +58,9 @@ def main():
     parser.add_argument(
                     '--output', default=sys.stdout, type=argparse.FileType('w'),
                             help='Output file for feature files')
+    parser.add_argument(
+                    '--no-color', default=False, action='store_true',
+                            help='Do not print in color (for error and warning messages)')
     parser.add_argument(
                     '--haralick', default=False, action='store_true',
                             help='Compute Haralick features')
