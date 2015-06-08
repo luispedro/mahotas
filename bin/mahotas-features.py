@@ -44,7 +44,13 @@ def read_bw(fname, options):
     im = mh.imread(fname)
     if im.ndim == 2:
         return im
-    print_error("{} is not a greyscale image".format(fname), not options.no_color)
+    if im.ndim == 3:
+        if options.convert_to_bw == 'max' or im.ptp(2).max() == 0:
+            # This is a greyscale image, saved as colour
+            return im.max(2)
+        if options.convert_to_bw == 'yes':
+            return mh.colors.rgb2grey(im, dtype=np.uint8)
+    print_error("{} is not a greyscale image (and --convert-to-bw was not specified)".format(fname), not options.no_color)
     sys.exit(1)
 
 def main():
@@ -58,6 +64,11 @@ def main():
     parser.add_argument(
                     '--output', default=sys.stdout, type=argparse.FileType('w'),
                             help='Output file for feature files')
+    parser.add_argument(
+                    '--convert-to-bw', default='no',
+                    help='Convert color images to greyscale.\nAcceptable values:\n\tno: raises an error (default)' +
+                        '\n\tmax: use max projection' +
+                        '\n\tyes: use rgb2gray')
     parser.add_argument(
                     '--no-color', default=False, action='store_true',
                             help='Do not print in color (for error and warning messages)')
