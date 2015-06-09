@@ -83,7 +83,6 @@ No features selected. Doing nothing.
 For example, use --haralick switch to compute Haralick features\n''')
         sys.exit(1)
 
-    features = []
     colnames = []
     first = True
     for fname in args.fnames:
@@ -96,16 +95,18 @@ For example, use --haralick switch to compute Haralick features\n''')
                 colnames.extend(mh.features.texture.haralick_labels[:-1])
                 colnames.extend(["ptp:{}".format(ell) for ell in mh.features.texture.haralick_labels[:-1]])
 
-        features.append(np.concatenate(cur))
-        first = False
-
-    features = np.array(features)
-    try:
-        import pandas as pd
-        features = pd.DataFrame(features, index=args.fnames, columns=colnames)
-        features.to_csv(args.output, sep='\t')
-    except ImportError:
-        np.savetxt(args.output, features)
+        if first:
+            for cname in colnames:
+                args.output.write("\t")
+                args.output.write(cname)
+            args.output.write("\n")
+            first = False
+        for fs in cur:
+            args.output.write(fname)
+            for f in fs:
+                args.output.write("\t")
+                args.output.write('{:.8}'.format(f))
+            args.output.write('\n')
 
 if __name__ == '__main__':
     main()
