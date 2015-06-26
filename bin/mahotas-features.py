@@ -92,8 +92,9 @@ For example, use --haralick switch to compute Haralick features\n''')
             har = mh.features.haralick(im, return_mean_ptp=True)
             cur.append(har)
             if first:
-                colnames.extend(mh.features.texture.haralick_labels[:-1])
-                colnames.extend(["ptp:{}".format(ell) for ell in mh.features.texture.haralick_labels[:-1]])
+                hlabels = mh.features.texture.haralick_labels[:-1]
+                colnames.extend(["mean:{}".format(ell) for ell in hlabels])
+                colnames.extend(["ptp:{}".format(ell) for ell in hlabels])
 
         if first:
             for cname in colnames:
