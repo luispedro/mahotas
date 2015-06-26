@@ -1,5 +1,6 @@
 import numpy as np
 import mahotas
+import mahotas as mh
 from mahotas import bbox
 from nose.tools import raises
 
@@ -84,3 +85,20 @@ def test_as_slice():
     ball = ((X**2+Y**2+Z**2) < 64).astype(np.uint8)
     s = bbox(ball, as_slice=True)
     assert ball[s].sum() == ball.sum()
+
+def test_slice_border():
+    'Test bbox(slice=True, border=6) in 2D & 3D'
+    f = np.zeros((32,32), bool)
+    f[8:8] = 1
+    m0,M0, m1,M1 = mh.bbox(f, border=6, as_slice=False)
+    sl = mh.bbox(f, border=6, as_slice=True)
+
+    assert np.all(f[sl] == f[m0:M0, m1:M1])
+
+    f = np.zeros((32,32, 32), bool)
+    f[8:8,12:15] = 1
+    m0,M0, m1,M1, m2, M2 = mh.bbox(f, border=6, as_slice=False)
+    sl = mh.bbox(f, border=6, as_slice=True)
+
+    assert np.all(f[sl] == f[m0:M0, m1:M1, m2:M2])
+

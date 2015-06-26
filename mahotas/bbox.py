@@ -32,12 +32,10 @@ def bbox(img, border=None, as_slice=False):
         return np.array([], dtype=np.intp)
     r = _bbox.bbox(img)
     if border:
-        min1,max1,min2,max2 = r
-        min1 = max(0, min1-border)
-        min2 = max(0, min2-border)
-        max1 += border
-        max2 += border
-        r = min1,max1,min2,max2
+        r = r.reshape((-1, 2))
+        np.maximum(r.T[0] - border, 0, out=r.T[0])
+        r.T[1] += border
+        r = r.ravel()
     if as_slice:
         r = tuple([slice(s,e) for s,e in r.reshape((-1,2))])
     return r

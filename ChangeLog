@@ -4,6 +4,8 @@ Version 1.3.0+
 	* Fixed labeled.bbox when there is no background (issue #61, reported by
 	Daniel Haehn)
 	* Added ``mahotas-features.py`` script
+	* bbox now allows dimensions greater than 2 (including when using the
+	``as_slice`` and ``border`` arguments)
 
 Version 1.3.0 2014-05-28 by luispedro
 	* Improve memory handling in freeimage.write_multipage
