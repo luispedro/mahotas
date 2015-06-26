@@ -19,6 +19,14 @@ def test_croptobbox():
     assert mahotas.croptobbox(ball.T, border=256).sum() == ball.sum()
     assert mahotas.croptobbox(ball.T, border=256).size == ball.size
 
+def test_croptobbox_3d():
+    YXZ = np.indices((32,32,64), float)
+    YXZ -= 8
+    Y,X,Z = YXZ
+    ball = ((X**2+Y**2+Z**2) < 64).astype(np.uint8)
+    assert np.sum(ball) == np.sum(mh.croptobbox(ball))
+
+
 def test_bbox_empty():
     assert mahotas.bbox(np.zeros((), np.bool)).shape == (0,)
 

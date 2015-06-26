@@ -66,6 +66,6 @@ def croptobbox(img, border=None):
 
     This ensures that the result is always a sub-image of the input.
     """
-    min1,max1,min2,max2 = bbox(img, border=border)
-    return img[min1:max1,min2:max2]
+    sl = bbox(img, border=border, as_slice=True)
+    return img[sl]
 

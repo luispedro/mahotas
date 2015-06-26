@@ -6,6 +6,7 @@ Version 1.3.0+
 	* Added ``mahotas-features.py`` script
 	* bbox now allows dimensions greater than 2 (including when using the
 	``as_slice`` and ``border`` arguments)
+	* Extended croptobbox for dimensions greater than 2
 
 Version 1.3.0 2014-05-28 by luispedro
 	* Improve memory handling in freeimage.write_multipage
