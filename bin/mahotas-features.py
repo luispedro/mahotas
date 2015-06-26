@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+from os import path
 import numpy as np
 import mahotas as mh
 import argparse
@@ -62,8 +63,11 @@ def main():
                     'fnames', metavar='input_file_name', nargs='+', type=str,
                             help='Image files names')
     parser.add_argument(
-                    '--output', default=sys.stdout, type=argparse.FileType('w'),
+                    '--output', default='features.tsv', type=str,
                             help='Output file for feature files')
+    parser.add_argument(
+                    '--clobber', default=False, action='store_true',
+                            help='Overwrite output file (if it exists)')
     parser.add_argument(
                     '--convert-to-bw', default='no',
                     help='Convert color images to greyscale.\nAcceptable values:\n\tno: raises an error (default)' +
@@ -83,6 +87,10 @@ No features selected. Doing nothing.
 For example, use --haralick switch to compute Haralick features\n''')
         sys.exit(1)
 
+    if not args.clobber and path.exists(args.output):
+        print_error('Output file ({}) already exists. Refusing to overwrite results without --clobber argument.'.format(args.output))
+        sys.exit(2)
+    output = open(args.output, 'w')
     colnames = []
     first = True
     for fname in args.fnames:
@@ -98,16 +106,17 @@ For example, use --haralick switch to compute Haralick features\n''')
 
         if first:
             for cname in colnames:
-                args.output.write("\t")
-                args.output.write(cname)
-            args.output.write("\n")
+                output.write("\t")
+                output.write(cname)
+            output.write("\n")
             first = False
         for fs in cur:
-            args.output.write(fname)
+            output.write(fname)
             for f in fs:
-                args.output.write("\t")
-                args.output.write('{:.8}'.format(f))
-            args.output.write('\n')
+                output.write("\t")
+                output.write('{:.8}'.format(f))
+            output.write('\n')
+    output.close()
 
 if __name__ == '__main__':
     main()
