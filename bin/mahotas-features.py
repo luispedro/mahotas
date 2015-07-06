@@ -5,6 +5,7 @@ from os import path
 import numpy as np
 import mahotas as mh
 import argparse
+from itertools import chain
 
 RED = '\033[91m'
 GREEN = '\033[92m'
@@ -54,6 +55,14 @@ def read_bw(fname, options):
     print_error("{} is not a greyscale image (and --convert-to-bw was not specified)".format(fname), not options.no_color)
     sys.exit(1)
 
+def _write_row(output, items, header=None):
+    if header:
+        output.write(header)
+    for it in items:
+        output.write('\t')
+        output.write(str(it))
+    output.write('\n')
+
 def main():
     sys.stderr.write(mh.citation(print_out=False, short=True))
     sys.stderr.write('\n\n')
@@ -90,32 +99,23 @@ For example, use --haralick switch to compute Haralick features\n''')
     if not args.clobber and path.exists(args.output):
         print_error('Output file ({}) already exists. Refusing to overwrite results without --clobber argument.'.format(args.output))
         sys.exit(2)
+
     output = open(args.output, 'w')
     colnames = []
-    first = True
+    if args.haralick:
+        hlabels = mh.features.texture.haralick_labels[:-1]
+        colnames.extend(["mean:{}".format(ell) for ell in hlabels])
+        colnames.extend(["ptp:{}".format(ell) for ell in hlabels])
+    _write_row(output, colnames)
+
     for fname in args.fnames:
         cur = []
         im = read_bw(fname, args)
         if args.haralick:
             har = mh.features.haralick(im, return_mean_ptp=True)
             cur.append(har)
-            if first:
-                hlabels = mh.features.texture.haralick_labels[:-1]
-                colnames.extend(["mean:{}".format(ell) for ell in hlabels])
-                colnames.extend(["ptp:{}".format(ell) for ell in hlabels])
 
-        if first:
-            for cname in colnames:
-                output.write("\t")
-                output.write(cname)
-            output.write("\n")
-            first = False
-        for fs in cur:
-            output.write(fname)
-            for f in fs:
-                output.write("\t")
-                output.write('{:.8}'.format(f))
-            output.write('\n')
+        _write_row(output, chain.from_iterable(cur), fname)
     output.close()
 
 if __name__ == '__main__':
