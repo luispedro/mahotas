@@ -191,6 +191,7 @@ def test_feature_not_same():
     assert np.all(multiple.ptp(0) > 0)
 
 
+
 def test_return_mean_ptp():
     f = 255*np.random.random((128,128))
     f = f.astype(np.uint8)
@@ -206,3 +207,11 @@ def test_return_mean_ptp_xor():
     f = 255*np.random.random((128,128))
     f = f.astype(np.uint8)
     fs = mh.features.haralick(f, return_mean=1, return_mean_ptp=1)
+
+
+def test_x_minus_y():
+    f = 255*np.random.random((128,128))
+    f = f.astype(np.uint8)
+    h = mh.features.haralick(f, use_x_minus_y_variance=False)
+    h2 = mh.features.haralick(f, use_x_minus_y_variance=True)
+    assert np.sum(h != h2) == 4

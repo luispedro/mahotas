@@ -16,10 +16,19 @@ __all__ = [
 
 def _entropy(p):
     p = p.ravel()
-    return -np.dot(np.log2(p+(p==0)),p)
+    p1 = p.copy()
+    p1 += (p==0)
+    return -np.dot(np.log2(p1), p)
 
 
-def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False, return_mean=False, return_mean_ptp=False):
+def haralick(f,
+            ignore_zeros=False,
+            preserve_haralick_bug=False,
+            compute_14th_feature=False,
+            return_mean=False,
+            return_mean_ptp=False,
+            use_x_minus_y_variance=False,
+            ):
     '''
     feats = haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False)
 
@@ -74,6 +83,13 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_fe
         When set, the function returns the mean and ptp (point-to-point, i.e.,
         difference between max() and min()) across all the directions (default:
         False).
+    use_x_minus_y_variance : bool, optional
+        Feature 10 (index 9) has two interpretations, as the variance of |x-y|
+        or as the variance of P(|x-y|). In order to achieve compatibility with
+        other software and previous versions of mahotas, mahotas defaults to
+        using ``VAR[P(|x-y|)]``; if this argument is True, then it uses
+        ``VAR[|x-y|]`` (default: False)
+
 
     Returns
     -------
@@ -104,9 +120,17 @@ def haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_fe
                         compute_14th_feature=compute_14th_feature,
                         return_mean=return_mean,
                         return_mean_ptp=return_mean_ptp,
+                        use_x_minus_y_variance=use_x_minus_y_variance,
                         )
 
-def haralick_features(cmats, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False, return_mean=False, return_mean_ptp=False):
+def haralick_features(cmats,
+                    ignore_zeros=False,
+                    preserve_haralick_bug=False,
+                    compute_14th_feature=False,
+                    return_mean=False,
+                    return_mean_ptp=False,
+                    use_x_minus_y_variance=False,
+                    ):
     '''
     features = haralick_features(cmats, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False)
 
@@ -164,6 +188,12 @@ def haralick_features(cmats, ignore_zeros=False, preserve_haralick_bug=False, co
         When set, the function returns the mean and ptp (point-to-point, i.e.,
         difference between max() and min()) across all the directions (default:
         False).
+    use_x_minus_y_variance : bool, optional
+        Feature 10 (index 9) has two interpretations, as the variance of |x-y|
+        or as the variance of P(|x-y|). In order to achieve compatibility with
+        other software and previous versions of mahotas, mahotas defaults to
+        using ``VAR[P(|x-y|)]``; if this argument is True, then it uses
+        ``VAR[|x-y|]`` (default: False)
 
     Returns
     -------
@@ -249,7 +279,12 @@ def haralick_features(cmats, ignore_zeros=False, preserve_haralick_bug=False, co
             feats[6] = np.dot(tk2, px_plus_y) - feats[5]**2
 
         feats[ 8] = _entropy(pravel)
-        feats[ 9] = px_minus_y.var()
+        if use_x_minus_y_variance:
+            mu_x_minus_y = np.dot(px_minus_y, k)
+            mu_x_minus_y_sq = np.dot(px_minus_y, k2)
+            feats[ 9] = mu_x_minus_y_sq - mu_x_minus_y**2
+        else:
+            feats[ 9] = px_minus_y.var()
         feats[10] = _entropy(px_minus_y)
 
         HX = _entropy(px)
