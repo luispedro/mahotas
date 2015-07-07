@@ -19,6 +19,11 @@ Mahotas supports both types.
 The `classification tutorial <classification.html>`__ illustrates the
 usefulness of feature computation.
 
+If you simply want to compute features from images (without any further
+processing), you can also use the `mahotas-features.py
+<mahotas-features.html>`__ script, which is installed with mahotas (since
+version 1.4).
+
 Global features
 ---------------
 

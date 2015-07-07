@@ -102,6 +102,7 @@ Jump to detailed `API Documentation <api.html>`__
    io
    classification
    edf
+   mahotas-features
    faq
    papers
    internals
