@@ -223,6 +223,20 @@ You can use it for mahotas or general computer vision in Python questions.
 Recent Changes
 --------------
 
+Version 1.4.0 (July 8 2015)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Added ``mahotas-features.py`` script
+- Add `short` argument to citation() function
+- Add `max_iter` argument to thin() function
+- Fixed labeled.bbox when there is no background (issue #61, reported by Daniel
+  Haehn)
+- bbox now allows dimensions greater than 2 (including when using the
+  ``as_slice`` and ``border`` arguments)
+- Extended croptobbox for dimensions greater than 2
+- Added use_x_minus_y_variance option to haralick features
+- Add function ``lbp_names``
+
+
 Version 1.3.0 (April 28 2015)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Improve memory handling in freeimage.write_multipage
