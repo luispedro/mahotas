@@ -88,8 +88,17 @@ def main():
     parser.add_argument(
                     '--haralick', default=False, action='store_true',
                             help='Compute Haralick features')
+    parser.add_argument(
+                    '--lbp', default=False, action='store_true',
+                            help='Compute LBP (linear binary patterns) features')
+    parser.add_argument(
+                    '--lbp-radius', default=8, action='store', type=int,
+                            help='Radius to use for LBP features')
+    parser.add_argument(
+                    '--lbp-points', default=6, action='store', type=int,
+                            help='Nr of points to use for LBP features')
     args = parser.parse_args()
-    if not args.haralick:
+    if not (args.haralick or args.lbp):
         sys.stderr.write('''\
 No features selected. Doing nothing.
 
@@ -106,6 +115,9 @@ For example, use --haralick switch to compute Haralick features\n''')
         hlabels = mh.features.texture.haralick_labels[:-1]
         colnames.extend(["mean:{}".format(ell) for ell in hlabels])
         colnames.extend(["ptp:{}".format(ell) for ell in hlabels])
+    if args.lbp:
+        from mahotas.features.lbp import lbp_names
+        colnames.extend(lbp_names(args.lbp_radius, args.lbp_points))
     _write_row(output, colnames)
 
     for fname in args.fnames:
@@ -114,6 +126,8 @@ For example, use --haralick switch to compute Haralick features\n''')
         if args.haralick:
             har = mh.features.haralick(im, return_mean_ptp=True)
             cur.append(har)
+        if args.lbp:
+            cur.append(mh.features.lbp(im, args.lbp_radius, args.lbp_points))
 
         _write_row(output, chain.from_iterable(cur), fname)
     output.close()
