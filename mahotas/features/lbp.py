@@ -159,3 +159,31 @@ def lbp(image, radius, points, ignore_zeros=False):
     compressed = final[pivots[:len(final)]]
     compressed = np.append(compressed, np.zeros(npivots - len(compressed)))
     return compressed
+
+def lbp_names(radius, points):
+    '''Return list of names (string) for LBP features
+
+    Parameters
+    ----------
+    radius : number (integer or floating point)
+        radius (in pixels)
+    points : integer
+        nr of points to consider
+
+    Returns
+    -------
+    names : list of str
+
+    See Also
+    --------
+    lbp : function
+        Compute LBP features
+    '''
+    from mahotas.features import _lbp
+    codes = np.arange(2**points, dtype=np.uint32)
+    iters = codes.copy()
+    codes = _lbp.map(codes.astype(np.uint32), points)
+    pivots = (codes == iters)
+    npivots = np.sum(pivots)
+    return ['lbp_r{}_p{}_{}'.format(radius, points, i) for i in range(npivots)]
+

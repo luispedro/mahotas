@@ -3,7 +3,7 @@ import numpy as np
 from mahotas.features import _lbp
 import mahotas.thresholding
 from mahotas.features import lbp
-from mahotas.features.lbp import lbp_transform
+from mahotas.features.lbp import lbp_transform, lbp_names
 from mahotas.tests.utils import luispedro_jpg
 
 def test_shape():
@@ -81,3 +81,11 @@ def test_lbp_3d():
     im = np.arange(10*20*3).reshape((10,20,3))
     lbp_transform(im, 1, 8)
 
+def test_lbp_names():
+    f = np.random.random(size=(64,72))
+    f *= 255
+    f = f.astype(np.uint8)
+
+    for radius,points in [(8,6),
+            (8,8),(6,6),(8,4),(12,6)]:
+        assert len(lbp(f, radius, points)) == len(lbp_names(radius, points))
