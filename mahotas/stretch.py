@@ -176,17 +176,22 @@ def as_rgb(r, g, b):
     return np.dstack([s(r), s(g), s(b)])
 
 
-def overlay(gray, red=None, green=None, blue=None):
+def overlay(gray, red=None, green=None, blue=None, if_gray_dtype_not_uint8='stretch'):
     '''
     Create an image which is greyscale, but with possible boolean overlays.
 
     Parameters
     ----------
-    gray: ndarray
-        Should be a greyscale image
+    gray: ndarray of type np.uint8
+        Should be a greyscale image of type np.uint8
 
     red,green,blue : ndarray, optional
         boolean arrays
+
+    if_gray_dtype_not_uint8 : str, optional
+        What to do if ``gray`` is not of type ``np.uint8``, must be one of
+            'stretch' (default): the function ``stretch`` is called.
+            'error' : in this case, an error is raised
 
     Returns
     -------
@@ -194,6 +199,11 @@ def overlay(gray, red=None, green=None, blue=None):
         Colour image
     '''
     _check_2(gray, 'overlay')
+    if gray.dtype != np.uint8:
+        if if_gray_dtype_not_uint8 == 'stretch':
+            gray = stretch(gray)
+        else:
+            raise ValueError('mahotas.overlay: first argument should be of dtype np.uint8')
     def _v(ch):
         if ch is None:
             return gray
