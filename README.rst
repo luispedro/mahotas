@@ -199,6 +199,10 @@ Links & Contacts
 
 *Issue Tracker*: `github mahotas issues <https://github.com/luispedro/mahotas/issues>`__
 
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/luispedro/mahotas
+   :target: https://gitter.im/luispedro/mahotas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 *Mailing List*: Use the `pythonvision mailing list
 <http://groups.google.com/group/pythonvision?pli=1>`_ for questions, bug
 submissions, etc. Or ask on `stackoverflow (tag mahotas)
