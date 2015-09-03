@@ -9,12 +9,18 @@ Python Computer Vision Library
 |Downloads|_
 |License|_
 
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/luispedro/mahotas
+   :target: https://gitter.im/luispedro/mahotas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
+
 .. |Travis| image:: https://api.travis-ci.org/luispedro/mahotas.png
 .. |Downloads| image:: https://pypip.in/d/mahotas/badge.png
 .. |License| image:: https://pypip.in/license/mahotas/badge.png
 .. _Travis: https://travis-ci.org/luispedro/mahotas
 .. _Downloads: https://pypi.python.org/pypi/mahotas
 .. _License: http://opensource.org/licenses/MIT
+
 
 
 Mahotas is a library of fast computer vision algorithms (all implemented in
@@ -198,10 +204,6 @@ Links & Contacts
 *Documentation*: `http://mahotas.readthedocs.org/ <http://mahotas.readthedocs.org/>`__
 
 *Issue Tracker*: `github mahotas issues <https://github.com/luispedro/mahotas/issues>`__
-
-.. image:: https://badges.gitter.im/Join%20Chat.svg
-   :alt: Join the chat at https://gitter.im/luispedro/mahotas
-   :target: https://gitter.im/luispedro/mahotas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
 *Mailing List*: Use the `pythonvision mailing list
 <http://groups.google.com/group/pythonvision?pli=1>`_ for questions, bug
