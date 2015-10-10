@@ -575,13 +575,17 @@ struct MarkerInfo {
 };
 
 struct NeighbourElem {
-    NeighbourElem(int delta, int margin, const numpy::position& delta_position)
+    // This represents a neighbour
+    //  - delta: how to get from the current element to the next by pointer manipulation
+    //  - step: how large the distance to the centre is
+    //  - delta_position: the difference as a numpy::position
+    NeighbourElem(int delta, int step, const numpy::position& delta_position)
         :delta(delta)
-        ,margin(margin)
+        ,step(step)
         ,delta_position(delta_position)
         { }
     int delta;
-    int margin;
+    int step;
     numpy::position delta_position;
 };
 
@@ -641,9 +645,9 @@ void cwatershed(numpy::aligned_array<npy_int64> res,
                     neighbour != past;
                     ++neighbour) {
             const numpy::index_type npos = next.position + neighbour->delta;
-            int nmargin = margin - neighbour->margin;
+            int nmargin = margin - neighbour->step;
             if (nmargin < 0) {
-                // nmargin is a lower bound on the margin, so we must recompute the actual thing
+                // nmargin is a lower bound on the margin, so we must recompute the actual value
                 numpy::position pos = markers.flat_to_pos(next.position);
                 assert(markers.validposition(pos));
                 numpy::position long_pos = pos + neighbour->delta_position;
@@ -655,7 +659,7 @@ void cwatershed(numpy::aligned_array<npy_int64> res,
                 // we are good with the recomputed margin
                 assert(markers.validposition(long_pos));
                 // Update lower bound
-                if ((nmargin - neighbour->margin) > margin) margin = nmargin - neighbour->margin;
+                if ((nmargin - neighbour->step) > margin) margin = nmargin - neighbour->step;
             }
             assert(npos < int(status.size()));
             switch (status[npos]) {
