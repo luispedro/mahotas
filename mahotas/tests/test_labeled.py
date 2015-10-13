@@ -283,3 +283,27 @@ def test_labeled_bbox_zeros():
     f3 = np.array([f])
     yield nozeros_test, f
     yield nozeros_test, f3
+
+
+def test_filter_labeled():
+
+    f = np.random.random(size=(256,256)) > .66
+    labeled, nr = mh.label(f)
+    no_change,no_nr = mh.labeled.filter_labeled(labeled)
+    assert no_nr == nr
+    assert np.all(no_change == labeled)
+
+    no_border, border_nr = mh.labeled.filter_labeled(labeled, remove_bordering=True)
+    assert nr > border_nr
+    assert not np.all(no_border == labeled)
+
+    min_size_3,nr3 = mh.labeled.filter_labeled(labeled, min_size=3)
+    assert nr > nr3
+    assert mh.labeled.labeled_size(min_size_3).min() == 3
+
+    max_size_3,_ = mh.labeled.filter_labeled(labeled, max_size=3)
+    assert mh.labeled.labeled_size(max_size_3)[1:].max() == 3
+
+
+    all_size_3,_ = mh.labeled.filter_labeled(labeled, max_size=3, min_size=3)
+    assert np.all(mh.labeled.labeled_size(all_size_3)[1:] == 3)

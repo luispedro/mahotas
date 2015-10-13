@@ -1,3 +1,6 @@
+Version 1.4.0+
+	* Add filter_labeled function
+
 Version 1.4.0 2015-07-08 by luispedro
 	* Add `short` argument to citation() function
 	* Add `max_iter` argument to thin() function

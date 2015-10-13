@@ -16,6 +16,7 @@ __all__ = [
     'borders',
     'border',
     'bwperim',
+    'filter_labeled',
     'label',
     'labeled_sum',
     'labeled_max',
@@ -575,3 +576,45 @@ def bbox(f, as_slice=False):
     if as_slice:
         output = [tuple([slice(s,e) for s,e in r.reshape((-1,2))]) for r in output]
     return output
+
+def filter_labeled(labeled, remove_bordering=False, min_size=None, max_size=None):
+    '''Filter labeled regions based on a series of conditions
+
+    Parameters
+    ----------
+    labeled : labeled array
+    remove_bordering : bool, optional
+        whether to remove regions that touch the border
+    min_size : int, optional
+        Minimum size (in pixels) of objects to keep (default is no minimum)
+    max_size : int, optional
+        Maximum size (in pixels) of objects to keep (default is no maximum)
+
+    Returns
+    -------
+    filtered : labeled array
+    nr : int
+        number of new labels
+    '''
+    from mahotas.labeled import remove_regions, labeled_size
+    import mahotas as mh
+    labeled = _as_labeled(labeled, labeled, 'filter_labeled')
+    if remove_bordering:
+        labeled = mh.labeled.remove_bordering(labeled)
+        labeled,nr = mh.labeled.relabel(labeled)
+    else:
+        nr = labeled.max()
+
+    to_keep = np.ones(nr+1, bool)
+
+    if min_size is not None or max_size is not None:
+        sizes = labeled_size(labeled)
+        if min_size:
+            to_keep &= (sizes >= min_size)
+        if max_size:
+            to_keep &= (sizes <= max_size)
+    to_keep[0] = True
+    to_remove = np.where(~to_keep)
+    labeled = remove_regions(labeled, to_remove)
+    labeled,nr = mh.labeled.relabel(labeled, inplace=True)
+    return labeled, nr

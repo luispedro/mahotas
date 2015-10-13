@@ -166,6 +166,11 @@ Now, we have ``24`` nuclei and ``relabeled`` goes from ``0`` (background) to ``2
     imshow(relabeled)
     show()
 
+In mahotas after version ``1.4``, we can even make many of the same operations
+with a single call to ``mh.labeled.filter_labeled``::
+
+    relabeled,n_left = mh.labeled.filter_labeled(labeled, remove_bordering=True, max_size=10000)
+
 
 Borders
 -------
