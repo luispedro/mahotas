@@ -36,7 +36,7 @@ def test_watershed():
                [2, 2, 2, 2],
                [2, 2, 2, 2]]))
     types = [np.uint8, np.int8, np.uint16, np.int16, np.int32, np.uint32,int,
-                 np.float32, np.float64, np.float128, float]
+                 np.float32, np.float64, float]
     if hasattr(np, 'float128'):
         types.append(np.float128)
     for d in types:
@@ -86,7 +86,7 @@ def test_overflow():
     https://github.com/luispedro/mahotas/issues/41
     '''
     f = np.random.random((128,64))
-    f *= 255 
+    f *= 255
     f = f.astype(np.uint8)
     for max_n in [127, 240, 280]:
         markers = np.zeros(f.shape, np.int)
@@ -97,7 +97,7 @@ def test_overflow():
                 if markers[a,b] == 0:
                     markers[a,b] = i + 1
                     break
-                
+
         r = mh.cwatershed(f, markers)
         assert markers.max() == max_n
         assert r.max() == max_n
