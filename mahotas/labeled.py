@@ -123,7 +123,7 @@ def is_same_labeling(labeled0, labeled1):
     Returns
     -------
     same : bool
-        Number of objects
+        True if the labelings passed as argument are equivalent
 
     See Also
     --------
