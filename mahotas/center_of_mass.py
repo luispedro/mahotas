@@ -1,6 +1,6 @@
-# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2015, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
-# 
+#
 # License: MIT (see COPYING file)
 
 from __future__ import division
@@ -10,7 +10,6 @@ from . import _center_of_mass
 def center_of_mass(img, labels=None):
     '''
     coords = center_of_mass(img, labels=None)
-    x0,x1,... = center_of_mass(img, labels=None)
 
     Returns the center of mass of img.
 
@@ -20,15 +19,19 @@ def center_of_mass(img, labels=None):
     Parameters
     ----------
     img : ndarray
-    labels : ndarray
-        A labeled array
+    labels : ndarray, optional
+        A labeled array (i.e., an array of integers of the same shape as
+        ``img`` such that each "object" is identified by areas with different
+        values).
 
     Returns
     -------
     coords : ndarray
-        if ``not labels``, a 1-ndarray of coordinates (size = len(img.shape)),
-        if ``labels``, a 2-ndarray of coordinates (shape = (labels.max()+1) xlen(img.shape))
-    '''
+        The exact shape of the output depends on whether the ``labels``
+        argument was used. If ``labels is None``, then the return value is a
+        1-ndarray of coordinates (``size = len(img.shape)``); otherwise, the
+        return value is a 2-ndarray of coordinates (``shape = (labels.max()+1,
+        len(img.shape)``).  '''
     if labels is not None:
         if labels.dtype != np.int32 or \
             not labels.flags['C_CONTIGUOUS']:
