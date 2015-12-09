@@ -31,7 +31,14 @@ On linux, the package is often called python-setuptools''')
     from sys import exit
     exit(1)
 import os
-import numpy
+try:
+    import numpy
+except ImportError:
+    class FakeNumpy(object):
+        def get_include(self):
+           return []
+    numpy = FakeNumpy()
+
 
 
 exec(compile(open('mahotas/mahotas_version.py').read(),
