@@ -580,6 +580,8 @@ def bbox(f, as_slice=False):
 def filter_labeled(labeled, remove_bordering=False, min_size=None, max_size=None):
     '''Filter labeled regions based on a series of conditions
 
+    .. versionadded :: 1.4.1
+
     Parameters
     ----------
     labeled : labeled array

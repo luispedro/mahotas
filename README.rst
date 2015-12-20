@@ -229,6 +229,11 @@ You can use it for mahotas or general computer vision in Python questions.
 Recent Changes
 --------------
 
+Version 1.4.1 (Dec 20 2015)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Add filter_labeled function
+- Fix tests on 32 bit platforms and older versions of numpy
+
 Version 1.4.0 (July 8 2015)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Added ``mahotas-features.py`` script
