@@ -26,6 +26,8 @@ Python Computer Vision Library
 Mahotas is a library of fast computer vision algorithms (all implemented in
 C++) operating over numpy arrays.
 
+Python versions 2.7, 3.3, 3.4, and 3.5 are supported.
+
 Notable algorithms:
  - watershed.
  - convex points calculations.
