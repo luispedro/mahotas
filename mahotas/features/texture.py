@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2015, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2016, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -219,7 +219,8 @@ def haralick_features(cmats,
             cmat[:,0] = 0
         T = cmat.sum()
         if not T:
-            continue
+            raise ValueError('mahotas.haralick_features: the input is empty. Cannot compute features!\n' +
+                                'This can happen if you are using `ignore_zeros`' )
         if not len(features):
             maxv = len(cmat)
             k = np.arange(maxv)
