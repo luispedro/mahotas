@@ -37,6 +37,19 @@ def haralick(f,
     Computes the Haralick texture features for the four 2-D directions or
     thirteen 3-D directions (depending on the dimensions of `f`).
 
+    ``ignore_zeros`` can be used to have the function ignore any zero-valued
+    pixels (as background). If there are no-nonzero neighbour pairs in all
+    directions, an exception is raised. Note that this can happen even with
+    some non-zero pixels, e.g.::
+
+         0 0 0 0
+         0 1 0 0
+         0 1 0 0
+         0 0 0 0
+
+    would trigger an error when ``ignore_zeros=True`` as there are no
+    horizontal non-zero pairs!
+
     Notes
     -----
     Haralick's paper has a typo in one of the equations. This function
