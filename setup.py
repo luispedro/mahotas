@@ -45,9 +45,9 @@ exec(compile(open('mahotas/mahotas_version.py').read(),
              'mahotas/mahotas_version.py', 'exec'))
 
 try:
-    long_description = open('README.rst', encoding='utf-8').read()
+    long_description = open('README.md', encoding='utf-8').read()
 except:
-    long_description = open('README.rst').read()
+    long_description = open('README.md').read()
 
 undef_macros = []
 define_macros = []
