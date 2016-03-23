@@ -13,8 +13,8 @@ Python Computer Vision Library
    :alt: Join the chat at https://gitter.im/luispedro/mahotas
    :target: https://gitter.im/luispedro/mahotas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
-
 .. |Travis| image:: https://api.travis-ci.org/luispedro/mahotas.png
+.. image:: https://anaconda.org/conda-forge/mahotas/badges/installer/conda.svg   :target: https://conda.anaconda.org/conda-forge
 .. |Downloads| image:: https://pypip.in/d/mahotas/badge.png
 .. |License| image:: https://pypip.in/license/mahotas/badge.png
 .. _Travis: https://travis-ci.org/luispedro/mahotas
@@ -132,6 +132,16 @@ As you can see, we rely on numpy/matplotlib for many operations.
 
 Install
 -------
+
+If you are using `conda <http://anaconda.org/>`__, you can install mahotas with
+the following pair of commands::
+
+    conda config --add channels conda-forge
+    conda install mahotas
+
+
+Compilation from source
+-----------------------
 
 You will need python (naturally), numpy, and a C++ compiler. Then you should be
 able to use::

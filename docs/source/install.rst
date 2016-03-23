@@ -1,6 +1,22 @@
-======================
 How To Install Mahotas
 ======================
+
+.. image:: https://anaconda.org/conda-forge/mahotas/badges/installer/conda.svg   :target: https://conda.anaconda.org/conda-forge
+
+The simplest way to install mahotas is to use `conda <http://anaconda.org/>`__.
+
+If you have conda installed, you can install mahotas using the following pair
+of commands::
+
+    conda config --add channels conda-forge
+    conda install mahotas
+
+This relies on the `conda-forge <https://conda-forge.github.io/>`__ project,
+which builds packages for all major environments (Linux, Mac OS X, and
+Windows). If you do not want to permanently add the conda-forge channel to your
+conda configuration, you can also install just mahotas with::
+
+    conda install -c https://conda.anaconda.org/conda-forge mahotas
 
 From source
 -----------
