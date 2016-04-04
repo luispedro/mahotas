@@ -217,3 +217,18 @@ def test_x_minus_y():
     h = mh.features.haralick(f, use_x_minus_y_variance=False)
     h2 = mh.features.haralick(f, use_x_minus_y_variance=True)
     assert np.sum(h != h2) == 4
+
+
+@raises(ValueError)
+def test_negative_values_haralick():
+    # https://github.com/luispedro/mahotas/issues/72
+    f = 255*np.random.random((16,16))
+    f = f.astype(np.int8)
+    mh.features.haralick(f)
+
+
+def test_int8_positive_haralick():
+    # https://github.com/luispedro/mahotas/issues/72
+    f = 64*np.random.random((16,16))
+    f = f.astype(np.int8)
+    mh.features.haralick(f) # this should be fine: all the values are positive

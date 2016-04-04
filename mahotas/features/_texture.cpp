@@ -30,6 +30,10 @@ void cooccurence(numpy::aligned_array<npy_int32> res, numpy::aligned_array<T> ar
         T val = *iter;
         T val2 = 0;
         if(filter.retrieve(iter, 0, val2)) {
+            if (val < 0 || val2 < 0) {
+                // The check is not performed in Python as this can be an expensive check for large arrays
+                throw PythonException(PyExc_ValueError, "cooccurence can only be computed on non-negative arrays");
+            }
             ++res.at(npy_intp(val), npy_intp(val2));
         }
     }

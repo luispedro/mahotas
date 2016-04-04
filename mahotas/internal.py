@@ -125,19 +125,26 @@ def _verify_is_integer_type(A, function_name):
     function_name : str
         Used for error messages
     '''
-    int_types=[
-                np.bool,
-                np.uint8,
-                np.int8,
-                np.uint16,
-                np.int16,
-                np.uint32,
-                np.int32,
-                np.int64,
-                np.uint64,
-                ]
-    if A.dtype not in int_types:
+    k = A.dtype.kind
+    if k not in "iub": # integer, unsigned integer, boolean
         raise TypeError('mahotas.%s: This function only accepts integer types (passed array of type %s)' % (function_name, A.dtype))
+
+def _verify_is_nonnegative_integer_type(A, function_name):
+    '''
+    _verify_is_nonnegative_integer_type(array, "function")
+
+    Checks that ``A`` is an unsigned integer array. If it is not, it raises
+    ``TypeError``.
+
+    Parameters
+    ----------
+    A : ndarray
+    function_name : str
+        Used for error messages
+    '''
+    _verify_is_integer_type(A, function_name)
+    if A.dtype.kind == 'i' and not np.all(A >= 0):
+        raise ValueError('mahotas.{0}: This function only accepts positive integer types (passed array of type {1})'.format(function_name, A.dtype))
 
 def _make_binary(array):
     '''
