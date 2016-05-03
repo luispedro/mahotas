@@ -116,8 +116,8 @@ As you can see, we rely on numpy/matplotlib for many operations.
 
 ## Install
 
-If you are using [conda](http://anaconda.org/), you can install mahotas
-with the following pair of commands:
+If you are using [conda](http://anaconda.org/), you can install mahotas from
+[conda-forge](https://conda-forge.github.io/) using the following commands:
 
     conda config --add channels conda-forge
     conda install mahotas
