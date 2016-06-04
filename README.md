@@ -135,7 +135,7 @@ You can test your installation by running:
 
 If you run into issues, the manual has more [extensive documentation on
 mahotas
-installation](http://mahotas.readthedocs.org/en/latest/install.html),
+installation](https://mahotas.readthedocs.io/en/latest/install.html),
 including how to find pre-built for several platforms.
 
 ## Citation
@@ -187,7 +187,7 @@ run the test suite.
 ## Links & Contacts
 
 *Documentation*:
-[http://mahotas.readthedocs.org/](http://mahotas.readthedocs.org/)
+[https://mahotas.readthedocs.io/](https://mahotas.readthedocs.io/)
 
 *Issue Tracker*: [github mahotas
 issues](https://github.com/luispedro/mahotas/issues)

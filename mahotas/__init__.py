@@ -19,7 +19,7 @@ watershed
 imread/imsave
     read/write image
 
-Documentation: http://mahotas.readthedocs.org/
+Documentation: https://mahotas.readthedocs.io/
 
 Citation:
 
