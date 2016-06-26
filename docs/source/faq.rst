@@ -2,6 +2,25 @@
 Frequently Asked Questions
 ==========================
 
+How do I install mahotas with anaconda?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you are using `conda <http://anaconda.org/>`__, you can
+install mahotas from `conda-forge
+<https://conda-forge.github.io/>`__ using the following
+commands::
+
+    conda config --add channels conda-forge
+    conda install mahotas
+
+Who uses mahotas?
+~~~~~~~~~~~~~~~~~
+
+In June 2016, there were `34 papers
+<https://scholar.google.com/scholar?as_sdt=1,5&hl=en&sciodt=0,5&cites=18199654681754783804&scipsc=>`__
+citing the `mahotas paper
+<http://dx.doi.org/10.5334/jors.ac>`__
+
 Why did you not simply contribute to ``scipy.ndimage`` or ``scikits.image``?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -12,8 +31,8 @@ of a collection of semi-organised routines than a project), there was no
 In the meanwhile, all these projects have very different internal philosophies.
 ``ndimage`` is old-school scipy, in C, with macros. ``scikits.image`` uses
 Cython extensively, while ``mahotas`` uses C++ and templates. I don't want to
-use Cython as I find that it is not yet established enough and it cannot (I
-believe) be used to write functions that run on multiple types (like with C++
+use Cython as I find that it is not yet established enough and at the time it
+could not be used to write functions that run on multiple types (like with C++
 templates). The scipy community does not want to use C++.
 
 I have, on the other hand, taken code from ndimage and ported it to C++ for use

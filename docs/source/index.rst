@@ -104,7 +104,6 @@ Jump to detailed `API Documentation <api.html>`__
    edf
    mahotas-features
    faq
-   papers
    internals
    principles
    contributing
