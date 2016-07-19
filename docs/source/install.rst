@@ -21,11 +21,7 @@ conda configuration, you can also install just mahotas with::
 From source
 -----------
 
-You can get the released version using your favorite Python package manager::
-
-    easy_install mahotas
-
-or::
+You can get the released version using pip::
 
     pip install mahotas
 
