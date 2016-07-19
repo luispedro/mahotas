@@ -2,39 +2,44 @@
 Mahotas: Computer Vision in Python
 ==================================
 
+.. note:: If you are using mahotas in a scientific publication, please cite:
+
+        Coelho, L.P. 2013. Mahotas: Open source software for scriptable computer
+        vision. Journal of Open Research Software 1(1):e3, DOI:
+        http://dx.doi.org/10.5334/jors.ac
+
 Mahotas is a computer vision and image processing library for Python.
 
 It includes many algorithms implemented in C++ for speed while operating in
 numpy arrays and with a very clean Python interface.
 
-Notable algorithms:
- - watershed.
+Mahotas currently has over 100 functions for image processing and computer
+vision and it keeps growing. Some examples of mahotas functionality:
+
+ - `watershed <http://mahotas.readthedocs.io/en/latest/api.html#mahotas.cwatershed>`__
  - convex points calculations.
- - hit & miss. thinning.
- - Zernike & Haralick, LBP, and TAS features.
- - freeimage based numpy image loading (requires freeimage libraries to be
-   installed).
- - Speeded-Up Robust Features (SURF), a form of local features.
- - thresholding.
+ - `hit & miss. thinning <http://mahotas.readthedocs.io/en/latest/api.html#mahotas.hitmiss>`__
+ - Zernike & Haralick, `local binary patterns
+   <http://mahotas.readthedocs.io/en/latest/lbp.html>`__, and TAS features.
+ - `morphological processing <http://mahotas.readthedocs.io/en/latest/morphology.html>`__
+ - `Speeded-Up Robust Features (SURF), a form of local features <http://mahotas.readthedocs.io/en/latest/surf.html>`__
+ - `thresholding <http://mahotas.readthedocs.io/en/latest/thresholding.html>`__
  - convolution.
  - Sobel edge detection.
 
-Mahotas currently has over 100 functions for image processing and computer
-vision and it keeps growing.
+The release schedule is roughly one release every few months and each release
+brings new functionality and improved performance. The interface is very
+stable, though, and code written using a version of mahotas from years back
+will work just fine in the current version, except it will be faster (some
+interfaces are deprecated and will be removed after a few years, but in the
+meanwhile, you only get a warning).
 
-The release schedule is roughly one release a month and each release brings new
-functionality and improved performance. The interface is very stable, though,
-and code written using a version of mahotas from years back will work just fine
-in the current version, except it will be faster (some interfaces are
-deprecated and will be removed after a few years, but in the meanwhile, you
-only get a warning). In a few unfortunate cases, there was a bug in the old
-code and your results will change for the better.
+Bug reports with test cases typically get fixed in 24 hours.
 
-If you are using mahotas in a scientific publication, please cite:
+.. seealso::
 
-    Coelho, L.P. 2013. Mahotas: Open source software for scriptable computer
-    vision. Journal of Open Research Software 1(1):e3, DOI:
-    http://dx.doi.org/10.5334/jors.ac
+    `mahotas-imread <http://imread.readthedocs.io/en/latest/>`__ is side
+    project which includes code to read/write images to files
 
 Examples
 --------
