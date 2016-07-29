@@ -22,6 +22,7 @@ def _entropy(p):
 
 
 def haralick(f,
+            distance=1,
             ignore_zeros=False,
             preserve_haralick_bug=False,
             compute_14th_feature=False,
@@ -78,6 +79,8 @@ def haralick(f,
     ----------
     f : ndarray of integer type
         input image. 2-D and 3-D images are supported.
+    distance: int, optional (default=1)
+        The distance to consider while computing the cooccurence matrix.
     ignore_zeros : bool, optional
         Whether to ignore zero pixels (default: False).
 
@@ -125,7 +128,7 @@ def haralick(f,
     cmat = np.empty((fm1, fm1), np.int32)
     def all_cmatrices():
         for dir in range(nr_dirs):
-            cooccurence(f, dir, cmat, symmetric=True)
+            cooccurence(f, dir, distance, cmat, symmetric=True)
             yield cmat
     return haralick_features(all_cmatrices(),
                         ignore_zeros=ignore_zeros,
@@ -377,7 +380,7 @@ _3d_deltas = [
     (1, 1,-1),
     (1,-1,-1) ]
 
-def cooccurence(f, direction, output=None, symmetric=True):
+def cooccurence(f, direction, distance, output=None, symmetric=True):
     '''
     cooccurence_matrix = cooccurence(f, direction, output={new matrix})
 
@@ -390,6 +393,8 @@ def cooccurence(f, direction, output=None, symmetric=True):
     direction : integer
         Direction as index into (horizontal [default], diagonal
         [nw-se], vertical, diagonal [ne-sw])
+    distance : integer,
+        Distance to the central pixel to consider.
     output : np.long 2 ndarray, optional
         preallocated result.
     symmetric : boolean, optional
@@ -416,13 +421,14 @@ def cooccurence(f, direction, output=None, symmetric=True):
         output.fill(0)
 
     if len(f.shape) == 2:
-        Bc = np.zeros((3, 3), f.dtype)
-        y,x = _2d_deltas[direction]
-        Bc[y+1,x+1] = 1
+        mask_size = 2 * distance + 1
+        Bc = np.zeros((mask_size, mask_size), f.dtype)
+        y, x = tuple(distance * i for i in _2d_deltas[direction])
+        Bc[y + distance, x + distance] = 1
     else:
-        Bc = np.zeros((3, 3, 3), f.dtype)
-        y,x,z = _3d_deltas[direction]
-        Bc[y+1,x+1,z+1] = 1
+        Bc = np.zeros((mask_size, mask_size, mask_size), f.dtype)
+        y, x = tuple(distance * i for i in _3d_deltas[direction])
+        Bc[y + distance, x + distance, z + distance] = 1
     _texture.cooccurence(f, output, Bc, symmetric)
     return output
 
