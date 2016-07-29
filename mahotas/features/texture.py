@@ -22,13 +22,13 @@ def _entropy(p):
 
 
 def haralick(f,
-            distance=1,
             ignore_zeros=False,
             preserve_haralick_bug=False,
             compute_14th_feature=False,
             return_mean=False,
             return_mean_ptp=False,
             use_x_minus_y_variance=False,
+            distance=1
             ):
     '''
     feats = haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False)
@@ -128,7 +128,7 @@ def haralick(f,
     cmat = np.empty((fm1, fm1), np.int32)
     def all_cmatrices():
         for dir in range(nr_dirs):
-            cooccurence(f, dir, distance, cmat, symmetric=True)
+            cooccurence(f, dir, cmat, symmetric=True, distance=distance)
             yield cmat
     return haralick_features(all_cmatrices(),
                         ignore_zeros=ignore_zeros,
@@ -380,7 +380,7 @@ _3d_deltas = [
     (1, 1,-1),
     (1,-1,-1) ]
 
-def cooccurence(f, direction, distance, output=None, symmetric=True):
+def cooccurence(f, direction, output=None, symmetric=True, distance=1):
     '''
     cooccurence_matrix = cooccurence(f, direction, output={new matrix})
 
@@ -393,12 +393,12 @@ def cooccurence(f, direction, distance, output=None, symmetric=True):
     direction : integer
         Direction as index into (horizontal [default], diagonal
         [nw-se], vertical, diagonal [ne-sw])
-    distance : integer,
-        Distance to the central pixel to consider.
     output : np.long 2 ndarray, optional
         preallocated result.
     symmetric : boolean, optional
         whether return a symmetric matrix (default: False)
+    distance : integer, optional (default=1)
+        Distance to the central pixel to consider.
 
     Returns
     -------
