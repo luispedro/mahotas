@@ -426,6 +426,7 @@ def cooccurence(f, direction, distance, output=None, symmetric=True):
         y, x = tuple(distance * i for i in _2d_deltas[direction])
         Bc[y + distance, x + distance] = 1
     else:
+        mask_size = 2 * distance + 1
         Bc = np.zeros((mask_size, mask_size, mask_size), f.dtype)
         y, x = tuple(distance * i for i in _3d_deltas[direction])
         Bc[y + distance, x + distance, z + distance] = 1
