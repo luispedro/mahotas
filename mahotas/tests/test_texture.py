@@ -14,7 +14,7 @@ def test__cooccurence():
     Bc = np.zeros((3,3), f.dtype)
     Bc[1,2] = 1
     res = np.zeros((5,5), np.int32)
-    cooccurence(f, res, 1, Bc, 0)
+    cooccurence(f, res, Bc, 0)
     assert res[0,0] == 1
     assert res[0,1] == 2
     assert res[1,0] == 0
@@ -28,7 +28,7 @@ def test__cooccurence():
     res = np.zeros((5,5), np.int32)
     Bc = np.zeros((3,3), f.dtype)
     Bc[2,2] = 1
-    cooccurence(f, res, 1, Bc, 0)
+    cooccurence(f, res, Bc, 0)
     assert res[0,0] == 1
     assert res[0,1] == 0
     assert res[0,2] == 2
