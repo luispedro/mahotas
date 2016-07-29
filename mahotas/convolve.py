@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2015, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2016, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -35,7 +35,12 @@ def convolve(f, weights, mode='reflect', cval=0.0, out=None, output=None):
     Convolution of `f` and `weights`
 
     Convolution is performed in `doubles` to avoid over/underflow, but the
-    result is then cast to `f.dtype`.
+    result is then cast to `f.dtype`. **This conversion may result in
+    over/underflow when using small integer types or unsigned types (if the
+    output is negative).** Converting to a floating point representation avoids
+    this issue::
+
+        c = convolve(f.astype(float), kernel)
 
     Parameters
     ----------
