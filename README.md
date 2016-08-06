@@ -15,18 +15,18 @@ Python versions 2.7, 3.3, 3.4, and 3.5 are supported.
 
 Notable algorithms:
 
-:   -   watershed.
-    -   convex points calculations.
-    -   hit & miss, thinning.
-    -   Zernike & Haralick, LBP, and TAS features.
-    -   freeimage based numpy image loading (requires freeimage
-        libraries to be installed).
-    -   Speeded-Up Robust Features (SURF), a form of local features.
-    -   thresholding.
-    -   convolution.
-    -   Sobel edge detection.
-    -   spline interpolation
-    -   SLIC super pixels.
+- [watershed](http://mahotas.readthedocs.io/en/latest/distance.html)
+- [convex points calculations](http://mahotas.readthedocs.io/en/latest/polygon.html).
+- hit & miss, thinning.
+- Zernike & Haralick, LBP, and TAS features.
+- [Speeded-Up Robust Features
+  (SURF)](http://mahotas.readthedocs.io/en/latest/surf.html), a form of local
+  features.
+- [thresholding](http://mahotas.readthedocs.io/en/latest/thresholding.html).
+- convolution.
+- Sobel edge detection.
+- spline interpolation
+- SLIC super pixels.
 
 Mahotas currently has over 100 functions for image processing and
 computer vision and it keeps growing.
