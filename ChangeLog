@@ -1,4 +1,5 @@
 Version 1.4.1+
+	* Fix `resize_to` return exactly the requested size
 	* Fix hard crash when computing texture on arrays with negative values
 	(issue #72)
 	* Added `distance` argument to haralick features (pull request #76, by

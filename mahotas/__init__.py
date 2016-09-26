@@ -63,7 +63,7 @@ try:
                         open, \
                         regmin, \
                         regmax
-    from .resize import imresize
+    from .resize import imresize, resize_to
     from .stretch import as_rgb, \
                         overlay, \
                         stretch, \

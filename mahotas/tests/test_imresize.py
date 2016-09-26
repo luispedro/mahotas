@@ -16,3 +16,18 @@ def test_resize_to():
     im = im.max(2)
     im  = mh.resize.resize_to(im, [512,256])
     assert im.shape == (512,256)
+
+def test_resize_to():
+    for start,target in [
+            ((128,128), (64,64)),
+            ((127,128), (64,64)),
+            ((125,128), (64,64)),
+            ((120,128), (64,64)),
+            ((117,128), (64,64)),
+            ((115,128), (61,64)),
+            ((116,129), (59,65)),
+            ]:
+        assert mh.resize_to(np.zeros(start), target).shape == target
+    start = np.zeros((65,31))
+    for t0 in range(7,29):
+        assert mh.resize_to(start, (t0, 17)).shape == (t0, 17)

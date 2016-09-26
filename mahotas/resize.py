@@ -36,9 +36,10 @@ def resize_to(im, nsize, order=3):
     from .interpolate import zoom
     if len(nsize) != im.ndim:
         raise ValueError('mahotas.resize_to: new size does not have the same dimension as old one')
+    out = np.empty(nsize, dtype=im.dtype)
     nsize = np.array(nsize, dtype=float)
     nsize /= im.shape
-    return zoom(im, nsize, order=order)
+    return zoom(im, nsize, order=order, out=out)
 
 
 def resize_rgb_to(im, nsize, order=3):
