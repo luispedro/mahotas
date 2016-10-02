@@ -218,6 +218,13 @@ questions.
 
 ## Recent Changes
 
+### Version 1.4.2 (Oct 2 2016)
+- Fix `resize\_to` return exactly the requested size
+- Fix hard crash when computing texture on arrays with negative values
+  (issue #72)
+- Added `distance` argument to haralick features (pull request #76, by
+  Guillaume Lemaitre)
+
 ### Version 1.4.1 (Dec 20 2015)
 
 -   Add `filter\_labeled` function

@@ -1,4 +1,4 @@
-Version 1.4.1+
+Version 1.4.2 2016-10-02 by luispedro
 	* Fix `resize_to` return exactly the requested size
 	* Fix hard crash when computing texture on arrays with negative values
 	(issue #72)
