@@ -121,7 +121,11 @@ setuptools.setup(name = 'mahotas',
       ext_modules = ext_modules,
       package_dir = package_dir,
       package_data = package_data,
-      scripts = ['bin/mahotas-features.py'],
+      entry_points={
+          'console_scripts': [
+              'mahotas-features = mahotas.features_cli:main',
+          ],
+      },
       test_suite = 'nose.collector',
       install_requires = install_requires,
       tests_require = tests_require
