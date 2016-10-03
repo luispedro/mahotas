@@ -3,7 +3,7 @@ include mahotas/*cpp
 include mahotas/*hpp
 include mahotas/*h
 include mahotas/*py
-include README.rst
+include README.md
 include docs/source/*.rst
 include AUTHORS
 include ChangeLog

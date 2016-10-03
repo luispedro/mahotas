@@ -2,6 +2,10 @@
 History
 =======
 
+Version 1.4.3 (Oct 3 2016)
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Fix distribution (add missing README.md file)
+
 Version 1.4.2 (Oct 2 2016)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
