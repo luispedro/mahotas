@@ -45,8 +45,8 @@ def fullhistogram(img):
     After calling this function, it will be true that
     ``hist[i] == (img == i).sum()``, for all ``i``.
 
-    Limitations
-    -----------
+    Notes
+    -----
     Only handles unsigned integer arrays.
 
     Parameters

@@ -90,8 +90,8 @@ def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
     img': ndarray
         resulting image. ndarray of same shape as `img` and type `dtype`.
 
-    Bugs
-    ----
+    Notes
+    -----
     If max > 255, then it truncates the values if dtype is not specified.
     '''
     if arg0 is None:
@@ -126,8 +126,8 @@ def as_rgb(r, g, b):
     be achieved by passing ``0`` as that channels value. In fact, passing a
     number as a channel value will set the whole channel to that value.
 
-    Example
-    -------
+    Examples
+    --------
 
     This shows a nice looking picture::
 

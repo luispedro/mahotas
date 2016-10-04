@@ -32,10 +32,9 @@ def line(p0, p1, canvas, color=1):
     color : integer, optional
         which value to store on the pixels (default: 1)
 
-    Implementation Reference
-    ------------------------
-
-    http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+    notes
+    -----
+    `Implementation Reference <http://en.wikipedia.org/wiki/Bresenham's_line_algorithm>`__
     '''
     y0,x0 = p0
     y1,x1 = p1

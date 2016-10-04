@@ -58,11 +58,11 @@ def croptobbox(img, border=None):
     nimg : ndarray
         A subimage of img.
 
-    Bugs
-    ----
-    Note that the border is on the bounding box, not on the final image! This
-    means that if the image has a positive pixel on its margin, it will still
-    be on the margin.
+    Notes
+    -----
+    Note that the border is on the bounding box, not on the final 
+    image! This means that if the image has a positive pixel on its margin, 
+    it will still be on the margin.
 
     This ensures that the result is always a sub-image of the input.
     """

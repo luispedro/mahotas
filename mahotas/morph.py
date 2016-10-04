@@ -319,7 +319,7 @@ def hitmiss(input, Bc, out=None, output=None):
 
     For a given pixel position, the hit&miss is ``True`` if, when ``Bc`` is
     overlaid on ``input``, centered at that position, the ``1`` values line up
-    with ``1``s, while the ``0``s line up with ``0``s (``2``s correspond to
+    with ``1``\ s, while the ``0``\ s line up with ``0``\ s (``2``\ s correspond to
     *don't care*).
 
     Examples
@@ -351,7 +351,7 @@ def hitmiss(input, Bc, out=None, output=None):
     Bc : ndarray
         hit & miss template, values must be one of (0, 1, 2)
     out : ndarray, optional
-        Used for output. Must be Boolean ndarray of same size as `input`
+        Used for output. Must be Boolean ndarray of same size as ``input``
     output : deprecated
         Do not use
 
@@ -701,8 +701,8 @@ def subm(a, b, out=None):
 
     but with saturation instead of underflow.
 
-    Example
-    -------
+    Examples
+    --------
 
     ::
 
