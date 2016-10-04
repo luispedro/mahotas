@@ -6,4 +6,4 @@ def run(verbose=False):
     argv = ['', '--exe', '-w', updir]
     if verbose:
         argv.append('--verbose')
-    nose.run('mahotas', argv=argv)
+    return nose.run('mahotas', argv=argv)
