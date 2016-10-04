@@ -46,9 +46,9 @@ def moments(img, p0, p1, cm=None, convert_to_float=True, normalize=False, normal
     moment: float
         floating point number
 
-    Bugs
-    ----
-      It only works for 2-D images
+    Notes
+    -----
+    It only works for 2-D images
     '''
     if normalise:
         normalize = True

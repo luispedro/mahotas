@@ -49,8 +49,8 @@ def zernike_moments(im, radius, degree=8, cm=None):
     zvalues : 1-ndarray of floats
         Zernike moments
 
-    Reference
-    ---------
+    References
+    ----------
     Teague, MR. (1980). Image Analysis via the General Theory of Moments.  J.
     Opt. Soc. Am. 70(8):920-930.
     """

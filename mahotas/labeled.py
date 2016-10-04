@@ -554,7 +554,7 @@ def bbox(f, as_slice=False):
     ``bboxes[34]`` will contain the bounding box of ``(f == 34)``.
 
     Parameters
-    --------
+    ----------
     f : integer ndarray
     as_slice : boolean, optional
         Whether to return slice objects instead of integer coordinates

@@ -100,11 +100,11 @@ def haralick(f,
         difference between max() and min()) across all the directions (default:
         False).
     use_x_minus_y_variance : bool, optional
-        Feature 10 (index 9) has two interpretations, as the variance of |x-y|
-        or as the variance of P(|x-y|). In order to achieve compatibility with
+        Feature 10 (index 9) has two interpretations, as the variance of \|x-y\|
+        or as the variance of P(\|x-y\|). In order to achieve compatibility with
         other software and previous versions of mahotas, mahotas defaults to
-        using ``VAR[P(|x-y|)]``; if this argument is True, then it uses
-        ``VAR[|x-y|]`` (default: False)
+        using ``VAR[P(\|x-y\|)]``; if this argument is True, then it uses
+        ``VAR[\|x-y\|]`` (default: False)
 
 
     Returns

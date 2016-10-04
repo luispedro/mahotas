@@ -82,7 +82,7 @@ And we get the following:
     v = mahotas.convolve(r-w, pattern)
     mask = (v == v.max())
     mask = mahotas.dilate(mask, np.ones((48,24)))
-    wally -= .8*wally * ~mask[:,:,None]
+    np.subtract(wally, .8*wally * ~mask[:,:,None], out=wally, casting='unsafe')
     imshow(wally)
     show()
 

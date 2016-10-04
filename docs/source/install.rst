@@ -68,9 +68,9 @@ standard package <http://sourceforge.net/p/winpython/wiki/PackageIndex_27/>`__
 Python(x, y)
 ~~~~~~~~~~~~
 
-If you use `Python(x, y) <http://pythonxy.com/>`__, which is often a good
+If you use `Python(x, y) <http://python-xy.github.io/>`__, which is often a good
 solution, then you probably have it already as `mahotas is a standard plugin
-<https://code.google.com/p/pythonxy/wiki/StandardPlugins>`__.
+<http://python-xy.github.io>`__.
 
 Enthought Canopy
 ~~~~~~~~~~~~~~~~

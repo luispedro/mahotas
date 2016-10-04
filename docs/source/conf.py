@@ -15,7 +15,7 @@ from mahotas import __version__ as mahotas_version
 
 extensions = [
         'sphinx.ext.autodoc',
-        'sphinx.ext.pngmath',
+        'sphinx.ext.imgmath',
         'sphinx.ext.intersphinx',
         'sphinx.ext.coverage',
         'sphinx.ext.doctest',
@@ -42,7 +42,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'mahotas'
-copyright = u'2008-2013, Luis Pedro Coelho'
+copyright = u'2008-2016, Luis Pedro Coelho'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -116,7 +116,7 @@ html_theme = 'default'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -156,7 +156,7 @@ html_sidebars = {
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'mahotasdoc'
+htmlhelp_basename = 'mahotas'
 
 
 # Options for plot output
