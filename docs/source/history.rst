@@ -297,8 +297,6 @@ Other changes:
 - Specify all function signatures on freeimage.py
 
 
-
-
 For version **0.7 (Dec 5 2011)**:
 
 The big change was that the *dependency on scipy was removed*. As part of this
@@ -317,18 +315,23 @@ well.
 - Fix GIL handling on errors (reported by Gareth McCaughan)
 - Fix freeimage for 64-bit computers
 
-For version **0.6.6 (August 8 2011)**:
+Version .6.6 (August 8 2011)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 - Fix fill_polygon bug (fix by joferkington)
 - Fix Haralick feature 6 (fix by Rita Simões)
 - Implement ``morph.get_structuring_element`` for ndim > 2. This implies that
-functions such as ``label()`` now also work in multiple dimensions
+  functions such as ``label()`` now also work in multiple dimensions
 - Add median filter & ``rank_filter`` functions
 - Add template_match function
 - Refactor by use of mahotas.internal
 - Better error message for when the compiled modules cannot be loaded
 - Update contact email. All docs in numpydoc format now.
 
-For version **0.6.5**:
+For version **0.6.5**
+~~~~~~~~~~~~~~~~~~~~~
+
 - Add ``max_points`` & ``descriptor_only`` arguments to mahotas.surf
 - Fix haralick for 3-D images (bug report by Rita Simões)
 - Better error messages

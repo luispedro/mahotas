@@ -31,7 +31,15 @@ def haralick(f,
             distance=1
             ):
     '''
-    feats = haralick(f, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False)
+    feats = haralick(f,
+            ignore_zeros=False,
+            preserve_haralick_bug=False,
+            compute_14th_feature=False,
+            return_mean=False,
+            return_mean_ptp=False,
+            use_x_minus_y_variance=False,
+            distance=1
+            )
 
     Compute Haralick texture features
 
@@ -148,7 +156,14 @@ def haralick_features(cmats,
                     use_x_minus_y_variance=False,
                     ):
     '''
-    features = haralick_features(cmats, ignore_zeros=False, preserve_haralick_bug=False, compute_14th_feature=False)
+    features = haralick_features(cmats,
+                    ignore_zeros=False,
+                    preserve_haralick_bug=False,
+                    compute_14th_feature=False,
+                    return_mean=False,
+                    return_mean_ptp=False,
+                    use_x_minus_y_variance=False,
+                    )
 
     Computers Haralick features for the given cooccurrence matrices.
 
@@ -382,7 +397,11 @@ _3d_deltas = [
 
 def cooccurence(f, direction, output=None, symmetric=True, distance=1):
     '''
-    cooccurence_matrix = cooccurence(f, direction, output={new matrix})
+    cooccurence_matrix = cooccurence(f,
+                            direction,
+                            output={new matrix},
+                            symmetric=True,
+                            distance=1)
 
     Compute grey-level cooccurence matrix
 
@@ -396,7 +415,7 @@ def cooccurence(f, direction, output=None, symmetric=True, distance=1):
     output : np.long 2 ndarray, optional
         preallocated result.
     symmetric : boolean, optional
-        whether return a symmetric matrix (default: False)
+        whether return a symmetric matrix (default: True)
     distance : integer, optional (default=1)
         Distance to the central pixel to consider.
 
