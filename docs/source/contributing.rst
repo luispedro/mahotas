@@ -26,11 +26,11 @@ There are two levels:
 1.  ``DEBUG=1`` This turns on assertions. The code will run slower, but
     probably not noticeably slower, except for very large images.
 2.  ``DEBUG=2`` This turns on the assertions and additionally uses the debug
-    version of the C++ library (this is probably only working if you are using
-    GCC). Some of the internal code also picks up on this and adds even more
+    version of the C++ library (this only works if you are using GCC). Some of
+    the internal code also picks up on the ``DEBUG=2`` and adds even more
     sanity checking. The result will be code that runs **much slower** as all
     operations done through iterators into standard containers are now checked
-    (including many inner loop operations).
+    (including many inner loop operations). However, it catches many errors.
 
 The Makefile that comes with the source helps you::
 

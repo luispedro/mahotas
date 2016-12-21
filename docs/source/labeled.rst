@@ -42,34 +42,32 @@ it with a square::
 
     labeled,nr_objects = mh.label(regions, np.ones((3,3), bool))
 
-.. versionadded:: 0.7
-    ``labeled_size`` and ``labeled_sum`` were added in version 0.7
-
 We can now collect a few statistics on the labeled regions. For example, how
 big are they?
 
 ::
 
     sizes = mh.labeled.labeled_size(labeled)
-    print 'Background size', sizes[0]
-    print 'Size of first region', sizes[1]
+    print('Background size', sizes[0])
+    print('Size of first region: {}'.format(sizes[1]))
 
 This size is measured simply as the number of pixels in each region. We can
 instead measure the total weight in each area::
 
     array = np.random.random_sample(regions.shape)
     sums = mh.labeled_sum(array, labeled)
-    print 'Sum of first region', sums[1]
+    print('Sum of first region: {}'.format(sums[1]))
 
 Filtering Regions
 -----------------
 
 .. versionadded:: 0.9.6
-    remove_regions & relabel were only added in version 0.9.6
+    ``remove_regions`` & ``relabel`` were added.
 
-Here is a slightly more complex example. This is in ``demos`` directory as
-``nuclear.py``. We are going to use this image, a fluorescent microscopy image
-from a `nuclear segmentation benchmark
+Here is a slightly more complex example. The full code is in the `demos
+directory <https://github.com/luispedro/mahotas/tree/master/mahotas/demos>`__
+as ``nuclear.py``. We are going to use this image, a fluorescent microscopy
+image from a `nuclear segmentation benchmark
 <http://luispedro.org/projects/nuclear-segmentation>`__
 
 This image is available as ``mahotas.demos.nuclear_image()``

@@ -14,7 +14,7 @@ For example, the classic lena image is a ``(512,512,3)`` array::
 
    import mahotas as mh
    lena = mh.demos.load('lena')
-   print lena.shap
+   print(lena.shape)
 
 We can convert it to greyscale as using ``rgb2grey`` (or ``rgb2gray`` if you
 prefer, both work). This conversion uses a visually realistic method (which

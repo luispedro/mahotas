@@ -2,10 +2,6 @@
 Local Binary Patterns
 =====================
 
-.. versionadded:: 0.7
-   LBPs are available before, but an important bug was fixed in 0.7. It is
-   **highly recommended that you never use the older version**.
-
 Local binary patterns depend on the local region around each pixel. See the
 diagram below:
 

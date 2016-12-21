@@ -1,6 +1,6 @@
-===================
-Polygon Utitilities
-===================
+=================
+Polygon Utilities
+=================
 
 Drawing
 -------
@@ -15,7 +15,7 @@ for many complex usage.
 
 The main purpose of these utilities is to aid debugging and visualisation. If
 you need to generate fancy graphs, look for packages such as `matplotlib
-<http://matplotlib.sf.net>`__.
+<http://matplotlib.org>`__.
 
 Convex Hull
 -----------

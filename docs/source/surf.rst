@@ -2,17 +2,15 @@
 Speeded-Up Robust Features
 ==========================
 
-.. versionadded:: 0.6.1
-   SURF is only available starting in version 0.6.1, with an important bugfix
-   in version 0.6.2.
-
 .. versionadded:: 0.8
    In version 0.8, some of the inner functions are now in mahotas.features.surf
    instead of mahotas.surf
 
 
-Speeded-Up Robust Features (SURF) are a recent innnovation in the *local
-features* family. There are two steps to this algorithm:
+`Speeded-Up Robust Features (SURF)
+<https://en.wikipedia.org/wiki/Speeded_up_robust_features>`__ are a recent
+innovation in the *local features* family. There are two steps to this
+algorithm:
 
 1. Detection of interest points.
 2. Description of interest points.
@@ -24,11 +22,11 @@ The function ``mahotas.features.surf.surf`` combines the two steps::
 
     f = ... # input image
     spoints = surf.surf(f)
-    print "Nr points:", len(spoints)
+    print("Nr points: {}".format(len(spoints)))
 
 Given the results, we can perform a simple clustering using, for example, `milk
-<http://luispedro.org/software/milk>`__ (we could have used any other system,
-of course; having written milk, I am most familiar with it)::
+<http://luispedro.org/software/milk>`__ (nowadays, `scikit-learn
+<scikit-learn.org>`__ would be a better choice)::
 
     try:
         import milk
