@@ -69,7 +69,7 @@ def test_ignore_zeros():
     np.seterr(all='raise')
     np.random.seed(22)
     A = np.zeros((1024,24), np.uint8)
-    A[:24,:24] = np.random.random_integers(100, 200, size=(24,24))
+    A[:24,:24] = np.random.randint(100, 200, size=(24,24))
     assert rc(A) < 100
     assert otsu(A) < 100
     assert rc(A, ignore_zeros=1) > 100

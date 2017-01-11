@@ -26,7 +26,7 @@ def _slow_rank_filter(A,r):
 
 def test_rank_filter():
     np.random.seed(22)
-    A = np.random.random_integers(0,255, (32,32))
+    A = np.random.randint(0, 256, (32,32))
     Bc = np.ones((3,3))
     for r in range(9):
         B1 = rank_filter(A, Bc, r, mode='constant')

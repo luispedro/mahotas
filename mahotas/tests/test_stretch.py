@@ -6,7 +6,7 @@ import numpy as np
 
 def test_stretch():
     np.random.seed(2323)
-    A = np.random.random_integers(12, 120, size=(100,100))
+    A = np.random.randint(12, 121, size=(100,100))
     A = stretch(A, 255)
     assert A.max() > 250
     assert A.min() == 0
@@ -28,9 +28,9 @@ def test_neg_numbers():
 
 def test_as_rgb():
     np.random.seed(2323)
-    r = np.random.random_integers(12, 120, size=(8,8))
-    g = np.random.random_integers(12, 120, size=(8,8))
-    b = np.random.random_integers(12, 120, size=(8,8))
+    r = np.random.randint(12, 121, size=(8,8))
+    g = np.random.randint(12, 121, size=(8,8))
+    b = np.random.randint(12, 121, size=(8,8))
     assert mahotas.as_rgb(r,g,b).max() >= 254
     assert mahotas.as_rgb(r,None,b).shape == (8,8,3)
     assert mahotas.as_rgb(r,None,b)[:,:,1].sum() == 0
@@ -43,9 +43,9 @@ def test_as_rgb_Nones():
 @raises(ValueError)
 def test_as_rgb_shape_mismatch():
     np.random.seed(2323)
-    r = np.random.random_integers(12, 120, size=(8,8))
-    g = np.random.random_integers(12, 120, size=(8,8))
-    b = np.random.random_integers(12, 120, size=(8,6))
+    r = np.random.randint(12, 121, size=(8,8))
+    g = np.random.randint(12, 121, size=(8,8))
+    b = np.random.randint(12, 121, size=(8,6))
     mahotas.as_rgb(r,g,b)
 
 
