@@ -255,6 +255,6 @@ def gbernsen(f, se, contrast_threshold, gthresh):
     fmax = rank_filter(f, se, se.sum()-1)
     fmin = rank_filter(f, se, 0)
     fptp = fmax - fmin
-    fmean = fmax/.2 + fmin/.2 # Do not use (fmax + fmin) as that may overflow
+    fmean = fmax/2. + fmin/2. # Do not use (fmax + fmin) as that may overflow
     return np.choose(fptp < contrast_threshold, (fmean < gthresh, fmean > f))
 
