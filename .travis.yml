@@ -14,7 +14,7 @@ before_install:
     - export PATH=/home/travis/miniconda/bin:$PATH
     - conda update --yes conda
 install:
-    - conda create  --yes -n condaenv python=$TRAVIS_PYTHON_VERSION numpy=1.9
+    - conda create  --yes -n condaenv python=$TRAVIS_PYTHON_VERSION numpy
     - conda install --yes -n condaenv scipy matplotlib pillow nose pip
     - conda install --yes -n condaenv -c https://conda.binstar.org/luispedro imread
     - source activate condaenv
