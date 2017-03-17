@@ -30,12 +30,12 @@ Global features
 Haralick features
 ~~~~~~~~~~~~~~~~~
 
-These are texture features, based on the adjancency matrix (the adjacency
-matrix stores in position *(i,j)* the number of times that a pixel takes the
-value *i* **next to** a pixel with the value *j*. Given different ways to
-define **next to**, you obtain slightly different variations of the features.
-Standard practice is to average them out across the directions to get some
-rotational invariance.
+These are texture features, based on the adjacency matrix (the adjacency matrix
+stores in position *(i,j)* the number of times that a pixel takes the value *i*
+**next to** a pixel with the value *j*. Given different ways to define **next
+to**, you obtain slightly different variations of the features. Standard
+practice is to average them out across the directions to get some rotational
+invariance.
 
 They can be computed for 2-D or 3-D images and are available in the
 ``mahotas.features.haralick`` module.
@@ -55,15 +55,15 @@ image is the final set of features.
 Again, this is an attempt at capturing texture. LBPs are insensitive to
 orientation and to illumination (scaling).
 
-Threshold Adjancency Statistics
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Threshold Adjacency Statistics
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Threshold adjancency statistics (TAS) are a recent innovation too. In the
+Threshold adjacency statistics (TAS) are a recent innovation too. In the
 original version, they have fixed parameters, but we have adapted them to
 *parameter-free* versions (see `Structured Literature Image Finder: Extracting
 Information from Text and Images in Biomedical Literature
-<http://dx.doi.org/10.1007/978-3-642-13131-8_4>`__ by Coelho et al. for a
-reference). Mahotas supports both.
+<http://dx.doi.org/10.1007/978-3-642-13131-8_4>`__ by Coelho
+et al. for a reference). Mahotas supports both.
 
 Zernike Moments
 ~~~~~~~~~~~~~~~
