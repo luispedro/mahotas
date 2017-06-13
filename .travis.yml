@@ -1,33 +1,42 @@
-language: python
 sudo: false
+language: python
+cache:
+  ccache: true
+  directories:
+    - $HOME/.ccache
+    - $HOME/miniconda
+
+before_cache:
+    - conda remove -y --name condaenv --all
+
 python:
   - "2.7"
-  - "3.3"
   - "3.4"
   - "3.5"
   - "3.6"
+env:
+  global:
+    - USE_CCACHE=1
+  matrix:
+    - NUMPY_VERSION=1.10
+    - NUMPY_VERSION=1.11
+    - NUMPY_VERSION=1.12
 
+
+# Conda does not have a numpy=1.10 for Python 3.6:
+matrix:
+  exclude:
+    - python: "3.6"
+      env: NUMPY_VERSION=1.10
 before_install:
-    - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-    - chmod +x miniconda.sh
-    - ./miniconda.sh -b -p /home/travis/miniconda
-    - export PATH=/home/travis/miniconda/bin:$PATH
-    - conda update --yes conda
+    - .travis/travis_before_install.sh
 install:
-    - conda create  --yes -n condaenv python=$TRAVIS_PYTHON_VERSION numpy=1.9
-    - conda install --yes -n condaenv scipy matplotlib pillow nose pip
-    - conda install --yes -n condaenv -c https://conda.binstar.org/luispedro imread
-    - source activate condaenv
-    - pip install --quiet coveralls
-    - make debug
+    - export PATH=$HOME/miniconda/bin:$PATH
+    - export PATH=/usr/lib/ccache:$PATH
+    - .travis/travis_install.sh
 script:
-    coverage run --source=mahotas setup.py test
+    - source activate condaenv
+    - coverage run --source=mahotas setup.py test
 after_success:
-    coveralls
-addons:
-    apt:
-        packages:
-            - libatlas-dev
-            - liblapack-dev
-            - gfortran
-            - libfreeimage3
+    - source activate condaenv
+    - coveralls
