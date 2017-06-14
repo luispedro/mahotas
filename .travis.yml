@@ -7,7 +7,8 @@ cache:
     - $HOME/miniconda
 
 before_cache:
-    - conda remove -y --name condaenv --all
+    - ccache --show-stats
+    - ccache --zero-stats
 
 python:
   - "2.7"
