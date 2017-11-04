@@ -2,16 +2,16 @@
 
 ## Python Computer Vision Library
 
+Mahotas is a library of fast computer vision algorithms (all implemented
+in C++ for speed) operating over numpy arrays.
+
 [![Travis](https://api.travis-ci.org/luispedro/mahotas.png)](https://travis-ci.org/luispedro/mahotas)
 [![Downloads](https://pypip.in/d/mahotas/badge.png)](https://pypi.python.org/pypi/mahotas)
 [![License](https://pypip.in/license/mahotas/badge.png)](http://opensource.org/licenses/MIT)
-[![Install with Anaconda](https://anaconda.org/conda-forge/mahotas/badges/installer/conda.svg)](https://conda.anaconda.org/conda-forge)
+[![Install with Anaconda](https://anaconda.org/conda-forge/mahotas/badges/installer/conda.svg)](https://conda.anaconda.org/conda-forge/mahotas)
 [![Join the chat at https://gitter.im/luispedro/mahotas](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/luispedro/mahotas)
 
-Mahotas is a library of fast computer vision algorithms (all implemented
-in C++) operating over numpy arrays.
-
-Python versions 2.7, 3.3, 3.4, and 3.5 are supported.
+Python versions 2.7, 3.3+, are supported.
 
 Notable algorithms:
 
@@ -222,9 +222,9 @@ questions.
 - Fix distribution (add missing `README.md` file)
 
 ### Version 1.4.2 (Oct 2 2016)
+
 - Fix `resize\_to` return exactly the requested size
-- Fix hard crash when computing texture on arrays with negative values
-  (issue #72)
+- Fix hard crash when computing texture on arrays with negative values (issue #72)
 - Added `distance` argument to haralick features (pull request #76, by
   Guillaume Lemaitre)
 
