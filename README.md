@@ -218,6 +218,9 @@ questions.
 
 ## Recent Changes
 
+### Version 1.4.4 (Nov 5 2017)
+- Fix bug in Bernsen thresholding (issue #84)
+
 ### Version 1.4.3 (Oct 3 2016)
 - Fix distribution (add missing `README.md` file)
 
