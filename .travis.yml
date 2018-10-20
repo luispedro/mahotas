@@ -23,11 +23,17 @@ env:
     - NUMPY_VERSION=1.11
     - NUMPY_VERSION=1.12
     - NUMPY_VERSION=1.13
+    - NUMPY_VERSION=1.14
+    - NUMPY_VERSION=1.15
 
 
-# Conda does not have a numpy=1.10 for Python 3.6:
+# Some combinations that seem to be missing on conda
 matrix:
   exclude:
+    - python: "3.4"
+      env: NUMPY_VERSION=1.14
+    - python: "3.4"
+      env: NUMPY_VERSION=1.15
     - python: "3.6"
       env: NUMPY_VERSION=1.10
 before_install:

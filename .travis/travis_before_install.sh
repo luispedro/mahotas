@@ -2,6 +2,7 @@
 
 mkdir -p ~/.local/bin
 export PATH=$HOME/.local/bin:$PATH
+export PATH=$HOME/miniconda/bin:$PATH
 
 if test -e $HOME/miniconda/bin; then
     echo "miniconda already installed."
@@ -12,5 +13,7 @@ else
     ./miniconda.sh -b -p $HOME/miniconda
     conda update --yes --quiet conda
 fi
-export PATH=$HOME/miniconda/bin:$PATH
+
+# For debugging:
+conda info -a
 
