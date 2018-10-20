@@ -122,7 +122,7 @@ def test_verify_fp():
 def test_as_floating_point_array():
     def check_arr(data):
         array = _as_floating_point_array(data)
-        assert np.issubdtype(array.dtype, np.float_)
+        assert np.issubdtype(array.dtype, np.floating)
 
     yield check_arr, np.arange(8, dtype=np.int8)
     yield check_arr, np.arange(8, dtype=np.int16)

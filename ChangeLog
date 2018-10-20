@@ -1,3 +1,6 @@
+Version 1.4.5 2018-10-20 by luispedro
+	* Fix deprecation warning with numpy float detection (issue #95)
+
 Version 1.4.4 2017-11-05 by luispedro
 	* Fix bug in Bernsen thresholding (issue #84)
 

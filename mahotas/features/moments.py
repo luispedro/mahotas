@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2018, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # License: MIT (see COPYING file)
@@ -52,7 +52,7 @@ def moments(img, p0, p1, cm=None, convert_to_float=True, normalize=False, normal
     '''
     if normalise:
         normalize = True
-    if not np.issubdtype(img.dtype, float) and convert_to_float:
+    if not np.issubdtype(img.dtype, np.floating) and convert_to_float:
         img = img.astype(np.float64)
     r,c = img.shape
     p = np.arange(c, dtype=float)

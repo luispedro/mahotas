@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2014, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2011-2018, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -109,8 +109,8 @@ def _verify_is_floatingpoint_type(A, function_name):
     function_name : str
         Used for error messages
     '''
-    if not np.issubdtype(A.dtype, np.float):
-        raise TypeError('mahotas.%s: This function only accepts floating-point types (passed array of type %s)' % (function_name, A.dtype))
+    if not np.issubdtype(A.dtype, np.floating):
+        raise TypeError('mahotas.{}: This function only accepts floating-point types (passed array of type {})'.format(function_name, A.dtype))
 
 def _verify_is_integer_type(A, function_name):
     '''
@@ -164,7 +164,7 @@ def _as_floating_point_array(array):
     Returns (possibly a copy) of array as a floating-point array
     '''
     array = np.asanyarray(array)
-    if not np.issubdtype(array.dtype, np.float_):
+    if not np.issubdtype(array.dtype, np.floating):
         return array.astype(np.double)
     return array
 

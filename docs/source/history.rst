@@ -2,6 +2,10 @@
 History
 =======
 
+Version 1.4.5 (Oct 20 2018)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Upgrade code to newer NumPy API (issue #95)
+
 Version 1.4.4 (Nov 5 2017)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Fix bug in Bernsen thresholding (issue #84)
