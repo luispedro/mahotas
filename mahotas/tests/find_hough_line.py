@@ -4,6 +4,7 @@
 import collections
 import math
 import numpy as np
+
 def find_hough_lines(im):
     '''
             line = find(img={square})
