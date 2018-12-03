@@ -12,6 +12,8 @@ in C++ for speed) operating over numpy arrays.
 [![Install with Anaconda](https://anaconda.org/conda-forge/mahotas/badges/installer/conda.svg)](https://anaconda.org/conda-forge/mahotas)
 [![Join the chat at https://gitter.im/luispedro/mahotas](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/luispedro/mahotas)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fluispedro%2Fmahotas.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fluispedro%2Fmahotas?ref=badge_shield)
+[![Code Quality: Python](https://img.shields.io/lgtm/grade/python/g/luispedro/mahotas.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/luispedro/mahotas/context:python)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/luispedro/mahotas.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/luispedro/mahotas/alerts)
 
 Python versions 2.7, 3.4+, are supported.
 
