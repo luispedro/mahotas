@@ -73,7 +73,7 @@ def relabel(labeled, inplace=False):
     Example::
 
         labeled,n = label(some_binary_map)
-        for region in xrange(n):
+        for region in range(n):
             if not good_region(labeled, region + 1):
                 # This deletes the region:
                 labeled[labeled == (region + 1)] = 0

@@ -28,7 +28,8 @@ areas *= threshed
 
 import random
 from matplotlib import colors as c
-colors = [plt.jet(c) for c in range(0, 256, 4)]
+from matplotlib import cm
+colors = [cm.jet(c) for c in range(0, 256, 4)]
 random.shuffle(colors)
 colors[0] = (0.,0.,0.,1.)
 rmap = c.ListedColormap(colors)

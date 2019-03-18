@@ -15,10 +15,10 @@ try:
     import milk
     descrs = spoints[:,5:]
     k = 5
-    values, _  =milk.kmeans(descrs, k)
+    values, _ = milk.kmeans(descrs, k)
     colors = np.array([(255-52*i,25+52*i,37**i % 101) for i in range(k)])
 except:
-    values = np.zeros(100)
+    values = np.zeros(100, int)
     colors = np.array([(255,0,0)])
 
 f2 = surf.show_surf(f, spoints[:100], values, colors)
