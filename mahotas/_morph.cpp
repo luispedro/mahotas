@@ -1,4 +1,4 @@
-// Copyright (C) 2008-2014, Luis Pedro Coelho <luis@luispedro.org>
+// Copyright (C) 2008-2019, Luis Pedro Coelho <luis@luispedro.org>
 // vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 // 
 // License: MIT
@@ -558,10 +558,10 @@ PyObject* py_close_holes(PyObject* self, PyObject* args) {
 template <typename CostType>
 struct MarkerInfo {
     CostType cost;
-    int idx;
-    int position;
-    int margin;
-    MarkerInfo(CostType cost, int idx, int position, int margin)
+    npy_intp idx;
+    npy_intp position;
+    npy_intp margin;
+    MarkerInfo(CostType cost, npy_intp idx, npy_intp position, npy_intp margin)
         :cost(cost)
         ,idx(idx)
         ,position(position)
@@ -579,13 +579,13 @@ struct NeighbourElem {
     //  - delta: how to get from the current element to the next by pointer manipulation
     //  - step: how large the distance to the centre is
     //  - delta_position: the difference as a numpy::position
-    NeighbourElem(int delta, int step, const numpy::position& delta_position)
+    NeighbourElem(npy_intp delta, npy_intp step, const numpy::position& delta_position)
         :delta(delta)
         ,step(step)
         ,delta_position(delta_position)
         { }
-    int delta;
-    int step;
+    npy_intp delta;
+    npy_intp step;
     numpy::position delta_position;
 };
 
@@ -596,26 +596,26 @@ void cwatershed(numpy::aligned_array<npy_int64> res,
                         const numpy::aligned_array<npy_int64> markers,
                         const numpy::aligned_array<BaseType> Bc) {
     gil_release nogil;
-    const int N = res.size();
-    const int N2 = Bc.size();
+    const npy_intp N = res.size();
+    const npy_intp N2 = Bc.size();
     assert(res.is_carray());
     npy_int64* rdata = res.data();
     std::vector<NeighbourElem> neighbours;
     const numpy::position centre = central_position(Bc);
     typename numpy::aligned_array<BaseType>::const_iterator Bi = Bc.begin();
-    for (int j = 0; j != N2; ++j, ++Bi) {
+    for (npy_intp j = 0; j != N2; ++j, ++Bi) {
         if (*Bi) {
             numpy::position npos = Bi.position() - centre;
-            int margin = 0;
+            npy_intp margin = 0;
             for (int d = 0; d != Bc.ndims(); ++d) {
-                margin = std::max<int>(std::abs(int(npos[d])), margin);
+                margin = std::max<npy_intp>(std::abs(npy_intp(npos[d])), margin);
             }
-            int delta = markers.pos_to_flat(npos);
+            npy_intp delta = markers.pos_to_flat(npos);
             if (!delta) continue;
             neighbours.push_back(NeighbourElem(delta, margin, npos));
         }
     }
-    int idx = 0;
+    npy_intp idx = 0;
 
     enum { white, grey, black };
     std::vector<unsigned char> status(array.size(), static_cast<unsigned char>(white));
@@ -627,7 +627,7 @@ void cwatershed(numpy::aligned_array<npy_int64> res,
         if (*miter) {
             assert(markers.validposition(miter.position()));
             const numpy::position mpos = miter.position();
-            const int margin = margin_of(mpos, markers);
+            const npy_intp margin = margin_of(mpos, markers);
 
             hqueue.push(MarkerInfo<BaseType>(array.at(mpos), idx++, markers.pos_to_flat(mpos), margin));
             res.at(mpos) = *miter;
@@ -639,7 +639,7 @@ void cwatershed(numpy::aligned_array<npy_int64> res,
         const MarkerInfo<BaseType> next = hqueue.top();
         hqueue.pop();
         status[next.position] = black;
-        int margin = next.margin;
+        npy_intp margin = next.margin;
         for (typename std::vector<NeighbourElem>::const_iterator neighbour = neighbours.begin(),
                             past = neighbours.end();
                     neighbour != past;
@@ -661,7 +661,7 @@ void cwatershed(numpy::aligned_array<npy_int64> res,
                 // Update lower bound
                 if ((nmargin - neighbour->step) > margin) margin = nmargin - neighbour->step;
             }
-            assert(npos < int(status.size()));
+            assert(npos < npy_intp(status.size()));
             switch (status[npos]) {
                 case white: {
                     const BaseType ncost = array.at_flat(npos);

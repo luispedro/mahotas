@@ -1,4 +1,5 @@
 Version 1.4.5+
+	* Make watershed work for >2³¹ voxels (issue #102)
 	* Remove milk from demos
 
 Version 1.4.5 2018-10-20 by luispedro
