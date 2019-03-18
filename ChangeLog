@@ -1,3 +1,6 @@
+Version 1.4.5+
+	* Remove milk from demos
+
 Version 1.4.5 2018-10-20 by luispedro
 	* Fix deprecation warning with numpy float detection (issue #95)
 

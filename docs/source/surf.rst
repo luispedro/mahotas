@@ -24,12 +24,11 @@ The function ``mahotas.features.surf.surf`` combines the two steps::
     spoints = surf.surf(f)
     print("Nr points: {}".format(len(spoints)))
 
-Given the results, we can perform a simple clustering using, for example, `milk
-<http://luispedro.org/software/milk>`__ (nowadays, `scikit-learn
-<scikit-learn.org>`__ would be a better choice)::
+Given the results, we can perform a simple clustering using, for example, `
+`scikit-learn <scikit-learn.org>`__::
 
     try:
-        import milk
+        from sklearn.cluster import KMeans
 
         # spoints includes both the detection information (such as the position
         # and the scale) as well as the descriptor (i.e., what the area around
@@ -40,7 +39,7 @@ Given the results, we can perform a simple clustering using, for example, `milk
         # We use 5 colours just because if it was much larger, then the colours
         # would look too similar in the output.
         k = 5
-        values, _  = milk.kmeans(descrs, k)
+        values = KMeans(n_clusters=k).fit(descrs).labels_
         colors = np.array([(255-52*i,25+52*i,37**i % 101) for i in xrange(k)])
     except:
         values = np.zeros(100)
