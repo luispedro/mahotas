@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2013, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2012-2019, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # License: MIT (see COPYING file)
@@ -34,7 +34,7 @@ def rgb2grey(array, dtype=np.float):
     _check_3(array, 'rgb2grey')
     transform = np.array([0.30, 0.59, 0.11])
     transformed = np.dot(array, transform)
-    return transformed.astype(dtype)
+    return transformed.astype(dtype, copy=False)
     
 rgb2gray = rgb2grey
 
@@ -47,7 +47,7 @@ def _convert(array, matrix, dtype, funcname):
     array = array.reshape((3,h,w))
     array = array.transpose((1,2,0))
     if dtype is not None:
-        array = array.astype(dtype)
+        array = array.astype(dtype, copy=False)
     return array
 
 def rgb2xyz(rgb, dtype=None):
@@ -159,7 +159,7 @@ def xyz2lab(xyz, dtype=None):
     b = 200 * (fy - fz)
     Lab = np.dstack( [L,a,b] )
     if dtype is not None:
-        Lab = Lab.astype(dtype)
+        Lab = Lab.astype(dtype, copy=False)
     return Lab
 
 def rgb2lab(rgb, dtype=None):

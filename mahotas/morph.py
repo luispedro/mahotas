@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2014, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2019, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT
@@ -307,7 +307,7 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
     _verify_is_integer_type(markers, 'cwatershed')
     if surface.shape != markers.shape:
         raise ValueError('morph.cwatershed: Markers array should have the same shape as value array.')
-    markers = markers.astype(np.int64)
+    markers = np.asanyarray(markers, np.int64)
     Bc = get_structuring_elem(surface, Bc)
     return _morph.cwatershed(surface, markers, Bc, bool(return_lines))
 
@@ -518,7 +518,7 @@ def majority_filter(img, N=3, out=None, output=None):
     filtered : ndarray
         boolean image of same size as img.
     '''
-    img = img.astype(np.bool_)
+    img = np.asanyarray(img, dtype=np.bool_)
     output = _get_output(img, out, 'majority_filter', np.bool_, output=output)
     if N <= 1:
         raise ValueError('mahotas.majority_filter: filter size must be positive')
