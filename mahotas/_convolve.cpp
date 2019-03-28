@@ -1,4 +1,4 @@
-// Copyright (C) 2010-2014 Luis Pedro Coelho <luis@luispedro.org>
+// Copyright (C) 2010-2019 Luis Pedro Coelho <luis@luispedro.org>
 //
 // License: MIT (Check COPYING file)
 
@@ -28,14 +28,14 @@ void convolve1d(const numpy::aligned_array<T> array, const numpy::aligned_array<
     assert(array.ndims() == 2);
     assert(result.is_carray());
 
-    const int N0 = array.dim(0);
-    const int N1 = array.dim(1);
-    const int step = array.stride(1);
+    const npy_intp N0 = array.dim(0);
+    const npy_intp N1 = array.dim(1);
+    const npy_intp step = array.stride(1);
     const double* fdata = filter.data();
-    const int Nf = filter.size();
-    const int centre = Nf/2;
+    const npy_intp Nf = filter.size();
+    const npy_intp centre = Nf/2;
 
-    for (int y = 0; y != N0; ++y) {
+    for (npy_intp y = 0; y != N0; ++y) {
         if (centre >= N1) break;
         const T* base0 = array.data(y);
         // The two loops (over x & x_) are almost the same.
@@ -45,9 +45,9 @@ void convolve1d(const numpy::aligned_array<T> array, const numpy::aligned_array<
         //
         // This was true in a 2013 MacBook Air. Maybe re-check in the future
         T* out = result.data(y,centre);
-        for (int x = centre; x != (N1 - centre); ++x) {
+        for (npy_intp x = centre; x != (N1 - centre); ++x) {
             double cur = 0;
-            for (int j = 0; j != Nf; ++j) {
+            for (npy_intp j = 0; j != Nf; ++j) {
                 const double val = base0[(x + j-centre)*step];
                 assert(val == array.at(y, x - centre + j));
                 cur += val * fdata[j];
@@ -58,15 +58,15 @@ void convolve1d(const numpy::aligned_array<T> array, const numpy::aligned_array<
 
     std::vector<npy_intp> offsets;
     offsets.resize(Nf);
-    for (int x_ = 0; x_ != 2*centre && x_ < N1; ++x_) {
-        const int x = (x_ < centre ? x_ : (N1 - 1) - (x_ - centre));
-        for (int j = 0; j != Nf; ++j) {
+    for (npy_intp x_ = 0; x_ != 2*centre && x_ < N1; ++x_) {
+        const npy_intp x = (x_ < centre ? x_ : (N1 - 1) - (x_ - centre));
+        for (npy_intp j = 0; j != Nf; ++j) {
             offsets[j] = fix_offset(mode, x + (j - centre), N1);
         }
-        for (int y = 0; y != N0; ++y) {
+        for (npy_intp y = 0; y != N0; ++y) {
             const T* base0 = array.data(y);
             double cur = 0;
-            for (int j = 0; j != Nf; ++j) {
+            for (npy_intp j = 0; j != Nf; ++j) {
                 const double val = (offsets[j] == border_flag_value ? 0 : base0[offsets[j] * step]);
                 cur += val * fdata[j];
             }
@@ -79,13 +79,13 @@ void convolve1d(const numpy::aligned_array<T> array, const numpy::aligned_array<
 template<typename T>
 void convolve(const numpy::aligned_array<T> array, const numpy::aligned_array<T> filter, numpy::aligned_array<T> result, int mode) {
     gil_release nogil;
-    const int N = array.size();
+    const npy_intp N = array.size();
     typename numpy::aligned_array<T>::const_iterator iter = array.begin();
     filter_iterator<T> fiter(array.raw_array(), filter.raw_array(), ExtendMode(mode), true);
-    const int N2 = fiter.size();
+    const npy_intp N2 = fiter.size();
     T* out = result.data();
 
-    for (int i = 0; i != N; ++i, fiter.iterate_both(iter), ++out) {
+    for (npy_intp i = 0; i != N; ++i, fiter.iterate_both(iter), ++out) {
         // The reasons for using double instead of T:
         //   (1) it is slightly faster (10%)
         //   (2) it handles over/underflow better
@@ -96,7 +96,7 @@ void convolve(const numpy::aligned_array<T> array, const numpy::aligned_array<T>
         //
         // and removed the double cast in double(val)*fiter[j] below.
         double cur = 0.;
-        for (int j = 0; j != N2; ++j) {
+        for (npy_intp j = 0; j != N2; ++j) {
             T val;
             if (fiter.retrieve(iter, j, val)) {
                 cur += double(val)*fiter[j];
@@ -170,9 +170,9 @@ PyObject* py_convolve(PyObject* self, PyObject* args) {
 template <typename T>
 void haar(numpy::aligned_array<T> array) {
     gil_release nogil;
-    const int N0 = array.dim(0);
-    const int N1 = array.dim(1);
-    const int step = array.stride(1);
+    const npy_intp N0 = array.dim(0);
+    const npy_intp N1 = array.dim(1);
+    const npy_intp step = array.stride(1);
 
     std::vector<T> bufdata;
     bufdata.resize(N1);
@@ -180,22 +180,22 @@ void haar(numpy::aligned_array<T> array) {
     T* low = buffer;
     T* high = buffer + N1/2;
 
-    for (int y = 0; y != N0; ++y) {
+    for (npy_intp y = 0; y != N0; ++y) {
         T* data = array.data(y);
-        for (int x = 0; x != (N1/2); ++x) {
+        for (npy_intp x = 0; x != (N1/2); ++x) {
             const T di = data[2*x*step];
             const T di1 = data[(2*x + 1)*step];
             low[x] = di + di1;
             high[x] = di1 - di;
         }
-        for (int x = 0; x != N1; ++x) {
+        for (npy_intp x = 0; x != N1; ++x) {
             data[step*x] = buffer[x];
         }
     }
 }
 
 template<typename T>
-T _access(const T* data, const int N, const int p, const int step) {
+T _access(const T* data, const npy_intp N, const npy_intp p, const npy_intp step) {
     if (p < 0) return T();
     if (p >= N) return T();
     return data[p*step];
@@ -204,9 +204,9 @@ T _access(const T* data, const int N, const int p, const int step) {
 template <typename T>
 void wavelet(numpy::aligned_array<T> array, const float coeffs[], const int ncoeffs) {
     gil_release nogil;
-    const int N0 = array.dim(0);
-    const int N1 = array.dim(1);
-    const int step = array.stride(1);
+    const npy_intp N0 = array.dim(0);
+    const npy_intp N1 = array.dim(1);
+    const npy_intp step = array.stride(1);
 
     std::vector<T> bufdata;
     bufdata.resize(N1);
@@ -214,13 +214,13 @@ void wavelet(numpy::aligned_array<T> array, const float coeffs[], const int ncoe
     T* low = buffer;
     T* high = buffer + N1/2;
 
-    for (int y = 0; y != N0; ++y) {
+    for (npy_intp y = 0; y != N0; ++y) {
         T* data = array.data(y);
-        for (int x = 0; x < (N1/2); ++x) {
+        for (npy_intp x = 0; x < (N1/2); ++x) {
             T l = T();
             T h = T();
             bool even = true;
-            for (int ci = 0; ci != ncoeffs; ++ci) {
+            for (npy_intp ci = 0; ci != ncoeffs; ++ci) {
                 T val = _access(data, N1, 2*x+ci, step);
                 const float cl = coeffs[ncoeffs-ci-1];
                 const float ch = (even ? -1 : +1) * coeffs[ci];
@@ -233,33 +233,33 @@ void wavelet(numpy::aligned_array<T> array, const float coeffs[], const int ncoe
             high[x] = h;
         }
 
-        for (int x = 0; x != N1; ++x) {
+        for (npy_intp x = 0; x != N1; ++x) {
             data[step*x] = buffer[x];
         }
     }
 }
 
 inline
-bool _is_even(int x) { return (x & 1) == 0; }
+bool _is_even(npy_intp x) { return (x & 1) == 0; }
 
 template <typename T>
 void iwavelet(numpy::aligned_array<T> array, const float coeffs[], const int ncoeffs) {
     gil_release nogil;
-    const int N0 = array.dim(0);
-    const int N1 = array.dim(1);
-    const int step = array.stride(1);
+    const npy_intp N0 = array.dim(0);
+    const npy_intp N1 = array.dim(1);
+    const npy_intp step = array.stride(1);
 
     std::vector<T> bufdata;
     bufdata.resize(N1);
     T* buffer = &bufdata[0];
-    for (int y = 0; y != N0; ++y) {
+    for (npy_intp y = 0; y != N0; ++y) {
         T* data = array.data(y);
         T* low = data;
         T* high = data + step*N1/2;
-        for (int x = 0; x < N1; ++x) {
+        for (npy_intp x = 0; x < N1; ++x) {
             T l = T();
             T h = T();
-            for (int ci = 0; ci != ncoeffs; ++ci) {
+            for (npy_intp ci = 0; ci != ncoeffs; ++ci) {
                 const int xmap2 = x+ci-ncoeffs+2;
                 if (!_is_even(xmap2)) {
                     const int xmap = xmap2 / 2;
@@ -495,10 +495,10 @@ PyObject* py_ihaar(PyObject* self, PyObject* args) {
 template<typename T>
 void rank_filter(numpy::aligned_array<T> res, const numpy::aligned_array<T> array, const numpy::aligned_array<T> Bc, const int rank, const int mode, const T cval = T()) {
     gil_release nogil;
-    const int N = res.size();
+    const npy_intp N = res.size();
     typename numpy::aligned_array<T>::const_iterator iter = array.begin();
     filter_iterator<T> fiter(array.raw_array(), Bc.raw_array(), ExtendMode(mode), true);
-    const int N2 = fiter.size();
+    const npy_intp N2 = fiter.size();
     if (rank < 0 || rank >= N2) {
         return;
     }
@@ -510,16 +510,16 @@ void rank_filter(numpy::aligned_array<T> res, const numpy::aligned_array<T> arra
     // This is generally a T*, except in debug builds, so we get checking there
     typename std::vector<T>::iterator neighbours = n_data.begin();
 
-    for (int i = 0; i != N; ++i, ++rpos, fiter.iterate_both(iter)) {
-        int n = 0;
-        for (int j = 0; j != N2; ++j) {
+    for (npy_intp i = 0; i != N; ++i, ++rpos, fiter.iterate_both(iter)) {
+        npy_intp n = 0;
+        for (npy_intp j = 0; j != N2; ++j) {
             T val;
             if (fiter.retrieve(iter, j, val)) neighbours[n++] = val;
             else if (mode == ExtendConstant) neighbours[n++] = cval;
         }
-        int currank = rank;
+        npy_intp currank = rank;
         if (n != N2) {
-            currank = int(n * rank/float(N2));
+            currank = npy_intp(n * rank/double(N2));
         }
         std::nth_element(neighbours, neighbours + currank, neighbours + n);
         *rpos = neighbours[currank];
@@ -600,17 +600,17 @@ PyObject* py_mean_filter(PyObject* self, PyObject* args) {
 template <typename T>
 void template_match(numpy::aligned_array<T> res, const numpy::aligned_array<T> f, const numpy::aligned_array<T> t, int mode, bool just_equality) {
     gil_release nogil;
-    const int N = res.size();
+    const npy_intp N = res.size();
     typename numpy::aligned_array<T>::const_iterator iter = f.begin();
     filter_iterator<T> fiter(f.raw_array(), t.raw_array(), ExtendMode(mode), false);
-    const int N2 = fiter.size();
+    const npy_intp N2 = fiter.size();
     assert(res.is_carray());
     // T* is a fine iterator type.
     T* rpos = res.data();
 
-    for (int i = 0; i != N; ++i, ++rpos, fiter.iterate_both(iter)) {
+    for (npy_intp i = 0; i != N; ++i, ++rpos, fiter.iterate_both(iter)) {
         T diff2 = T(0);
-        for (int j = 0; j != N2; ++j) {
+        for (npy_intp j = 0; j != N2; ++j) {
             T val;
             if (fiter.retrieve(iter, j, val)) {
                 const T tj = fiter[j];
@@ -653,19 +653,19 @@ PyObject* py_template_match(PyObject* self, PyObject* args) {
 template <typename T>
 void find2d(const numpy::aligned_array<T> array, const numpy::aligned_array<T> target, numpy::aligned_array<bool> out) {
     gil_release nogil;
-    const int N0 = array.dim(0);
-    const int N1 = array.dim(1);
+    const npy_intp N0 = array.dim(0);
+    const npy_intp N1 = array.dim(1);
 
-    const int Nt0 = target.dim(0);
-    const int Nt1 = target.dim(1);
+    const npy_intp Nt0 = target.dim(0);
+    const npy_intp Nt1 = target.dim(1);
     assert(out.is_carray());
     bool* rpos = out.data();
     std::fill(rpos, rpos + N0*N1, false);
 
-    for (int y = 0; y < N0 - Nt0; ++y) {
-        for (int x = 0; x < N1 - Nt1; ++x) {
-            for (int sy = 0; sy < Nt0; ++sy) {
-                for (int sx = 0; sx < Nt1; ++sx) {
+    for (npy_intp y = 0; y < N0 - Nt0; ++y) {
+        for (npy_intp x = 0; x < N1 - Nt1; ++x) {
+            for (npy_intp sy = 0; sy < Nt0; ++sy) {
+                for (npy_intp sx = 0; sx < Nt1; ++sx) {
                     if (array.at(y + sy,x + sx) != target.at(sy,sx)) {
                         goto next_pos;
                     }
