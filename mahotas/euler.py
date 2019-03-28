@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2010, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2019, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # License: MIT
 
@@ -67,6 +67,6 @@ def euler(f, n=8, mode='constant'):
     if f.dtype is not np.bool:
         assert np.all( (f == 0) | (f == 1)), 'mahotas.euler: Non-binary image'
         f = (f != 0)
-    value = convolve(f.astype(_powers.dtype), _powers, mode=mode)
+    value = convolve(f.astype(_powers.dtype, copy=False), _powers, mode=mode)
     return lookup[value].sum()
 

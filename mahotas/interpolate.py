@@ -1,6 +1,6 @@
 # This module was adapted from scipy.ndimage and retains its license
 # Copyright (C) 2003-2005 Peter J. Verveer
-# Copyright (C) 2011-2014 Luis Pedro Coelho
+# Copyright (C) 2011-2019 Luis Pedro Coelho
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -162,7 +162,7 @@ def _maybe_filter(array, order, func, prefilter, dtype):
     if prefilter and order > 1:
         return spline_filter(array, order, dtype=dtype)
     else:
-        return array.astype(dtype)
+        return array.astype(dtype, copy=False)
 
 def zoom(array, zoom, out=None, order=3, mode='constant', cval=0.0, prefilter=True, output=None):
     """

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2013, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2019, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -94,7 +94,7 @@ def otsu(img, ignore_zeros=False):
     """
     _verify_is_integer_type(img, 'otsu')
     hist = fullhistogram(img)
-    hist = hist.astype(np.double)
+    hist = np.asanyarray(hist, dtype=np.double)
     if ignore_zeros:
         hist[0] = 0
     return _histogram.otsu(hist)

@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2015, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2019, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # LICENSE: MIT
@@ -485,7 +485,7 @@ def labeled_size(labeled):
     difference is that that function only accepts unsigned integer types).
     '''
     from .histogram import fullhistogram
-    return fullhistogram(labeled.astype(np.uint32))
+    return fullhistogram(labeled.astype(np.uint32, copy=False))
 
 
 _perimeter_magic = np.array([
@@ -528,7 +528,7 @@ def perimeter(bwimage, n=4, mode="constant"):
     """
     global _perimeter_values
     perim = bwperim(bwimage, n, mode)
-    perim = perim.astype(np.uint8)
+    perim = perim.astype(np.uint8, copy=False)
 
     histogram = mh.fullhistogram(
                     mh.convolve(perim, _perimeter_magic))

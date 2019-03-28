@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2016, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2019, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -60,8 +60,7 @@ def convolve(f, weights, mode='reflect', cval=0.0, out=None, output=None):
     -------
     convolved : ndarray of same dtype as `f`
     '''
-    if f.dtype != weights.dtype:
-        weights = weights.astype(f.dtype)
+    weights = weights.astype(f.dtype, copy=False)
     if f.ndim != weights.ndim:
         raise ValueError('mahotas.convolve: `f` and `weights` must have the same dimensions')
     output = _get_output(f, out, 'convolve', output=output)
@@ -109,7 +108,7 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None):
         raise ValueError('mahotas.convolve1d: only 1-D sequences allowed')
     _check_mode(mode, cval, 'convolve1d')
     if f.flags.contiguous and len(weights) < f.shape[axis]:
-        weights = weights.astype(np.double)
+        weights = weights.astype(np.double, copy=False)
         indices = [a for a in range(f.ndim) if a != axis] + [axis]
         rindices = [indices.index(a) for a in range(f.ndim)]
         oshape = f.shape
@@ -271,7 +270,7 @@ def template_match(f, template, mode='reflect', cval=0., out=None, output=None):
         ``f[i-s0:i+s0,j-s1:j+s1]`` and ``template`` (for appropriately defined
         ``s0`` and ``s1``).
     '''
-    template = template.astype(f.dtype)
+    template = template.astype(f.dtype, copy=False)
     output = _get_output(f, out, 'template_match', output=output)
     _check_mode(mode, cval, 'template_match')
     return _convolve.template_match(f, template, output, mode2int[mode], 0)
@@ -437,7 +436,7 @@ def _wavelet_array(f, inline, func):
 def _wavelet_center_compute(oshape, border=0, dtype=None, cval=0.0):
     for c in range(1, 16+border):
         nshape = 2**(np.floor(np.log2(oshape))+c)
-        nshape = nshape.astype(int)
+        nshape = nshape.astype(int, copy=False)
         delta = nshape - oshape
         delta //= 2
         if np.min(delta) <= border:

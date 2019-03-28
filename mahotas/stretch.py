@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2009-2019, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -103,7 +103,7 @@ def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
     else:
         min = arg0
         max = arg1
-    img = img.astype(np.double)
+    img = img.astype(np.double, copy=True)
     img -= img.min()
     ptp = img.ptp()
     if not ptp:
@@ -113,7 +113,7 @@ def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
         return img
     img *= float(max - min)/ptp
     if min: img += min
-    return img.astype(dtype)
+    return img.astype(dtype, copy=False)
 
 def as_rgb(r, g, b):
     '''
@@ -168,7 +168,7 @@ def as_rgb(r, g, b):
         c = np.asanyarray(c)
         if c.shape == ():
             c = np.tile(c, shape)
-            return c.astype(np.uint8)
+            return c.astype(np.uint8, copy=False)
         elif c.shape != shape:
             sh = lambda c : (c.shape if c is not None else ' . ')
             raise ValueError('mahotas.as_rgb: Not all arguments have the same shape. Shapes were : %s' % [sh(r), sh(g), sh(b)])
@@ -207,10 +207,10 @@ def overlay(gray, red=None, green=None, blue=None, if_gray_dtype_not_uint8='stre
     def _v(ch):
         if ch is None:
             return gray
-        ch = ch.astype(bool)
+        ch = ch.astype(bool, copy=False)
         ch = 255*ch
         return np.maximum(gray, ch)
     r = _v(red)
     g = _v(green)
     b = _v(blue)
-    return np.dstack([r,g,b]).astype(gray.dtype)
+    return np.dstack([r,g,b]).astype(gray.dtype, copy=False)
