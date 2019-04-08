@@ -25,10 +25,10 @@ const char TypeErrorMsg[] =
 template<typename T>
 void subm(numpy::aligned_array<T> a, const numpy::aligned_array<T> b) {
     gil_release nogil;
-    const int N = a.size();
+    const numpy::index_type N = a.size();
     typename numpy::aligned_array<T>::iterator ita = a.begin();
     typename numpy::aligned_array<T>::const_iterator itb = b.begin();
-    for (int i = 0; i != N; ++i, ++ita, ++itb) {
+    for (numpy::index_type i = 0; i != N; ++i, ++ita, ++itb) {
         if (std::numeric_limits<T>::is_signed) {
             T val = *ita - *itb;
             if (*itb >= 0 && (val <= *ita)) *ita = val; // subtracted a positive number, no underflow
@@ -66,7 +66,7 @@ PyObject* py_subm(PyObject* self, PyObject* args) {
 template <typename T>
 numpy::position central_position(const numpy::array_base<T>& array) {
     numpy::position res(array.raw_dims(), array.ndims());
-    for (int i = 0, nd = array.ndims(); i != nd; ++i) res.position_[i] /= 2;
+    for (numpy::index_type i = 0, nd = array.ndims(); i != nd; ++i) res.position_[i] /= 2;
     return res;
 }
 
@@ -100,10 +100,10 @@ std::vector<numpy::position> neighbours_delta(const numpy::aligned_array<T>& Bc,
 template<typename T>
 numpy::index_type margin_of(const numpy::position& position, const numpy::array_base<T>& ref) {
     numpy::index_type margin = std::numeric_limits<numpy::index_type>::max();
-    const int nd = ref.ndims();
-    for (int d = 0; d != nd; ++d) {
+    const numpy::index_type nd = ref.ndims();
+    for (numpy::index_type d = 0; d != nd; ++d) {
         if (position[d] < margin) margin = position[d];
-        const int rmargin = ref.dim(d) - position[d] - 1;
+        const numpy::index_type rmargin = ref.dim(d) - position[d] - 1;
         if (rmargin < margin) margin = rmargin;
    }
    return margin;
@@ -129,16 +129,16 @@ template<> bool is_bool<bool>(bool) { return true; }
 template<typename T>
 void erode(numpy::aligned_array<T> res, const numpy::aligned_array<T> array, const numpy::aligned_array<T> Bc) {
     gil_release nogil;
-    const int N = res.size();
+    const numpy::index_type N = res.size();
     typename numpy::aligned_array<T>::const_iterator iter = array.begin();
     filter_iterator<T> filter(array.raw_array(), Bc.raw_array(), ExtendNearest, is_bool(T()));
-    const int N2 = filter.size();
+    const numpy::index_type N2 = filter.size();
     T* rpos = res.data();
     if (!N2) return;
 
-    for (int i = 0; i != N; ++i, ++rpos, filter.iterate_both(iter)) {
+    for (numpy::index_type i = 0; i != N; ++i, ++rpos, filter.iterate_both(iter)) {
         T value = std::numeric_limits<T>::max();
-        for (int j = 0; j != N2; ++j) {
+        for (numpy::index_type j = 0; j != N2; ++j) {
             T arr_val = T();
             filter.retrieve(iter, j, arr_val);
             value = std::min<T>(value, erode_sub(arr_val, filter[j]));
@@ -153,22 +153,22 @@ void fast_binary_dilate_erode_2d(numpy::aligned_array<bool> res, const numpy::al
     assert(array.is_carray());
     assert(res.ndim() == 2);
 
-    const int Ny = array.dim(0);
-    const int Nx = array.dim(1);
-    const int N = Ny * Nx;
+    const numpy::index_type Ny = array.dim(0);
+    const numpy::index_type Nx = array.dim(1);
+    const numpy::index_type N = Ny * Nx;
 
-    const int By = Bc.dim(0);
-    const int Bx = Bc.dim(1);
+    const numpy::index_type By = Bc.dim(0);
+    const numpy::index_type Bx = Bc.dim(1);
 
-    const int Cy = By/2;
-    const int Cx = Bx/2;
+    const numpy::index_type Cy = By/2;
+    const numpy::index_type Cx = Bx/2;
 
-    std::vector<int> positions;
-    for (int y = 0; y != By; ++y) {
-        for (int x = 0; x != Bx; ++x) {
+    std::vector<numpy::index_type> positions;
+    for (numpy::index_type y = 0; y != By; ++y) {
+        for (numpy::index_type x = 0; x != Bx; ++x) {
             if (!Bc.at(y,x)) continue;
-            const int dy = y-Cy;
-            const int dx = x-Cx;
+            const numpy::index_type dy = y-Cy;
+            const numpy::index_type dx = x-Cx;
             if (std::abs(dy) >= Ny || std::abs(dx) >= Nx) continue;
             if (dy || dx) {
                 positions.push_back(is_erosion ? dy: -dy);
@@ -176,16 +176,16 @@ void fast_binary_dilate_erode_2d(numpy::aligned_array<bool> res, const numpy::al
             }
         }
     }
-    const int N2 = positions.size()/2;
+    const numpy::index_type N2 = positions.size()/2;
     if (Bc.at(Cy,Cx)) std::copy(array.data(), array.data() + N, res.data());
     else std::fill_n(res.data(), N, is_erosion);
     if (positions.empty()) return;
 
-    for (int y = 0; y != Ny; ++y) {
+    for (numpy::index_type y = 0; y != Ny; ++y) {
         bool* const orow = res.data(y);
-        for (int j = 0; j != N2; ++j) {
-            int dy = positions[2*j];
-            int dx = positions[2*j + 1];
+        for (numpy::index_type j = 0; j != N2; ++j) {
+            numpy::index_type dy = positions[2*j];
+            numpy::index_type dx = positions[2*j + 1];
             assert(dx || dy);
             if ((y + dy) < 0) dy = -y;
             if ((y + dy) >= Ny) {
@@ -193,9 +193,9 @@ void fast_binary_dilate_erode_2d(numpy::aligned_array<bool> res, const numpy::al
             }
             bool* out = orow;
             const bool* in = array.data(y + dy);
-            int n = Nx - std::abs(dx);
+            numpy::index_type n = Nx - std::abs(dx);
             if (dx > 0) {
-                for (int i = 0; i != (dx-1); ++i) {
+                for (numpy::index_type i = 0; i != (dx-1); ++i) {
                     if (is_erosion) {
                         out[Nx-i-1] &= in[Nx-1];
                     } else {
@@ -204,7 +204,7 @@ void fast_binary_dilate_erode_2d(numpy::aligned_array<bool> res, const numpy::al
                 }
                 in += dx;
             } else if (dx < 0) {
-                for (int i = 0; i != -dx; ++i) {
+                for (numpy::index_type i = 0; i != -dx; ++i) {
                     if (is_erosion) {
                         out[i] &= in[0];
                     } else {
@@ -214,9 +214,9 @@ void fast_binary_dilate_erode_2d(numpy::aligned_array<bool> res, const numpy::al
                 out += -dx;
             }
             if (is_erosion) {
-                for (int i = 0; i != n; ++i) *out++ &= *in++;
+                for (numpy::index_type i = 0; i != n; ++i) *out++ &= *in++;
             } else {
-                for (int i = 0; i != n; ++i) *out++ |= *in++;
+                for (numpy::index_type i = 0; i != n; ++i) *out++ |= *in++;
             }
         }
     }
@@ -254,15 +254,15 @@ PyObject* py_erode(PyObject* self, PyObject* args) {
 template<typename T>
 void locmin_max(numpy::aligned_array<bool> res, const numpy::aligned_array<T> array, const numpy::aligned_array<T> Bc, bool is_min) {
     gil_release nogil;
-    const int N = res.size();
+    const numpy::index_type N = res.size();
     typename numpy::aligned_array<T>::const_iterator iter = array.begin();
     filter_iterator<T> filter(res.raw_array(), Bc.raw_array(), ExtendNearest, true);
-    const int N2 = filter.size();
+    const numpy::index_type N2 = filter.size();
     bool* rpos = res.data();
 
-    for (int i = 0; i != N; ++i, ++rpos, filter.iterate_both(iter)) {
+    for (numpy::index_type i = 0; i != N; ++i, ++rpos, filter.iterate_both(iter)) {
         T cur = *iter;
-        for (int j = 0; j != N2; ++j) {
+        for (numpy::index_type j = 0; j != N2; ++j) {
             T arr_val = T();
             filter.retrieve(iter, j, arr_val);
             if (( is_min && (arr_val < cur)) ||
@@ -306,17 +306,17 @@ PyObject* py_locminmax(PyObject* self, PyObject* args) {
 
 template <typename T>
 void remove_fake_regmin_max(numpy::aligned_array<bool> regmin, const numpy::aligned_array<T> f, const numpy::aligned_array<T> Bc, bool is_min) {
-    const int N = f.size();
+    const numpy::index_type N = f.size();
     numpy::aligned_array<bool>::iterator riter = regmin.begin();
     const std::vector<numpy::position> Bc_neighbours = neighbours(Bc);
     typedef std::vector<numpy::position>::const_iterator Bc_iter;
-    const int N2 = Bc_neighbours.size();
+    const numpy::index_type N2 = Bc_neighbours.size();
 
-    for (int i = 0; i != N; ++i, ++riter) {
+    for (numpy::index_type i = 0; i != N; ++i, ++riter) {
         if (!*riter) continue;
         const numpy::position pos = riter.position();
         const T val = f.at(pos);
-        for (int j = 0; j != N2; ++j) {
+        for (numpy::index_type j = 0; j != N2; ++j) {
             numpy::position npos = pos + Bc_neighbours[j];
             if (f.validposition(npos) &&
                     !regmin.at(npos) &&
@@ -396,19 +396,19 @@ bool dilate_add(bool a, bool b) {
 template<typename T>
 void dilate(numpy::aligned_array<T> res, const numpy::array<T> array, const numpy::aligned_array<T> Bc) {
     gil_release nogil;
-    const int N = res.size();
+    const numpy::index_type N = res.size();
     typename numpy::array<T>::const_iterator iter = array.begin();
     filter_iterator<T> filter(res.raw_array(), Bc.raw_array(), ExtendNearest, is_bool(T()));
-    const int N2 = filter.size();
+    const numpy::index_type N2 = filter.size();
     // T* is a fine iterator type.
     T* rpos = res.data();
     std::fill(rpos, rpos + res.size(), std::numeric_limits<T>::min());
     if (!N2) return;
 
-    for (int i = 0; i != N; ++i, ++rpos, filter.iterate_both(iter)) {
+    for (numpy::index_type i = 0; i != N; ++i, ++rpos, filter.iterate_both(iter)) {
         const T value = *iter;
         if (value == std::numeric_limits<T>::min()) continue;
-        for (int j = 0; j != N2; ++j) {
+        for (numpy::index_type j = 0; j != N2; ++j) {
             const T nval = dilate_add(value, filter[j]);
             T arr_val = T();
             filter.retrieve(rpos, j, arr_val);
@@ -461,12 +461,12 @@ PyObject* py_disk_2d(PyObject* self, PyObject* args) {
     Py_XINCREF(array);
     bool* iter = numpy::ndarray_cast<bool*>(array);
     const int radius2 = radius * radius;
-    const int N0 = PyArray_DIM(array, 0);
-    const int N1 = PyArray_DIM(array, 1);
-    const int c0 = N0/2;
-    const int c1 = N1/2;
-    for (int x0 = 0; x0 != N0; ++x0) {
-        for (int x1 = 0; x1 != N1; ++x1, ++iter) {
+    const numpy::index_type N0 = PyArray_DIM(array, 0);
+    const numpy::index_type N1 = PyArray_DIM(array, 1);
+    const numpy::index_type c0 = N0/2;
+    const numpy::index_type c1 = N1/2;
+    for (numpy::index_type x0 = 0; x0 != N0; ++x0) {
+        for (numpy::index_type x1 = 0; x1 != N1; ++x1, ++iter) {
             if ((x0-c0)*(x0-c0) + (x1-c1)*(x1-c1) < radius2) {
                 *iter = true;
             }
@@ -479,16 +479,16 @@ void close_holes(const numpy::aligned_array<bool> ref, numpy::aligned_array<bool
     std::fill_n(f.data(), f.size(), false);
 
     numpy::position_stack stack(ref.ndim());
-    const int N = ref.size();
+    const numpy::index_type N = ref.size();
     const std::vector<numpy::position> Bc_neighbours = neighbours(Bc);
-    const int N2 = Bc_neighbours.size();
-    for (int d = 0; d != ref.ndims(); ++d) {
+    const numpy::index_type N2 = Bc_neighbours.size();
+    for (numpy::index_type d = 0; d != ref.ndims(); ++d) {
         if (ref.dim(d) == 0) continue;
         numpy::position pos;
         pos.nd_ = ref.ndims();
-        for (int di = 0; di != ref.ndims(); ++di) pos.position_[di] = 0;
+        for (numpy::index_type di = 0; di != ref.ndims(); ++di) pos.position_[di] = 0;
 
-        for (int i = 0; i != N/ref.dim(d); ++i) {
+        for (numpy::index_type i = 0; i != N/ref.dim(d); ++i) {
             pos.position_[d] = 0;
             if (!ref.at(pos) && !f.at(pos)) {
                 f.at(pos) = true;
@@ -500,9 +500,9 @@ void close_holes(const numpy::aligned_array<bool> ref, numpy::aligned_array<bool
                 stack.push(pos);
             }
 
-            for (int j = 0; j != ref.ndims() - 1; ++j) {
+            for (numpy::index_type j = 0; j != ref.ndims() - 1; ++j) {
                 if (j == d) ++j;
-                if (pos.position_[j] < int(ref.dim(j))) {
+                if (pos.position_[j] < numpy::index_type(ref.dim(j))) {
                     ++pos.position_[j];
                     break;
                 }
@@ -513,7 +513,7 @@ void close_holes(const numpy::aligned_array<bool> ref, numpy::aligned_array<bool
     while (!stack.empty()) {
         numpy::position pos = stack.top_pop();
         std::vector<numpy::position>::const_iterator startc = Bc_neighbours.begin();
-        for (int j = 0; j != N2; ++j, ++startc) {
+        for (numpy::index_type j = 0; j != N2; ++j, ++startc) {
             numpy::position npos = pos + *startc;
             if (ref.validposition(npos) && !ref.at(npos) && !f.at(npos)) {
                 f.at(npos) = true;
@@ -607,7 +607,7 @@ void cwatershed(numpy::aligned_array<npy_int64> res,
         if (*Bi) {
             numpy::position npos = Bi.position() - centre;
             npy_intp margin = 0;
-            for (int d = 0; d != Bc.ndims(); ++d) {
+            for (numpy::index_type d = 0; d != Bc.ndims(); ++d) {
                 margin = std::max<npy_intp>(std::abs(npy_intp(npos[d])), margin);
             }
             npy_intp delta = markers.pos_to_flat(npos);
@@ -623,7 +623,7 @@ void cwatershed(numpy::aligned_array<npy_int64> res,
     std::priority_queue<MarkerInfo<BaseType> > hqueue;
 
     typename numpy::aligned_array<npy_int64>::const_iterator miter = markers.begin();
-    for (int i = 0; i != N; ++i, ++miter) {
+    for (numpy::index_type i = 0; i != N; ++i, ++miter) {
         if (*miter) {
             assert(markers.validposition(miter.position()));
             const numpy::position mpos = miter.position();
@@ -645,7 +645,7 @@ void cwatershed(numpy::aligned_array<npy_int64> res,
                     neighbour != past;
                     ++neighbour) {
             const numpy::index_type npos = next.position + neighbour->delta;
-            int nmargin = margin - neighbour->step;
+            numpy::index_type nmargin = margin - neighbour->step;
             if (nmargin < 0) {
                 // nmargin is a lower bound on the margin, so we must recompute the actual value
                 numpy::position pos = markers.flat_to_pos(next.position);
@@ -724,8 +724,8 @@ PyObject* py_cwatershed(PyObject* self, PyObject* args) {
 double compute_euc2_dist(const numpy:: position& a, const numpy::position b) {
     assert(a.ndim() == b.ndim());
     double r = 0.;
-    const int n = a.ndim();
-    for (int i = 0; i != n; ++i) {
+    const numpy::index_type n = a.ndim();
+    for (numpy::index_type i = 0; i != n; ++i) {
         r += (a[i]-b[i])*(a[i]-b[i]);
     }
     return r;
@@ -739,9 +739,9 @@ void distance_multi(numpy::aligned_array<BaseType> res,
                         const numpy::aligned_array<bool> array,
                         const numpy::aligned_array<bool> Bc) {
     gil_release nogil;
-    const int N = res.size();
+    const numpy::index_type N = res.size();
     const std::vector<numpy::position> Bcs = neighbours_delta(Bc);
-    const int N2 = Bcs.size();
+    const numpy::index_type N2 = Bcs.size();
 
     typename numpy::aligned_array<bool>::const_iterator aiter = array.begin();
     typename numpy::aligned_array<BaseType>::iterator riter = res.begin();
@@ -749,12 +749,12 @@ void distance_multi(numpy::aligned_array<BaseType> res,
     numpy::position_queue cur_q(res.ndim());
     numpy::position_queue orig_q(res.ndim());
     std::queue<double> dist_q;
-    for (int i = 0; i != N; ++i, ++riter, ++aiter) {
+    for (numpy::index_type i = 0; i != N; ++i, ++riter, ++aiter) {
         if (!*aiter) {
             *riter = 0;
             const numpy::position p = aiter.position();
             numpy::position next = p;
-            for (int j = 0; j != N2; ++j) {
+            for (numpy::index_type j = 0; j != N2; ++j) {
                 next += Bcs[j];
                 if (array.validposition(next) && array.at(next)) {
                     const double dist = compute_euc2_dist(next, p);
@@ -780,7 +780,7 @@ void distance_multi(numpy::aligned_array<BaseType> res,
         assert(dist == compute_euc2_dist(next, orig));
 
         if (res.at(next) < dist) continue;
-        for (int j = 0; j != N2; ++j) {
+        for (numpy::index_type j = 0; j != N2; ++j) {
             next += Bcs[j];
             if (array.validposition(next)) {
                 const double next_dist = compute_euc2_dist(next, orig);
@@ -823,11 +823,11 @@ PyObject* py_distance_multi(PyObject* self, PyObject* args) {
 }
 
 struct HitMissNeighbour {
-    HitMissNeighbour(int delta, int value)
+    HitMissNeighbour(numpy::index_type delta, int value)
         :delta(delta)
         ,value(value)
         { }
-    int delta;
+    numpy::index_type delta;
     int value;
 };
 
@@ -838,18 +838,18 @@ void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, 
     const numpy::index_type N = input.size();
     const numpy::index_type N2 = Bc.size();
     const numpy::position centre = central_position(Bc);
-    int Bc_margin = 0;
-    for (int d = 0; d != Bc.ndims(); ++d) {
-        int cmargin = Bc.dim(d)/2;
+    numpy::index_type Bc_margin = 0;
+    for (numpy::index_type d = 0; d != Bc.ndims(); ++d) {
+        numpy::index_type cmargin = Bc.dim(d)/2;
         if (cmargin > Bc_margin) Bc_margin = cmargin;
     }
 
     std::vector<HitMissNeighbour> neighbours;
     const_iterator Bi = Bc.begin();
-    for (int j = 0; j != N2; ++j, ++Bi) {
+    for (numpy::index_type j = 0; j != N2; ++j, ++Bi) {
         if (*Bi != 2) {
             numpy::position npos = Bi.position() - centre;
-            int delta = input.pos_to_flat(npos);
+            numpy::index_type delta = input.pos_to_flat(npos);
             neighbours.push_back(HitMissNeighbour(delta, *Bi));
         }
     }
@@ -858,17 +858,17 @@ void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, 
     // It makes it more likely that matching will fail earlier
     // in uniform regions than otherwise would be the case.
     std::random_shuffle(neighbours.begin(), neighbours.end());
-    int slack = 0;
-    for (int i = 0; i != N; ++i) {
+    numpy::index_type slack = 0;
+    for (npy_intp i = 0; i != N; ++i) {
         while (!slack) {
             numpy::position cur = input.flat_to_pos(i);
             bool moved = false;
-            for (int d = 0; d != input.ndims(); ++d) {
-                int margin = std::min<int>(cur[d], input.dim(d) - cur[d] - 1);
+            for (numpy::index_type d = 0; d != input.ndims(); ++d) {
+                numpy::index_type margin = std::min<numpy::index_type>(cur[d], input.dim(d) - cur[d] - 1);
                 if (margin < Bc.dim(d)/2) {
-                    int size = 1;
-                    for (int dd = d+1; dd < input.ndims(); ++dd) size *= input.dim(dd);
-                    for (int j = 0; j != size; ++j) {
+                    numpy::index_type size = 1;
+                    for (numpy::index_type dd = d+1; dd < input.ndims(); ++dd) size *= input.dim(dd);
+                    for (numpy::index_type j = 0; j != size; ++j) {
                         res.at_flat(i++) = 0;
                         if (i == N) return;
                     }
@@ -914,8 +914,8 @@ PyObject* py_hitmiss(PyObject* self, PyObject* args) {
 PyObject* py_majority_filter(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     PyArrayObject* res_a;
-    int N;
-    if (!PyArg_ParseTuple(args, "OiO", &array, &N, &res_a) ||
+    long long N;
+    if (!PyArg_ParseTuple(args, "OLO", &array, &N, &res_a) ||
         !PyArray_Check(array) || !PyArray_Check(res_a) ||
         PyArray_TYPE(array) != NPY_BOOL || PyArray_TYPE(res_a) != NPY_BOOL ||
         !PyArray_ISCARRAY(res_a)) {
@@ -926,18 +926,18 @@ PyObject* py_majority_filter(PyObject* self, PyObject* args) {
     PyArray_FILLWBYTE(res_a, 0);
     numpy::aligned_array<bool> input(array);
     numpy::aligned_array<bool> output(res_a);
-    const int rows = input.dim(0);
-    const int cols = input.dim(1);
-    const int T = N*N/2;
+    const numpy::index_type rows = input.dim(0);
+    const numpy::index_type cols = input.dim(1);
+    const numpy::index_type T = N*N/2;
     if (rows < N || cols < N) {
         return PyArray_Return(res_a);
     }
-    for (int y = 0; y != rows-N; ++y) {
-        bool* output_iter = output.data() + (y+int(N/2)) * output.stride(0) + int(N/2);
-        for (int x = 0; x != cols-N; ++x) {
-            int count = 0;
-            for (int dy = 0; dy != N; ++dy) {
-                for (int dx = 0; dx != N; ++dx) {
+    for (numpy::index_type y = 0; y != rows-N; ++y) {
+        bool* output_iter = output.data() + (y+numpy::index_type(N/2)) * output.stride(0) + numpy::index_type(N/2);
+        for (numpy::index_type x = 0; x != cols-N; ++x) {
+            numpy::index_type count = 0;
+            for (numpy::index_type dy = 0; dy != N; ++dy) {
+                for (numpy::index_type dx = 0; dx != N; ++dx) {
                     if (input.at(y+dy,x+dx)) ++count;
                 }
             }
