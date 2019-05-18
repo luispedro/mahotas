@@ -43,5 +43,5 @@ plt.title('After filtering and relabeling, there are {} nuclei left.'.format(n_l
 plt.imshow(relabeled)
 
 
-plt.show()
 plt.tight_layout()
+plt.show()
