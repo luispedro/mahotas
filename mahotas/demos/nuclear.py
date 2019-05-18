@@ -1,33 +1,47 @@
 import mahotas
 import numpy as np
-from pylab import imshow, show
+import matplotlib.pyplot as plt
 import os
 
+plt.subplot(3,2,1)
 f = mahotas.imread(os.path.join('data', 'nuclear.png'))
 f = f[:,:,0]
-imshow(f)
-show()
+plt.title('input image, first channel')
+plt.imshow(f)
 
+
+plt.subplot(3,2,2)
 f = mahotas.gaussian_filter(f, 4)
 f = (f> f.mean())
-imshow(f)
-show()
+plt.title('gaussian_filter')
+plt.imshow(f)
 
+
+plt.subplot(3,2,3)
 labeled, n_nucleus  = mahotas.label(f)
-print('Found {} nuclei.'.format(n_nucleus))
-imshow(labeled)
-show()
+plt.title('Found {} nuclei.'.format(n_nucleus))
+plt.imshow(labeled)
+
+
+plt.subplot(3,2,4)
 sizes = mahotas.labeled.labeled_size(labeled)
 too_big = np.where(sizes > 10000)
 labeled = mahotas.labeled.remove_regions(labeled, too_big)
-imshow(labeled)
-show()
+plt.title('remove_regions')
+plt.imshow(labeled)
 
+
+plt.subplot(3,2,5)
 labeled = mahotas.labeled.remove_bordering(labeled)
-imshow(labeled)
-show()
+plt.title('remove_bordering')
+plt.imshow(labeled)
 
+
+plt.subplot(3,2,6)
 relabeled, n_left = mahotas.labeled.relabel(labeled)
-print('After filtering and relabeling, there are {} nuclei left.'.format(n_left))
-imshow(relabeled)
-show()
+plt.title('After filtering and relabeling, there are {} nuclei left.'.format(n_left))
+plt.imshow(relabeled)
+
+
+plt.show()
+plt.tight_layout()
