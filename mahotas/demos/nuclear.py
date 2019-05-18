@@ -1,8 +1,9 @@
 import mahotas
 import numpy as np
 from pylab import imshow, show
+import os
 
-f = mahotas.imread('mahotas/demos/data/nuclear.png')
+f = mahotas.imread(os.path.join('data', 'nuclear.png'))
 f = f[:,:,0]
 imshow(f)
 show()
