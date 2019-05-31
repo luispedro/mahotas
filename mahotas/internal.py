@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2018, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2011-2019, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -26,7 +26,7 @@ def _get_output(array, out, fname, dtype=None, output=None):
     detail = '.\nWhen an output argument is used, the checking is very strict as this is a performance feature.'
     if dtype is None:
         dtype = array.dtype
-    if output is not None:
+    if output is not None: # pragma: no cover
         import warnings
         warnings.warn('Using deprecated `output` argument in function `%s`. Please use `out` in the future. It has exactly the same meaning and it matches what numpy uses.' % fname, DeprecationWarning)
         if out is not None:
