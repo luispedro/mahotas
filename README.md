@@ -7,7 +7,7 @@ in C++ for speed) operating over numpy arrays.
 
 [![Travis](https://api.travis-ci.org/luispedro/mahotas.png)](https://travis-ci.org/luispedro/mahotas)
 [![Coverage Status](https://coveralls.io/repos/github/luispedro/mahotas/badge.svg?branch=master)](https://coveralls.io/github/luispedro/mahotas?branch=master)
-[![Downloads](http://badge.kloud51.com/pypi/d/mahotas.svg)](https://pypi.python.org/pypi/mahotas)
+[![Downloads](https://pepy.tech/badge/mahotas/month)](https://pepy.tech/project/mahotas/month)
 [![License](http://badge.kloud51.com/pypi/l/mahotas.svg)](http://opensource.org/licenses/MIT)
 [![Install with Anaconda](https://anaconda.org/conda-forge/mahotas/badges/installer/conda.svg)](https://anaconda.org/conda-forge/mahotas)
 [![Join the chat at https://gitter.im/luispedro/mahotas](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/luispedro/mahotas)
