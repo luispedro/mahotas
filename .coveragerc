@@ -13,6 +13,9 @@ omit =
     mahotas/tas.py
     mahotas/tests/__init__.py
     mahotas/zernike.py
+    mahotas/io/freeimage.py
+    mahotas/io/pil.py
+    mahotas/features_cli.py
 exclude_lines =
     pragma: no cover
 
