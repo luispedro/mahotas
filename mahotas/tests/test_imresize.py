@@ -17,7 +17,7 @@ def test_resize_to():
     im  = mh.resize.resize_to(im, [512,256])
     assert im.shape == (512,256)
 
-def test_resize_to():
+def test_resize_edge_cases():
     for start,target in [
             ((128,128), (64,64)),
             ((127,128), (64,64)),

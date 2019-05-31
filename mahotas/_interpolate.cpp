@@ -1,5 +1,5 @@
 /* Copyright (C) 2003-2005 Peter J. Verveer
- * Copyright (C) 2011-2013 Luis Pedro Coelho
+ * Copyright (C) 2011-2019 Luis Pedro Coelho
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -398,13 +398,16 @@ PyObject* py_zoom_shift(PyObject* self, PyObject* args) {
     if (!numpy::are_arrays(array, output) ||
         !PyArray_ISCARRAY(array) || !PyArray_ISCARRAY(output) ||
         !numpy::equiv_typenums(array, output)) {
-        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        PyErr_SetString(PyExc_RuntimeError, "mahotas.zoom_shift: input data has unexpected types. This may be a bug in mahotas.");
         return NULL;
     }
     if (!PyArray_Check(zooms)) {
         zooms = 0;
-    } else if (!PyArray_ISCARRAY(zooms) || !numpy::equiv_typenums(zooms, array)) {
-        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+    } else if (!PyArray_ISCARRAY(zooms)) {
+        PyErr_SetString(PyExc_RuntimeError, "mahotas.zoom_shift: zooms is not a c-array");
+        return NULL;
+    } else if (!numpy::equiv_typenums(zooms, array)) {
+        PyErr_SetString(PyExc_RuntimeError, "mahotas.zoom_shift: zooms does not have an equivalent type to array");
         return NULL;
     } else if (PyArray_DIM(zooms, 0) != PyArray_NDIM(array)) {
         PyErr_SetString(PyExc_ValueError, "mahotas.zoom_shift: zoom array must have one entry for each dimension");
@@ -414,7 +417,7 @@ PyObject* py_zoom_shift(PyObject* self, PyObject* args) {
     if (!PyArray_Check(shifts)) {
         shifts = 0;
     } else if (!PyArray_ISCARRAY(shifts) || !numpy::equiv_typenums(shifts, array)) {
-        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        PyErr_SetString(PyExc_RuntimeError, "mahotas.zoom_shift: shifts is not in the expected format, expected a c-array with an equivalent type to array");
         return NULL;
     } else if (PyArray_DIM(shifts, 0) != PyArray_NDIM(array)) {
         PyErr_SetString(PyExc_ValueError, "mahotas.zoom_shift: shift array must have one entry for each dimension");

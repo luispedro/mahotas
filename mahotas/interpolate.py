@@ -226,7 +226,17 @@ def zoom(array, zoom, out=None, order=3, mode='constant', cval=0.0, prefilter=Tr
     zoom[np.isinf(zoom)] = 1
 
     _check_mode(mode, cval, 'interpolation.zoom')
+
+    # zooming is always done in floats, but the user may want the output in
+    # another type, so handle this case here:
+    o_out = None
+    if out.dtype != array.dtype:
+        o_out = out
+        out = np.empty(out.shape, array.dtype)
     _interpolate.zoom_shift(array, zoom, None, out, order, mode2int[mode], cval)
+    if o_out is not None:
+        o_out[:] = out[:]
+        out = o_out
     return out
 
 
