@@ -371,8 +371,11 @@ def hitmiss(input, Bc, out=None, output=None):
         else:
             Bc = Bc.astype(input.dtype)
 
-    if out is None and output is not None:
+    if out is None and output is not None: # pragma: no cover
         out = output
+
+    # We cannot call internal._get_output here because the conditions around
+    # dtypes are different from those implemented in `internal._get_output`
 
     if out is None:
         out = np.empty_like(input)
