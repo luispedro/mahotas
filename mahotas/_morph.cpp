@@ -22,6 +22,10 @@ const char TypeErrorMsg[] =
     "Type not understood. "
     "This is caused by either a direct call to _morph (which is dangerous: types are not checked!) or a bug in mahotas.\n";
 
+// Using std::abs fails on Windows as it is not defined for all integer types:
+template <typename T>
+inline T t_abs(T val) { return (val >= 0 ? val : -val); }
+
 template<typename T>
 void subm(numpy::aligned_array<T> a, const numpy::aligned_array<T> b) {
     gil_release nogil;
@@ -169,7 +173,7 @@ void fast_binary_dilate_erode_2d(numpy::aligned_array<bool> res, const numpy::al
             if (!Bc.at(y,x)) continue;
             const numpy::index_type dy = y-Cy;
             const numpy::index_type dx = x-Cx;
-            if (std::abs(dy) >= Ny || std::abs(dx) >= Nx) continue;
+            if (t_abs(dy) >= Ny || t_abs(dx) >= Nx) continue;
             if (dy || dx) {
                 positions.push_back(is_erosion ? dy: -dy);
                 positions.push_back(is_erosion ? dx: -dx);
@@ -193,7 +197,7 @@ void fast_binary_dilate_erode_2d(numpy::aligned_array<bool> res, const numpy::al
             }
             bool* out = orow;
             const bool* in = array.data(y + dy);
-            numpy::index_type n = Nx - std::abs(dx);
+            numpy::index_type n = Nx - t_abs(dx);
             if (dx > 0) {
                 for (numpy::index_type i = 0; i != (dx-1); ++i) {
                     if (is_erosion) {
@@ -608,7 +612,7 @@ void cwatershed(numpy::aligned_array<npy_int64> res,
             numpy::position npos = Bi.position() - centre;
             npy_intp margin = 0;
             for (numpy::index_type d = 0; d != Bc.ndims(); ++d) {
-                margin = std::max<npy_intp>(std::abs(npy_intp(npos[d])), margin);
+                margin = std::max<npy_intp>(t_abs(npy_intp(npos[d])), margin);
             }
             npy_intp delta = markers.pos_to_flat(npos);
             if (!delta) continue;
