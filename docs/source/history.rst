@@ -2,6 +2,11 @@
 History
 =======
 
+Version 1.4.7 (Jul 10 2019)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Fix compilation on Windows
+
 Version 1.4.6 (Jul 10 2019)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
