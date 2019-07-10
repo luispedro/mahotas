@@ -220,6 +220,14 @@ questions.
 
 ## Recent Changes
 
+### Version 1.4.6 (Jul 10 2019)
+
+- Make watershed work for >2³¹ voxels (issue #102)
+- Remove milk from demos
+- Improve performance by avoid unnecessary array copies in `cwatershed()`,
+  `majority_filter()`, and color conversions
+- Fix bug in interpolation
+
 ### Version 1.4.5 (Oct 20 2018)
 - Upgrade code to newer NumPy API (issue #95)
 
