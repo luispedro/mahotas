@@ -4,8 +4,6 @@ import mahotas as mh
 from mahotas.features import surf
 from matplotlib import pyplot as plt
 
-from os import path
-
 f = mh.demos.load('luispedro', as_grey=True)
 f = f.astype(np.uint8)
 spoints = surf.surf(f, 4, 6, 2)

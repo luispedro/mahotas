@@ -57,12 +57,12 @@ __all__ = [
 try:
     try:
         from imread import imread, imsave
-    except: # pragma: no cover
+    except ImportError: # pragma: no cover
         try:
             from .pil import imread, imsave
-        except:
+        except ImportError:
             from .freeimage import imread, imsave
-except: # pragma: no cover
+except ImportError: # pragma: no cover
     import sys
     _,e,_ = sys.exc_info()
     _error_message %= e

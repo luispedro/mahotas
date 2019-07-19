@@ -1,7 +1,6 @@
 from __future__ import print_function
 import mahotas as mh
 from pylab import gray, imshow, show
-import numpy as np
 
 
 luispedro = mh.demos.load('luispedro')

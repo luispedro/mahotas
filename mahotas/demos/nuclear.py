@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 
 plt.subplot(3,2,1)
-f = mahotas.imread(os.path.join('data', 'nuclear.png'))
+f = mahotas.demos.load('nuclear')
 f = f[:,:,0]
 plt.title('input image, first channel')
 plt.imshow(f)

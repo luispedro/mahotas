@@ -599,7 +599,6 @@ def filter_labeled(labeled, remove_bordering=False, min_size=None, max_size=None
         number of new labels
     '''
     from mahotas.labeled import remove_regions, labeled_size
-    import mahotas as mh
     labeled = _as_labeled(labeled, labeled, 'filter_labeled')
     if remove_bordering:
         labeled = mh.labeled.remove_bordering(labeled)
