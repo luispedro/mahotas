@@ -220,6 +220,10 @@ questions.
 
 ## Recent Changes
 
+### Version 1.4.8 (Oct 11 2019)
+
+- Fix co-occurrence matrix computation (patch by @databaaz)
+
 ### Version 1.4.7 (Jul 10 2019)
 
 - Fix compilation on Windows
