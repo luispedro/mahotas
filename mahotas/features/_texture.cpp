@@ -62,7 +62,7 @@ PyObject* py_cooccurent(PyObject* self, PyObject* args) {
     if (symmetric) {
         numpy::aligned_array<npy_int32> cmatrix(result);
         const int s0 = cmatrix.size(0);
-        const int s1 = cmatrix.size(0);
+        const int s1 = cmatrix.size(1);
 
         if (s0 != s1) {
             PyErr_SetString(PyExc_RuntimeError, "mahotas._texture.cooccurence: Results matrix not square.");
