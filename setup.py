@@ -91,7 +91,7 @@ package_data = {
     'mahotas.demos': ['data/*'],
     }
 
-install_requires = open('requirements.txt').read()
+install_requires = open('requirements.txt').read().strip().split('\n')
 
 tests_require = open('tests-requirements.txt').read()
 
