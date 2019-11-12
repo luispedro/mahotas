@@ -62,7 +62,8 @@ try:
             from .pil import imread, imsave
         except ImportError:
             from .freeimage import imread, imsave
-except ImportError: # pragma: no cover
+# Importing freeimage can throw both ImportError and OSError, so check for both
+except (OSError, ImportError): # pragma: no cover
     import sys
     _,e,_ = sys.exc_info()
     _error_message %= e

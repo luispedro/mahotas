@@ -2,6 +2,12 @@
 History
 =======
 
+Version 1.4.9 (Nov 12 2019)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Fix FreeImage detection (issue #108)
+
+
 Version 1.4.8 (Oct 11 2019)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

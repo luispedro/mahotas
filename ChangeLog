@@ -1,3 +1,6 @@
+Version 1.4.9 2019-11-12 by luispedro
+	* Fix FreeImage detection (issue #108)
+
 Version 1.4.8 2019-10-11 by luispedro
 	* Fix co-occurrence matrix computation (patch by @databaaz)
 
