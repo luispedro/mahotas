@@ -11,7 +11,6 @@ in C++ for speed) operating over numpy arrays.
 [![License](http://badge.kloud51.com/pypi/l/mahotas.svg)](http://opensource.org/licenses/MIT)
 [![Install with Anaconda](https://anaconda.org/conda-forge/mahotas/badges/installer/conda.svg)](https://anaconda.org/conda-forge/mahotas)
 [![Join the chat at https://gitter.im/luispedro/mahotas](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/luispedro/mahotas)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fluispedro%2Fmahotas.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fluispedro%2Fmahotas?ref=badge_shield)
 
 Python versions 2.7, 3.4+, are supported.
 
