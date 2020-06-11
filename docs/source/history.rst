@@ -2,6 +2,14 @@
 History
 =======
 
+Version 1.4.10 (Jun 11 2020)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Build wheels automatically (PR #114 by
+  `nathanhillyer <https://github.com/nathanhillyer>`__)
+- Fix setup.py requirements (issue #86 with fix by
+  `ATolkachev <https://github.com/ATolkachev>`__)
+
 Version 1.4.9 (Nov 12 2019)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -219,6 +219,10 @@ questions.
 
 ## Recent Changes
 
+### Version 1.4.10 (Jun 11 2020)
+
+- Build wheels automatically (PR #114 by [nathanhillyer](https://github.com/nathanhillyer))
+
 ### Version 1.4.9 (Nov 12 2019)
 
 - Fix FreeImage detection (issue #108)
