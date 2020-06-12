@@ -123,7 +123,7 @@ def sujoy(img, kernel_nhood=0, just_filter=False):
 	grad += grad_v
 	if just_filter:
 		return grad
-	t = 2*np.sqrt(grad.mean())
+	t = np.sqrt(grad.mean())
 
 	return mh.regmax(grad)*(np.sqrt(grad)>t)
 
