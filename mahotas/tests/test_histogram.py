@@ -1,6 +1,6 @@
 import numpy as np
 from mahotas.histogram import fullhistogram
-from nose.tools import raises
+import pytest
 
 def test_fullhistogram():
     A100 = np.arange(100).reshape((10,10)).astype(np.uint32)
@@ -46,7 +46,7 @@ def test_types():
     assert np.all(fullhistogram(A100.astype(np.uint32)) == fullhistogram(A100))
     assert np.all(fullhistogram(A100.astype(np.uint64)) == fullhistogram(A100))
 
-@raises(TypeError)
 def test_float():
-    fullhistogram(np.arange(16.*4., dtype=float).reshape((16,4)))
+    with pytest.raises(TypeError):
+        fullhistogram(np.arange(16.*4., dtype=float).reshape((16,4)))
 

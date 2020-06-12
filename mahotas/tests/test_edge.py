@@ -1,5 +1,6 @@
 from mahotas.edge import sobel
-from nose.tools import raises
+
+import pytest
 import mahotas as mh
 import numpy as np
 
@@ -45,10 +46,10 @@ def test_sobel_pure():
     assert np.all(f == f2)
 
 
-@raises(ValueError)
 def test_3d_error():
     f = np.zeros((32,16,3))
-    sobel(f)
+    with pytest.raises(ValueError):
+        sobel(f)
 
 
 def test_dog():

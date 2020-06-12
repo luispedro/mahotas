@@ -4,9 +4,9 @@ import mahotas.convolve
 import mahotas as mh
 from mahotas.convolve import convolve1d, gaussian_filter
 import mahotas._filters
-from os import path
-from nose.tools import raises
+
 from mahotas.tests.utils import luispedro_jpg
+import pytest
 
 def test_compare_w_ndimage():
     from scipy import ndimage
@@ -34,14 +34,14 @@ def test_22():
     assert np.all(AB == AC)
 
 
-@raises(ValueError)
 def test_mismatched_dims():
     f = np.arange(128*128, dtype=float).reshape((128,128))
     filter = np.arange(17,dtype=float)-8
     filter **= 2
     filter /= -16
     np.exp(filter,filter)
-    mahotas.convolve(f,filter)
+    with pytest.raises(ValueError):
+        mahotas.convolve(f,filter)
 
 def test_convolve1d_shape():
     f = np.arange(64*4).reshape((16,-1))
@@ -50,11 +50,11 @@ def test_convolve1d_shape():
         g = convolve1d(f, n, axis)
         assert g.shape == f.shape
 
-@raises(ValueError)
 def test_convolve1d_2d():
     f = np.arange(64*4).reshape((16,-1))
     n = np.array([[.5,1.,.5],[0.,2.,0.]])
-    convolve1d(f, n, 0)
+    with pytest.raises(ValueError):
+        convolve1d(f, n, 0)
 
 
 def test_gaussian_filter():
@@ -72,14 +72,14 @@ def test_gaussian_order():
 
 def test_gaussian_order_high():
     im = np.arange(64*64).reshape((64,64))
-    @raises(ValueError)
-    def gaussian_order(order):
-        mahotas.gaussian_filter(im, 2., order=order)
-    yield gaussian_order, 4
-    yield gaussian_order, 5
-    yield gaussian_order, -3
-    yield gaussian_order, -1
-    yield gaussian_order, 1.5
+    for order in [
+                 4,
+                 5,
+                 -3,
+                 -1,
+                 1.5]:
+        with pytest.raises(ValueError):
+            mahotas.gaussian_filter(im, 2., order=order)
 
 def test_haar():
     image = luispedro_jpg(1)
@@ -118,18 +118,19 @@ def test_daubechies_D2_haar():
     assert np.allclose(dau, wav)
 
 def test_3d_wavelets_error():
-    @raises(ValueError)
-    def call_f(f):
-        f(np.arange(4*4*4).reshape((4,4,4)))
+    im = np.arange(4*4*4).reshape((4,4,4))
+    with pytest.raises(ValueError):
+        mahotas.haar(im)
+    with pytest.raises(ValueError):
+        mahotas.ihaar(im)
+    with pytest.raises(ValueError):
+        mahotas.daubechies(im, 'D4')
 
-    yield call_f, mahotas.haar
-    yield call_f, mahotas.ihaar
-    yield call_f, lambda im: mahotas.daubechies(im, 'D4')
 
-@raises(ValueError)
 def test_non_valid_daubechies():
     image = luispedro_jpg()
-    mahotas.daubechies(image, 'D-4')
+    with pytest.raises(ValueError):
+        mahotas.daubechies(image, 'D-4')
 
 def test_wavelets_inline():
     def inline(f):
@@ -241,10 +242,10 @@ def test_convolve1d():
             assert np.all(fw == f1w)
             assert np.all(fww == f0w)
 
-@raises(ValueError)
 def test_gaussian_small_sigma():
     im =  np.arange(128*4).reshape((16,-1))
-    mh.gaussian_filter(im, .01)
+    with pytest.raises(ValueError):
+        mh.gaussian_filter(im, .01)
 
 
 def test_gaussian_small_image():

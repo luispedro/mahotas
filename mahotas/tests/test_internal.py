@@ -2,7 +2,7 @@ import numpy as np
 from mahotas.internal import _get_output, _get_axis
 from mahotas.internal import _normalize_sequence, _verify_is_integer_type, _verify_is_floatingpoint_type, _as_floating_point_array
 from mahotas.internal import _check_3
-from nose.tools import raises
+import pytest
 
 def test_get_output():
     f = np.arange(256).reshape((32,8))
@@ -17,25 +17,25 @@ def test_dtype():
     output = _get_output(f, None, 'test', np.float32)
     assert output.dtype == np.float32
 
-@raises(ValueError)
 def test_get_output_bad_shape():
     f = np.arange(256).reshape((32,8))
     output = np.zeros((16,16), f.dtype)
-    _get_output(f, output, 'testing')
+    with pytest.raises(ValueError):
+        _get_output(f, output, 'testing')
 
-@raises(ValueError)
 def test_get_output_non_contiguous():
     f = np.arange(256).reshape((32,8))
     output = np.zeros((32,16), f.dtype)
     output = output[:,::2]
     assert output.shape == f.shape
-    _get_output(f, output, 'testing')
+    with pytest.raises(ValueError):
+        _get_output(f, output, 'testing')
 
-@raises(ValueError)
 def test_get_output_explicit_dtype():
     f = np.arange(256).reshape((32,8))
     output = np.zeros_like(f)
-    _get_output(f, output, 'testing', bool)
+    with pytest.raises(ValueError):
+        _get_output(f, output, 'testing', bool)
 
 
 def test_get_axis_good():
@@ -47,16 +47,14 @@ def test_get_axis_good():
 
 def test_get_axis_off():
     f = np.zeros((3,4,5,3,2,2,5,3,2,4,1))
-    @raises(ValueError)
-    def index(i):
-        _get_axis(f, i, 'test')
-    yield index, 12
-    yield index, 13
-    yield index, 14
-    yield index, 67
-    yield index, -67
-    yield index, -len(f.shape)-1
-    yield raises
+    for i in [ 12,
+             13,
+             14,
+             67,
+             -67,
+             -len(f.shape)-1]:
+        with pytest.raises(ValueError):
+            _get_axis(f, i, 'test')
 
 
 
@@ -75,9 +73,9 @@ def test_normalize_sequence():
     assert _normalize_sequence(f, [2,4], 'test') == [2,4]
 
 def test_normalize_wrong_size():
-    @raises(ValueError)
     def check(ns, val):
-        _normalize_sequence(f.reshape(ns), val, 'test')
+        with pytest.raises(ValueError):
+            _normalize_sequence(f.reshape(ns), val, 'test')
     f = np.arange(64)
 
     check((64,),[1,2])
@@ -87,66 +85,49 @@ def test_normalize_wrong_size():
     check((4,-1),[1])
     check((4,2,-1),[1,2])
 
-def test_verify_int():
-    @raises(TypeError)
-    def check_fp(arr):
+@pytest.mark.parametrize('dtype', [np.float, np.float32, np.float64])
+def test_verify_float_arr(dtype):
+    arr = np.arange(1., dtype=dtype)
+    _verify_is_floatingpoint_type(arr, 'test')
+    with pytest.raises(TypeError):
         _verify_is_integer_type(arr, 'test')
 
-    def check_int(arr):
-        _verify_is_integer_type(arr, 'test')
-
-    yield check_fp, np.arange(1., dtype=np.float)
-    yield check_fp, np.arange(1., dtype=np.float32)
-    yield check_fp, np.arange(1., dtype=np.float64)
-
-    yield check_int, np.arange(1, dtype=np.int32)
-    yield check_int, np.arange(1, dtype=np.uint16)
-    yield check_int, np.arange(1, dtype=np.int64)
-
-def test_verify_fp():
-    def check_fp(arr):
+@pytest.mark.parametrize('dtype', [np.int32, np.uint16, np.int64])
+def test_verify_int_arr(dtype):
+    arr = np.arange(1., dtype=dtype)
+    _verify_is_integer_type(arr, 'test')
+    with pytest.raises(TypeError):
         _verify_is_floatingpoint_type(arr, 'test')
 
-    @raises(TypeError)
-    def check_int(arr):
-        _verify_is_floatingpoint_type(arr, 'test')
 
-    yield check_fp, np.arange(1., dtype=np.float)
-    yield check_fp, np.arange(1., dtype=np.float32)
-    yield check_fp, np.arange(1., dtype=np.float64)
-
-    yield check_int, np.arange(1, dtype=np.int32)
-    yield check_int, np.arange(1, dtype=np.uint16)
-    yield check_int, np.arange(1, dtype=np.int64)
-
-def test_as_floating_point_array():
-    def check_arr(data):
-        array = _as_floating_point_array(data)
-        assert np.issubdtype(array.dtype, np.floating)
-
-    yield check_arr, np.arange(8, dtype=np.int8)
-    yield check_arr, np.arange(8, dtype=np.int16)
-    yield check_arr, np.arange(8, dtype=np.uint32)
-    yield check_arr, np.arange(8, dtype=np.double)
-    yield check_arr, np.arange(8, dtype=np.float32)
-    yield check_arr, [1,2,3]
-    yield check_arr, [[1,2],[2,3],[3,4]]
-    yield check_arr, [[1.,2.],[2.,3.],[3.,4.]]
+@pytest.mark.parametrize('data', [
+      np.arange(8, dtype=np.int8)
+    , np.arange(8, dtype=np.int16)
+    , np.arange(8, dtype=np.uint32)
+    , np.arange(8, dtype=np.double)
+    , np.arange(8, dtype=np.float32)
+    , [1,2,3]
+    , [[1,2],[2,3],[3,4]]
+    , [[1.,2.],[2.,3.],[3.,4.]]
+    ])
+def test_as_floating_point_array(data):
+    array = _as_floating_point_array(data)
+    assert np.issubdtype(array.dtype, np.floating)
 
 def test_check_3():
     _check_3(np.zeros((14,24,3), np.uint8), 'testing')
 
-@raises(ValueError)
 def test_check_3_dim4():
-    _check_3(np.zeros((14,24,3,5), np.uint8), 'testing')
+    with pytest.raises(ValueError):
+        _check_3(np.zeros((14,24,3,5), np.uint8), 'testing')
 
-@raises(ValueError)
 def test_check_3_not3():
-    _check_3(np.zeros((14,24,5), np.uint8), 'testing')
+    with pytest.raises(ValueError):
+        _check_3(np.zeros((14,24,5), np.uint8), 'testing')
 
-@raises(ValueError)
 def test_check_3_not3_dim4():
-    _check_3(np.zeros((14,24,5,5), np.uint8), 'testing')
+    with pytest.raises(ValueError):
+        _check_3(np.zeros((14,24,5,5), np.uint8), 'testing')
 
 
 def test_make_binary():
