@@ -47,13 +47,13 @@ def test_sobel_pure():
 
 def test_sujoy_shape():
 	A = np.arange(100*100)
-	A = (A % 30)
+	A = (A % 15)
 	A = A.reshape((100,100))
 	assert sujoy(A).shape == A.shape
 	assert sujoy(A, just_filter=True).shape == A.shape
 
 def test_sujoy_zeros():
-	A = np.zeros((30,100))
+	A = np.zeros((15,100))
 	assert sujoy(A).shape == A.shape
 	assert sujoy(A).sum() == 0
 
@@ -76,8 +76,8 @@ def test_sujoy():
 		assert len(set(N)) > 1
 
 def test_zero_images1():
-	assert np.isnan(sujoy(np.zeros((32,32)))).sum() == 0
-	assert sujoy(np.zeros((32,32)), just_filter=True).sum() == 0
+	assert np.isnan(sujoy(np.zeros((16,16)))).sum() == 0
+	assert sujoy(np.zeros((16,16)), just_filter=True).sum() == 0
 
 def test_sujoy_pure():
 	f = np.random.random((64, 128))
@@ -89,9 +89,8 @@ def test_sujoy_pure():
 @raises(ValueError)
 def test_3d_error():
 	f = np.zeros((32,16,3))
-	f1 = np.zeros((64,32,3))
 	sobel(f)
-	sujoy(f1)
+	sujoy(f)
 
 
 def test_dog():
