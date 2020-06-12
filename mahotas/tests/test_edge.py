@@ -45,7 +45,7 @@ def test_sobel_pure():
     assert np.all(f == f2)
 
 
- def test_sujoy_shape():
+def test_sujoy_shape():
     A = np.arange(100*100)
     A = (A % 15)
     A = A.reshape((100,100))
