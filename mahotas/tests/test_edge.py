@@ -90,8 +90,11 @@ def test_sujoy_pure():
 def test_3d_error():
     f = np.zeros((32,16,3))
     sobel(f)
-    sujoy(f)
 
+@raises(ValueError)
+def test_3d_error1():
+    f = np.zeros((32,16,3))
+    sujoy(f)
 
 def test_dog():
     im = mh.demos.load('lena')
