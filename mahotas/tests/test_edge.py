@@ -82,7 +82,7 @@ def test_zero_images1():
 def test_sujoy_pure():
 	f = np.random.random((64, 128))
 	f2 = f.copy()
-	_ = mh.sujoy(f)
+	_ = sujoy(f)
 	assert np.all(f == f2)
 
 
