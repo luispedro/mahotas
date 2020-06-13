@@ -56,12 +56,14 @@ def test_sujoy_shape():
     A = (A % 15)
     A = A.reshape((100,100))
     assert sujoy(A).shape == A.shape
+    assert sujoy(A, kernel_nhood=1).shape == A.shape
     assert sujoy(A, just_filter=True).shape == A.shape
 
 def test_sujoy_zeros():
     A = np.zeros((15,100))
     assert sujoy(A).shape == A.shape
     assert sujoy(A).sum() == 0
+    assert sujoy(A, kernel_nhood=1).sum() == 0
 
 def test_sujoy():
     I = np.array([
@@ -80,9 +82,19 @@ def test_sujoy():
         if y < (r-1): N.append(I[y+1,x])
         if x < (c-1): N.append(I[y,x+1])
         assert len(set(N)) > 1
+    E = sujoy(I, kernel_nhood=1)
+    r,c = I.shape
+    for y,x in zip(*np.where(E)):
+        N = [I[y,x]]
+        if y > 0: N.append(I[y-1,x])
+        if x > 0: N.append(I[y,x-1])
+        if y < (r-1): N.append(I[y+1,x])
+        if x < (c-1): N.append(I[y,x+1])
+        assert len(set(N)) > 1
 
 def test_zero_images1():
     assert np.isnan(sujoy(np.zeros((16,16)))).sum() == 0
+    assert np.isnan(sujoy(np.zeros((16,16)), kernel_nhood=1)).sum() == 0
     assert sujoy(np.zeros((16,16)), just_filter=True).sum() == 0
 
 def test_sujoy_pure():
