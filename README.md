@@ -5,13 +5,12 @@
 Mahotas is a library of fast computer vision algorithms (all implemented
 in C++ for speed) operating over numpy arrays.
 
-[![Travis](https://api.travis-ci.org/luispedro/mahotas.png)](https://travis-ci.org/luispedro/mahotas)
+[![Travis](https://api.travis-ci.com/luispedro/mahotas.png)](https://travis-ci.com/luispedro/mahotas)
 [![Coverage Status](https://coveralls.io/repos/github/luispedro/mahotas/badge.svg?branch=master)](https://coveralls.io/github/luispedro/mahotas?branch=master)
 [![Downloads](https://pepy.tech/badge/mahotas/month)](https://pepy.tech/project/mahotas/month)
 [![License](http://badge.kloud51.com/pypi/l/mahotas.svg)](http://opensource.org/licenses/MIT)
 [![Install with Anaconda](https://anaconda.org/conda-forge/mahotas/badges/installer/conda.svg)](https://anaconda.org/conda-forge/mahotas)
 [![Join the chat at https://gitter.im/luispedro/mahotas](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/luispedro/mahotas)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fluispedro%2Fmahotas.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fluispedro%2Fmahotas?ref=badge_shield)
 
 Python versions 2.7, 3.4+, are supported.
 
@@ -219,6 +218,10 @@ future. You can use it for mahotas or general computer vision in Python
 questions.
 
 ## Recent Changes
+
+### Version 1.4.10 (Jun 11 2020)
+
+- Build wheels automatically (PR #114 by [nathanhillyer](https://github.com/nathanhillyer))
 
 ### Version 1.4.9 (Nov 12 2019)
 

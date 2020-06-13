@@ -1,14 +1,13 @@
 ======================================
 Tutorial: Classification Using Mahotas
 ======================================
-.. versionadded:: 0.8
-    Before version 0.8, texture was under mahotas, not under mahotas.features
 
-Here is an example of using mahotas and `milk <http://luispedro.org/software/milk>`_
-for image classification (but most of the code can easily be adapted to use
-another machine learning package).  I assume that there are three important
-directories: ``positives/`` and ``negatives/`` contain the manually labeled
-examples, and the rest of the data is in an ``unlabeled/`` directory.
+Here is an example of using mahotas and `scikit-learn
+<https://scikit-learn.org>`__ for image classification (but most of the code
+can easily be adapted to use another machine learning package).  I assume that
+there are three important directories: ``positives/`` and ``negatives/``
+contain the manually labeled examples, and the rest of the data is in an
+``unlabeled/`` directory.
 
 Here is the simple algorithm:
 
@@ -25,7 +24,6 @@ We start with a bunch of imports::
     from glob import glob
     import mahotas
     import mahotas.features
-    import milk
     from jug import TaskGenerator
 
 Now, we define a function which computes features. In general, texture features
@@ -40,16 +38,18 @@ are very fast and give very decent results::
 the mean (sometimes you use the spread ``ptp()`` too).
 
 Now a pair of functions to learn a classifier and apply it. These are just
-``milk`` functions::
+``scikit-learn`` functions::
 
     @TaskGenerator
     def learn_model(features, labels):
-        learner = milk.defaultclassifier()
-        return learner.train(features, labels)
+        from sklearn.ensemble import RandomForestClassifier
+        clf = RandomForestClassifier()
+        clf.fit(features, labels)
+        return clf
 
     @TaskGenerator
     def classify(model, features):
-         return model.apply(features)
+         return model.predict(features)
 
 We assume we have three pre-prepared directories with the images in jpeg
 format. This bit you will have to adapt for your own settings::
@@ -73,6 +73,7 @@ This uses texture features, which is probably good enough, but you can play
 with other features in ``mahotas.features`` if you'd like (or try
 ``mahotas.surf``, but that gets more complicated).
 
-(This was motivated by `a question on Stackoverflow <http://stackoverflow.com/questions/5426482/using-pil-to-detect-a-scan-of-a-blank-page/5505754>`__).
+(This was motivated by `a question on Stackoverflow
+<http://stackoverflow.com/questions/5426482/using-pil-to-detect-a-scan-of-a-blank-page/5505754>`__).
 
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2019, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2009-2020, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -91,9 +91,9 @@ package_data = {
     'mahotas.demos': ['data/*'],
     }
 
-install_requires = open('requirements.txt').read()
+install_requires = open('requirements.txt').read().strip().split('\n')
 
-tests_require = open('tests-requirements.txt').read()
+tests_require = open('tests-requirements.txt').read().strip().split('\n')
 
 copt={
     'msvc': ['/EHsc'], 
