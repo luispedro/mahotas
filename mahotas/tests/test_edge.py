@@ -96,11 +96,12 @@ def test_zero_images1():
     assert np.isnan(sujoy(np.zeros((16,16)))).sum() == 0
     assert np.isnan(sujoy(np.zeros((16,16)), kernel_nhood=1)).sum() == 0
     assert sujoy(np.zeros((16,16)), just_filter=True).sum() == 0
+    assert sujoy(np.zeros((16,16)), just_filter=True, kernel_nhood=1).sum() == 0
 
 def test_sujoy_pure():
     f = np.random.random((64, 128))
     f2 = f.copy()
-    _ = mh.sujoy(f)
+    _ = sujoy(f)
     assert np.all(f == f2)
 
 @raises(ValueError)
