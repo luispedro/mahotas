@@ -1,7 +1,7 @@
 import numpy as np
 import mahotas as mh
 import mahotas.labeled
-from nose.tools import raises
+from pytest import raises
 
 def test_border():
     labeled = np.zeros((32,32), np.uint8)
@@ -137,11 +137,11 @@ def test_remove_bordering():
         mahotas.labeled.remove_bordering(labeled, out=removed2)
         assert np.all(removed2 == removed)
 
-@raises(ValueError)
 def test_check_array_labeled_not_same_shape():
-    arr = np.zeros((4,7))
-    lab = np.zeros((4,3), dtype=np.intc)
-    mahotas.labeled._as_labeled(arr, lab, 'testing')
+    with raises(ValueError):
+        arr = np.zeros((4,7))
+        lab = np.zeros((4,3), dtype=np.intc)
+        mahotas.labeled._as_labeled(arr, lab, 'testing')
 
 def _nelems(arr):
     return len(set(map(int, arr.ravel())))
@@ -242,15 +242,11 @@ def test_as_labeled():
     assert _as_labeled(arr[::2], labeled[::2], funcname, inplace=None) is not labeled
     assert _as_labeled(arr[::2], labeled[::2], funcname) is not labeled
 
-    @raises(ValueError)
-    def t():
+    with raises(ValueError):
         _as_labeled(arr[::2], labeled[::2], funcname, inplace=True)
-    t()
 
-    @raises(ValueError)
-    def t():
+    with raises(ValueError):
         _as_labeled(arr[::2], labeled, funcname)
-    t()
 
 
 def test_labeled_bbox():
@@ -281,8 +277,8 @@ def test_labeled_bbox_zeros():
         [2,2,1],
         [2,2,3]])
     f3 = np.array([f])
-    yield nozeros_test, f
-    yield nozeros_test, f3
+    nozeros_test(f)
+    nozeros_test(f3)
 
 
 def test_filter_labeled():

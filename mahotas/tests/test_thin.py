@@ -1,5 +1,6 @@
 import numpy as np
 import mahotas.thin
+import pytest
 
 def slow_thin(binimg, n=-1):
     """
@@ -74,23 +75,24 @@ def test_thin():
     assert mahotas.erode(W).sum() == 0
     assert (W & A).sum() == W.sum()
 
-def test_compare():
-    def compare(A):
-        W = mahotas.thin(A)
-        W2 = slow_thin(A)
-        assert np.all(W == W2)
+
+def gen_compares():
     A = np.zeros((100,100), bool)
-    yield compare, A
+    yield A.copy()
+
     A[20:40] = 1
-    yield compare, A
+    yield A.copy()
+
     A[:,20:40] = 1
-    yield compare, A
+    yield A.copy()
 
     A[60:80,60:80] = 1
-    yield compare, A
+    yield A.copy()
 
-    W = mahotas.thin(A, 2)
-    W2 = slow_thin(A, 2)
+@pytest.mark.parametrize('A', gen_compares())
+def test_compare(A):
+    W = mahotas.thin(A)
+    W2 = slow_thin(A)
     assert np.all(W == W2)
 
 

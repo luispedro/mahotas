@@ -2,7 +2,7 @@ import numpy as np
 from mahotas.features import texture
 import mahotas as mh
 import mahotas.features._texture
-from nose.tools import raises
+import pytest
 
 def test__cooccurence():
     cooccurence = mahotas.features._texture.cooccurence
@@ -42,30 +42,21 @@ def test_cooccurence_errors():
     f2 = np.zeros((6,6), np.uint8)
     f3 = np.zeros((6,6,6), np.uint8)
     f4 = np.zeros((6,6,6,6), np.uint8)
-    @raises(ValueError)
-    def c_1():
+
+    with pytest.raises(ValueError):
         texture.cooccurence(f2, -2, distance=1)
-    yield c_1
 
-    @raises(ValueError)
-    def c_1():
+    with pytest.raises(ValueError):
         texture.cooccurence(f3, -2, distance=1)
-    yield c_1
 
-    @raises(ValueError)
-    def c_2_10():
+    with pytest.raises(ValueError):
         texture.cooccurence(f2, 10, distance=1)
-    yield c_2_10
 
-    @raises(ValueError)
-    def c_3_17():
+    with pytest.raises(ValueError):
         texture.cooccurence(f3, 17, distance=1)
-    yield c_3_17
 
-    @raises(ValueError)
-    def c_4_1():
+    with pytest.raises(ValueError):
         texture.cooccurence(f4, 1, distance=1)
-    yield c_4_1
 
 
 
@@ -137,17 +128,17 @@ def test_single_point():
     A[2,2]=12
     assert not np.any(np.isnan(texture.cooccurence(A, 0, distance=1)))
 
-@raises(TypeError)
 def test_float_cooccurence():
     A = np.zeros((5,5), np.float32)
     A[2,2]=12
-    texture.cooccurence(A, 0, distance=1)
+    with pytest.raises(TypeError):
+        texture.cooccurence(A, 0, distance=1)
 
-@raises(TypeError)
 def test_float_haralick():
     A = np.zeros((5,5), np.float32)
     A[2,2]=12
-    texture.haralick(A)
+    with pytest.raises(TypeError):
+        texture.haralick(A)
 
 def test_haralick3d():
     np.random.seed(22)
@@ -167,14 +158,14 @@ def test_zeros():
     feats = texture.haralick(zeros)
     assert not np.any(np.isnan(feats))
 
-@raises(ValueError)
 def test_ignore_zeros_raise():
     zeros = np.zeros((64,64), np.uint8)
-    texture.haralick(zeros, ignore_zeros=True)
+    with pytest.raises(ValueError):
+        texture.haralick(zeros, ignore_zeros=True)
 
-@raises(ValueError)
 def test_4d_image():
-    texture.haralick(np.arange(4**5).reshape((4,4,4,4,4)))
+    with pytest.raises(ValueError):
+        texture.haralick(np.arange(4**5).reshape((4,4,4,4,4)))
 
 
 def rand_haralick():
@@ -204,11 +195,11 @@ def test_return_mean_ptp():
     assert np.all(fs.mean(0) == fs_mean_ptp[:fs.shape[1]])
     assert np.all(fs.ptp(0) == fs_mean_ptp[fs.shape[1]:])
 
-@raises(ValueError)
 def test_return_mean_ptp_xor():
     f = 255*np.random.random((128,128))
     f = f.astype(np.uint8)
-    fs = mh.features.haralick(f, return_mean=1, return_mean_ptp=1)
+    with pytest.raises(ValueError):
+        mh.features.haralick(f, return_mean=1, return_mean_ptp=1)
 
 
 def test_x_minus_y():
@@ -219,12 +210,12 @@ def test_x_minus_y():
     assert np.sum(h != h2) == 4
 
 
-@raises(ValueError)
 def test_negative_values_haralick():
     # https://github.com/luispedro/mahotas/issues/72
     f = 255*np.random.random((16,16))
     f = f.astype(np.int8)
-    mh.features.haralick(f)
+    with pytest.raises(ValueError):
+        mh.features.haralick(f)
 
 
 def test_int8_positive_haralick():

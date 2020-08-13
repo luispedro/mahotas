@@ -133,13 +133,13 @@ def test_non_valid_daubechies():
         mahotas.daubechies(image, 'D-4')
 
 def test_wavelets_inline():
-    def inline(f):
-        im = np.arange(16, dtype=float).reshape((4,4))
-        t = f(im, inline=True)
-        assert id(im) == id(t)
+    im = np.arange(16, dtype=float).reshape((4,4))
+    h = mh.haar(im, inline=True)
+    assert id(im) == id(h)
 
-    yield inline, mahotas.haar
-    yield inline, lambda im,inline: mahotas.daubechies(im, 'D4', inline=inline)
+    db = mahotas.daubechies(im, 'D4', inline=True)
+    assert id(im) == id(db)
+
 
 def test_wavelet_iwavelet():
     f = luispedro_jpg(1)

@@ -2,7 +2,8 @@ import numpy as np
 import mahotas
 import mahotas as mh
 import sys
-from nose.tools import raises
+import pytest
+
 S = np.array([
     [0,0,0,0],
     [0,1,2,1],
@@ -22,34 +23,33 @@ M = np.array([
     [0,0,0,0],
     ])
 
-def test_watershed():
-    def cast_test(dtype):
-        St = S.astype(dtype)
-        Mt = M.astype(int)
-        W = mahotas.cwatershed(2-St, Mt)
-        if hasattr(sys, 'getrefcount'):
-            assert sys.getrefcount(W) == 2
-        assert np.all(W == np.array([[1, 1, 1, 1],
-               [1, 1, 1, 1],
-               [1, 1, 1, 1],
-               [2, 2, 1, 1],
-               [2, 2, 2, 2],
-               [2, 2, 2, 2],
-               [2, 2, 2, 2]]))
-    types = [np.uint8, np.int8, np.uint16, np.int16, np.int32, np.uint32,int,
-                 np.float32, np.float64, float]
-    if hasattr(np, 'float128'):
-        types.append(np.float128)
-    for d in types:
-        yield cast_test, d
+types = [np.uint8, np.int8, np.uint16, np.int16, np.int32, np.uint32,int,
+             np.float32, np.float64, float]
+if hasattr(np, 'float128'):
+    types.append(np.float128)
+
+@pytest.mark.parametrize('dtype', types)
+def test_watershed(dtype):
+    St = S.astype(dtype)
+    Mt = M.astype(int)
+    W = mahotas.cwatershed(2-St, Mt)
+    if hasattr(sys, 'getrefcount'):
+        assert sys.getrefcount(W) == 2
+    assert np.all(W == np.array([[1, 1, 1, 1],
+           [1, 1, 1, 1],
+           [1, 1, 1, 1],
+           [2, 2, 1, 1],
+           [2, 2, 2, 2],
+           [2, 2, 2, 2],
+           [2, 2, 2, 2]]))
 
 
-@raises(TypeError)
 def test_float16():
     dtype = np.float16
     St = S.astype(dtype)
     Mt = M.astype(int)
-    mh.cwatershed(2-St,Mt)
+    with pytest.raises(TypeError):
+        mh.cwatershed(2-St,Mt)
 
 
 def test_watershed2():
@@ -60,13 +60,13 @@ def test_watershed2():
     W = mahotas.cwatershed(S, markers)
     assert np.all( (W == 1) | (W == 2) )
 
-@raises(ValueError)
 def test_mismatched_array_markers():
     S = np.zeros((10,12), np.uint8)
     markers = np.zeros((8,12), np.uint8)
     markers[2,2] = 1
     markers[6,2] = 2
-    mahotas.cwatershed(S, markers)
+    with pytest.raises(ValueError):
+        mahotas.cwatershed(S, markers)
 
 def test_mix_types():
     "[watershed regression]: Mixing types of surface and marker arrays used to cause crash"
