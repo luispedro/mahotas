@@ -1,10 +1,10 @@
-from nose.tools import raises
 import numpy as np
 from mahotas.features import _lbp
 import mahotas.thresholding
 from mahotas.features import lbp
 from mahotas.features.lbp import lbp_transform, lbp_names
 from mahotas.tests.utils import luispedro_jpg
+import pytest
 
 def test_shape():
     A = np.arange(32*32).reshape((32,32))
@@ -76,10 +76,10 @@ def test_count_binary1s():
 
     assert np.all(count_binary1s([128]) == [1])
 
-@raises(ValueError)
 def test_lbp_3d():
     im = np.arange(10*20*3).reshape((10,20,3))
-    lbp_transform(im, 1, 8)
+    with pytest.raises(ValueError):
+        lbp_transform(im, 1, 8)
 
 def test_lbp_names():
     f = np.random.random(size=(64,72))

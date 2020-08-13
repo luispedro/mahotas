@@ -3,7 +3,7 @@ import mahotas as mh
 import mahotas.features.surf as surf
 from mahotas.features import _surf
 from .utils import luispedro_jpg
-from nose.tools import raises
+import pytest
 
 def test_integral():
     f = np.arange(8*16).reshape((8,16)) % 8
@@ -100,27 +100,27 @@ def test_descriptors_descriptor_only():
     only = surf.descriptors(f, points, descriptor_only=True)
     assert full.size > only.size
 
-@raises(ValueError)
 def test_3d_image():
-    surf.surf(np.arange(8*8*16).reshape((16,8,8)), 6, 24, 1)
+    with pytest.raises(ValueError):
+        surf.surf(np.arange(8*8*16).reshape((16,8,8)), 6, 24, 1)
 
-@raises(TypeError)
 def test_integral_intested_points():
     np.random.seed(22)
     f = np.random.rand(16,16)*230
     f = f.astype(np.uint8)
     f = surf.integral(f)
-    surf.interest_points(f.astype(np.int32), is_integral=True)
+    with pytest.raises(TypeError):
+        surf.interest_points(f.astype(np.int32), is_integral=True)
 
 
-@raises(TypeError)
 def test_integral_descriptors():
     np.random.seed(22)
     f = np.random.rand(16,16)*230
     f = f.astype(np.uint8)
     f = surf.integral(f)
     points = surf.interest_points(f, is_integral=True)
-    surf.descriptors(f.astype(np.int32), points, is_integral=True)
+    with pytest.raises(TypeError):
+        surf.descriptors(f.astype(np.int32), points, is_integral=True)
 
 def test_dense():
     f = np.arange(280*360).reshape((280,360)) % 25

@@ -1,7 +1,7 @@
 import mahotas as mh
 import numpy as np
 from mahotas.morph import get_structuring_elem, subm, tophat_open, tophat_close
-from nose.tools import raises
+import pytest
 
 
 def test_get_structuring_elem():
@@ -20,12 +20,9 @@ def test_get_structuring_elem():
     assert np.all(get_structuring_elem(A, Bc.astype(np.float).T).flags['C_CONTIGUOUS'])
     assert np.all(get_structuring_elem(A, Bc.astype(np.float).T) == Bc.T)
 
-    @raises(ValueError)
-    def bad_dims():
+    with pytest.raises(ValueError):
         Bc = np.ones((3,3,3), dtype=np.bool)
         get_structuring_elem(A, Bc)
-
-    bad_dims()
 
 
 def test_open():
@@ -185,10 +182,8 @@ def test_circle_se():
         assert not c.all()
         assert c.any()
 
-    @raises(ValueError)
-    def circle_1():
+    with pytest.raises(ValueError):
         circle_se(-1)
-    circle_1()
 
 def test_distance_multi():
     import mahotas._morph
@@ -222,17 +217,14 @@ def test_disk():
     D = disk(32, 2)
     assert D[32,2]
 
-    @raises(ValueError)
-    def test_negative_dim(dim):
-        disk(3, dim)
-
-    test_negative_dim(-2)
-    test_negative_dim(-1)
-    test_negative_dim(0)
+    # Test negative values
+    for dim in [-2, -1, 0]:
+        with pytest.raises(ValueError):
+            disk(3, dim)
 
 
-@raises(ValueError)
 def test_close_holes_3d():
     'Close holes should raise exception with 3D inputs'
     f = np.random.rand(100,100,3) > .9
-    mh.close_holes(f)
+    with pytest.raises(ValueError):
+        mh.close_holes(f)

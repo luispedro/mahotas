@@ -1,7 +1,7 @@
 from mahotas.stretch import stretch
 import mahotas
 import mahotas as mh
-from nose.tools import raises
+import pytest
 import numpy as np
 
 def test_stretch():
@@ -36,17 +36,17 @@ def test_as_rgb():
     assert mahotas.as_rgb(r,None,b)[:,:,1].sum() == 0
 
 
-@raises(ValueError)
 def test_as_rgb_Nones():
-    mahotas.as_rgb(None,None,None)
+    with pytest.raises(ValueError):
+        mahotas.as_rgb(None,None,None)
 
-@raises(ValueError)
 def test_as_rgb_shape_mismatch():
     np.random.seed(2323)
     r = np.random.randint(12, 121, size=(8,8))
     g = np.random.randint(12, 121, size=(8,8))
     b = np.random.randint(12, 121, size=(8,6))
-    mahotas.as_rgb(r,g,b)
+    with pytest.raises(ValueError):
+        mahotas.as_rgb(r,g,b)
 
 
 
@@ -68,9 +68,9 @@ def test_stretch_rgb():
     assert np.all(s[:,:,0] == s_rgb[:,:,0])
     assert np.all(mh.stretch(b) == mh.stretch_rgb(b))
 
-@raises(ValueError)
 def test_stretch_rgb4():
-    mh.stretch_rgb(np.zeros((8,8,3,2)))
+    with pytest.raises(ValueError):
+        mh.stretch_rgb(np.zeros((8,8,3,2)))
 
 
 def test_overlay():
