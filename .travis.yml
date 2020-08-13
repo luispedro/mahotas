@@ -27,6 +27,8 @@ env:
     - NUMPY_VERSION=1.14
     - NUMPY_VERSION=1.15
     - NUMPY_VERSION=1.16
+    - NUMPY_VERSION=1.17
+    - NUMPY_VERSION=1.18
 
 
 # Some combinations seem to be missing on conda
@@ -51,7 +53,7 @@ install:
 script:
     - source activate condaenv
     - export DEBUG=2
-    - coverage run --source=mahotas setup.py test
+    - coverage run --source=mahotas -m pytest -v
 after_success:
     - source activate condaenv
     - coveralls
