@@ -26,8 +26,9 @@ def test_watershed():
     def cast_test(dtype):
         St = S.astype(dtype)
         Mt = M.astype(int)
-        W = mahotas.cwatershed(2-St,Mt)
-        assert sys.getrefcount(W) == 2
+        W = mahotas.cwatershed(2-St, Mt)
+        if hasattr(sys, 'getrefcount'):
+            assert sys.getrefcount(W) == 2
         assert np.all(W == np.array([[1, 1, 1, 1],
                [1, 1, 1, 1],
                [1, 1, 1, 1],
