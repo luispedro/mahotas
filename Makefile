@@ -17,10 +17,7 @@ clean:
 	rm -rf build mahotas/*.so mahotas/features/*.so
 
 tests: debug
-	nosetests -vx
-
-tests3: debug3
-	nosetests3 -vx
+	pytest -v
 
 docs:
 	rm -rf build/docs
