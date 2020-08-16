@@ -2,6 +2,12 @@
 History
 =======
 
+Version 1.4.11 (Aug 16 2020)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Convert tests to pytest
+- Fix testing for PyPy
+
 Version 1.4.10 (Jun 11 2020)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
