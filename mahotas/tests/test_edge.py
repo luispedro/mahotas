@@ -1,6 +1,5 @@
 from mahotas.edge import sobel
 from mahotas.edge import sujoy
-from nose.tools import raises
 import pytest
 import mahotas as mh
 import numpy as np
@@ -105,10 +104,10 @@ def test_sujoy_pure():
     _ = sujoy(f)
     assert np.all(f == f2)
 
-@raises(ValueError)
 def test_3d_error1():
     f = np.zeros((32,16,3))
-    sujoy(f)
+    with pytest.raises(ValueError):
+        sujoy(f)
 
 def test_dog():
     im = mh.demos.load('lena')
