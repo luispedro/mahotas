@@ -219,6 +219,11 @@ questions.
 
 ## Recent Changes
 
+### Version 1.4.11 (Aug 16 2020)
+
+- Convert tests to pytest
+- Fix testing for PyPy
+
 ### Version 1.4.10 (Jun 11 2020)
 
 - Build wheels automatically (PR #114 by [nathanhillyer](https://github.com/nathanhillyer))

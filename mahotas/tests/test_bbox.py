@@ -2,7 +2,6 @@ import numpy as np
 import mahotas
 import mahotas as mh
 from mahotas import bbox
-from nose.tools import raises
 
 def test_croptobbox():
     X,Y = np.meshgrid(np.arange(16)-8,np.arange(16)-8)

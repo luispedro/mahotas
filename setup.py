@@ -148,7 +148,6 @@ setuptools.setup(name = 'mahotas',
               'mahotas-features = mahotas.features_cli:main',
           ],
       },
-      test_suite = 'nose.collector',
       install_requires = install_requires,
       tests_require = tests_require,
       cmdclass = {'build_ext': build_ext_subclass}

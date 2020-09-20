@@ -1,3 +1,7 @@
+Version 1.4.11 2020-08-16 by luispedro
+	* Convert tests to pytest
+	* Fix testing for PyPy
+
 Version 1.4.10 2020-06-11 by luispedro
 	* Build wheels automatically (PR #114 by @nathanhillyer)
 	* Fix issue with requirements in setup.py (#86 by @ATolkachev)

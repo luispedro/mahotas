@@ -1,7 +1,7 @@
 import numpy as np
 import mahotas.morph
 from scipy import ndimage
-from nose.tools import raises
+import pytest
 
 def slow_majority(img, N):
     img = (img > 0)
@@ -17,33 +17,31 @@ def slow_majority(img, N):
                 output[y+dy//2,x+dx//2] = 1
     return output
 
-def compare_w_slow(R):
+def gen_R():
+
+    np.random.seed(22)
+    R = np.random.rand(64, 64) > .68
+    yield R
+    yield R*24.
+
+    R = np.random.rand(32, 64) > .68
+    yield R
+
+    R = np.random.rand(64, 64) > .68
+    yield R[:32,:]
+
+    R = np.random.rand(64, 64) > .68
+    yield R[:23,:]
+
+@pytest.mark.parametrize('R', list(gen_R()))
+def test_compare_w_slow(R):
     for N in (3,5,7):
         assert np.all(mahotas.morph.majority_filter(R, N) == slow_majority(R, N))
 
-def test_majority():
 
-    np.random.seed(22)
-    R = np.random.rand(64, 64) > .68
-    yield compare_w_slow, R
-
-    R = np.random.rand(32, 64) > .68
-    yield compare_w_slow, R
-
-    R = np.random.rand(64, 64) > .68
-    yield compare_w_slow, R[:32,:]
-
-    R = np.random.rand(64, 64) > .68
-    yield compare_w_slow, R[:23,:]
-
-
-@raises(ValueError)
 def test_N0():
-    mahotas.morph.majority_filter(np.zeros((20,20), np.bool_), 0)
+    with pytest.raises(ValueError):
+        mahotas.morph.majority_filter(np.zeros((20,20), np.bool_), 0)
 
 
-def test_not_bool():
-    np.random.seed(22)
-    R = np.random.rand(64, 64) > .68
-    yield compare_w_slow, R*24.
 

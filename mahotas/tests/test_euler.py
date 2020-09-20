@@ -1,6 +1,6 @@
 import numpy as np
 from mahotas.euler import euler, _euler_lookup4, _euler_lookup8
-from nose.tools import raises
+import pytest
 
 def test_lookup():
     Q1 = [np.array(q, np.bool) for q in ([[0,0],[1,0]], [[0,0],[0,1]], [[0,1],[0,0]], [[1,0],[0,0]]) ]
@@ -33,10 +33,10 @@ def test_euler():
     assert euler(f) == 0
     assert euler(f, 4) == 0
 
-@raises(ValueError)
 def test_euler7():
     f = np.arange(100)
     f = (f % 5) == 1
     f = f.reshape((10,10))
-    euler(f, 7)
+    with pytest.raises(ValueError):
+        euler(f, 7)
 

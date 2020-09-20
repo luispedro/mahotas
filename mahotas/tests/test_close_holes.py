@@ -10,4 +10,5 @@ def test_close_holes_simple():
     holed[12,12] = True
     img[12,12] = True
     assert np.all( mahotas.close_holes(holed) == img)
-    assert sys.getrefcount(holed) == 2
+    if hasattr(sys, 'getrefcount'):
+        assert sys.getrefcount(holed) == 2

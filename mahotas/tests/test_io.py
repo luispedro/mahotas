@@ -1,9 +1,8 @@
 import numpy as np
 from mahotas.io import error_imread, error_imsave
-from nose.tools import raises
 from os import path
 import mahotas as mh
-
+import pytest
 
 filename = path.join(
             path.dirname(__file__),
@@ -19,20 +18,19 @@ def skip_on(etype):
                 test(*args, **kwargs)
             except Exception as e:
                 if isinstance(e, etype):
-                    from nose import SkipTest
-                    raise SkipTest
+                    pytest.skip("Missing dependency")
                 raise
         return execute
     return skip_on2
 
 
-@raises(ImportError)
 def test_error_imread():
-    error_imread(filename)
+    with pytest.raises(ImportError):
+        error_imread(filename)
 
-@raises(ImportError)
 def test_error_imsave():
-    error_imsave('/tmp/test_mahotas.png', np.arange(16, dtype=np.uint8).reshape((4,4)))
+    with pytest.raises(ImportError):
+        error_imsave('/tmp/test_mahotas.png', np.arange(16, dtype=np.uint8).reshape((4,4)))
 
 @skip_on(IOError)
 def test_as_grey():
@@ -46,11 +44,13 @@ def test_as_grey():
     assert im.ndim == 2
 
 
-@skip_on(ImportError)
 def test_pil():
     import mahotas as mh
     import numpy as np
-    from mahotas.io import pil
+    try:
+        from mahotas.io import pil
+    except ImportError:
+        pytest.skip("Missing PIL. Skipping PIL-dependent tests")
     lena = mh.demos.load('lena')
     filename = path.join(
             path.dirname(__file__),

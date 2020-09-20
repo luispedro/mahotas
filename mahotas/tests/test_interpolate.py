@@ -1,6 +1,7 @@
 from mahotas import interpolate
 import numpy as np
-from nose.tools import raises
+import pytest
+from pytest import raises
 
 def test_spline_filter1d_smoke():
     f  = (np.arange(64*64, dtype=np.intc) % 64).reshape((64,64)).astype(np.float64)
@@ -36,34 +37,32 @@ def test_shift_ratio():
         ratio = output.sum()/f.sum()
         assert np.abs(ratio - 1.) < .01
 
-def test_order():
+@pytest.mark.parametrize('func, deg', [(interpolate.spline_filter1d, -6),
+                                    (interpolate.spline_filter1d, 6),
+                                    (interpolate.spline_filter, 0)])
+def test_order(func, deg):
     f = np.arange(16*16).reshape((16,16))
-    @raises(ValueError)
-    def call_f(f, *args):
-        f(*args)
-    yield call_f, interpolate.spline_filter1d, f, -6
-    yield call_f, interpolate.spline_filter1d, f, 6
-    yield call_f, interpolate.spline_filter, f, 0
+    with raises(ValueError):
+        func(f, deg)
 
-def test_complex():
+@pytest.mark.parametrize('func, deg', [(interpolate.spline_filter1d, 3),
+                                        (interpolate.spline_filter, 3)])
+def test_complex(func, deg):
     f = -np.arange(16.*16).reshape((16,16))
     f = np.lib.scimath.sqrt(f)
 
-    @raises(TypeError)
-    def call_f(f, *args):
-        f(*args)
-    yield call_f, interpolate.spline_filter1d, f, 3
-    yield call_f, interpolate.spline_filter, f, 3
+    with raises(TypeError):
+        func(f, deg)
 
 
-@raises(ValueError)
 def test_maybe_filter_error():
-    interpolate._maybe_filter(np.array(3), 1, 'testing', False, np.float32)
+    with raises(ValueError):
+        interpolate._maybe_filter(np.array(3), 1, 'testing', False, np.float32)
 
-@raises(ValueError)
 def test_short_shift():
     im = np.arange(256).reshape((16,4,-1))
-    interpolate.shift(im, [1,0])
+    with raises(ValueError):
+        interpolate.shift(im, [1,0])
 
 def test_shift_uint8():
     im = np.arange(256).reshape((16,-1))

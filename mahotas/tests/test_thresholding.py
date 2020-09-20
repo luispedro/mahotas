@@ -1,9 +1,10 @@
-# Copyright 2011-2013 Luis Pedro Coelho <luis@luispedro.org>
+# Copyright 2011-2020 Luis Pedro Coelho <luis@luispedro.org>
 # License: MIT
 
 import numpy as np
 from mahotas.thresholding import otsu, rc, bernsen, gbernsen
 from mahotas.histogram import fullhistogram
+import pytest
 
 def slow_otsu(img, ignore_zeros=False):
     hist = fullhistogram(img)
@@ -42,20 +43,19 @@ def test_otsu_fast():
         slow = slow_otsu(A)
         assert fast == slow
 
-def test_thresholding():
+
+@pytest.mark.parametrize('method', [otsu, rc])
+def test_thresholding(method):
     np.random.seed(123)
     A = np.random.rand(128,128)
     A[24:48,24:48] += 4 * np.random.rand(24,24)
     A *= 255//A.max()
     A = A.astype(np.uint8)
-    def tm(method):
-        T = method(A)
-        assert (A > T)[24:48,24:48].mean() > .5
-        assert (A > T)[:24,:24].mean() < .5
-        assert (A > T)[48:,:].mean() < .5
-        assert (A > T)[:,48:].mean() < .5
-    yield tm, otsu
-    yield tm, rc
+    T = method(A)
+    assert (A > T)[24:48,24:48].mean() > .5
+    assert (A > T)[:24,:24].mean() < .5
+    assert (A > T)[48:,:].mean() < .5
+    assert (A > T)[:,48:].mean() < .5
 
 
 def test_nozeros():
@@ -75,13 +75,11 @@ def test_ignore_zeros():
     assert rc(A, ignore_zeros=1) > 100
     assert otsu(A, ignore_zeros=1) > 100
 
-def test_zero_image():
+@pytest.mark.parametrize('method', [otsu, rc])
+def test_zero_image(method):
     A = np.zeros((16,16), np.uint8)
-    def tm(method):
-        assert method(A, ignore_zeros=0) == 0
-        assert method(A, ignore_zeros=1) == 0
-    yield tm, rc
-    yield tm, otsu
+    assert method(A, ignore_zeros=0) == 0
+    assert method(A, ignore_zeros=1) == 0
 
 def test_soft_threhold():
     from mahotas.thresholding import soft_threshold

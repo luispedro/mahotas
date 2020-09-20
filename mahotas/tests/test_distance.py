@@ -30,13 +30,13 @@ def compare_slow(bw):
 def test_distance():
     bw = np.ones((256, 256), bool)
     bw[100, 100] = 0
-    yield compare_slow, bw
+    compare_slow(bw)
 
     bw[100:110, 100:110] = 0
-    yield compare_slow, bw
+    compare_slow(bw)
 
     bw[200:210, 200:210] = 0
-    yield compare_slow, bw
+    compare_slow(bw)
 
 
 def test_uint8():

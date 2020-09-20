@@ -1,9 +1,7 @@
 def run(verbose=False):
-    import nose
     from os import path
-    currentdir = path.dirname(__file__)
-    updir = path.join(currentdir, '..')
-    argv = ['', '--exe', '-w', updir]
+    import pytest
+    args = [path.dirname(__file__)]
     if verbose:
-        argv.append('--verbose')
-    return nose.run('mahotas', argv=argv)
+        args.append('--verbose')
+    return pytest.main(args)
