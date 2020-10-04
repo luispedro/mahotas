@@ -21,15 +21,17 @@
 #  THE SOFTWARE.
 
 from __future__ import division
+
 try:
     import setuptools
 except ImportError:
-    print('''
-setuptools not found.
+    print("""
+        setuptools not found.
 
-On linux, the package is often called python-setuptools''')
+        On linux, the package is often called python-setuptools""")
     from sys import exit
     exit(1)
+
 import os
 try:
     import numpy
@@ -42,8 +44,7 @@ except ImportError:
 
 from distutils.command.build_ext import build_ext
 
-exec(compile(open('mahotas/mahotas_version.py').read(),
-             'mahotas/mahotas_version.py', 'exec'))
+__version__ = open('mahotas/mahotas_version.py').read()
 
 try:
     long_description = open('README.md', encoding='utf-8').read()
@@ -109,47 +110,47 @@ class build_ext_subclass(build_ext):
         build_ext.build_extensions(self)
 
 classifiers = [
-'Development Status :: 5 - Production/Stable',
-'Intended Audience :: Developers',
-'Intended Audience :: Science/Research',
-'Topic :: Scientific/Engineering :: Image Recognition',
-'Topic :: Software Development :: Libraries',
-'Programming Language :: Python',
-'Programming Language :: Python :: 2',
-'Programming Language :: Python :: 2.7',
-'Programming Language :: Python :: 3',
-'Programming Language :: Python :: 3.3',
-'Programming Language :: Python :: 3.4',
-'Programming Language :: Python :: 3.5',
-'Programming Language :: Python :: 3.6',
-'Programming Language :: Python :: 3.7',
-'Programming Language :: C++',
-'Operating System :: OS Independent',
-'License :: OSI Approved :: MIT License',
+    'Development Status :: 5 - Production/Stable',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Science/Research',
+    'Topic :: Scientific/Engineering :: Image Recognition',
+    'Topic :: Software Development :: Libraries',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 2',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.3',
+    'Programming Language :: Python :: 3.4',
+    'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: C++',
+    'Operating System :: OS Independent',
+    'License :: OSI Approved :: MIT License',
 ]
 
-setuptools.setup(name = 'mahotas',
-      version = __version__,
-      description = 'Mahotas: Computer Vision Library',
-      long_description = long_description,
-      long_description_content_type = 'text/markdown',
-      author = 'Luis Pedro Coelho',
-      author_email = 'luis@luispedro.org',
-      license = 'MIT',
-      platforms = ['Any'],
-      classifiers = classifiers,
-      url = 'http://luispedro.org/software/mahotas',
-      packages = packages,
-      ext_modules = ext_modules,
-      package_dir = package_dir,
-      package_data = package_data,
-      entry_points={
-          'console_scripts': [
-              'mahotas-features = mahotas.features_cli:main',
-          ],
-      },
-      install_requires = install_requires,
-      tests_require = tests_require,
-      cmdclass = {'build_ext': build_ext_subclass}
-      )
-
+setuptools.setup(
+    name = 'mahotas',
+    version = __version__,
+    description = 'Mahotas: Computer Vision Library',
+    long_description = long_description,
+    long_description_content_type = 'text/markdown',
+    author = 'Luis Pedro Coelho',
+    author_email = 'luis@luispedro.org',
+    license = 'MIT',
+    platforms = ['Any'],
+    classifiers = classifiers,
+    url = 'http://luispedro.org/software/mahotas',
+    packages = packages,
+    ext_modules = ext_modules,
+    package_dir = package_dir,
+    package_data = package_data,
+    entry_points={
+        'console_scripts': [
+            'mahotas-features = mahotas.features_cli:main',
+        ],
+    },
+    install_requires = install_requires,
+    tests_require = tests_require,
+    cmdclass = {'build_ext': build_ext_subclass}
+)
