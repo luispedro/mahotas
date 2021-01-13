@@ -1,0 +1,33 @@
+name: Test mahotas
+
+on: [push]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.5', '3.6', '3.7', '3.8']
+        numpy-version:  ['1.16', '1.17', '1.18', '1.19']
+      max-parallel: 5
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Add conda to system path
+      run: |
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        echo $CONDA/bin >> $GITHUB_PATH
+    - name: Install dependencies
+      run: |
+        conda install --name base numpy=${{ matrix.numpy-version }}
+        conda install --file tests-requirements.txt --name base
+    - name: Build
+      run: |
+         make debug
+    - name: Test with pytest
+      run: |
+        pytest -v
