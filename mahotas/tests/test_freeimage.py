@@ -74,7 +74,7 @@ def test_multi(tmpdir):
         assert np.all(f == f2)
 
 
-def test_uint16():
+def test_uint16(tmpdir):
     img = np.zeros((32,32), dtype=np.uint16)
     fname = tmpdir.join('mahotas_test.png')
     freeimage.imsave(fname, img)
