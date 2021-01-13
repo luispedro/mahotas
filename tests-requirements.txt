@@ -1,3 +1,6 @@
+matplotlib
+pip
+coveralls
 pytest
 scipy
 pillow
