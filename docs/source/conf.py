@@ -178,8 +178,8 @@ plot_include_source = True
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', 'mahotas.tex', ur'mahotas Documentation',
-   ur'Luis Pedro Coelho', 'manual'),
+  ('index', 'mahotas.tex', 'mahotas Documentation',
+   'Luis Pedro Coelho', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
