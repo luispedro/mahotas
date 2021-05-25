@@ -476,7 +476,7 @@ def wavelet_center(f, border=0, dtype=float, cval=0.0):
     nshape, position = _wavelet_center_compute(f.shape, border)
     nimage = np.zeros(nshape, dtype=dtype)
     nimage += cval
-    nimage[position] = f
+    nimage[tuple(position)] = f
     return nimage
 
 
@@ -507,7 +507,7 @@ def wavelet_decenter(w, oshape, border=0):
         Forward function
     '''
     nshape, position = _wavelet_center_compute(oshape, border)
-    return w[position]
+    return w[tuple(position)]
 
 
 
