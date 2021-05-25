@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2010, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2009-2021, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -61,7 +61,7 @@ def fullhistogram(img):
     """
     _verify_is_integer_type(img, 'fullhistogram')
     img = np.ascontiguousarray(img)
-    if img.dtype == np.bool:
+    if img.dtype == bool:
         ones = img.sum()
         zeros = img.size - ones
         return np.array([zeros, ones], np.uintc)

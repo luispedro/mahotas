@@ -3,9 +3,9 @@ from mahotas.euler import euler, _euler_lookup4, _euler_lookup8
 import pytest
 
 def test_lookup():
-    Q1 = [np.array(q, np.bool) for q in ([[0,0],[1,0]], [[0,0],[0,1]], [[0,1],[0,0]], [[1,0],[0,0]]) ]
+    Q1 = [np.array(q, np.bool_) for q in ([[0,0],[1,0]], [[0,0],[0,1]], [[0,1],[0,0]], [[1,0],[0,0]]) ]
     Q2 =  [(~q) for q in Q1]
-    Q3 = [np.array(q, np.bool) for q in ([[0,1],[1,0]], [[1,0],[0,1]]) ]
+    Q3 = [np.array(q, np.bool_) for q in ([[0,1],[1,0]], [[1,0],[0,1]]) ]
 
     def _value(q, lookup):
         q = q.ravel()
@@ -23,7 +23,7 @@ def test_lookup():
         assert _value(q, _euler_lookup4) ==  .5
 
 def test_euler():
-    f = np.zeros((16,16), np.bool)
+    f = np.zeros((16,16), np.bool_)
     f[4:8,4:8] = 1
     assert euler(f) == 1
     assert euler(f, 4) == 1

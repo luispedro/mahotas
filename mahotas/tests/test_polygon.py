@@ -6,7 +6,7 @@ import pytest
 
 def test_polygon():
     polygon = [(10,10), (10,20), (20,20)]
-    canvas = np.zeros((40,40), np.bool)
+    canvas = np.zeros((40,40), np.bool_)
     fill_polygon(polygon, canvas)
     assert canvas.sum() == (10*10+10)/2
     canvas2 = canvas.copy()
@@ -16,7 +16,7 @@ def test_polygon():
 
 def test_convex():
     polygon = [(100,232), (233,222), (234,23), (555,355), (343,345), (1000,800)]
-    canvas = np.zeros((1024, 1024), np.bool)
+    canvas = np.zeros((1024, 1024), np.bool_)
     mahotas.polygon.fill_polygon(polygon, canvas)
     canvas2 = mahotas.polygon.fill_convexhull(canvas)
     # The overlap isn't perfect. There is a slight sliver. Fixing it is not

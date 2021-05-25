@@ -1,7 +1,7 @@
 from mahotas import label
 import numpy as np
 def test_label():
-    A = np.zeros((128,128), np.int)
+    A = np.zeros((128,128), np.int_)
     L,n = label(A)
     assert not L.max()
     assert n == 0

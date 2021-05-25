@@ -90,7 +90,7 @@ def test_overflow():
     f *= 255
     f = f.astype(np.uint8)
     for max_n in [127, 240, 280]:
-        markers = np.zeros(f.shape, np.int)
+        markers = np.zeros(f.shape, np.int_)
         for i in range(max_n):
             while True:
                 a = np.random.randint(f.shape[0])

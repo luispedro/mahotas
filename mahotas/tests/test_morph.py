@@ -5,23 +5,23 @@ import pytest
 
 
 def test_get_structuring_elem():
-    A = np.zeros((10,10), np.bool)
-    Bc = np.ones((4,4), dtype=np.bool)
+    A = np.zeros((10,10), np.bool_)
+    Bc = np.ones((4,4), dtype=np.bool_)
     Bc[0,2] = 0
 
     assert np.all(get_structuring_elem(A, None) == [[0,1,0],[1,1,1],[0,1,0]])
     assert np.all(get_structuring_elem(A, 4) == [[0,1,0],[1,1,1],[0,1,0]])
     assert np.all(get_structuring_elem(A, 4) == get_structuring_elem(A, 1))
     assert np.all(get_structuring_elem(A, 8) == get_structuring_elem(A, 2))
-    assert np.all(get_structuring_elem(A, 8) == np.ones((3,3), dtype=np.bool))
+    assert np.all(get_structuring_elem(A, 8) == np.ones((3,3), dtype=np.bool_))
     assert np.all(get_structuring_elem(A, Bc) == Bc)
     assert np.all(get_structuring_elem(A, Bc.T) == Bc.T)
     assert get_structuring_elem(A, Bc.T).flags['C_CONTIGUOUS']
-    assert np.all(get_structuring_elem(A, Bc.astype(np.float).T).flags['C_CONTIGUOUS'])
-    assert np.all(get_structuring_elem(A, Bc.astype(np.float).T) == Bc.T)
+    assert np.all(get_structuring_elem(A, Bc.astype(np.float_).T).flags['C_CONTIGUOUS'])
+    assert np.all(get_structuring_elem(A, Bc.astype(np.float_).T) == Bc.T)
 
     with pytest.raises(ValueError):
-        Bc = np.ones((3,3,3), dtype=np.bool)
+        Bc = np.ones((3,3,3), dtype=np.bool_)
         get_structuring_elem(A, Bc)
 
 
@@ -53,7 +53,7 @@ def slow_reg(A, agg):
         return vals
 
 
-    res = np.zeros(A.shape, bool)
+    res = np.zeros(A.shape, np.bool_)
     for i in range(A.shape[0]):
         for j in range(A.shape[0]):
             res[i,j] = (A[i,j] == agg(get(i,j)))
@@ -189,7 +189,7 @@ def test_distance_multi():
     import mahotas._morph
     np.random.seed(20)
     binim = np.random.random((12,18)) > .1
-    f = (binim * 0 + 26 *27).astype(float)
+    f = (binim * 0 + 26 *27).astype(np.float_)
     Bc = np.ones((3,3), bool)
     mahotas._morph.distance_multi(f, binim, Bc)
     f2 = mahotas.distance(binim)

@@ -49,7 +49,7 @@ def sobel(img, just_filter=False):
     '''
     # This is based on Octave's implementation,
     # but with some reverse engineering to match Matlab exactly
-    img = np.array(img, dtype=np.float)
+    img = np.array(img, dtype=float)
     if img.ndim != 2:
         raise ValueError('mahotas.sobel: Only available for 2-dimensional images')
     img -= img.min()
@@ -93,7 +93,7 @@ def dog(img, sigma1 = 2, multiplier = 1.001, just_filter = False):
         Binary image of edges, unless `just_filter`, in which case it will be
         an array of floating point values.
     '''
-    img = np.array(img, dtype=np.float)
+    img = np.array(img, dtype=float)
     if img.ndim != 2:
         raise ValueError('mahotas.dog: Only available for 2-dimensional images')
 

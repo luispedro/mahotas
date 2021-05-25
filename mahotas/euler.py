@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2019, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2021, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # License: MIT
 
@@ -64,7 +64,7 @@ def euler(f, n=8, mode='constant'):
         lookup = _euler_lookup4
     else:
         raise ValueError('mahotas.euler: Connectivity must be 4 or 8')
-    if f.dtype is not np.bool:
+    if f.dtype is not np.bool_:
         assert np.all( (f == 0) | (f == 1)), 'mahotas.euler: Non-binary image'
         f = (f != 0)
     value = convolve(f.astype(_powers.dtype, copy=False), _powers, mode=mode)

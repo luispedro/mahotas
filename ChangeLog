@@ -1,3 +1,6 @@
+Unreleased
+	* Update for newer NumPy
+
 Version 1.4.11 2020-08-16 by luispedro
 	* Convert tests to pytest
 	* Fix testing for PyPy

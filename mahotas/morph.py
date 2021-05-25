@@ -498,7 +498,7 @@ def close_holes(ref, Bc=None):
 
 def majority_filter(img, N=3, out=None, output=None):
     '''
-    filtered = majority_filter(img, N=3, out={np.empty(img.shape, np.bool)})
+    filtered = majority_filter(img, N=3, out={np.empty(img.shape, bool)})
 
     Majority filter
 

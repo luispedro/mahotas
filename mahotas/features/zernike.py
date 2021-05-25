@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2014, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2006-2021, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -84,7 +84,7 @@ def zernike_moments(im, radius, degree=8, cm=None):
     Yn = Yn[k]
     Xn = Xn[k]
     Dn = Dn[k]
-    An = np.empty(Yn.shape, np.complex)
+    An = np.empty(Yn.shape, np.complex_)
     An.real = (Xn/Dn)
     An.imag = (Yn/Dn)
 

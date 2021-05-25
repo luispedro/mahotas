@@ -530,7 +530,7 @@ def _array_from_bitmap(bitmap):
     if type(dtype) == str and dtype == 'bit':
         bitmap8 = _FI.FreeImage_ConvertToGreyscale(bitmap)
         try:
-            return _array_from_bitmap(bitmap8).astype(np.bool)
+            return _array_from_bitmap(bitmap8).astype(bool)
         finally:
             _FI.FreeImage_Unload(bitmap8)
     array = _wrap_bitmap_bits_in_array(bitmap, shape, dtype)

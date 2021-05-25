@@ -41,9 +41,9 @@ def dilate(f, B):
 def sereflect(Bi):
     return Bi[::-1, ::-1]
 def limits(f):
-    from numpy import array, bool, uint8, uint16, int32, int64
+    from numpy import array, bool_, uint8, uint16, int32, int64
     code = f.dtype
-    if code == bool: return 0,1
+    if code == bool_: return 0,1
     if code == uint8: return 0,255
     if code == uint16: return 0,65535
     if code == int32: return -2147483647,2147483647

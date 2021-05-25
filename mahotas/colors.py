@@ -1,6 +1,6 @@
-# Copyright (C) 2012-2019, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2012-2021, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
-# 
+#
 # License: MIT (see COPYING file)
 
 from __future__ import division
@@ -8,9 +8,9 @@ from __future__ import division
 import numpy as np
 from .internal import _check_3
 
-def rgb2grey(array, dtype=np.float):
+def rgb2grey(array, dtype=float):
     '''
-    grey = rgb2grey(rgb_image, dtype=np.float)
+    grey = rgb2grey(rgb_image, dtype=float)
 
     Convert an RGB image to a grayscale image
 
@@ -35,7 +35,7 @@ def rgb2grey(array, dtype=np.float):
     transform = np.array([0.30, 0.59, 0.11])
     transformed = np.dot(array, transform)
     return transformed.astype(dtype, copy=False)
-    
+
 rgb2gray = rgb2grey
 
 def _convert(array, matrix, dtype, funcname):

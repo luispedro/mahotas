@@ -23,7 +23,7 @@ def _compare_slow(img):
         assert np.all(_slow_bwperim(img, n) == bwperim(img, n))
 
 def test_bwperim():
-    img = np.zeros((8,8), np.bool)
+    img = np.zeros((8,8), np.bool_)
     img[3:7,3:7] = 1
     _compare_slow(img)
 

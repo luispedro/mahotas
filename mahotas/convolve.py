@@ -666,7 +666,7 @@ def laplacian_2D(array, alpha = 0.2):
     filtered : ndarray
         Filtered version of `array`
     """
-    array = np.array(array, dtype=np.float)
+    array = np.array(array, dtype=float)
     if array.ndim != 2:
         raise ValueError('mahotas.laplacian_2D: Only available for 2-dimensional arrays')
         

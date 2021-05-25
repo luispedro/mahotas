@@ -27,7 +27,7 @@ def test_croptobbox_3d():
 
 
 def test_bbox_empty():
-    assert mahotas.bbox(np.zeros((), np.bool)).shape == (0,)
+    assert mahotas.bbox(np.zeros((), np.bool_)).shape == (0,)
 
 def test_bbox_3():
     YXZ = np.indices((32,32,64), float)
