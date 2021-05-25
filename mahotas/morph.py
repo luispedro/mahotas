@@ -319,7 +319,7 @@ def hitmiss(input, Bc, out=None, output=None):
 
     For a given pixel position, the hit&miss is ``True`` if, when ``Bc`` is
     overlaid on ``input``, centered at that position, the ``1`` values line up
-    with ``1``\ s, while the ``0``\ s line up with ``0``\ s (``2``\ s correspond to
+    with ``1``s, while the ``0``s line up with ``0``s (``2``s correspond to
     *don't care*).
 
     Examples

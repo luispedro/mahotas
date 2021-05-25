@@ -15,7 +15,7 @@ def moments(img, p0, p1, cm=None, convert_to_float=True, normalize=False, normal
 
     The formula computed is
 
-    \sum_{ij} { img[i,j] (i - c0)**p0 (j - c1)**p1 }
+    \\sum_{ij} { img[i,j] (i - c0)**p0 (j - c1)**p1 }
 
     where cm = (c0,c1). If `cm` is not given, then (0,0) is used.
 

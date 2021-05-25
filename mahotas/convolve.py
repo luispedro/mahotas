@@ -204,7 +204,7 @@ def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None, output=None):
     '''
     ranked = rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None)
 
-    Rank filter. The value at ``ranked[i,j]`` will be the ``rank``\ th largest in
+    Rank filter. The value at ``ranked[i,j]`` will be the ``rank``th largest in
     the neighbourhood defined by ``Bc``.
 
     Parameters
@@ -225,7 +225,7 @@ def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None, output=None):
     Returns
     -------
     ranked : ndarray of same type and shape as ``f``
-        ranked[i,j] is the ``rank``\ th value of the points in f close to (i,j)
+        ranked[i,j] is the ``rank``th value of the points in f close to (i,j)
 
     See Also
     --------
