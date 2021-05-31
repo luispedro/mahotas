@@ -20,7 +20,7 @@ def moments(img, p0, p1, cm=None, convert_to_float=True, normalize=False, normal
     where cm = (c0,c1). If `cm` is not given, then (0,0) is used.
 
     If image is of an integer type, then it is internally converted to
-    np.float64, unlesss `convert_to_float` is False. The reason is that,
+    np.float64, unless `convert_to_float` is False. The reason is that,
     otherwise, overflow is likely except for small images. Since this
     conversion takes longer than the computation, you can turn it off in case
     you are sure that your images are small enough for overflow to be an issue.
