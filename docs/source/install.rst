@@ -54,7 +54,7 @@ Packaged Versions
 On Windows
 ~~~~~~~~~~
 
-On Windows, Christoph Gohlke does an excelent job maintaining `binary packages
+On Windows, Christoph Gohlke does an excellent job maintaining `binary packages
 of mahotas <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`__ (and several other
 packages).
 
