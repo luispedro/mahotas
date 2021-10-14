@@ -1,0 +1,50 @@
+name: Test mahotas
+
+on: [push]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.6', '3.7', '3.8', '3.9']
+        numpy-version:  ['1.17', '1.18', '1.19', '1.20', '1.21']
+        exclude:
+            # 3.6 is too old for NumPy 1.20/1.21
+            - python-version: '3.6'
+              numpy-version: '1.20'
+            - python-version: '3.6'
+              numpy-version: '1.21'
+
+            # NumPy 1.17/1.18 are too old for Python 3.9
+            - python-version: '3.9'
+              numpy-version: '1.17'
+            - python-version: '3.9'
+              numpy-version: '1.18'
+      max-parallel: 5
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        activate-environment: mahotas_test_env
+        python-version: ${{ matrix.python-version }}
+        auto-activate-base: false
+    - name: Add conda to system path
+      run: |
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        echo $CONDA/bin >> $GITHUB_PATH
+    - name: Install dependencies
+      run: |
+        conda install --name mahotas_test_env python=${{ matrix.python-version }} numpy=${{ matrix.numpy-version }}
+        conda install --file tests-requirements.txt --name mahotas_test_env
+    - name: Build
+      shell: bash -l {0}
+      run: |
+         conda activate mahotas_test_env
+         make debug
+    - name: Test with pytest
+      shell: bash -l {0}
+      run: |
+         conda activate mahotas_test_env
+         python -m pytest -v
