@@ -2,6 +2,12 @@
 History
 =======
 
+Version 1.4.12 (Oct 14 2021)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Update to newer NumPy
+- Build wheels for Python 3.9 & 3.10
+
 Version 1.4.11 (Aug 16 2020)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
