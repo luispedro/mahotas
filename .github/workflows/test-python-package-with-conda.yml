@@ -37,6 +37,7 @@ jobs:
     - name: Install dependencies
       run: |
         conda install --name mahotas_test_env python=${{ matrix.python-version }} numpy=${{ matrix.numpy-version }}
+        conda config --env --add channels conda-forge
         conda install --file tests-requirements.txt --name mahotas_test_env
     - name: Build
       shell: bash -l {0}
