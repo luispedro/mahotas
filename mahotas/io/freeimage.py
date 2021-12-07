@@ -803,6 +803,6 @@ if sys.version_info[0] > 2:
     _, _encoding = locale.getdefaultlocale()
     if _encoding is None:
         _encoding = 'UTF-8'
-    _bytestr = lambda x: x.encode(_encoding)
+    _bytestr = lambda x: str(x).encode(_encoding)
 else:
     _bytestr = str
