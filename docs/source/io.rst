@@ -16,7 +16,7 @@ It can use the following backends (it tries them in the following order):
     arrays. It supports PNG, JPEG, TIFF, WEBP, BMP, and a few TIFF-based
     microscopy formats (LSM and STK).
 
-2.  It also looks for `freeimage <http://freeimage.sourceforge.net/>`__.
+2.  It also looks for `freeimage <https://freeimage.sourceforge.net/>`__.
     Freeimage can read and write many formats. Unfortunately, it is harder to
     install and it is not as well-maintained as imread.
 
@@ -29,4 +29,4 @@ Thus, depending on what you had installed, the resulting images would be
 different.
 
 If you are running on Windows, you may wish to try `Christoph Gohlke's packages
-<http://www.lfd.uci.edu/~gohlke/pythonlibs/#mahotas>`__.
+<https://www.lfd.uci.edu/~gohlke/pythonlibs/#mahotas>`__.

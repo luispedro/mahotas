@@ -3,7 +3,7 @@ Finding Wally
 =============
 
 This was originally an `answer on stackoverflow
-<http://stackoverflow.com/questions/8849869/how-do-i-find-wally-with-python>`__
+<https://stackoverflow.com/questions/8849869/how-do-i-find-wally-with-python>`__
 We can use it as a simple tutorial example.
 
 The problem is to find Wally (who goes by Waldo in the US) in the following

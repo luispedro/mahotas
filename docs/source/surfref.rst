@@ -4,7 +4,7 @@ Implementing SURF-ref With Mahotas
 
 This is a companion to the paper `Determining the subcellular location of new
 proteins from microscope images using local features
-<http://dx.doi.org/10.1093/bioinformatics/btt392>`__
+<https://dx.doi.org/10.1093/bioinformatics/btt392>`__
 by Coelho et al. (2013).
 
 ::

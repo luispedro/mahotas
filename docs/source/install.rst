@@ -3,7 +3,7 @@ How To Install Mahotas
 
 .. image:: https://anaconda.org/conda-forge/mahotas/badges/installer/conda.svg   :target: https://conda.anaconda.org/conda-forge
 
-The simplest way to install mahotas is to use `conda <http://anaconda.org/>`__.
+The simplest way to install mahotas is to use `conda <https://anaconda.org/>`__.
 
 If you have conda installed, you can install mahotas using the following pair
 of commands::
@@ -26,7 +26,7 @@ You can get the released version using pip::
     pip install mahotas
 
 If you prefer, you can download the source from `PyPI
-<http://pypi.python.org/pypi/mahotas>`__ and run::
+<https://pypi.python.org/pypi/mahotas>`__ and run::
 
     python setup.py install
 
@@ -55,22 +55,22 @@ On Windows
 ~~~~~~~~~~
 
 On Windows, Christoph Gohlke does an excellent job maintaining `binary packages
-of mahotas <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`__ (and several other
+of mahotas <https://www.lfd.uci.edu/~gohlke/pythonlibs/>`__ (and several other
 packages).
 
 
 WinPython
 ~~~~~~~~~
 
-`WinPython <http://winpython.sourceforge.net/>`__ ships with `mahotas as a
-standard package <http://sourceforge.net/p/winpython/wiki/PackageIndex_27/>`__
+`WinPython <https://winpython.sourceforge.net/>`__ ships with `mahotas as a
+standard package <https://sourceforge.net/p/winpython/wiki/PackageIndex_27/>`__
 
 Python(x, y)
 ~~~~~~~~~~~~
 
-If you use `Python(x, y) <http://python-xy.github.io/>`__, which is often a good
+If you use `Python(x, y) <https://python-xy.github.io/>`__, which is often a good
 solution, then you probably have it already as `mahotas is a standard plugin
-<http://python-xy.github.io>`__.
+<https://python-xy.github.io>`__.
 
 Enthought Canopy
 ~~~~~~~~~~~~~~~~
@@ -82,7 +82,7 @@ FreeBSD
 ~~~~~~~
 
 Mahotas is available for FreeBSD as `graphics/mahotas
-<http://www.freshports.org/graphics/mahotas>`__.
+<https://www.freshports.org/graphics/mahotas>`__.
 
 MacPorts
 ~~~~~~~~

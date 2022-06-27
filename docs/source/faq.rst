@@ -5,7 +5,7 @@ Frequently Asked Questions
 How do I install mahotas with anaconda?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you are using `conda <http://anaconda.org/>`__, you can
+If you are using `conda <https://anaconda.org/>`__, you can
 install mahotas from `conda-forge
 <https://conda-forge.github.io/>`__ using the following
 commands::
@@ -19,7 +19,7 @@ Who uses mahotas?
 In June 2016, there were `34 papers
 <https://scholar.google.com/scholar?as_sdt=1,5&hl=en&sciodt=0,5&cites=18199654681754783804&scipsc=>`__
 citing the `mahotas paper
-<http://dx.doi.org/10.5334/jors.ac>`__
+<https://dx.doi.org/10.5334/jors.ac>`__
 
 Why did you not simply contribute to ``scipy.ndimage`` or ``scikits.image``?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -76,7 +76,7 @@ If you use mahotas in a scientific publication, please cite:
 
     Coelho, L.P. 2013. Mahotas: Open source software for scriptable computer
     vision. Journal of Open Research Software 1(1), DOI:
-    http://dx.doi.org/10.5334/jors.ac
+    https://dx.doi.org/10.5334/jors.ac
 
 In BibTeX format::
 
@@ -87,7 +87,7 @@ In BibTeX format::
         year = {2013},
         volume = {1},
         doi = {10.5334/jors.ac},
-        url = {http://dx.doi.org/10.5334/jors.ac}
+        url = {https://dx.doi.org/10.5334/jors.ac}
     }
 
 This is accessible in Python using ``mahotas.citation()``.
@@ -109,5 +109,5 @@ as it uses other packages itself.  Thus, depending on what you had installed,
 the resulting images would be different.
 
 If you are running on Windows, you may wish to try `Christoph Gohlke's packages
-<http://www.lfd.uci.edu/~gohlke/pythonlibs/#mahotas>`__.
+<https://www.lfd.uci.edu/~gohlke/pythonlibs/#mahotas>`__.
 

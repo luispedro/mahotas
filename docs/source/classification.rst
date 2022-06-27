@@ -15,7 +15,7 @@ Here is the simple algorithm:
 2. learn a classifier
 3. use that classifier on the unlabeled images
 
-In the code below I used `jug <http://luispedro.org/software/jug>`_ to give you
+In the code below I used `jug <https://luispedro.org/software/jug>`_ to give you
 the possibility of running it on multiple processors, but the code also works
 if you remove every line which mentions ``TaskGenerator``.
 
@@ -74,6 +74,6 @@ with other features in ``mahotas.features`` if you'd like (or try
 ``mahotas.surf``, but that gets more complicated).
 
 (This was motivated by `a question on Stackoverflow
-<http://stackoverflow.com/questions/5426482/using-pil-to-detect-a-scan-of-a-blank-page/5505754>`__).
+<https://stackoverflow.com/questions/5426482/using-pil-to-detect-a-scan-of-a-blank-page/5505754>`__).
 
 

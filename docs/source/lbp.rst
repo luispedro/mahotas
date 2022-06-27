@@ -8,7 +8,7 @@ diagram below:
 .. image:: LBP.svg
     :alt: Neighbourhood illustration
 
-(Image reference: `Wikipedia <http://en.wikipedia.org/wiki/Local_binary_patterns>`__)
+(Image reference: `Wikipedia <https://en.wikipedia.org/wiki/Local_binary_patterns>`__)
 
 The reference pixel is in red, at the centre. A number of points are defined at
 a distance ``r`` from it. These are the green points. As you go from left to

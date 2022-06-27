@@ -38,8 +38,8 @@ After Oct 2013, you can get this image with mahotas as::
 Dilation & Erosion
 ------------------
 
-`Dilation <http://en.wikipedia.org/wiki/Dilation_(morphology)>`__ and `erosion
-<http://en.wikipedia.org/wiki/Erosion_(morphology)>`__ are two very basic
+`Dilation <https://en.wikipedia.org/wiki/Dilation_(morphology)>`__ and `erosion
+<https://en.wikipedia.org/wiki/Erosion_(morphology)>`__ are two very basic
 operators (mathematically, you only need one of them as you
 can define the erosion as dilation of the negative or vice-versa).
 

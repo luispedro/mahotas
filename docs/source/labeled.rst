@@ -68,7 +68,7 @@ Here is a slightly more complex example. The full code is in the `demos
 directory <https://github.com/luispedro/mahotas/tree/master/mahotas/demos>`__
 as ``nuclear.py``. We are going to use this image, a fluorescent microscopy
 image from a `nuclear segmentation benchmark
-<http://luispedro.org/projects/nuclear-segmentation>`__
+<https://luispedro.org/projects/nuclear-segmentation>`__
 
 This image is available as ``mahotas.demos.nuclear_image()``
 

@@ -6,7 +6,7 @@ Mahotas: Computer Vision in Python
 
         Coelho, L.P. 2013. Mahotas: Open source software for scriptable computer
         vision. Journal of Open Research Software 1(1):e3, DOI:
-        http://dx.doi.org/10.5334/jors.ac
+        https://dx.doi.org/10.5334/jors.ac
 
 Mahotas is a computer vision and image processing library for Python.
 
@@ -16,14 +16,14 @@ numpy arrays and with a very clean Python interface.
 Mahotas currently has over 100 functions for image processing and computer
 vision and it keeps growing. Some examples of mahotas functionality:
 
- - `watershed <http://mahotas.readthedocs.io/en/latest/api.html#mahotas.cwatershed>`__
+ - `watershed <https://mahotas.readthedocs.io/en/latest/api.html#mahotas.cwatershed>`__
  - convex points calculations.
- - `hit & miss. thinning <http://mahotas.readthedocs.io/en/latest/api.html#mahotas.hitmiss>`__
+ - `hit & miss. thinning <https://mahotas.readthedocs.io/en/latest/api.html#mahotas.hitmiss>`__
  - Zernike & Haralick, `local binary patterns
-   <http://mahotas.readthedocs.io/en/latest/lbp.html>`__, and TAS features.
- - `morphological processing <http://mahotas.readthedocs.io/en/latest/morphology.html>`__
- - `Speeded-Up Robust Features (SURF), a form of local features <http://mahotas.readthedocs.io/en/latest/surf.html>`__
- - `thresholding <http://mahotas.readthedocs.io/en/latest/thresholding.html>`__
+   <https://mahotas.readthedocs.io/en/latest/lbp.html>`__, and TAS features.
+ - `morphological processing <https://mahotas.readthedocs.io/en/latest/morphology.html>`__
+ - `Speeded-Up Robust Features (SURF), a form of local features <https://mahotas.readthedocs.io/en/latest/surf.html>`__
+ - `thresholding <https://mahotas.readthedocs.io/en/latest/thresholding.html>`__
  - convolution.
  - Sobel edge detection.
 
@@ -38,7 +38,7 @@ Bug reports with test cases typically get fixed in 24 hours.
 
 .. seealso::
 
-    `mahotas-imread <http://imread.readthedocs.io/en/latest/>`__ is side
+    `mahotas-imread <https://imread.readthedocs.io/en/latest/>`__ is side
     project which includes code to read/write images to files
 
 Examples

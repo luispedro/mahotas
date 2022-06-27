@@ -26,7 +26,7 @@ You can obtain help on all the options by running ``mahotas-features.py
 --help``::
 
     If you use mahotas in a scientific publication, please cite
-        Coelho, LP (2013). http://dx.doi.org/10.5334/jors.ac
+        Coelho, LP (2013). https://dx.doi.org/10.5334/jors.ac
 
 
     usage: mahotas-features.py [-h] [--output OUTPUT] [--clobber]

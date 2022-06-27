@@ -52,7 +52,7 @@ Other Colour Spaces
 -------------------
 
 Mahotas can also convert to `XYZ space
-<http://en.wikipedia.org/wiki/CIE_1931_color_space>`__ and to the `Lab space
-<http://en.wikipedia.org/wiki/Lab_color_space>`__ with ``rgb2xyz`` and
+<https://en.wikipedia.org/wiki/CIE_1931_color_space>`__ and to the `Lab space
+<https://en.wikipedia.org/wiki/Lab_color_space>`__ with ``rgb2xyz`` and
 ``rgb2lab``, respectively.
 

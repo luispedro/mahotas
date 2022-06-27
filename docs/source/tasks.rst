@@ -8,20 +8,20 @@ Here are a few ideas for improving mahotas.
 New Features
 ------------
 
-- `HOG <http://en.wikipedia.org/wiki/Histogram_of_oriented_gradients>`__
-- `BRISK <http://savvash.blogspot.pt/2011/08/brisk-binary-robust-invariant-scalable.html>`__
-- `Canny edge detection <http://en.wikipedia.org/wiki/Canny_edge_detector>`__
-- `Hough Transform <http://en.wikipedia.org/wiki/Hough_transform>`__
-- `bilateral filtering <http://en.wikipedia.org/wiki/Bilateral_filter>`__
-- `Non Local Filtering <http://en.wikipedia.org/wiki/Non-local_means>`__
-- `Wiener filtering <http://en.wikipedia.org/wiki/Wiener_filter>`__
+- `HOG <https://en.wikipedia.org/wiki/Histogram_of_oriented_gradients>`__
+- `BRISK <https://savvash.blogspot.pt/2011/08/brisk-binary-robust-invariant-scalable.html>`__
+- `Canny edge detection <https://en.wikipedia.org/wiki/Canny_edge_detector>`__
+- `Hough Transform <https://en.wikipedia.org/wiki/Hough_transform>`__
+- `bilateral filtering <https://en.wikipedia.org/wiki/Bilateral_filter>`__
+- `Non Local Filtering <https://en.wikipedia.org/wiki/Non-local_means>`__
+- `Wiener filtering <https://en.wikipedia.org/wiki/Wiener_filter>`__
 
 Small Improvements
 ------------------
 
-- something like the ``overlay`` function from `pymorph <http://luispedro.org/software/pymorph>`__ (or even just copy it over and adapt it to mahotas style).
+- something like the ``overlay`` function from `pymorph <https://luispedro.org/software/pymorph>`__ (or even just copy it over and adapt it to mahotas style).
 - H-maxima transform (again, pymorph can provide a basis)
-- `entropy thresholding <http://en.wikipedia.org/wiki/Thresholding_(image_processing)>`__
+- `entropy thresholding <https://en.wikipedia.org/wiki/Thresholding_(image_processing)>`__
 
 Internals
 ---------
