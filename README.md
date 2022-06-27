@@ -7,10 +7,10 @@ in C++ for speed) operating over numpy arrays.
 
 ![GH Actions Status](https://github.com/luispedro/mahotas/workflows/Python%20Package%20using%20Conda/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/luispedro/mahotas/badge.svg?branch=master)](https://coveralls.io/github/luispedro/mahotas?branch=master)
-[![Downloads](https://pepy.tech/badge/mahotas/month)](https://pepy.tech/project/mahotas/month)
 [![License](https://img.shields.io/badge/License-MIT-blue)](http://opensource.org/licenses/MIT)
+[![Downloads](https://pepy.tech/badge/mahotas/month)](https://pepy.tech/project/mahotas/month)
+[![Install with Conda](https://anaconda.org/conda-forge/mahotas/badges/downloads.svg)](https://anaconda.org/conda-forge/mahotas)
 [![Install with Anaconda](https://anaconda.org/conda-forge/mahotas/badges/installer/conda.svg)](https://anaconda.org/conda-forge/mahotas)
-[![Join the chat at https://gitter.im/luispedro/mahotas](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/luispedro/mahotas)
 
 Python versions 2.7, 3.4+, are supported.
 
