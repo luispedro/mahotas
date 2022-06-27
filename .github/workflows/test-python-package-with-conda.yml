@@ -6,22 +6,47 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ['3.6', '3.7', '3.8', '3.9']
-        numpy-version:  ['1.17', '1.18', '1.19', '1.20', '1.21']
+        python-version: ['3.6', '3.7', '3.8', '3.9', '3.10',]
+        numpy-version:  ['1.17', '1.18', '1.19', '1.20', '1.21', '1.22']
         exclude:
-            # 3.6 is too old for NumPy 1.20/1.21
+            # 3.6 is too old for NumPy 1.20+
             - python-version: '3.6'
               numpy-version: '1.20'
             - python-version: '3.6'
               numpy-version: '1.21'
+            - python-version: '3.6'
+              numpy-version: '1.22'
+
+
+            # 3.7 is too old for NumPy 1.22+
+            - python-version: '3.7'
+              numpy-version: '1.22'
+
+            # NumPy 1.19 is not available on 3.7-9
+            - python-version: '3.7'
+              numpy-version: '1.19'
+            - python-version: '3.8'
+              numpy-version: '1.19'
+            - python-version: '3.9'
+              numpy-version: '1.19'
 
             # NumPy 1.17/1.18 are too old for Python 3.9
             - python-version: '3.9'
               numpy-version: '1.17'
             - python-version: '3.9'
               numpy-version: '1.18'
-      max-parallel: 5
+
+            # NumPy <1.21 are too old for Python 3.10
+            - python-version: '3.10'
+              numpy-version: '1.17'
+            - python-version: '3.10'
+              numpy-version: '1.18'
+            - python-version: '3.10'
+              numpy-version: '1.19'
+            - python-version: '3.10'
+              numpy-version: '1.20'
 
     steps:
     - uses: actions/checkout@v2
