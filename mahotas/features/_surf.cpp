@@ -323,6 +323,7 @@ void get_interest_points(
     double threshold,
     std::vector<interest_point>& result_points,
     const int initial_step_size) {
+    gil_release nogil;
     assert(threshold >= 0);
 
     result_points.clear();
@@ -397,6 +398,9 @@ void build_pyramid(numpy::aligned_array<T> integral,
         pyramid.push_back(numpy::new_array<double>(nr_intervals, N0/step_size, N1/step_size));
         PyArray_FILLWBYTE(pyramid[o].raw_array(), 0);
     }
+
+    // Now that data is allocated, we can release the GIL
+    gil_release nogil;
 
     // now fill out the pyramid with data
     for (int o = 0; o < nr_octaves; ++o)
@@ -663,7 +667,6 @@ std::vector<surf_point> get_surf_points(const numpy::aligned_array<T>& int_img, 
     assert(max_points > 0);
     hessian_pyramid pyramid;
 
-    gil_release nogil;
     std::vector<interest_point> points;
     build_pyramid<T>(int_img, pyramid, nr_octaves, nr_intervals, initial_step_size);
     get_interest_points(pyramid, threshold, points, initial_step_size);
@@ -787,7 +790,6 @@ PyObject* py_interest_points(PyObject* self, PyObject* args) {
     try {
         switch(PyArray_TYPE(array)) {
         #define HANDLE(type) {\
-            gil_release nogil; \
             build_pyramid<type>(numpy::aligned_array<type>(array), pyramid, nr_octaves, nr_intervals, initial_step_size); \
             get_interest_points(pyramid, threshold, interest_points, initial_step_size); \
             if (max_points >= 0 && interest_points.size() > unsigned(max_points)) { \
