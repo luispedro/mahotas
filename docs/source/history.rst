@@ -2,6 +2,12 @@
 History
 =======
 
+Version 1.4.13 (Jun 28 2022)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Fix freeimage testing (and make freeimage loading more robust, see #129)
+- Add GIL fixed (which triggered crashes in newer NumPy versions)
+
 Version 1.4.12 (Oct 14 2021)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
