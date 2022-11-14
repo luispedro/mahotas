@@ -34,7 +34,7 @@ def line(p0, p1, canvas, color=1):
 
     notes
     -----
-    `Implementation Reference <http://en.wikipedia.org/wiki/Bresenham's_line_algorithm>`__
+    `Implementation Reference <https://en.wikipedia.org/wiki/Bresenham's_line_algorithm>`__
     '''
     y0,x0 = p0
     y1,x1 = p1
@@ -76,7 +76,7 @@ def fill_polygon(polygon, canvas, color=1):
     color : integer, optional
         which colour to use (default: 1)
     '''
-# algorithm adapted from: http://www.alienryderflex.com/polygon_fill/
+# algorithm adapted from: https://www.alienryderflex.com/polygon_fill/
     if not len(polygon):
         return
     min_y = min(y for y,x in polygon)
@@ -108,7 +108,7 @@ def convexhull(bwimg):
     Compute the convex hull as a polygon
 
     This is an implementation of the Graham Scan:
-    http://en.wikipedia.org/wiki/Graham_scan
+    https://en.wikipedia.org/wiki/Graham_scan
 
     Parameters
     ----------

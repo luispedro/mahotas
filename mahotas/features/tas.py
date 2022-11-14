@@ -60,7 +60,7 @@ def tas(img):
     Compute Threshold Adjacency Statistics
 
     TAS were presented by Hamilton et al.  in "Fast automated cell phenotype
-    image classification" (http://www.biomedcentral.com/1471-2105/8/110)
+    image classification" (https://www.biomedcentral.com/1471-2105/8/110)
 
     Also returns a version computed on the negative of the binarisation defined
     by Hamilton et al.
@@ -90,7 +90,7 @@ def pftas(img, T=None):
     Compute parameter free Threshold Adjacency Statistics
 
     TAS were presented by Hamilton et al.  in "Fast automated cell phenotype
-    image classification" (http://www.biomedcentral.com/1471-2105/8/110)
+    image classification" (https://www.biomedcentral.com/1471-2105/8/110)
 
     The current version is an adapted version which is free of parameters. The
     thresholding is done by using Otsu's algorithm (or can be pre-computed and
@@ -98,7 +98,7 @@ def pftas(img, T=None):
     included is the standard deviation. This was first published by Coelho et
     al. in "Structured Literature Image Finder: Extracting Information from
     Text and Images in Biomedical Literature"
-    (http://www.springerlink.com/content/60634778710577t0/)
+    (https://www.springerlink.com/content/60634778710577t0/)
 
     Also returns a version computed on the negative of the binarisation defined
     by Hamilton et al.

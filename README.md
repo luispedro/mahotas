@@ -7,7 +7,7 @@ in C++ for speed) operating over numpy arrays.
 
 ![GH Actions Status](https://github.com/luispedro/mahotas/workflows/Python%20Package%20using%20Conda/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/luispedro/mahotas/badge.svg?branch=master)](https://coveralls.io/github/luispedro/mahotas?branch=master)
-[![License](https://img.shields.io/badge/License-MIT-blue)](http://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-MIT-blue)](https://opensource.org/licenses/MIT)
 [![Downloads](https://pepy.tech/badge/mahotas/month)](https://pepy.tech/project/mahotas/month)
 [![Install with Conda](https://anaconda.org/conda-forge/mahotas/badges/downloads.svg)](https://anaconda.org/conda-forge/mahotas)
 [![Install with Anaconda](https://anaconda.org/conda-forge/mahotas/badges/installer/conda.svg)](https://anaconda.org/conda-forge/mahotas)
@@ -16,14 +16,14 @@ Python versions 2.7, 3.4+, are supported.
 
 Notable algorithms:
 
-- [watershed](http://mahotas.readthedocs.io/en/latest/distance.html)
-- [convex points calculations](http://mahotas.readthedocs.io/en/latest/polygon.html).
+- [watershed](https://mahotas.readthedocs.io/en/latest/distance.html)
+- [convex points calculations](https://mahotas.readthedocs.io/en/latest/polygon.html).
 - hit & miss, thinning.
 - Zernike & Haralick, LBP, and TAS features.
 - [Speeded-Up Robust Features
-  (SURF)](http://mahotas.readthedocs.io/en/latest/surf.html), a form of local
+  (SURF)](https://mahotas.readthedocs.io/en/latest/surf.html), a form of local
   features.
-- [thresholding](http://mahotas.readthedocs.io/en/latest/thresholding.html).
+- [thresholding](https://mahotas.readthedocs.io/en/latest/thresholding.html).
 - convolution.
 - Sobel edge detection.
 - spline interpolation
@@ -41,7 +41,7 @@ years, but in the meanwhile, you only get a warning). In a few
 unfortunate cases, there was a bug in the old code and your results will
 change for the better.
 
-Please cite [the mahotas paper](http://dx.doi.org/10.5334/jors.ac) (see
+Please cite [the mahotas paper](https://dx.doi.org/10.5334/jors.ac) (see
 details below under [Citation](#Citation)) if you use it in a publication.
 
 ## Examples
@@ -117,7 +117,7 @@ As you can see, we rely on numpy/matplotlib for many operations.
 
 ## Install
 
-If you are using [conda](http://anaconda.org/), you can install mahotas from
+If you are using [conda](https://anaconda.org/), you can install mahotas from
 [conda-forge](https://conda-forge.github.io/) using the following commands:
 
     conda config --add channels conda-forge
@@ -145,7 +145,7 @@ If you use mahotas on a published publication, please cite:
 
 > **Luis Pedro Coelho** Mahotas: Open source software for scriptable
 > computer vision in Journal of Open Research Software, vol 1, 2013.
-> [[DOI](http://dx.doi.org/10.5334/jors.ac)]
+> [[DOI](https://dx.doi.org/10.5334/jors.ac)]
 
 In Bibtex format:
 
@@ -154,7 +154,7 @@ In Bibtex format:
 >       title = {Mahotas: Open source software for scriptable computer vision},
 >       journal = {Journal of Open Research Software},
 >       year = {2013},
->       doi = {http://dx.doi.org/10.5334/jors.ac},
+>       doi = {https://dx.doi.org/10.5334/jors.ac},
 >       month = {July},
 >       volume = {1}
 >   }
@@ -164,7 +164,7 @@ You can access this information using the `mahotas.citation()` function.
 ## Development
 
 Development happens on github
-([http://github.com/luispedro/mahotas](https://github.com/luispedro/mahotas)).
+([https://github.com/luispedro/mahotas](https://github.com/luispedro/mahotas)).
 
 You can set the `DEBUG` environment variable before compilation to get a
 debug version:
@@ -194,11 +194,11 @@ run the test suite.
 issues](https://github.com/luispedro/mahotas/issues)
 
 *Mailing List*: Use the [pythonvision mailing
-list](http://groups.google.com/group/pythonvision?pli=1) for questions,
+list](https://groups.google.com/group/pythonvision?pli=1) for questions,
 bug submissions, etc. Or ask on [stackoverflow (tag
-mahotas)](http://stackoverflow.com/questions/tagged/mahotas)
+mahotas)](https://stackoverflow.com/questions/tagged/mahotas)
 
-*Main Author & Maintainer*: [Luis Pedro Coelho](http://luispedro.org)
+*Main Author & Maintainer*: [Luis Pedro Coelho](https://luispedro.org)
 (follow on [twitter](https://twitter.com/luispedrocoelho) or
 [github](https://github.com/luispedro)).
 
@@ -208,11 +208,11 @@ Gohlke, as well as
 [others](https://github.com/luispedro/mahotas/graphs/contributors).
 
 [Presentation about mahotas for bioimage
-informatics](http://luispedro.org/files/talks/2013/EuBIAS/mahotas.html)
+informatics](https://luispedro.org/files/talks/2013/EuBIAS/mahotas.html)
 
 For more general discussion of computer vision in Python, the
 [pythonvision mailing
-list](http://groups.google.com/group/pythonvision?pli=1) is a much
+list](https://groups.google.com/group/pythonvision?pli=1) is a much
 better venue and generates a public discussion log for others in the
 future. You can use it for mahotas or general computer vision in Python
 questions.

@@ -46,7 +46,7 @@ def distance(bw, metric='euclidean2'):
     Cornell Computing and Information.* 2004.
 
     Available at:
-    http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.88.1647&rep=rep1&type=pdf.
+    https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.88.1647&rep=rep1&type=pdf.
 
     For n-D images (with n > 2), a slower hand-craft method is used.
     '''

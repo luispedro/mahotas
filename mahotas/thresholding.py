@@ -77,7 +77,7 @@ def otsu(img, ignore_zeros=False):
         bin = (im > t)
 
     See Wikipedia for details on methods:
-    http://en.wikipedia.org/wiki/Otsu's_method
+    https://en.wikipedia.org/wiki/Otsu's_method
 
     Parameters
     ----------

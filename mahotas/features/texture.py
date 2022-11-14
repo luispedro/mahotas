@@ -78,7 +78,7 @@ def haralick(f,
             pages = {610--621},
             publisher = {IEEE},
             title = {Textural features for image classification},
-            url = {http://ieeexplore.ieee.org/lpdocs/epic03/wrapper.htm?arnumber=4309314},
+            url = {https://ieeexplore.ieee.org/lpdocs/epic03/wrapper.htm?arnumber=4309314},
             volume = {3},
             year = {1973}
         }
@@ -190,7 +190,7 @@ def haralick_features(cmats,
             pages = {610--621},
             publisher = {IEEE},
             title = {Textural features for image classification},
-            url = {http://ieeexplore.ieee.org/lpdocs/epic03/wrapper.htm?arnumber=4309314},
+            url = {https://ieeexplore.ieee.org/lpdocs/epic03/wrapper.htm?arnumber=4309314},
             volume = {3},
             year = {1973}
         }

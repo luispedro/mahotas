@@ -63,7 +63,7 @@ PyObject* py_histogram(PyObject* self, PyObject* args) {
 
 int otsu(const double* hist, const int n) {
 // Otsu calculated according to CVonline:
-// http://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/MORSE/threshold.pdf
+// https://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/MORSE/threshold.pdf
     gil_release nogil;
     std::vector<double> nB, nO;
     if (n <= 1) return 0;

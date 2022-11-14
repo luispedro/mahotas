@@ -49,7 +49,7 @@ def euler(f, n=8, mode='constant'):
 
     References
     ----------
-    http://en.wikipedia.org/wiki/Euler_characteristic
+    https://en.wikipedia.org/wiki/Euler_characteristic
 
     References
     ----------

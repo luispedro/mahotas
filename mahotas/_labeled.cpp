@@ -233,8 +233,8 @@ void labeled_foldl(const numpy::aligned_array<T> array, const numpy::aligned_arr
 // In certain versions of g++, in certain environments,
 // multiple versions of std::min & std::max are in scope and the compiler is
 // unable to resolve them. Therefore, based on
-// http://www.cplusplus.com/reference/algorithm/min/ &
-// http://www.cplusplus.com/reference/algorithm/max/ I implemented equivalents
+// https://www.cplusplus.com/reference/algorithm/min/ &
+// https://www.cplusplus.com/reference/algorithm/max/ I implemented equivalents
 // here:
 
 template <class T>

@@ -25,7 +25,7 @@ Citation:
 
     Coelho, Luis Pedro, 2013. Mahotas: Open source software for scriptable
     computer vision. Journal of Open Research Software, 1:e3, DOI:
-    http://dx.doi.org/10.5334/jors.ac
+    https://dx.doi.org/10.5334/jors.ac
 '''
 try:
     from .bbox import bbox, croptobbox
@@ -102,7 +102,7 @@ If you use mahotas please cite
 
     Coelho, Luis Pedro, 2013. Mahotas: Open source software for scriptable
     computer vision. Journal of Open Research Software, 1:e3, DOI:
-    http://dx.doi.org/10.5334/jors.ac
+    https://dx.doi.org/10.5334/jors.ac
 
 
 In BibTex format:
@@ -114,13 +114,13 @@ In BibTex format:
     year = {2013},
     volume = {1},
     doi = {10.5334/jors.ac},
-    url = {http://dx.doi.org/10.5334/jors.ac}
+    url = {https://dx.doi.org/10.5334/jors.ac}
 }
 '''
 
 short_citation_text = \
 '''If you use mahotas in a scientific publication, please cite
-    Coelho, LP (2013). http://dx.doi.org/10.5334/jors.ac
+    Coelho, LP (2013). https://dx.doi.org/10.5334/jors.ac
 '''
 
 def citation(print_out=True, short=False):

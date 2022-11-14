@@ -58,12 +58,12 @@ def rgb2xyz(rgb, dtype=None):
 
     The input is interpreted as sRGB. See Wikipedia for more details:
 
-    http://en.wikipedia.org/wiki/SRGB
+    https://en.wikipedia.org/wiki/SRGB
 
     Parameters
     ----------
     rgb : ndarray
-    dtype : dtype, optional 
+    dtype : dtype, optional
         What dtype to return
 
     Returns
@@ -95,7 +95,7 @@ def xyz2rgb(xyz, dtype=None):
 
     The output should be interpreted as sRGB. See Wikipedia for more details:
 
-    http://en.wikipedia.org/wiki/SRGB
+    https://en.wikipedia.org/wiki/SRGB
 
     Parameters
     ----------
@@ -132,7 +132,7 @@ def xyz2lab(xyz, dtype=None):
 
     Convert CIE XYZ to L*a*b* coordinates
 
-    http://en.wikipedia.org/wiki/CIELAB
+    https://en.wikipedia.org/wiki/CIELAB
 
     Parameters
     ----------
@@ -168,7 +168,7 @@ def rgb2lab(rgb, dtype=None):
 
     Convert sRGB to L*a*b* coordinates
 
-    http://en.wikipedia.org/wiki/CIELAB
+    https://en.wikipedia.org/wiki/CIELAB
 
     Parameters
     ----------

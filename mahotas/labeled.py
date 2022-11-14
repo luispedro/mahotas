@@ -38,7 +38,7 @@ def label(array, Bc=None, out=None, output=None):
     This is also called *connected component labeled*, where the connectivity
     is defined by the structuring element ``Bc``.
 
-    See: http://en.wikipedia.org/wiki/Connected-component_labeling
+    See: https://en.wikipedia.org/wiki/Connected-component_labeling
 
     Parameters
     ----------
@@ -524,7 +524,7 @@ def perimeter(bwimage, n=4, mode="constant"):
     ----------
     .. [1] K. Benkrid, D. Crookes. Design and FPGA Implementation of
            a Perimeter Estimator. The Queen's University of Belfast.
-           http://www.cs.qub.ac.uk/~d.crookes/webpubs/papers/perimeter.doc
+           https://www.cs.qub.ac.uk/~d.crookes/webpubs/papers/perimeter.doc
     """
     global _perimeter_values
     perim = bwperim(bwimage, n, mode)

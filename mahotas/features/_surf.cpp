@@ -441,7 +441,7 @@ void build_pyramid(numpy::aligned_array<T> integral,
                     // Survey."by Tuytelaars T and Mikolajczyk K.; Foundations
                     // and Trends® in Computer Graphics and Vision.
                     // 2007;3(3):177-280. Available at:
-                    // http://www.nowpublishers.com/product.aspx?product=CGV&doi=0600000017.
+                    // https://www.nowpublishers.com/product.aspx?product=CGV&doi=0600000017.
                     //
                     // Also uses 0.6
                     double determinant = Dxx*Dyy - 0.36*Dxy*Dxy;

@@ -747,7 +747,7 @@ def tophat_close(f, Bc=None, out=None):
     This returns objects that are smaller than ``Bc`` and contain lower values
     than their surroundings.
 
-    See: http://en.wikipedia.org/wiki/Top-hat_transform
+    See: https://en.wikipedia.org/wiki/Top-hat_transform
 
     Parameters
     ----------
@@ -781,7 +781,7 @@ def tophat_open(f, Bc=None, out=None):
     This returns objects that are smaller than ``Bc`` and contain higher values
     than their surroundings.
 
-    See: http://en.wikipedia.org/wiki/Top-hat_transform
+    See: https://en.wikipedia.org/wiki/Top-hat_transform
 
     Parameters
     ----------

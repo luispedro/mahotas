@@ -25,7 +25,7 @@ On **Mac OS**, if using ``port``, run the following commands::
 
 On **Windows**, use Christoph Gohlke's packages. See:
 
-http://www.lfd.uci.edu/~gohlke/pythonlibs/#imread
+https://www.lfd.uci.edu/~gohlke/pythonlibs/#imread
 
 
 
@@ -41,7 +41,7 @@ Under Linux, look for a package called `freeimage` in your distribution (it is
 actually called `libfreeimage3` in debian/ubuntu, for example).
 
 Under Windows, consider using the third-party mahotas packages at
-http://www.lfd.uci.edu/~gohlke/pythonlibs/ (kindly maintained by Christoph
+https://www.lfd.uci.edu/~gohlke/pythonlibs/ (kindly maintained by Christoph
 Gohlke), which already package freeimage.
 
 Full error was: %s'''
