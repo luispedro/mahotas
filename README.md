@@ -50,68 +50,74 @@ This is a simple example (using an example file that is shipped with
 mahotas) of calling watershed using above threshold regions as a seed
 (we use Otsu to define threshold).
 
-    # import using ``mh`` abbreviation which is common:
-    import mahotas as mh
+```python
+# import using ``mh`` abbreviation which is common:
+import mahotas as mh
 
-    # Load one of the demo images
-    im = mh.demos.load('nuclear')
+# Load one of the demo images
+im = mh.demos.load('nuclear')
 
-    # Automatically compute a threshold
-    T_otsu = mh.thresholding.otsu(im)
+# Automatically compute a threshold
+T_otsu = mh.thresholding.otsu(im)
 
-    # Label the thresholded image (thresholding is done with numpy operations
-    seeds,nr_regions = mh.label(im > T_otsu)
+# Label the thresholded image (thresholding is done with numpy operations
+seeds,nr_regions = mh.label(im > T_otsu)
 
-    # Call seeded watershed to expand the threshold
-    labeled = mh.cwatershed(im.max() - im, seeds)
+# Call seeded watershed to expand the threshold
+labeled = mh.cwatershed(im.max() - im, seeds)
+```
 
 Here is a very simple example of using `mahotas.distance` (which
 computes a distance map):
 
-    import pylab as p
-    import numpy as np
-    import mahotas as mh
+```python
+import pylab as p
+import numpy as np
+import mahotas as mh
 
-    f = np.ones((256,256), bool)
-    f[200:,240:] = False
-    f[128:144,32:48] = False
-    # f is basically True with the exception of two islands: one in the lower-right
-    # corner, another, middle-left
+f = np.ones((256,256), bool)
+f[200:,240:] = False
+f[128:144,32:48] = False
+# f is basically True with the exception of two islands: one in the lower-right
+# corner, another, middle-left
 
-    dmap = mh.distance(f)
-    p.imshow(dmap)
-    p.show()
+dmap = mh.distance(f)
+p.imshow(dmap)
+p.show()
+```
 
 (This is under [mahotas/demos/distance.py](https://github.com/luispedro/mahotas/blob/master/mahotas/demos/distance.py).)
 
 How to invoke thresholding functions:
 
-    import mahotas as mh
-    import numpy as np
-    from pylab import imshow, gray, show, subplot
-    from os import path
+```python
+import mahotas as mh
+import numpy as np
+from pylab import imshow, gray, show, subplot
+from os import path
 
-    # Load photo of mahotas' author in greyscale
-    photo = mh.demos.load('luispedro', as_grey=True)
+# Load photo of mahotas' author in greyscale
+photo = mh.demos.load('luispedro', as_grey=True)
 
-    # Convert to integer values (using numpy operations)
-    photo = photo.astype(np.uint8)
+# Convert to integer values (using numpy operations)
+photo = photo.astype(np.uint8)
 
-    # Compute Otsu threshold
-    T_otsu = mh.otsu(photo)
-    thresholded_otsu = (photo > T_otsu)
+# Compute Otsu threshold
+T_otsu = mh.otsu(photo)
+thresholded_otsu = (photo > T_otsu)
 
-    # Compute Riddler-Calvard threshold
-    T_rc = mh.rc(photo)
-    thresholded_rc = (photo > T_rc)
+# Compute Riddler-Calvard threshold
+T_rc = mh.rc(photo)
+thresholded_rc = (photo > T_rc)
 
-    # Now call pylab functions to display the image
-    gray()
-    subplot(2,1,1)
-    imshow(thresholded_otsu)
-    subplot(2,1,2)
-    imshow(thresholded_rc)
-    show()
+# Now call pylab functions to display the image
+gray()
+subplot(2,1,1)
+imshow(thresholded_otsu)
+subplot(2,1,2)
+imshow(thresholded_rc)
+show()
+```
 
 As you can see, we rely on numpy/matplotlib for many operations.
 
@@ -120,19 +126,25 @@ As you can see, we rely on numpy/matplotlib for many operations.
 If you are using [conda](https://anaconda.org/), you can install mahotas from
 [conda-forge](https://conda-forge.github.io/) using the following commands:
 
-    conda config --add channels conda-forge
-    conda install mahotas
+```bash
+conda config --add channels conda-forge
+conda install mahotas
+```
 
 ### Compilation from source
 
 You will need python (naturally), numpy, and a C++ compiler. Then you
 should be able to use:
 
-    pip install mahotas
+```bash
+pip install mahotas
+```
 
 You can test your installation by running:
 
-    python -c "import mahotas as mh; mh.test()"
+```bash
+python -c "import mahotas as mh; mh.test()"
+```
 
 If you run into issues, the manual has more [extensive documentation on
 mahotas
@@ -169,13 +181,17 @@ Development happens on github
 You can set the `DEBUG` environment variable before compilation to get a
 debug version:
 
-    export DEBUG=1
-    python setup.py test
+```bash
+export DEBUG=1
+python setup.py test
+```
 
 You can set it to the value `2` to get extra checks:
 
-    export DEBUG=2
-    python setup.py test
+```bash
+export DEBUG=2
+python setup.py test
+```
 
 Be careful not to use this in production unless you are chasing a bug.
 Debug level 2 is very slow as it adds many runtime checks.
