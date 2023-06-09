@@ -20,7 +20,6 @@ extensions = [
         'sphinx.ext.coverage',
         'sphinx.ext.doctest',
         'numpydoc',
-        'matplotlib.sphinxext.only_directives',
         'matplotlib.sphinxext.plot_directive',
         ]
 
@@ -44,8 +43,8 @@ source_encoding = 'utf-8'
 master_doc = 'index'
 
 # General information about the project.
-project = u'mahotas'
-copyright = u'2008-2016, Luis Pedro Coelho'
+project = 'mahotas'
+copyright = '2008-2023, Luis Pedro Coelho'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

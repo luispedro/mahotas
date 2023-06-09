@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2021, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2023, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # License: MIT
 
@@ -40,7 +40,7 @@ def euler(f, n=8, mode='constant'):
     n : int, optional
         Connectivity, one of (4,8). default: 8
     mode : {'reflect', 'nearest', 'wrap', 'mirror', 'constant' [default]}
-        How to handle borders        
+        How to handle borders
 
     Returns
     -------
@@ -51,8 +51,6 @@ def euler(f, n=8, mode='constant'):
     ----------
     https://en.wikipedia.org/wiki/Euler_characteristic
 
-    References
-    ----------
     The following algorithm is used:
 
     *A Fast Algorithm for Computing the Euler Number of an Image and its VLSI

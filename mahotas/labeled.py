@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2019, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2023, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # LICENSE: MIT
@@ -481,8 +481,9 @@ def labeled_size(labeled):
 
     See Also
     --------
-    mahotas.fullhistogram : almost same function by another name (the only
-    difference is that that function only accepts unsigned integer types).
+    mahotas.fullhistogram : function
+        almost same function by another name (the only difference is that that
+        function only accepts unsigned integer types).
     '''
     from .histogram import fullhistogram
     return fullhistogram(labeled.astype(np.uint32, copy=False))

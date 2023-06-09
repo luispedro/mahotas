@@ -45,7 +45,7 @@ w is the white channel.
 ::
 
     pattern = np.ones((24,16), float)
-    for i in xrange(2):
+    for i in range(2):
         pattern[i::4] = -1
 
 Build up a pattern of +1,+1,-1,-1 on the vertical axis. This is Wally's shirt.
@@ -57,7 +57,7 @@ Build up a pattern of +1,+1,-1,-1 on the vertical axis. This is Wally's shirt.
 Convolve with red minus white. This will give a strong response where the shirt
 is.
 
-:: 
+::
 
     mask = (v == v.max())
     mask = mahotas.dilate(mask, np.ones((48,24)))
@@ -77,7 +77,7 @@ And we get the following:
     r,g,b = wfloat.transpose((2,0,1))
     w = wfloat.mean(2)
     pattern = np.ones((24,16), float)
-    for i in xrange(2):
+    for i in range(2):
         pattern[i::4] = -1
     v = mahotas.convolve(r-w, pattern)
     mask = (v == v.max())

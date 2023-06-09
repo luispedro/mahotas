@@ -32,7 +32,7 @@ Given the results, we can perform a simple clustering using, for example, `
 
         # spoints includes both the detection information (such as the position
         # and the scale) as well as the descriptor (i.e., what the area around
-        # the point looks like). We only want to use the descriptor for 
+        # the point looks like). We only want to use the descriptor for
         # clustering. The descriptor starts at position 5:
         descrs = spoints[:,5:]
         
@@ -40,12 +40,12 @@ Given the results, we can perform a simple clustering using, for example, `
         # would look too similar in the output.
         k = 5
         values = KMeans(n_clusters=k).fit(descrs).labels_
-        colors = np.array([(255-52*i,25+52*i,37**i % 101) for i in xrange(k)])
+        colors = np.array([(255-52*i,25+52*i,37**i % 101) for i in range(k)])
     except:
         values = np.zeros(100)
         colors = [(255,0,0)]
 
-So we are assigning different colours to each of the possible 
+So we are assigning different colours to each of the possible
 
 The helper ``surf.show_surf`` draws coloured polygons around the
 interest points::

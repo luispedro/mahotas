@@ -30,8 +30,8 @@ So far, very easy. The next part is the hard part. We want to do the
 following::
 
     r = np.zeros((h,w))-1
-    for y in xrange(h):
-        for x in xrange(w):
+    for y in range(h):
+        for x in range(w):
             r[y,x] = image[best[y,x], y, x]
 
 But this is very slow (never run nested loops in Python if you can avoid it).
