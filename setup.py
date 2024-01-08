@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2020, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2009-2024, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,7 +33,12 @@ On linux, the package is often called python-setuptools''')
 import os
 try:
     import numpy
-except ImportError:
+except ImportError as e:
+    print('''
+Could not import numpy ({}).
+
+It is possible that building will fail.
+          '''.format(e))
     class FakeNumpy(object):
         def get_include(self):
            return []
@@ -45,10 +50,7 @@ from distutils.command.build_ext import build_ext
 exec(compile(open('mahotas/mahotas_version.py').read(),
              'mahotas/mahotas_version.py', 'exec'))
 
-try:
-    long_description = open('README.md', encoding='utf-8').read()
-except:
-    long_description = open('README.md').read()
+long_description = open('README.md', encoding='utf-8').read()
 
 undef_macros = []
 define_macros = []
@@ -78,7 +80,9 @@ extensions = {
     'mahotas.features._zernike': ['mahotas/features/_zernike.cpp'],
 }
 
-ext_modules = [setuptools.Extension(key, sources=sources, undef_macros=undef_macros, define_macros=define_macros, include_dirs=[numpy.get_include()]) for key,sources in extensions.items()]
+ext_modules = [
+        setuptools.Extension(key, sources=sources, undef_macros=undef_macros, define_macros=define_macros, include_dirs=[numpy.get_include()])
+        for key,sources in extensions.items()]
 
 packages = setuptools.find_packages()
 
@@ -123,6 +127,10 @@ classifiers = [
 'Programming Language :: Python :: 3.5',
 'Programming Language :: Python :: 3.6',
 'Programming Language :: Python :: 3.7',
+'Programming Language :: Python :: 3.8',
+'Programming Language :: Python :: 3.9',
+'Programming Language :: Python :: 3.10',
+'Programming Language :: Python :: 3.11',
 'Programming Language :: C++',
 'Operating System :: OS Independent',
 'License :: OSI Approved :: MIT License',
