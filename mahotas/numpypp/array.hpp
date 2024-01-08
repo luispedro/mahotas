@@ -1,6 +1,6 @@
 #ifndef MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_
 #define MAHOTAS_NUMPYPP_ARRAY_HPP_INCLUDE_GUARD_LPC_
-/* Copyright 2008-2014 (C)
+/* Copyright 2008-2024 (C)
  * Luis Pedro Coelho <luis@luispedro.org>
  * License: MIT
  */
@@ -192,7 +192,13 @@ struct position_queue : protected position_vector {
 
 
 template <typename BaseType>
-struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
+struct iterator_base {
+    using iterator_category = std::forward_iterator_tag;
+    using difference_type = npy_intp;
+    using value_type = BaseType;
+    using pointer = BaseType*;
+    using reference = BaseType&;
+
     friend struct ::filter_iterator<BaseType>;
     protected:
 #ifdef _GLIBCXX_DEBUG
@@ -256,6 +262,7 @@ struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
             return out << "I {" << iter.position_ << "}";
         }
 
+    protected:
         bool is_valid() const {
 #ifdef _GLIBCXX_DEBUG
             ::numpy::position p = this->position();
