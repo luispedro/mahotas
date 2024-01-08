@@ -8,8 +8,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
-        numpy-version:  ['1.18', '1.19', '1.20', '1.21', '1.22', '1.23', '1.24']
+        python-version:
+          - '3.7'
+          - '3.8'
+          - '3.9'
+          - '3.10'
+          - '3.11'
+        numpy-version:
+          - '1.19'
+          - '1.20'
+          - '1.21'
+          - '1.22'
+          - '1.23'
+          - '1.24'
+          - '1.25'
+          - '1.26'
         exclude:
             # 3.7 is too old for NumPy 1.22+
             - python-version: '3.7'
@@ -18,6 +31,20 @@ jobs:
               numpy-version: '1.23'
             - python-version: '3.7'
               numpy-version: '1.24'
+            - python-version: '3.7'
+              numpy-version: '1.25'
+            - python-version: '3.7'
+              numpy-version: '1.26'
+
+            # 3.8 is too old for NumPy 1.25+
+            - python-version: '3.8'
+              numpy-version: '1.25'
+            - python-version: '3.8'
+              numpy-version: '1.26'
+
+            # NumPy 1.20 & Python 3.7 trigger a bad resolve from mamba
+            - python-version: '3.7'
+              numpy-version: '1.20'
 
             # NumPy 1.19 is not available on 3.7-9
             - python-version: '3.7'
@@ -27,13 +54,8 @@ jobs:
             - python-version: '3.9'
               numpy-version: '1.19'
 
-            # NumPy 1.18 are too old for Python 3.9
-            - python-version: '3.9'
-              numpy-version: '1.18'
 
             # NumPy <1.21 are too old for Python 3.10
-            - python-version: '3.10'
-              numpy-version: '1.18'
             - python-version: '3.10'
               numpy-version: '1.19'
             - python-version: '3.10'
@@ -41,8 +63,6 @@ jobs:
 
 
             # NumPy <1.23 are too old for Python 3.11
-            - python-version: '3.11'
-              numpy-version: '1.18'
             - python-version: '3.11'
               numpy-version: '1.19'
             - python-version: '3.11'
