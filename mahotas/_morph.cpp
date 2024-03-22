@@ -1,4 +1,4 @@
-// Copyright (C) 2008-2019, Luis Pedro Coelho <luis@luispedro.org>
+// Copyright (C) 2008-2024, Luis Pedro Coelho <luis@luispedro.org>
 // vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 // 
 // License: MIT
@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <limits>
 #include <iostream>
+#include <random>
 
 #include "numpypp/array.hpp"
 #include "numpypp/dispatch.hpp"
@@ -861,7 +862,8 @@ void hitmiss(numpy::aligned_array<T> res, const numpy::aligned_array<T>& input, 
     // This is a micro-optimisation for templates with structure
     // It makes it more likely that matching will fail earlier
     // in uniform regions than otherwise would be the case.
-    std::random_shuffle(neighbours.begin(), neighbours.end());
+    std::mt19937 g(12345);
+    std::shuffle(neighbours.begin(), neighbours.end(), g);
     numpy::index_type slack = 0;
     for (npy_intp i = 0; i != N; ++i) {
         while (!slack) {
