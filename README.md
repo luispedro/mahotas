@@ -235,6 +235,11 @@ questions.
 
 ## Recent Changes
 
+### Version 1.4.14 (Mar 24 2024)
+
+- Fix code for C++17 (issue #146)
+
+
 ### Version 1.4.13 (Jun 28 2022)
 
 - Fix freeimage testing (and make freeimage loading more robust, see #129)
