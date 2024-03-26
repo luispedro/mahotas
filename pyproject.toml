@@ -10,3 +10,4 @@ build-backend = "setuptools.build_meta"
 test-command = "pytest --import-mode=importlib {project}/mahotas/tests"
 test-extras = ["tests"]
 skip = "*manylinux*i686"
+environment = { PIP_ONLY_BINARY="numpy scipy" }
