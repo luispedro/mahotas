@@ -1,4 +1,4 @@
-name: Build
+name: Build wheel and sdist
 
 on:
   push:
