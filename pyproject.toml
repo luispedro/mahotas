@@ -10,5 +10,5 @@ build-backend = "setuptools.build_meta"
 test-command = "pytest --import-mode=importlib {project}/mahotas/tests"
 test-extras = ["tests"]
 test-skip = ["*manylinux*i686", "pp*", "cp31*-win32"]
-skip= "pp37-macosx*"
+skip= "pp37*"
 environment = { PIP_PREFER_BINARY="1", PIP_VERBOSE="1" }
