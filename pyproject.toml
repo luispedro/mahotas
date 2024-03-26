@@ -9,5 +9,5 @@ build-backend = "setuptools.build_meta"
 [tool.cibuildwheel]
 test-command = "pytest --import-mode=importlib {project}/mahotas/tests"
 test-extras = ["tests"]
-test-skip = ["*manylinux*i686", "pp*-macosx_arm64", "pp37*", "cp31*-win32"]
+test-skip = ["*manylinux*i686", "pp*", "cp31*-win32"]
 environment = { PIP_PREFER_BINARY="1", PIP_VERBOSE="1" }
