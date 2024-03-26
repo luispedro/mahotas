@@ -1,6 +1,18 @@
 name: Build
 
-on: [push, pull_request]
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+      - master
+      - build_wheel
+  pull_request:
+
+concurrency:
+  group: wheel-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   make_sdist:
@@ -24,6 +36,7 @@ jobs:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         # macos-13 is an intel runner, macos-14 is apple silicon
         os: [ubuntu-latest, windows-latest, macos-13, macos-14]

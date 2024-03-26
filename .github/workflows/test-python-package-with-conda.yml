@@ -2,6 +2,10 @@ name: Test mahotas
 
 on: [push]
 
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-linux:
     runs-on: ubuntu-latest
