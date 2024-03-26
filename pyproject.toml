@@ -1,0 +1,12 @@
+[build-system]
+requires = [
+    "setuptools",
+    "oldest-supported-numpy ; python_version<'3.12'",
+    "numpy; python_version>='3.12'",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.cibuildwheel]
+test-command = "pytest --import-mode=importlib {project}/mahotas/tests"
+test-extras = ["tests"]
+skip = "*manylinux*i686"
