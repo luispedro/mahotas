@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools", "numpy"]
+# When build with numpy>=1.25 the resulted binary wheel is compatybile with numpy >=1.16
+build-backend = "setuptools.build_meta"
+
+[tool.cibuildwheel]
+test-command = "pytest --import-mode=importlib {project}/mahotas/tests"
+test-extras = ["tests"]
+test-skip = ["pp*", "cp31*-win32"]  # there are no scipy weels for this version
+skip= ["pp37*", "pp310*", "*musllinux*", "*manylinux*i686"] # there are no numpy wheels for this version
+environment = { PIP_PREFER_BINARY="1"}

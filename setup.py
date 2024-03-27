@@ -98,6 +98,8 @@ package_data = {
 install_requires = open('requirements.txt').read().strip().split('\n')
 
 tests_require = open('tests-requirements.txt').read().strip().split('\n')
+if "freeimage" in tests_require:
+    tests_require.pop(tests_require.index("freeimage"))
 
 copt={
     'msvc': ['/EHsc'], 
@@ -158,6 +160,9 @@ setuptools.setup(name = 'mahotas',
       },
       install_requires = install_requires,
       tests_require = tests_require,
-      cmdclass = {'build_ext': build_ext_subclass}
+      cmdclass = {'build_ext': build_ext_subclass},
+      extras_require = {
+        "tests": tests_require,
+        },
       )
 
