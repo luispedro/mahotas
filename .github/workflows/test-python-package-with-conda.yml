@@ -2,6 +2,10 @@ name: Test mahotas
 
 on: [push]
 
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-linux:
     runs-on: ubuntu-latest
@@ -74,7 +78,7 @@ jobs:
               numpy-version: '1.22'
 
 
-            # NumPy <1.25 are too old for Python 3.12
+            # NumPy <=1.25 are too old for Python 3.12
             - python-version: '3.12'
               numpy-version: '1.19'
             - python-version: '3.12'
