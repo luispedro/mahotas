@@ -235,6 +235,10 @@ questions.
 
 ## Recent Changes
 
+### Version 1.4.15 (Mar 24 2024)
+
+- Update build system (thanks to @Czaki, see #147)
+
 ### Version 1.4.14 (Mar 24 2024)
 
 - Fix code for C++17 (issue #146)

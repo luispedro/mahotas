@@ -1,3 +1,6 @@
+Version 1.4.15 2024-04-17 by luispedro
+	* Update build system (thanks to @Czaki, see #147)
+
 Version 1.4.14 2024-03-24 by luispedro
 	* Update for C++17 (remove use of std::random_shuffle)
 
