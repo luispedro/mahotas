@@ -62,6 +62,11 @@ try:
             from .pil import imread, imsave
         except ImportError:
             from .freeimage import imread, imsave
+            from os import environ
+            if 'MAHOTAS_NO_FREEIMAGE_DEPRECATION' not in environ:
+                import warnings
+                warnings.warn('mahotas.freeimage is deprecated. Please install the `imread` package')
+                warnings.warn('To suppress this warning, set the environment variable MAHOTAS_NO_FREEIMAGE_DEPRECATION')
 # Importing freeimage can throw both ImportError and OSError, so check for both
 except (OSError, ImportError): # pragma: no cover
     import sys
