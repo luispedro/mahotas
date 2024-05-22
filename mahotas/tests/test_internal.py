@@ -85,7 +85,7 @@ def test_normalize_wrong_size():
     check((4,-1),[1])
     check((4,2,-1),[1,2])
 
-@pytest.mark.parametrize('dtype', [np.float_, np.float32, np.float64])
+@pytest.mark.parametrize('dtype', [np.float32, np.float64])
 def test_verify_float_arr(dtype):
     arr = np.arange(1., dtype=dtype)
     _verify_is_floatingpoint_type(arr, 'test')

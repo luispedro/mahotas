@@ -17,8 +17,10 @@ def test_get_structuring_elem():
     assert np.all(get_structuring_elem(A, Bc) == Bc)
     assert np.all(get_structuring_elem(A, Bc.T) == Bc.T)
     assert get_structuring_elem(A, Bc.T).flags['C_CONTIGUOUS']
-    assert np.all(get_structuring_elem(A, Bc.astype(np.float_).T).flags['C_CONTIGUOUS'])
-    assert np.all(get_structuring_elem(A, Bc.astype(np.float_).T) == Bc.T)
+    assert np.all(get_structuring_elem(A, Bc.astype(np.float32).T).flags['C_CONTIGUOUS'])
+    assert np.all(get_structuring_elem(A, Bc.astype(np.float64).T).flags['C_CONTIGUOUS'])
+    assert np.all(get_structuring_elem(A, Bc.astype(np.float32).T) == Bc.T)
+    assert np.all(get_structuring_elem(A, Bc.astype(np.float64).T) == Bc.T)
 
     with pytest.raises(ValueError):
         Bc = np.ones((3,3,3), dtype=np.bool_)
@@ -189,7 +191,7 @@ def test_distance_multi():
     import mahotas._morph
     np.random.seed(20)
     binim = np.random.random((12,18)) > .1
-    f = (binim * 0 + 26 *27).astype(np.float_)
+    f = (binim * 0 + 26 *27).astype(np.float64)
     Bc = np.ones((3,3), bool)
     mahotas._morph.distance_multi(f, binim, Bc)
     f2 = mahotas.distance(binim)

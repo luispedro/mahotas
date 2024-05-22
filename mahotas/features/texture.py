@@ -353,7 +353,7 @@ def haralick_features(cmats,
         return features.mean(axis=0)
     if return_mean_ptp:
         mean = features.mean(axis=0)
-        ptp = features.ptp(axis=0)
+        ptp = np.ptp(features, axis=0)
         return np.concatenate((mean,ptp))
 
     return features

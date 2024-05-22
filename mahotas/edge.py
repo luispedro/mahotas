@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2014, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2024, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
-# 
+#
 # License: MIT (see COPYING file)
 
-from __future__ import division
 import numpy as np
 import mahotas as mh
 from . import convolve, gaussian_filter
@@ -53,7 +52,7 @@ def sobel(img, just_filter=False):
     if img.ndim != 2:
         raise ValueError('mahotas.sobel: Only available for 2-dimensional images')
     img -= img.min()
-    ptp = img.ptp()
+    ptp = np.ptp(img)
     if ptp == 0:
         return img
     img /= ptp

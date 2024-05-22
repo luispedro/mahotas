@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2019, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2009-2024, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,7 +20,6 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-from __future__ import division
 import numpy as np
 from .internal import _check_2
 
@@ -72,7 +71,7 @@ def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
     (second form). The method is simple linear stretching according to the
     formula::
 
-        p' = max * (p - img.min())/img.ptp() + min
+        p' = max * (p - img.min())/np.ptp(img) + min
 
     Parameters
     ----------
@@ -105,7 +104,7 @@ def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
         max = arg1
     img = img.astype(np.double, copy=True)
     img -= img.min()
-    ptp = img.ptp()
+    ptp = np.ptp(img)
     if not ptp:
         img = np.zeros(img.shape, dtype)
         if min:

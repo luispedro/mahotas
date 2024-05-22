@@ -1,5 +1,6 @@
 Unreleased
 	* io: Add deprecated warning for freeimage
+	* mahotas: update for NumPy 2
 
 Version 1.4.15 2024-04-17 by luispedro
 	* Update build system (thanks to @Czaki, see #147)

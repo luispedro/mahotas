@@ -47,7 +47,7 @@ def read_bw(fname, options):
     if im.ndim == 2:
         return im
     if im.ndim == 3:
-        if options.convert_to_bw == 'max' or im.ptp(2).max() == 0:
+        if options.convert_to_bw == 'max' or np.ptp(im, 2).max() == 0:
             # This is a greyscale image, saved as colour
             return im.max(2)
         if options.convert_to_bw == 'yes':

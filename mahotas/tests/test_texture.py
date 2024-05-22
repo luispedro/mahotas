@@ -181,7 +181,7 @@ def test_feature_not_same():
     np.random.seed(26)
 
     multiple = np.array([rand_haralick() for i in range(8)])
-    assert np.all(multiple.ptp(0) > 0)
+    assert np.all(np.ptp(multiple, axis=0) > 0)
 
 
 
@@ -193,7 +193,7 @@ def test_return_mean_ptp():
     fs_mean_ptp = mh.features.haralick(f, return_mean_ptp=1)
     assert np.all(fs.mean(0) == fs_mean)
     assert np.all(fs.mean(0) == fs_mean_ptp[:fs.shape[1]])
-    assert np.all(fs.ptp(0) == fs_mean_ptp[fs.shape[1]:])
+    assert np.all(np.ptp(fs, axis=0) == fs_mean_ptp[fs.shape[1]:])
 
 def test_return_mean_ptp_xor():
     f = 255*np.random.random((128,128))
