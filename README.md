@@ -235,6 +235,12 @@ questions.
 
 ## Recent Changes
 
+### Version 1.4.16 (Jul 3 2024)
+
+- update for NumPy 2
+- Add deprecated warning for freeimage
+
+
 ### Version 1.4.15 (Mar 24 2024)
 
 - Update build system (thanks to @Czaki, see #147)
