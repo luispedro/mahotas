@@ -1,4 +1,4 @@
-/* Copyright 2010-2014 (C)
+/* Copyright 2010-2024 (C)
  * Luis Pedro Coelho <luis@luispedro.org>
  * License: MIT
  */
@@ -13,7 +13,8 @@ typedef unsigned short ushort;
     case NPY_INT: HANDLE(int); break; \
     case NPY_UINT: HANDLE(unsigned int); break; \
     case NPY_LONG: HANDLE(npy_long); break; \
-    case NPY_ULONG: HANDLE(npy_ulong); break;
+    case NPY_LONGLONG: HANDLE(npy_longlong); break; \
+    case NPY_ULONGLONG: HANDLE(npy_ulonglong); break;
 
 #if defined(NPY_FLOAT128)
 #define HANDLE_FLOAT128() case NPY_FLOAT128: HANDLE(npy_float128)
