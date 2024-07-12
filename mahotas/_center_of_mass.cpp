@@ -1,4 +1,4 @@
-// Copyright (C) 2008-2012  Luis Pedro Coelho <luis@luispedro.org>
+// Copyright (C) 2008-2024  Luis Pedro Coelho <luis@luispedro.org>
 //
 // License: MIT (see COPYING file)
 
@@ -45,7 +45,7 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
     int max_label = 0;
     if (!PyArg_ParseTuple(args,"OO", &array, &labels_obj)) return NULL;
     if (!PyArray_Check(array)) {
-        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        PyErr_Format(PyExc_RuntimeError, "%s (first argument is not an array)", TypeErrorMsg);
         return NULL;
     }
     if (labels_obj != Py_None) {
@@ -53,7 +53,7 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
         if (!PyArray_Check(labels_obj) ||
             !PyArray_ISCARRAY_RO(labels_arr) ||
             !numpy::check_type<npy_int32>(labels_arr)) {
-            PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+            PyErr_Format(PyExc_RuntimeError, "%s (second argument is not None, but does not match expectations)", TypeErrorMsg);
             return NULL;
         }
         labels = ndarray_cast<const npy_int32*>(labels_arr);
@@ -92,7 +92,7 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
             default: {
                 if (labels) delete [] totals;
                 nogil.restore();
-                PyErr_SetString(PyExc_RuntimeError,TypeErrorMsg);
+                PyErr_Format(PyExc_RuntimeError, "%s (type = %d)", TypeErrorMsg, PyArray_TYPE(array));
                 return NULL;
             }
         }
