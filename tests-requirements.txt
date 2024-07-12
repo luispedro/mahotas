@@ -2,6 +2,6 @@ matplotlib
 pip
 freeimage
 coveralls
-pytest
+pytest<=8.1.1
 scipy
 pillow
