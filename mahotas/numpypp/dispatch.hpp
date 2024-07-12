@@ -44,7 +44,7 @@ typedef unsigned short ushort;
                 HANDLE_TYPES();\
                 HANDLE_FLOAT16(); \
                 default: \
-                PyErr_SetString(PyExc_RuntimeError, "Dispatch on types failed!"); \
+                PyErr_Format(PyExc_RuntimeError, "Dispatch on types failed (type = %d)!", PyArray_TYPE(array)); \
                 return NULL; \
         } \
     } \
@@ -55,7 +55,7 @@ typedef unsigned short ushort;
         switch(PyArray_TYPE(array)) { \
                 HANDLE_INTEGER_TYPES();\
                 default: \
-                PyErr_SetString(PyExc_RuntimeError, "Dispatch on types failed!"); \
+                PyErr_Format(PyExc_RuntimeError, "Dispatch on integer types failed (type = %d)!", PyArray_TYPE(array)); \
                 return NULL; \
         } \
     } \
@@ -67,7 +67,7 @@ typedef unsigned short ushort;
                 HANDLE_FLOAT_TYPES();\
                 HANDLE_FLOAT16(); \
                 default: \
-                    PyErr_SetString(PyExc_RuntimeError, "Dispatch on types failed!"); \
+                    PyErr_Format(PyExc_RuntimeError, "Dispatch on floating point types failed (type = %d)!", PyArray_TYPE(array)); \
                     return NULL; \
         } \
     } \
