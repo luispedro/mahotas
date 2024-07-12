@@ -1,11 +1,11 @@
-# Copyright (C) 2008-2015, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2024, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
 
-from __future__ import division
 import numpy as np
 from . import _center_of_mass
+
 
 def center_of_mass(img, labels=None):
     '''
@@ -37,7 +37,7 @@ def center_of_mass(img, labels=None):
             not labels.flags['C_CONTIGUOUS']:
             labels = np.ascontiguousarray(labels, np.int32)
         else:
-            # This is necessary because it might be of a type that equals
+            # This is necessary because labels might be of a type that equals
             # NPY_INT32, but is not NPY_INT32
             labels = labels.view(np.int32)
     cm = _center_of_mass.center_of_mass(img, labels)
