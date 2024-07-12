@@ -1,6 +1,5 @@
 matplotlib
 pip
-freeimage
 coveralls
 pytest<=8.1.1
 scipy

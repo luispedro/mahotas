@@ -100,7 +100,7 @@ jobs:
               numpy-version: '1.25'
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - uses: mamba-org/setup-micromamba@v1
       with:
         cache-environment: true
@@ -112,6 +112,7 @@ jobs:
       shell: bash -l {0}
       run: |
         micromamba install --file tests-requirements.txt --name mahotas_test_env
+        micromamba install --name mahotas_test_env freeimage imread
     - name: Build
       shell: bash -l {0}
       run: |
