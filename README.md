@@ -235,6 +235,10 @@ questions.
 
 ## Recent Changes
 
+### Version 1.4.17 (Jul 13 2024)
+
+- Fix bug that stopped mahotas from working on Windows
+
 ### Version 1.4.16 (Jul 3 2024)
 
 - update for NumPy 2

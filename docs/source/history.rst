@@ -2,6 +2,10 @@
 History
 =======
 
+Version 1.4.17 (Jul 13 2024)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Fixes for Windows (actually a bona fides bug that was only triggered in a very specific case)
+
 Version 1.4.16 (Jul 3 2024)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - update for NumPy 2

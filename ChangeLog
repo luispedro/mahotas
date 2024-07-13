@@ -1,3 +1,6 @@
+Version 1.4.17 2024-07-13 by luispedro
+	* mahotas: fix bug triggered on Windows
+
 Version 1.4.16 2024-07-03 by luispedro
 	* io: Add deprecated warning for freeimage
 	* mahotas: update for NumPy 2
