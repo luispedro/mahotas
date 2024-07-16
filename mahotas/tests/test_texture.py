@@ -171,6 +171,7 @@ def test_4d_image():
 def rand_haralick():
     f = 255*np.random.random((128,128))
     f = f.astype(np.uint8)
+    f[0, 0] = 255
     f = mh.features.haralick(f)
     return f.mean(0)
 def test_feature_non_zero():
