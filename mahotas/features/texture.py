@@ -132,7 +132,7 @@ def haralick(f,
         nr_dirs = len(_3d_deltas)
     else:
         raise ValueError('mahotas.texture.haralick: Can only handle 2D and 3D images.')
-    fm1 = f.max() + 1
+    fm1 = int(f.max()) + 1
     cmat = np.empty((fm1, fm1), np.int32)
     def all_cmatrices():
         for dir in range(nr_dirs):
