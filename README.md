@@ -5,12 +5,12 @@
 Mahotas is a library of fast computer vision algorithms (all implemented
 in C++ for speed) operating over numpy arrays.
 
-![GH Actions Status](https://github.com/luispedro/mahotas/workflows/Python%20Package%20using%20Conda/badge.svg)
+[![Test mahotas](https://github.com/luispedro/mahotas/actions/workflows/test-python-package-with-conda.yml/badge.svg)](https://github.com/luispedro/mahotas/actions/workflows/test-python-package-with-conda.yml)
 [![Coverage Status](https://coveralls.io/repos/github/luispedro/mahotas/badge.svg?branch=master)](https://coveralls.io/github/luispedro/mahotas?branch=master)
 [![License](https://img.shields.io/badge/License-MIT-blue)](https://opensource.org/licenses/MIT)
-[![Downloads](https://pepy.tech/badge/mahotas/month)](https://pepy.tech/project/mahotas/month)
-[![Install with Conda](https://anaconda.org/conda-forge/mahotas/badges/downloads.svg)](https://anaconda.org/conda-forge/mahotas)
-[![Install with Anaconda](https://anaconda.org/conda-forge/mahotas/badges/installer/conda.svg)](https://anaconda.org/conda-forge/mahotas)
+[![Downloads](https://static.pepy.tech/badge/mahotas)](https://pepy.tech/project/mahotas)
+[![Conda Downloads](https://anaconda.org/conda-forge/mahotas/badges/downloads.svg)](https://anaconda.org/conda-forge/mahotas)
+[![Install with conda](https://img.shields.io/badge/install%20with-conda-brightgreen.svg?style=flat)](https://anaconda.org/conda-forge/mahotas)
 
 Python versions 2.7, 3.4+, are supported.
 
