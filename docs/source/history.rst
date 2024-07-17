@@ -2,6 +2,11 @@
 History
 =======
 
+Version 1.4.18 (Jul 18 2024)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Fix bug in Haralick features and NumPy 2 (thanks to @Czaki, see `#150 <https://github.com/luispedro/mahotas/pull/150>`__)
+
 Version 1.4.17 (Jul 13 2024)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Fixes for Windows (actually a bona fides bug that was only triggered in a very specific case)

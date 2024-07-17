@@ -235,6 +235,10 @@ questions.
 
 ## Recent Changes
 
+### Version 1.4.18 (Jul 18 2024)
+
+- Fix bug in Haralick features and NumPy 2 (thanks to @Czaki, see [#150](https://github.com/luispedro/mahotas/pull/150))
+
 ### Version 1.4.17 (Jul 13 2024)
 
 - Fix bug that stopped mahotas from working on Windows
