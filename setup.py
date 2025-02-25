@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2024, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2009-2025, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -134,6 +134,7 @@ classifiers = [
 'Programming Language :: Python :: 3.10',
 'Programming Language :: Python :: 3.11',
 'Programming Language :: Python :: 3.12',
+'Programming Language :: Python :: 3.13',
 'Programming Language :: C++',
 'Operating System :: OS Independent',
 'License :: OSI Approved :: MIT License',
