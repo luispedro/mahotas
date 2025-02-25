@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2023, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2025, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -108,11 +108,11 @@ def haralick(f,
         difference between max() and min()) across all the directions (default:
         False).
     use_x_minus_y_variance : bool, optional
-        Feature 10 (index 9) has two interpretations, as the variance of \|x-y\|
-        or as the variance of P(\|x-y\|). In order to achieve compatibility with
+        Feature 10 (index 9) has two interpretations, as the variance of |x-y|
+        or as the variance of P(|x-y|). In order to achieve compatibility with
         other software and previous versions of mahotas, mahotas defaults to
-        using ``VAR[P(\|x-y\|)]``; if this argument is True, then it uses
-        ``VAR[\|x-y\|]`` (default: False)
+        using ``VAR[P(|x-y|)]``; if this argument is True, then it uses
+        ``VAR[|x-y|]`` (default: False)
 
 
     Returns
@@ -220,11 +220,11 @@ def haralick_features(cmats,
         difference between max() and min()) across all the directions (default:
         False).
     use_x_minus_y_variance : bool, optional
-        Feature 10 (index 9) has two interpretations, as the variance of \|x-y\|
-        or as the variance of P(\|x-y\|). In order to achieve compatibility with
+        Feature 10 (index 9) has two interpretations, as the variance of |x-y|
+        or as the variance of P(|x-y|). In order to achieve compatibility with
         other software and previous versions of mahotas, mahotas defaults to
-        using ``VAR[P(\|x-y\|)]``; if this argument is True, then it uses
-        ``VAR[\|x-y\|]`` (default: False)
+        using ``VAR[P(|x-y|)]``; if this argument is True, then it uses
+        ``VAR[|x-y|]`` (default: False)
 
     Returns
     -------

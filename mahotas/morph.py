@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2019, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2025, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT
@@ -319,7 +319,7 @@ def hitmiss(input, Bc, out=None, output=None):
 
     For a given pixel position, the hit&miss is ``True`` if, when ``Bc`` is
     overlaid on ``input``, centered at that position, the ``1`` values line up
-    with ``1``\s, while the ``0``\s line up with ``0``\s (``2``\s correspond to
+    with ``1``, while the ``0`` line up with ``0`` (``2`` correspond to
     *don't care*).
 
     Examples
