@@ -2,7 +2,7 @@
 # License: MIT
 
 import numpy as np
-from mahotas.thresholding import otsu, rc, bernsen, gbernsen
+from mahotas.thresholding import otsu, rc, bernsen, gbernsen, elen
 from mahotas.histogram import fullhistogram
 import pytest
 
@@ -114,3 +114,9 @@ def test_gbernsen():
         f = f.astype(np.uint8)
         b = gbernsen(f, np.ones((3,3), bool), 15, 145)
         assert f.shape == b.shape
+
+def test_elen_threshold():
+    img = np.array([[100, 150], [200, 50]], dtype=np.uint8)
+    t = elen(img)
+    assert isinstance(t, float)
+    assert t == 125
