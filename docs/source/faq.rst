@@ -16,10 +16,11 @@ commands::
 Who uses mahotas?
 ~~~~~~~~~~~~~~~~~
 
-In June 2016, there were `34 papers
+As of July 2025, `320 papers
 <https://scholar.google.com/scholar?as_sdt=1,5&hl=en&sciodt=0,5&cites=18199654681754783804&scipsc=>`__
-citing the `mahotas paper
-<https://dx.doi.org/10.5334/jors.ac>`__
+cite the `mahotas paper
+<https://dx.doi.org/10.5334/jors.ac>`__. Many more use it without citing it. It
+is used in a wide variety of applications, from astronomy to medicine.
 
 Why did you not simply contribute to ``scipy.ndimage`` or ``scikits.image``?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

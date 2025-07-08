@@ -12,7 +12,7 @@ in C++ for speed) operating over numpy arrays.
 [![Conda Downloads](https://anaconda.org/conda-forge/mahotas/badges/downloads.svg)](https://anaconda.org/conda-forge/mahotas)
 [![Install with conda](https://img.shields.io/badge/install%20with-conda-brightgreen.svg?style=flat)](https://anaconda.org/conda-forge/mahotas)
 
-Python versions 2.7, 3.4+, are supported.
+Python versions 3.7+, are supported.
 
 Notable algorithms:
 

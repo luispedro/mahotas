@@ -87,7 +87,7 @@ Mahotas is available for FreeBSD as `graphics/mahotas
 MacPorts
 ~~~~~~~~
 
-For Macports, mahotas is available as `py27-mahotas
+For Macports, mahotas is available as `py-mahotas
 <https://trac.macports.org/browser/trunk/dports/python/py-mahotas/Portfile>`__.
 
 conda
