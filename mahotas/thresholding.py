@@ -51,7 +51,8 @@ __all__ = [
         'rc',
         'soft_threshold',
         'bernsen',
-        'gbernsen',
+        'gbernsen',,
+        'elen',
     ]
 
 
@@ -258,3 +259,65 @@ def gbernsen(f, se, contrast_threshold, gthresh):
     fmean = fmax/2. + fmin/2. # Do not use (fmax + fmin) as that may overflow
     return np.choose(fptp < contrast_threshold, (fmean < gthresh, fmean > f))
 
+def elen(img, ignore_zeros=False):
+    """
+    T = elen(img, ignore_zeros=False)
+
+    Calculate a threshold using Elen & Donmez's histogram-based method.
+
+    Parameters
+    ----------
+    img : ndarray
+        Grayscale input image (integer type preferred).
+    ignore_zeros : bool, optional
+        If True, ignores zero-valued pixels. Default is False.
+
+    Returns
+    -------
+    T : float
+        Threshold value.
+
+    References
+    ----------
+    Elen, A. & Donmez, E. (2024), "Histogram-based thresholding", Optik, 306: 1-20,
+    DOI: 10.1109/83.366472
+    """
+    _verify_is_integer_type(img, 'elen')
+    hist = fullhistogram(img)
+    hist = np.asanyarray(hist, dtype=np.float64)
+    if ignore_zeros:
+        hist[0] = 0
+
+    total = hist.sum()
+    if total == 0:
+        return 0
+
+    # Bin centers: 0, 1, ..., len(hist)-1
+    bin_centers = np.arange(len(hist), dtype=np.float64)
+
+    # Normalize histogram to obtain probability distribution
+    prob = hist / total
+
+    # Calculate global mean and standard deviation of the intensity distribution
+    mean = np.sum(bin_centers * prob)
+    std = np.sqrt(np.sum(((bin_centers - mean) ** 2) * prob))
+
+    # Define alpha region as [mean - std, mean + std]
+    mask_alpha = (bin_centers >= mean - std) & (bin_centers <= mean + std)
+
+    # Separate histogram bins into alpha (central) and beta (peripheral) regions
+    counts_alpha = hist[mask_alpha]
+    bins_alpha = bin_centers[mask_alpha]
+    counts_beta = hist[~mask_alpha]
+    bins_beta = bin_centers[~mask_alpha]
+
+    # Compute weights (sum of counts) for each region
+    weight_alpha = counts_alpha.sum()
+    weight_beta = counts_beta.sum()
+
+    # Compute average intensity within each region
+    avg_alpha = np.sum(bins_alpha * counts_alpha) / weight_alpha if weight_alpha > 0 else 0
+    avg_beta = np.sum(bins_beta * counts_beta) / weight_beta if weight_beta > 0 else 0
+
+    # Final threshold is the midpoint between regional means
+    return (avg_alpha + avg_beta) / 2.0
