@@ -32,6 +32,8 @@ jobs:
           - '2.0'
           - '2.1'
           - '2.2'
+          - '2.3'
+          - '2.4'
         exclude:
             # 3.7 is too old for NumPy 1.22+
             - python-version: '3.7'
@@ -50,6 +52,10 @@ jobs:
               numpy-version: '2.1'
             - python-version: '3.7'
               numpy-version: '2.2'
+            - python-version: '3.7'
+              numpy-version: '2.3'
+            - python-version: '3.7'
+              numpy-version: '2.4'
 
             # 3.8 is too old for NumPy 1.25+
             - python-version: '3.8'
@@ -62,6 +68,20 @@ jobs:
               numpy-version: '2.1'
             - python-version: '3.8'
               numpy-version: '2.2'
+            - python-version: '3.8'
+              numpy-version: '2.3'
+            - python-version: '3.8'
+              numpy-version: '2.4'
+
+            # 3.9 is too old for NumPy 2.1+
+            - python-version: '3.9'
+              numpy-version: '2.1'
+            - python-version: '3.9'
+              numpy-version: '2.2'
+            - python-version: '3.9'
+              numpy-version: '2.3'
+            - python-version: '3.9'
+              numpy-version: '2.4'
 
             # NumPy 1.20 & Python 3.7 trigger a bad resolve from mamba
             - python-version: '3.7'
@@ -81,6 +101,12 @@ jobs:
               numpy-version: '1.19'
             - python-version: '3.10'
               numpy-version: '1.20'
+
+            # NumPy >2.3+ are too new for Python 3.10
+            - python-version: '3.10'
+              numpy-version: '2.3'
+            - python-version: '3.10'
+              numpy-version: '2.4'
 
 
             # NumPy <1.23 are too old for Python 3.11
@@ -111,7 +137,7 @@ jobs:
               numpy-version: '1.25'
 
 
-            # NumPy <=1.25 are too old for Python 3.12
+            # NumPy <=2.1 are too old for Python 3.13
             - python-version: '3.13'
               numpy-version: '1.19'
             - python-version: '3.13'
@@ -126,6 +152,10 @@ jobs:
               numpy-version: '1.24'
             - python-version: '3.13'
               numpy-version: '1.25'
+            - python-version: '3.13'
+              numpy-version: '1.26'
+            - python-version: '3.13'
+              numpy-version: '2.0'
 
     steps:
     - uses: actions/checkout@v4

@@ -1,4 +1,5 @@
 matplotlib
+setuptools
 pip
 coveralls
 pytest<=8.1.1
