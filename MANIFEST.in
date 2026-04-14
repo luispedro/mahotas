@@ -12,6 +12,5 @@ include INSTALL
 include Makefile
 include mahotas/tests/data/*
 include mahotas/demos/data/*
-include *requirements.txt
 graft docs/source
 include docs/Makefile

@@ -1,11 +1,75 @@
 [build-system]
-requires = ["setuptools", "numpy"]
-# When build with numpy>=1.25 the resulted binary wheel is compatybile with numpy >=1.16
+requires = ["setuptools>=64", "numpy"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "mahotas"
+dynamic = ["version"]
+description = "Mahotas: Computer Vision Library"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "MIT"}
+authors = [
+    {name = "Luis Pedro Coelho", email = "luis@luispedro.org"},
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+    "Topic :: Software Development :: Libraries",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: C++",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "numpy",
+]
+
+[project.urls]
+Homepage = "https://luispedro.org/software/mahotas"
+Documentation = "https://mahotas.readthedocs.io/"
+Repository = "https://github.com/luispedro/mahotas"
+Issues = "https://github.com/luispedro/mahotas/issues"
+
+[project.optional-dependencies]
+tests = [
+    "matplotlib",
+    "pip",
+    "coveralls",
+    "pytest<=8.1.1",
+    "scipy",
+    "pillow",
+]
+
+[project.scripts]
+mahotas-features = "mahotas.features_cli:main"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = {attr = "mahotas.mahotas_version.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["mahotas*"]
+
+[tool.setuptools.package-data]
+"mahotas.tests" = ["data/*"]
+"mahotas.demos" = ["data/*"]
 
 [tool.cibuildwheel]
 test-command = "pytest --import-mode=importlib {project}/mahotas/tests"
 test-extras = ["tests"]
-test-skip = ["pp*", "cp31*-win32"]  # there are no scipy weels for this version
-skip= ["pp37*", "pp310*", "*musllinux*", "*manylinux*i686"] # there are no numpy wheels for this version
-environment = { PIP_PREFER_BINARY="1"}
+test-skip = ["pp*", "cp31*-win32"]  # there are no scipy wheels for this version
+skip = ["pp37*", "pp310*", "*musllinux*", "*manylinux*i686"]  # there are no numpy wheels for this version
+environment = {PIP_PREFER_BINARY = "1"}
