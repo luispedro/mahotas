@@ -2,6 +2,9 @@ matplotlib
 setuptools
 pip
 coveralls
+meson-python>=0.17.1,<0.18
+meson>=1.2.3
+ninja
 pytest<=8.1.1
 scipy
 pillow

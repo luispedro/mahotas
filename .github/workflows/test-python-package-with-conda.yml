@@ -171,6 +171,7 @@ jobs:
       run: |
         micromamba install --file tests-requirements.txt --name mahotas_test_env
         micromamba install --name mahotas_test_env freeimage imread
+        python -m pip install "meson-python>=0.17.1,<0.18" "meson>=1.2.3" ninja
     - name: Build
       shell: bash -l {0}
       run: |

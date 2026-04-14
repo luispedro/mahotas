@@ -19,24 +19,23 @@ Debug Mode
 ----------
 
 If you compile mahotas in debug mode, then it will run slower but perform a lot
-of runtime checks. This is controlled by the ``DEBUG`` environment variable.
+of runtime checks.
 
 There are two levels:
 
-1.  ``DEBUG=1`` This turns on assertions. The code will run slower, but
+1.  A Meson ``debug`` build turns on assertions. The code will run slower, but
     probably not noticeably slower, except for very large images.
-2.  ``DEBUG=2`` This turns on the assertions and additionally uses the debug
-    version of the C++ library (this only works if you are using GCC). Some of
-    the internal code also picks up on the ``DEBUG=2`` and adds even more
-    sanity checking. The result will be code that runs **much slower** as all
-    operations done through iterators into standard containers are now checked
-    (including many inner loop operations). However, it catches many errors.
+2.  ``make debug`` uses a Meson ``debug`` build and additionally defines
+    ``_GLIBCXX_DEBUG``. This only has an effect with libstdc++, but when
+    available it enables checked iterators in the C++ standard library. The
+    result will be code that runs **much slower** as many iterator operations
+    are now checked. However, it catches many errors.
 
 The Makefile that comes with the source helps you::
 
     make clean
     make debug
-    make test
+    make tests
 
 will rebuild in debug mode and run all tests. When you are done testing, use
 the ``fast`` Make target to get the non-debug build::
@@ -44,12 +43,11 @@ the ``fast`` Make target to get the non-debug build::
     make clean
     make fast
 
-Using make will not change your environment. The ``DEBUG`` variable is set
-internally only.
+Using make will rebuild the editable install in your current Python
+environment with the requested configuration.
 
 If you don't know about it, check out `ccache <https://ccache.samba.org/>`__
 which is a great tool if you are developing in compiled languages (this is not
 specific to mahotas or even Python). It will allow you to quickly perform
 ``make clean; make debug`` and ``make clean; make fast`` so you never get your
 builds mixed up.
-

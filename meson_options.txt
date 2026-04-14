@@ -1,0 +1,6 @@
+option(
+    'glibcpp_debug',
+    type: 'boolean',
+    value: false,
+    description: 'Enable libstdc++ checked iterators for debug-style builds.',
+)

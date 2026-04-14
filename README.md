@@ -152,6 +152,14 @@ If you want an editable install for development, use:
 pip install -e .[tests]
 ```
 
+The build is Meson-based. To rebuild the editable install in release or debug
+mode after the initial development install, use:
+
+```bash
+make fast
+make debug
+```
+
 If you run into issues, the manual has more [extensive documentation on
 mahotas
 installation](https://mahotas.readthedocs.io/en/latest/install.html),
@@ -184,30 +192,28 @@ You can access this information using the `mahotas.citation()` function.
 Development happens on github
 ([https://github.com/luispedro/mahotas](https://github.com/luispedro/mahotas)).
 
-You can set the `DEBUG` environment variable before compilation to get a
-debug version:
-
-```bash
-export DEBUG=1
-make debug
-pytest -v
-```
-
-You can set it to the value `2` to get extra checks:
-
-```bash
-export DEBUG=2
-make debug
-pytest -v
-```
-
-Be careful not to use this in production unless you are chasing a bug.
-Debug level 2 is very slow as it adds many runtime checks.
-
 The `Makefile` that is shipped with the source of mahotas can be useful
-too. `make debug` will create a debug build. `make fast` will create a
-non-debug build (you need to `make clean` in between). `make tests` will
-run the test suite.
+too. `make debug` rebuilds the editable install with a Meson debug build and
+enables `_GLIBCXX_DEBUG`. `make fast` rebuilds it in release mode. `make tests`
+runs the test suite after a debug rebuild.
+
+```bash
+make debug
+pytest -v
+```
+
+If you want the equivalent of the old `DEBUG=1` build without
+`_GLIBCXX_DEBUG`, invoke pip directly:
+
+```bash
+python -m pip install -e . --no-deps --no-build-isolation \
+  --config-settings=build-dir=build/debug \
+  --config-settings=setup-args=-Dbuildtype=debug
+```
+
+Be careful not to use the debug build in production unless you are chasing a
+bug. The `_GLIBCXX_DEBUG` configuration used by `make debug` is very slow as it
+adds many runtime checks.
 
 ## Links & Contacts
 

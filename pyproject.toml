@@ -1,6 +1,11 @@
 [build-system]
-requires = ["setuptools>=64", "numpy"]
-build-backend = "setuptools.build_meta"
+requires = [
+    "meson-python>=0.17.1,<0.18",
+    "meson>=1.2.3",
+    "ninja",
+    "numpy",
+]
+build-backend = "mesonpy"
 
 [project]
 name = "mahotas"
@@ -46,6 +51,9 @@ tests = [
     "matplotlib",
     "pip",
     "coveralls",
+    "meson-python>=0.17.1,<0.18",
+    "meson>=1.2.3",
+    "ninja",
     "pytest<=8.1.1",
     "scipy",
     "pillow",
@@ -53,19 +61,6 @@ tests = [
 
 [project.scripts]
 mahotas-features = "mahotas.features_cli:main"
-
-[tool.setuptools]
-include-package-data = false
-
-[tool.setuptools.dynamic]
-version = {attr = "mahotas.mahotas_version.__version__"}
-
-[tool.setuptools.packages.find]
-include = ["mahotas*"]
-
-[tool.setuptools.package-data]
-"mahotas.tests" = ["data/*"]
-"mahotas.demos" = ["data/*"]
 
 [tool.cibuildwheel]
 test-command = "pytest --import-mode=importlib {project}/mahotas/tests"

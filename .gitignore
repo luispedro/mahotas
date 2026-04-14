@@ -1,6 +1,7 @@
 wheelhouse
 dist/
 build/
+/.mesonpy-*
 mahotas.egg-info/
 *.pyc
 *.so

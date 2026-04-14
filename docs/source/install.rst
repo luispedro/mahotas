@@ -31,15 +31,25 @@ For development, install from a checkout with::
 
     pip install -e .[tests]
 
-You will need to have ``numpy`` and a ``C++`` compiler.
+This installs the test dependencies and the Meson build tools needed by the
+``Makefile`` rebuild targets. You will also need a ``C++`` compiler.
+
+To rebuild the editable install after changes, use::
+
+    make fast
+    make debug
 
 Visual Studio
 ~~~~~~~~~~~~~
 
-For compiling from source in Visual Studio, use::
+On Windows, Meson will use Visual Studio automatically when you build from
+source. For a normal install, use::
 
-    python setup.py build_ext -c msvc
-    pip install .
+    python -m pip install .
+
+For a debug-style editable install, use::
+
+    python -m pip install -e . --no-deps --no-build-isolation --config-settings=build-dir=build/debug --config-settings=setup-args=-Dbuildtype=debug
 
 
 Bleeding Edge (Development)
