@@ -193,9 +193,9 @@ Development happens on github
 ([https://github.com/luispedro/mahotas](https://github.com/luispedro/mahotas)).
 
 The `Makefile` that is shipped with the source of mahotas can be useful
-too. `make debug` rebuilds the editable install with a Meson debug build and
-enables `_GLIBCXX_DEBUG`. `make fast` rebuilds it in release mode. `make tests`
-runs the test suite after a debug rebuild.
+too. `make debug` rebuilds the editable install in optimized mode while keeping
+assertions enabled and adding `_GLIBCXX_DEBUG`. `make fast` rebuilds it in
+plain release mode. `make tests` runs the test suite after a debug rebuild.
 
 ```bash
 make debug
@@ -208,12 +208,13 @@ If you want the equivalent of the old `DEBUG=1` build without
 ```bash
 python -m pip install -e . --no-deps --no-build-isolation \
   --config-settings=build-dir=build/debug \
-  --config-settings=setup-args=-Dbuildtype=debug
+  --config-settings=setup-args=-Dbuildtype=release \
+  --config-settings=setup-args=-Db_ndebug=false
 ```
 
 Be careful not to use the debug build in production unless you are chasing a
-bug. The `_GLIBCXX_DEBUG` configuration used by `make debug` is very slow as it
-adds many runtime checks.
+bug. The `_GLIBCXX_DEBUG` configuration used by `make debug` can still be much
+slower than a plain release build because it adds many runtime checks.
 
 ## Links & Contacts
 

@@ -49,7 +49,7 @@ source. For a normal install, use::
 
 For a debug-style editable install, use::
 
-    python -m pip install -e . --no-deps --no-build-isolation --config-settings=build-dir=build/debug --config-settings=setup-args=-Dbuildtype=debug
+    python -m pip install -e . --no-deps --no-build-isolation --config-settings=build-dir=build/debug --config-settings=setup-args=-Dbuildtype=release --config-settings=setup-args=-Db_ndebug=false
 
 
 Bleeding Edge (Development)

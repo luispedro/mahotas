@@ -23,13 +23,13 @@ of runtime checks.
 
 There are two levels:
 
-1.  A Meson ``debug`` build turns on assertions. The code will run slower, but
+1.  A release build with ``b_ndebug=false`` turns on assertions. The code will run slower, but
     probably not noticeably slower, except for very large images.
-2.  ``make debug`` uses a Meson ``debug`` build and additionally defines
-    ``_GLIBCXX_DEBUG``. This only has an effect with libstdc++, but when
-    available it enables checked iterators in the C++ standard library. The
-    result will be code that runs **much slower** as many iterator operations
-    are now checked. However, it catches many errors.
+2.  ``make debug`` uses an optimized release build with assertions enabled and
+    additionally defines ``_GLIBCXX_DEBUG``. This only has an effect with
+    libstdc++, but when available it enables checked iterators in the C++
+    standard library. The result can still be **much slower** as many iterator
+    operations are now checked. However, it catches many errors.
 
 The Makefile that comes with the source helps you::
 
