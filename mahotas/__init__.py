@@ -27,75 +27,60 @@ Citation:
     computer vision. Journal of Open Research Software, 1:e3, DOI:
     https://dx.doi.org/10.5334/jors.ac
 '''
-try:
-    from .bbox import bbox, croptobbox
-    from .center_of_mass import center_of_mass
-    from .convolve import convolve, \
-                            convolve1d, \
-                            find, \
-                            mean_filter, \
-                            median_filter, \
-                            rank_filter, \
-                            template_match, \
-                            gaussian_filter1d, \
-                            gaussian_filter, \
-                            laplacian_2D
-    from .convolve import haar, ihaar, daubechies, idaubechies, wavelet_center, wavelet_decenter
-    from .distance import distance
-    from .edge import sobel, dog
-    from .euler import euler
-    from .histogram import fullhistogram
-    from .labeled import border, borders, bwperim, label, labeled_sum
-    from .features.moments import moments
-    from .morph import cdilate, \
-                        cerode, \
-                        close, \
-                        close_holes, \
-                        cwatershed, \
-                        disk, \
-                        dilate, \
-                        erode, \
-                        get_structuring_elem, \
-                        hitmiss, \
-                        locmax, \
-                        locmin, \
-                        majority_filter, \
-                        open, \
-                        regmin, \
-                        regmax
-    from .resize import imresize, resize_to
-    from .stretch import as_rgb, \
-                        overlay, \
-                        stretch, \
-                        stretch_rgb
-    from .thin import thin
-    from .thresholding import otsu, rc
-    from .io import imread, imsave
+from .bbox import bbox, croptobbox
+from .center_of_mass import center_of_mass
+from .convolve import convolve, \
+                        convolve1d, \
+                        find, \
+                        mean_filter, \
+                        median_filter, \
+                        rank_filter, \
+                        template_match, \
+                        gaussian_filter1d, \
+                        gaussian_filter, \
+                        laplacian_2D
+from .convolve import haar, ihaar, daubechies, idaubechies, wavelet_center, wavelet_decenter
+from .distance import distance
+from .edge import sobel, dog
+from .euler import euler
+from .histogram import fullhistogram
+from .labeled import border, borders, bwperim, label, labeled_sum
+from .features.moments import moments
+from .morph import cdilate, \
+                    cerode, \
+                    close, \
+                    close_holes, \
+                    cwatershed, \
+                    disk, \
+                    dilate, \
+                    erode, \
+                    get_structuring_elem, \
+                    hitmiss, \
+                    locmax, \
+                    locmin, \
+                    majority_filter, \
+                    open, \
+                    regmin, \
+                    regmax
+from .resize import imresize, resize_to
+from .stretch import as_rgb, \
+                    overlay, \
+                    stretch, \
+                    stretch_rgb
+from .thin import thin
+from .thresholding import otsu, rc
+from .io import imread, imsave
 
-    from .tests import run as test
+from .tests import run as test
 
-    from .mahotas_version import __version__
+from .mahotas_version import __version__
 
-    from . import colors
-    from . import demos
-    from . import features
-    from . import morph
-    from . import polygon
-    from . import segmentation
-except ImportError: # pragma: no cover
-    import sys
-    _,e,_ = sys.exc_info()
-    from sys import stderr
-    stderr.write('''\
-Could not import submodules (exact error was: %s).
-
-There are many reasons for this error the most common one is that you have
-either not built the packages or have built (using `python setup.py build`) or
-installed them (using `python setup.py install`) and then proceeded to test
-mahotas **without changing the current directory**.
-
-Try installing and then changing to another directory before importing mahotas.
-''' % e)
+from . import colors
+from . import demos
+from . import features
+from . import morph
+from . import polygon
+from . import segmentation
 
 citation_text = '''
 If you use mahotas please cite
@@ -202,4 +187,3 @@ __all__ = [
     'citation_text',
     '__version__',
     ]
-
