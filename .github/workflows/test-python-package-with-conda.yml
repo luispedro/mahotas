@@ -158,8 +158,8 @@ jobs:
               numpy-version: '2.0'
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: mamba-org/setup-micromamba@v1
+    - uses: actions/checkout@v6
+    - uses: mamba-org/setup-micromamba@v2
       with:
         cache-environment: true
         cache-downloads: false
