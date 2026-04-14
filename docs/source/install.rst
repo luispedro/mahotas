@@ -21,14 +21,15 @@ conda configuration, you can also install just mahotas with::
 From source
 -----------
 
+Mahotas supports Python 3.7 through 3.13.
+
 You can get the released version using pip::
 
     pip install mahotas
 
-If you prefer, you can download the source from `PyPI
-<https://pypi.python.org/pypi/mahotas>`__ and run::
+For development, install from a checkout with::
 
-    python setup.py install
+    pip install -e .[tests]
 
 You will need to have ``numpy`` and a ``C++`` compiler.
 
@@ -38,7 +39,7 @@ Visual Studio
 For compiling from source in Visual Studio, use::
 
     python setup.py build_ext -c msvc
-    python setup.py install
+    pip install .
 
 
 Bleeding Edge (Development)
@@ -103,4 +104,3 @@ Frugalware Linux
 ~~~~~~~~~~~~~~~~
 
 Mahotas is available as ``python-mahotas``.
-

@@ -12,7 +12,7 @@ in C++ for speed) operating over numpy arrays.
 [![Conda Downloads](https://anaconda.org/conda-forge/mahotas/badges/downloads.svg)](https://anaconda.org/conda-forge/mahotas)
 [![Install with conda](https://img.shields.io/badge/install%20with-conda-brightgreen.svg?style=flat)](https://anaconda.org/conda-forge/mahotas)
 
-Python versions 3.7+, are supported.
+Python 3.7 through 3.13 are supported.
 
 Notable algorithms:
 
@@ -133,8 +133,8 @@ conda install mahotas
 
 ### Compilation from source
 
-You will need python (naturally), numpy, and a C++ compiler. Then you
-should be able to use:
+You will need Python, NumPy, and a C++ compiler. Then you should be able to
+use:
 
 ```bash
 pip install mahotas
@@ -144,6 +144,12 @@ You can test your installation by running:
 
 ```bash
 python -c "import mahotas as mh; mh.test()"
+```
+
+If you want an editable install for development, use:
+
+```bash
+pip install -e .[tests]
 ```
 
 If you run into issues, the manual has more [extensive documentation on
@@ -183,14 +189,16 @@ debug version:
 
 ```bash
 export DEBUG=1
-python setup.py test
+make debug
+pytest -v
 ```
 
 You can set it to the value `2` to get extra checks:
 
 ```bash
 export DEBUG=2
-python setup.py test
+make debug
+pytest -v
 ```
 
 Be careful not to use this in production unless you are chasing a bug.
@@ -198,7 +206,7 @@ Debug level 2 is very slow as it adds many runtime checks.
 
 The `Makefile` that is shipped with the source of mahotas can be useful
 too. `make debug` will create a debug build. `make fast` will create a
-non-debug build (you need to `make clean` in between). `make test` will
+non-debug build (you need to `make clean` in between). `make tests` will
 run the test suite.
 
 ## Links & Contacts
