@@ -42,7 +42,7 @@ from . import _interpolate
 from ._filters import mode2int, modes, _check_mode
 
 def _check_interpolate(array, order, funcname):
-    if not (0 < order < 5):
+    if not (0 <= order <= 5):
         raise ValueError('mahotas.interpolate.%s: spline order not supported' % funcname)
 
     array = np.asarray(array)
@@ -81,6 +81,8 @@ def spline_filter1d(array, order=3, axis=-1, out=None, dtype=np.float64, output=
         The filtered input.
     """
     array = _check_interpolate(array, order, 'spline_filter1d')
+    if order < 2:
+        raise ValueError('mahotas.interpolate.spline_filter1d: spline order must be >= 2')
     if isinstance(out, type): # pragma: no cover
         import warnings
         warnings.warn('mahotas.interpolate.spline_filter1d: Use `dtype` for type instead of `out`', DeprecationWarning)
@@ -137,6 +139,8 @@ def spline_filter(array, order=3, out=None, dtype=np.float64, output=None):
 
     """
     array = _check_interpolate(array, order, 'spline_filter')
+    if order < 2:
+        raise ValueError('mahotas.interpolate.spline_filter: spline order must be >= 2')
     if isinstance(out, type): # pragma: no cover
         import warnings
         warnings.warn('mahotas.interpolate.spline_filter: Use `dtype` for type instead of `out`', DeprecationWarning)

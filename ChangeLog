@@ -9,6 +9,8 @@ Version 1.4.19+
 	* Fix gaussian_filter1d() silently ignoring `out` parameter.
 	* Fix gbernsen() swapped np.choose branches: both the local and
 	  global threshold branches were inverted.
+	* Allow spline order 0 (nearest-neighbor) in interpolate.zoom()
+	  and interpolate.shift().
 
 Version 1.4.18 2024-07-18 by luispedro
 	* Fix bug in Haralick features and NumPy 2 (thanks to @Czaki, see #150)

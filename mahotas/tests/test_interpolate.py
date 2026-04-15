@@ -39,7 +39,10 @@ def test_shift_ratio():
 
 @pytest.mark.parametrize('func, deg', [(interpolate.spline_filter1d, -6),
                                     (interpolate.spline_filter1d, 6),
-                                    (interpolate.spline_filter, 0)])
+                                    (interpolate.spline_filter1d, 0),
+                                    (interpolate.spline_filter1d, 1),
+                                    (interpolate.spline_filter, 0),
+                                    (interpolate.spline_filter, 1)])
 def test_order(func, deg):
     f = np.arange(16*16).reshape((16,16))
     with raises(ValueError):
@@ -68,3 +71,12 @@ def test_shift_uint8():
     im = np.arange(256).reshape((16,-1))
     im = im.astype(np.uint8)
     interpolate.shift(im, [0, np.pi/2], order=1)
+
+def test_zoom_order0():
+    f = np.zeros((64, 64))
+    f[16:48, 16:48] = 200
+    out = interpolate.zoom(f, 0.5, order=0)
+    assert out.shape == (32, 32)
+    # Nearest-neighbor: center block should be preserved
+    assert out[12, 12] == 200
+    assert out[0, 0] == 0
