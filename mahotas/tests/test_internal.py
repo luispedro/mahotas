@@ -37,6 +37,21 @@ def test_get_output_explicit_dtype():
     with pytest.raises(ValueError):
         _get_output(f, output, 'testing', bool)
 
+def test_get_output_deprecated_output():
+    f = np.arange(256).reshape((32,8))
+    out_arr = np.empty_like(f)
+    with pytest.warns(DeprecationWarning, match='deprecated `output`'):
+        result = _get_output(f, None, 'testing', output=out_arr)
+    assert result is out_arr
+
+def test_get_output_both_out_and_output():
+    f = np.arange(256).reshape((32,8))
+    out_arr = np.empty_like(f)
+    other_arr = np.empty_like(f)
+    with pytest.warns(DeprecationWarning):
+        result = _get_output(f, out_arr, 'testing', output=other_arr)
+    assert result is out_arr
+
 
 def test_get_axis_good():
     f = np.zeros((3,4,5,3,2,2,5,3,2,4,1))

@@ -1,12 +1,13 @@
-# Copyright (C) 2011-2019, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2011-2026, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
+import warnings
 import numpy as np
 
 def _get_output(array, out, fname, dtype=None, output=None):
     '''
-    output = _get_output(array, out, fname, dtype=None, output=None)
+    out = _get_output(array, out, fname, dtype=None, output=None)
 
     Implements the mahotas output convention:
         (1) if `out` is None, return np.empty(array.shape, array.dtype)
@@ -18,31 +19,44 @@ def _get_output(array, out, fname, dtype=None, output=None):
     out : ndarray or None
     fname : str
         Function name. Used in error messages
+    dtype : dtype, optional
+        Expected dtype. Defaults to ``array.dtype``
+    output : ndarray or None, optional
+        Deprecated alias for `out`. Triggers a DeprecationWarning.
 
     Returns
     -------
-    output : ndarray
+    out : ndarray
     '''
     detail = '.\nWhen an output argument is used, the checking is very strict as this is a performance feature.'
     if dtype is None:
         dtype = array.dtype
     if output is not None: # pragma: no cover
-        import warnings
-        warnings.warn('Using deprecated `output` argument in function `%s`. Please use `out` in the future. It has exactly the same meaning and it matches what numpy uses.' % fname, DeprecationWarning)
+        warnings.warn(
+            f'Using deprecated `output` argument in function `{fname}`. '
+            'Please use `out` in the future. It has exactly the same '
+            'meaning and it matches what numpy uses.',
+            DeprecationWarning,
+            stacklevel=3)
         if out is not None:
-            warnings.warn('Using both `out` and `output` in function `%s`.\nMahotas is going to ignore the `output` argument and use the `out` version exclusively.' % fname)
+            warnings.warn(
+                f'Using both `out` and `output` in function `{fname}`.\n'
+                'Mahotas is going to ignore the `output` argument '
+                'and use the `out` version exclusively.',
+                DeprecationWarning,
+                stacklevel=3)
         else:
             out = output
     if out is None:
         return np.empty(array.shape, dtype)
     if out.dtype != dtype:
         raise ValueError(
-            'mahotas.%s: `out` has wrong type (out.dtype is %s; expected %s)%s' %
-                (fname, out.dtype, dtype, detail))
+            f'mahotas.{fname}: `out` has wrong type (out.dtype is {out.dtype}; expected {dtype}){detail}')
     if out.shape != array.shape:
-        raise ValueError('mahotas.%s: `out` has wrong shape (got %s, while expecting %s)%s' % (fname, out.shape, array.shape, detail))
+        raise ValueError(
+            f'mahotas.{fname}: `out` has wrong shape (got {out.shape}, while expecting {array.shape}){detail}')
     if not out.flags.contiguous:
-        raise ValueError('mahotas.%s: `out` is not c-array%s' % (fname,detail))
+        raise ValueError(f'mahotas.{fname}: `out` is not c-array{detail}')
     return out
 
 def _get_axis(array, axis, fname):
