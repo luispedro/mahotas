@@ -95,8 +95,8 @@ def imresize(img, nsize, order=3):
     scipy.misc.pilutil.imresize : Similar function
     '''
     from .interpolate import zoom
-    if type(nsize) == tuple or type(nsize) == list:
-        if type(nsize[0]) == int:
+    if isinstance(nsize, (tuple, list)):
+        if isinstance(nsize[0], int):
             nsize = np.array(nsize, dtype=float)
             nsize /= img.shape
     return zoom(img, nsize, order=order)

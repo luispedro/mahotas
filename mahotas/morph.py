@@ -70,9 +70,9 @@ def get_structuring_elem(A,Bc):
     }
     if Bc is None:
         Bc = 1
-    elif type(Bc) == int and (len(A.shape), Bc) in translate_sizes:
+    elif isinstance(Bc, int) and (len(A.shape), Bc) in translate_sizes:
         Bc = translate_sizes[len(A.shape),Bc]
-    elif type(Bc) != int:
+    elif not isinstance(Bc, int):
         if A.ndim != Bc.ndim:
             raise ValueError('morph.get_structuring_elem: Bc does not have the correct number of dimensions. [array has {} coordinates; Bc has {}.]'.format(A.ndim, Bc.ndim))
         Bc = np.asanyarray(Bc, A.dtype)
