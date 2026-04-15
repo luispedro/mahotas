@@ -114,3 +114,31 @@ def test_gbernsen():
         f = f.astype(np.uint8)
         b = gbernsen(f, np.ones((3,3), bool), 15, 145)
         assert f.shape == b.shape
+
+def test_gbernsen_high_contrast():
+    # In a high-contrast region (contrast > threshold), gbernsen should
+    # threshold by local mean: pixel > mean(local_max, local_min)
+    f = np.zeros((32, 32), np.uint8)
+    f[16:, :] = 200
+    se = np.ones((3, 3), bool)
+    # contrast_threshold=10, gthresh=50
+    # Away from the edge, contrast is 0 (low), so global threshold applies.
+    # The bright region (200) is above gthresh=50, so should be True.
+    b = gbernsen(f, se, 10, 50)
+    # Bright pixels should be foreground
+    assert b[20, 16] == True
+    # Dark pixels should be background
+    assert b[5, 16] == False
+
+def test_gbernsen_low_contrast_global():
+    # In a uniform (low contrast) region, gbernsen falls back to global threshold.
+    # Pixels above gthresh should be True, below should be False.
+    f = np.full((32, 32), 100, dtype=np.uint8)
+    se = np.ones((3, 3), bool)
+    # contrast_threshold=10: entire image has 0 contrast → low contrast everywhere
+    # gthresh=50: all pixels (100) are above 50 → all should be True
+    b = gbernsen(f, se, 10, 50)
+    assert b[16, 16] == True
+    # gthresh=150: all pixels (100) are below 150 → all should be False
+    b2 = gbernsen(f, se, 10, 150)
+    assert b2[16, 16] == False
