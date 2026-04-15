@@ -6,6 +6,7 @@ Version 1.4.19+
 	* Fix dog() edge detection: edges were shifted by (-1,-1) because
 	  subarray indices were used as direct array indices, and the scan
 	  range excluded the last valid row/column.
+	* Fix gaussian_filter1d() silently ignoring `out` parameter.
 
 Version 1.4.18 2024-07-18 by luispedro
 	* Fix bug in Haralick features and NumPy 2 (thanks to @Czaki, see #150)

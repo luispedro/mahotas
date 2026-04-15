@@ -339,6 +339,8 @@ def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., o
 
     """
     _verify_is_floatingpoint_type(array, 'gaussian_filter1d')
+    if output is not None:
+        out = _get_output(array, out, 'gaussian_filter1d', output=output)
     sigma = float(sigma)
     s2 = sigma*sigma
     # make the length of the filter equal to 4 times the standard
@@ -361,7 +363,7 @@ def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., o
         weights *= (3.0 - x*x/s2)*x/(s2*s2)
     else:
         raise ValueError('mahotas.convolve.gaussian_filter1d: Order outside 0..3 not implemented')
-    return convolve1d(array, weights, axis, mode, cval, out=output)
+    return convolve1d(array, weights, axis, mode, cval, out=out)
 
 
 def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out=None, output=None):
