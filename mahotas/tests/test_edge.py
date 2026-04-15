@@ -60,3 +60,18 @@ def test_dog():
     assert edges.any()
     edges1 = mh.dog(im, sigma1=1.)
     assert np.any(edges != edges1)
+
+
+def test_dog_edge_position():
+    # Create an image with a sharp horizontal edge at row 20
+    # DoG crosses zero between row 19 (positive) and row 20 (negative).
+    # The algorithm marks the negative point, so row 20 should be an edge.
+    img = np.zeros((40, 40), dtype=float)
+    img[20:, :] = 100.0
+
+    edges = mh.dog(img)
+
+    edge_rows = np.where(edges.any(axis=1))[0]
+    assert len(edge_rows) > 0, 'dog should detect the horizontal edge'
+    assert 20 in edge_rows, \
+        f'Edge expected at row 20 (negative side of zero crossing), got {edge_rows}'

@@ -113,49 +113,48 @@ def dog(img, sigma1 = 2, multiplier = 1.001, just_filter = False):
     
     # Look for the zero crossings:  +-, -+ and their transposes
     # Choose the edge to be the negative point
-    rr = np.arange(1, m-2)
-    cc = np.arange(1, n-2)
+    rr = np.arange(1, m-1)
+    cc = np.arange(1, n-1)
 
     (rx,cx) = np.nonzero(
-        np.logical_and(np.logical_and(DoG[np.ix_(rr,cc)] < 0, DoG[np.ix_(rr,cc+1)] > 0), 
+        np.logical_and(np.logical_and(DoG[np.ix_(rr,cc)] < 0, DoG[np.ix_(rr,cc+1)] > 0),
                        abs( DoG[np.ix_(rr,cc)] - DoG[np.ix_(rr,cc+1)]) > thresh) )   # [- +]
-    e[(rx,cx)] = 1
+    e[(rr[rx],cc[cx])] = 1
     (rx,cx) = np.nonzero(
-        np.logical_and(np.logical_and(DoG[np.ix_(rr,cc-1)] > 0, DoG[np.ix_(rr,cc+1)] < 0), 
+        np.logical_and(np.logical_and(DoG[np.ix_(rr,cc-1)] > 0, DoG[np.ix_(rr,cc+1)] < 0),
                        abs( DoG[np.ix_(rr,cc-1)] - DoG[np.ix_(rr,cc)]) > thresh) )   # [+ -]
-    e[(rx,cx)] = 1
+    e[(rr[rx],cc[cx])] = 1
     (rx,cx) = np.nonzero(
-        np.logical_and(np.logical_and(DoG[np.ix_(rr,cc)] < 0, DoG[np.ix_(rr+1,cc)] > 0), 
+        np.logical_and(np.logical_and(DoG[np.ix_(rr,cc)] < 0, DoG[np.ix_(rr+1,cc)] > 0),
                        abs( DoG[np.ix_(rr,cc)] - DoG[np.ix_(rr+1,cc)]) > thresh) )   # [- +]'
-    e[(rx,cx)] = 1    
+    e[(rr[rx],cc[cx])] = 1
     (rx,cx) = np.nonzero(
-        np.logical_and(np.logical_and(DoG[np.ix_(rr-1,cc)] > 0, DoG[np.ix_(rr,cc)] < 0), 
+        np.logical_and(np.logical_and(DoG[np.ix_(rr-1,cc)] > 0, DoG[np.ix_(rr,cc)] < 0),
                        abs( DoG[np.ix_(rr-1,cc)] - DoG[np.ix_(rr,cc)]) > thresh) )   # [+ -]'
-    e[(rx,cx)] = 1
-    
+    e[(rr[rx],cc[cx])] = 1
+
     # Another case: DoG can be precisely zero
     (rz,cz) = np.nonzero(DoG[np.ix_(rr,cc)] == 0)
     if rz.size != 0:
         # Look for the zero crossings: +0-, -0+ and their transposes
         # The edge lies on the Zero point
-        
-        (rx,cx) = np.nonzero(
-            np.logical_and(np.logical_and(DoG[np.ix_(rz,cz-1)] < 0, DoG[np.ix_(rz,cz+1)] > 0), 
-                           abs( DoG[np.ix_(rz,cz+1)] - DoG[np.ix_(rz,cz-1)]) > thresh) )   # [- 0 +]
-        e[(rx,cx)] = 1  
-        (rx,cx) = np.nonzero(
-            np.logical_and(np.logical_and(DoG[np.ix_(rz,cz-1)] > 0, DoG[np.ix_(rz,cz+1)] < 0), 
-                           abs( DoG[np.ix_(rz,cz-1)] - DoG[np.ix_(rz,cz+1)]) > thresh) )   # [+ 0 -]
-        e[(rx,cx)] = 1
-        (rx,cx) = np.nonzero(
-            np.logical_and(np.logical_and(DoG[np.ix_(rz-1,cz)] < 0, DoG[np.ix_(rz+1,cz)] > 0), 
-                           abs( DoG[np.ix_(rz+1,cz)] - DoG[np.ix_(rz-1,cz)]) > thresh) )   # [- 0 +]'
-        e[(rx,cx)] = 1
-        (rx,cx) = np.nonzero(
-            np.logical_and(np.logical_and(DoG[np.ix_(rz-1,cz)] > 0, DoG[np.ix_(rz+1,cz)] < 0), 
-                           abs( DoG[np.ix_(rz-1,cz)] - DoG[np.ix_(rz+1,cz)]) > thresh) )   # [+ 0 -]'
-        e[(rx,cx)] = 1
-        
+        # Map subarray indices to original array coordinates
+        rz_orig = rr[rz]
+        cz_orig = cc[cz]
+
+        mask = np.logical_and(np.logical_and(DoG[rz_orig,cz_orig-1] < 0, DoG[rz_orig,cz_orig+1] > 0),
+                       abs( DoG[rz_orig,cz_orig+1] - DoG[rz_orig,cz_orig-1]) > thresh)   # [- 0 +]
+        e[rz_orig[mask],cz_orig[mask]] = 1
+        mask = np.logical_and(np.logical_and(DoG[rz_orig,cz_orig-1] > 0, DoG[rz_orig,cz_orig+1] < 0),
+                       abs( DoG[rz_orig,cz_orig-1] - DoG[rz_orig,cz_orig+1]) > thresh)   # [+ 0 -]
+        e[rz_orig[mask],cz_orig[mask]] = 1
+        mask = np.logical_and(np.logical_and(DoG[rz_orig-1,cz_orig] < 0, DoG[rz_orig+1,cz_orig] > 0),
+                       abs( DoG[rz_orig+1,cz_orig] - DoG[rz_orig-1,cz_orig]) > thresh)   # [- 0 +]'
+        e[rz_orig[mask],cz_orig[mask]] = 1
+        mask = np.logical_and(np.logical_and(DoG[rz_orig-1,cz_orig] > 0, DoG[rz_orig+1,cz_orig] < 0),
+                       abs( DoG[rz_orig-1,cz_orig] - DoG[rz_orig+1,cz_orig]) > thresh)   # [+ 0 -]'
+        e[rz_orig[mask],cz_orig[mask]] = 1
+
     return e
 
 
