@@ -84,7 +84,7 @@ def rgb2xyz(rgb, dtype=None):
     a = 0.055
     rgb_linear_high = np.power( (rgb + a)/(1.+a), 2.4 )
     rgb_linear_low = rgb/12.92
-    rgb_linear = np.choose(rgb <= 0.04045, [rgb_linear_low, rgb_linear_high])
+    rgb_linear = np.choose(rgb <= 0.04045, [rgb_linear_high, rgb_linear_low])
     return _convert(rgb_linear, transformation, dtype, 'rgb2xyz')
 
 def xyz2rgb(xyz, dtype=None):
@@ -122,7 +122,7 @@ def xyz2rgb(xyz, dtype=None):
     srgb_high = (1 + a)*np.power(rgb_linear, 1./2.4)
     srgb_high -= a
     srgb_low = 12.92 * rgb_linear
-    srgb = np.choose(rgb_linear <= 0.0031308, [srgb_low, srgb_high])
+    srgb = np.choose(rgb_linear <= 0.0031308, [srgb_high, srgb_low])
     srgb *= 255.
     return srgb
 
@@ -149,7 +149,7 @@ def xyz2lab(xyz, dtype=None):
     def f(t):
         branch_large = t**(1./3)
         branch_small = ((1/3.)*(29./6)*(29./6))*t + 4/29.
-        return np.choose(t <= (6./29)**2, [branch_small, branch_large])
+        return np.choose(t <= (6./29)**3, [branch_large, branch_small])
     xn, yn, zn = 0.95047, 1., 1.08883
     fx = f(x/xn)
     fy = f(y/yn)

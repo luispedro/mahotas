@@ -1,3 +1,9 @@
+Version 1.4.19+
+	* Fix inverted np.choose in color conversions (rgb2xyz, xyz2rgb, xyz2lab):
+	  all three had the choice arrays swapped, producing incorrect values.
+	  Additionally, xyz2lab used (6/29)^2 instead of the correct (6/29)^3
+	  threshold from the CIE standard.
+
 Version 1.4.18 2024-07-18 by luispedro
 	* Fix bug in Haralick features and NumPy 2 (thanks to @Czaki, see #150)
 
