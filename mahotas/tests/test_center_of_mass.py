@@ -58,6 +58,24 @@ def test_labels():
 
 
 
+def test_zero_sum_label():
+    # Labels whose pixels sum to zero should return NaN, not crash or Inf
+    img = np.zeros((10, 10), dtype=np.uint8)
+    labels = np.zeros((10, 10), dtype=np.int32)
+    labels[5:, :] = 1
+    img[:5, :] = 10  # label 0 has values, label 1 is all zeros
+    cm = mahotas.center_of_mass(img, labels)
+    assert cm.shape == (2, 2)
+    # label 0 should have a valid center
+    assert np.all(np.isfinite(cm[0]))
+    # label 1 (all zeros) should be NaN
+    assert np.all(np.isnan(cm[1]))
+
+    # Also test signed image where values cancel to zero
+    img2 = np.array([[5, -5]], dtype=np.int32)
+    cm2 = mahotas.center_of_mass(img2)
+    assert np.all(np.isnan(cm2))
+
 def test_labels_not_intc():
     img = np.arange(256).reshape((16,16))
     labels = img.copy()

@@ -98,10 +98,15 @@ PyObject* py_center_of_mass(PyObject* self, PyObject* args) {
         }
         const int nd = PyArray_NDIM(array);
         for (int label = 0; label != (max_label+1); ++label) {
-            for (int j = 0; j != nd; ++j) {
-                centers_v[label*nd+j] /= totals[label];
+            if (totals[label] == 0.0) {
+                std::fill(centers_v + label*nd, centers_v + (label+1)*nd,
+                          std::numeric_limits<double>::quiet_NaN());
+            } else {
+                for (int j = 0; j != nd; ++j) {
+                    centers_v[label*nd+j] /= totals[label];
+                }
+                std::reverse(centers_v + label*nd, centers_v + (label+1)*nd);
             }
-            std::reverse(centers_v + label*nd, centers_v + (label+1)*nd);
         }
         if (labels) delete [] totals;
     }

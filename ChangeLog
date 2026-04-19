@@ -9,6 +9,8 @@ Version 1.4.19+
 	* Fix gaussian_filter1d() silently ignoring `out` parameter.
 	* Fix gbernsen() swapped np.choose branches: both the local and
 	  global threshold branches were inverted.
+	* Fix center_of_mass() to return NaN for zero-sum labels instead
+	  of relying on undefined floating-point division behavior.
 	* Fix find() off-by-one: template matches at the last valid
 	  row/column were missed.
 	* Allow spline order 0 (nearest-neighbor) in interpolate.zoom()
