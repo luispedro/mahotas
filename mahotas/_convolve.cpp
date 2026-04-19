@@ -662,8 +662,8 @@ void find2d(const numpy::aligned_array<T> array, const numpy::aligned_array<T> t
     bool* rpos = out.data();
     std::fill(rpos, rpos + N0*N1, false);
 
-    for (npy_intp y = 0; y < N0 - Nt0; ++y) {
-        for (npy_intp x = 0; x < N1 - Nt1; ++x) {
+    for (npy_intp y = 0; y <= N0 - Nt0; ++y) {
+        for (npy_intp x = 0; x <= N1 - Nt1; ++x) {
             for (npy_intp sy = 0; sy < Nt0; ++sy) {
                 for (npy_intp sx = 0; sx < Nt1; ++sx) {
                     if (array.at(y + sy,x + sx) != target.at(sy,sx)) {
