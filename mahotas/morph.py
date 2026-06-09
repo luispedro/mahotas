@@ -711,7 +711,7 @@ def subm(a, b, out=None):
         a = np.array([10, 10, 10], np.uint8)
         b = np.array([ 5, 10, 15], np.uint8)
 
-        print subm(a,b)
+        print(subm(a,b))
 
     Prints out::
 
