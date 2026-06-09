@@ -119,7 +119,7 @@ _API = {
     }
 
 
-class _ctypes_wrapper(object):
+class _ctypes_wrapper:
     pass
 
 
@@ -226,7 +226,7 @@ def _error_handler(fif, message):
 _FI.FreeImage_SetOutputMessage(_error_handler)
 
 
-class FI_TYPES(object):
+class FI_TYPES:
     FIT_UNKNOWN = 0
     FIT_BITMAP = 1
     FIT_UINT16 = 2
@@ -314,7 +314,7 @@ class FI_TYPES(object):
         return np.dtype(dtype), extra_dims + [w, h]
 
 
-class IO_FLAGS(object):
+class IO_FLAGS:
     #Bmp
     BMP_DEFAULT = 0
     BMP_SAVE_RLE = 1
@@ -380,7 +380,7 @@ class IO_FLAGS(object):
     XBM_DEFAULT = 0
 
 
-class METADATA_MODELS(object):
+class METADATA_MODELS:
     FIMD_NODATA = -1
     FIMD_COMMENTS = 0
     FIMD_EXIF_MAIN = 1
@@ -395,7 +395,7 @@ class METADATA_MODELS(object):
     FIMD_CUSTOM = 10
 
 
-class FI_FORMAT(object):
+class FI_FORMAT:
     FIF_UNKNOWN = -1
     FIF_BMP = 0
     FIF_ICO = 1
@@ -510,7 +510,7 @@ def _wrap_bitmap_bits_in_array(bitmap, shape, dtype):
         strides = (itemsize, pitch)
     bits = _FI.FreeImage_GetBits(bitmap)
 
-    class DummyArray(object):
+    class DummyArray:
         __array_interface__ = {
             'data': (bits, False),
             'strides': strides,
@@ -798,11 +798,8 @@ def imsave(filename, img):
     write(img, filename)
 
 
-if sys.version_info[0] > 2:
-    import locale
-    _, _encoding = locale.getdefaultlocale()
-    if _encoding is None:
-        _encoding = 'UTF-8'
-    _bytestr = lambda x: str(x).encode(_encoding)
-else:
-    _bytestr = str
+import locale
+_encoding = locale.getpreferredencoding(False) or 'UTF-8'
+
+def _bytestr(x):
+    return str(x).encode(_encoding)

@@ -19,6 +19,10 @@ Version 1.4.19+
 	  now that the minimum supported Python is 3.10.
 	* Convert all `%`- and `.format()`-style string formatting to
 	  f-strings.
+	* freeimage: drop Python 2 compatibility branch, replace
+	  deprecated `locale.getdefaultlocale()` with
+	  `locale.getpreferredencoding()`, and drop `(object)` base
+	  classes.
 
 Version 1.4.18 2024-07-18 by luispedro
 	* Fix bug in Haralick features and NumPy 2 (thanks to @Czaki, see #150)
