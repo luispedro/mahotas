@@ -87,8 +87,8 @@ def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_p
         the position, *angle* the orientation, *score* and *laplacian* the
         score and sign of the detector; and *D_i* is the descriptor
 
-        If ``descriptor_only``, then only the *D_i*\ s are returned and the array
-        has shape (N, 64)!
+        If ``descriptor_only``, then only the *D_i* values are returned and the
+        array has shape (N, 64)!
     '''
     surfs = _surf.surf(integral(f), nr_octaves, nr_scales, initial_step_size, threshold, max_points)
     if descriptor_only:
