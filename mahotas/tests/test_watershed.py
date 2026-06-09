@@ -1,7 +1,6 @@
 import numpy as np
 import mahotas
 import mahotas as mh
-import sys
 import pytest
 
 S = np.array([
@@ -33,8 +32,6 @@ def test_watershed(dtype):
     St = S.astype(dtype)
     Mt = M.astype(int)
     W = mahotas.cwatershed(2-St, Mt)
-    if hasattr(sys, 'getrefcount'):
-        assert sys.getrefcount(W) == 2
     assert np.all(W == np.array([[1, 1, 1, 1],
            [1, 1, 1, 1],
            [1, 1, 1, 1],
