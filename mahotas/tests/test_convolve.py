@@ -287,3 +287,18 @@ def test_gaussian_filter1d_higher_dims():
     assert np.allclose(a1, a1_4dm)
     assert np.abs(a1-a1_4dm).max() < 0.01
 
+
+def test_gaussian_filter1d_out():
+    np.random.seed(0)
+    a = np.random.random((32, 32))
+    expected = mh.gaussian_filter1d(a, 1., axis=0)
+
+    out = np.empty_like(a)
+    r = mh.gaussian_filter1d(a, 1., axis=0, out=out)
+    assert np.allclose(r, expected)
+
+    with pytest.raises(ValueError):
+        mh.gaussian_filter1d(a, 1., axis=0, out=np.empty((16, 32)))
+    with pytest.raises(ValueError):
+        mh.gaussian_filter1d(a, 1., axis=0, out=np.empty_like(a, dtype=np.float32))
+

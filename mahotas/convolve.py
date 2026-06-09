@@ -339,7 +339,7 @@ def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., o
 
     """
     _verify_is_floatingpoint_type(array, 'gaussian_filter1d')
-    if output is not None:
+    if out is not None or output is not None:
         out = _get_output(array, out, 'gaussian_filter1d', output=output)
     sigma = float(sigma)
     s2 = sigma*sigma
