@@ -436,8 +436,8 @@ class FI_FORMAT:
 
 
 def read(filename, flags=0):
-    """Read an image to a numpy array of shape (width, height) for
-    greyscale images, or shape (width, height, nchannels) for RGB or
+    """Read an image to a numpy array of shape (height, width) for
+    greyscale images, or shape (height, width, nchannels) for RGB or
     RGBA images.
 
     """

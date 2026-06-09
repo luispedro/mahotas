@@ -80,7 +80,7 @@ def relabel(labeled, inplace=False):
 
     Parameters
     ----------
-    relabeled : ndarray of int
+    labeled : ndarray of int
         A labeled array
     inplace : boolean, optional
         Whether to perform relabeling inplace, erasing the values in
@@ -156,7 +156,7 @@ def remove_regions(labeled, regions, inplace=False):
 
     Parameters
     ----------
-    relabeled : ndarray of int
+    labeled : ndarray of int
         A labeled array
     regions : sequence of int
         These regions will be removed
@@ -171,7 +171,7 @@ def remove_regions(labeled, regions, inplace=False):
     See Also
     --------
     relabel : function
-        After removing unecessary regions, it is often a good idea to relabel
+        After removing unnecessary regions, it is often a good idea to relabel
         your label image.
     '''
     labeled = _as_labeled(labeled, labeled, 'remove_regions', inplace=inplace)
@@ -193,7 +193,7 @@ def remove_regions_where(labeled, conditions, inplace=False):
 
     Or, saving one image allocation::
 
-        removed = relabel(remove_regions(labeled, conditions), inplace=True)
+        removed = relabel(remove_regions_where(labeled, conditions), inplace=True)
 
     This is the same, but reuses the memory in the relabeling operation.
 
@@ -220,7 +220,7 @@ def remove_bordering(labeled, rsize=1, out=None, output=None):
     labeled : ndarray
         Labeled array
     rsize : int or tuple, optional
-        Minimum distance to the border (in Manhatan distance) to allow an
+        Minimum distance to the border (in Manhattan distance) to allow an
         object to survive. May be int or tuple with len == labeled.ndim.
     out : ndarray, optional
         If ``im`` is passed as ``out``, then it operates inline.

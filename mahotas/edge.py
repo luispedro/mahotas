@@ -38,7 +38,7 @@ def sobel(img, just_filter=False):
     img : Any 2D-ndarray
     just_filter : boolean, optional
         If true, then return the result of filtering the image with the sobel
-        filters, but do not threashold (default is False).
+        filters, but do not threshold (default is False).
 
     Returns
     -------
@@ -70,7 +70,7 @@ def sobel(img, just_filter=False):
 
 def dog(img, sigma1 = 2, multiplier = 1.001, just_filter = False):
     '''
-    edges = dog(img, sigma1 = 2, thresh= None, just_filter = False)
+    edges = dog(img, sigma1=2, multiplier=1.001, just_filter=False)
 
     Compute edges using the Difference of Gaussian (DoG) operator.
 

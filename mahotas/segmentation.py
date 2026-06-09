@@ -64,7 +64,7 @@ def slic(array, spacer=16, m=1.0, max_iters=128):
     array : ndarray
     spacer : int, optional
         x/y spacing between initial seeds. Initial seeds will be placed at
-        ``array[spacer/2::spacer,spacer/::spacer]``
+        ``array[spacer/2::spacer, spacer/2::spacer]``
     m : float, optional
         tradeoff between colour space and spatial distance.
     max_iters : int, optional

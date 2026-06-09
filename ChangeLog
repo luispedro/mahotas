@@ -1,6 +1,16 @@
 Version 1.4.19+
-	* Fix swapped docstrings of labeled_max and labeled_min in
-	  mahotas.labeled (no behavior change; documentation only).
+	* Documentation sweep: fix swapped docstrings of labeled_max and
+	  labeled_min, parameter-name mistakes in relabel/remove_regions,
+	  bad `lbp_transform` signature/description, "linear binary
+	  patterns" -> "local binary patterns" in lbp docstrings and CLI
+	  help, `dog()` and `convolve1d` signature lines, `tophat_close`
+	  self-See-Also, ambiguous Haralick output shape, freeimage.read
+	  shape ordering (height, width), zoom/shift mode list, spline_filter
+	  stray "axis." line, slic spacer typo, bbox/croptobbox n-D wording,
+	  stretch/stretch_rgb arg0/arg1 naming, _get_output description,
+	  several typos (empahsize, threashold, unecessary, Manhatan,
+	  Computers, `mahotas.features.lb`), and gbernsen gthresh
+	  "optional" mislabeling. No behavior changes.
 	* Fix inverted np.choose in color conversions (rgb2xyz, xyz2rgb, xyz2lab):
 	  all three had the choice arrays swapped, producing incorrect values.
 	  Additionally, xyz2lab used (6/29)^2 instead of the correct (6/29)^3

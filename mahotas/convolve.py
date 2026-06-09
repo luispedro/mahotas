@@ -90,8 +90,12 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None):
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
     out : ndarray, optional
-        Output array. Must have same shape and dtype as `f` as well as be
-        C-contiguous.
+        Output array. Must be of the same dtype as `f` and C-contiguous. In
+        the slow path (non-contiguous `f` or `len(weights) >= f.shape[axis]`)
+        it must have the same shape as `f`; in the contiguous fast path the
+        input is internally transposed/reshaped so a user-supplied `out`
+        must match that reshaped layout. Pass ``out=None`` to let the
+        function allocate the appropriate buffer.
 
     Returns
     -------
@@ -531,6 +535,11 @@ def haar(f, preserve_energy=True, inline=False):
         image is returned. Integer images are always converted to floating
         point and copied.
 
+    Returns
+    -------
+    t : ndarray
+        Haar-transformed image (floating point)
+
     See Also
     --------
     ihaar : function
@@ -569,6 +578,11 @@ def daubechies(f, code, inline=False):
         image is returned. Integer images are always converted to floating
         point and copied.
 
+    Returns
+    -------
+    filtered : ndarray
+        Daubechies-transformed image (floating point)
+
     See Also
     --------
     haar : function
@@ -597,6 +611,11 @@ def idaubechies(f, code, inline=False):
         Whether to write the results to the input image. By default, a new
         image is returned. Integer images are always converted to floating
         point and copied.
+
+    Returns
+    -------
+    rfiltered : ndarray
+        Inverse Daubechies-transformed image (floating point)
 
     See Also
     --------
@@ -660,8 +679,8 @@ def laplacian_2D(array, alpha = 0.2):
         input 2D array. If the array is an integer array, it will be converted 
         to a double array.
     alpha : scalar or sequence of scalars
-        controls the shape of Laplacian operator. Must be 0-1. A larger values 
-        makes the operator empahsize the diagonal direction.
+        controls the shape of Laplacian operator. Must be 0-1. A larger values
+        makes the operator emphasize the diagonal direction.
 
     Returns
     -------

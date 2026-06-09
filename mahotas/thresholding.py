@@ -238,7 +238,7 @@ def gbernsen(f, se, contrast_threshold, gthresh):
         structuring element to use for "locality"
     contrast_threshold : integer
         contrast threshold
-    gthresh : numeric, optional
+    gthresh : numeric
         global threshold to fall back in low contrast regions
 
     Returns

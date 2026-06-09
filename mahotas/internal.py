@@ -10,7 +10,8 @@ def _get_output(array, out, fname, dtype=None, output=None):
     out = _get_output(array, out, fname, dtype=None, output=None)
 
     Implements the mahotas output convention:
-        (1) if `out` is None, return np.empty(array.shape, array.dtype)
+        (1) if `out` is None, return np.empty(array.shape, dtype) where
+            ``dtype`` is the `dtype` argument if provided, else ``array.dtype``
         (2) else verify that output is of right size, shape, and contiguous
 
     Parameters

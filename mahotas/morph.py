@@ -763,7 +763,7 @@ def tophat_close(f, Bc=None, out=None):
 
     See Also
     --------
-    tophat_close : function
+    tophat_open : function
         Sister function to this one
     '''
     Bc = get_structuring_elem(f, Bc)

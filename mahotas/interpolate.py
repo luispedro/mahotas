@@ -110,7 +110,6 @@ def spline_filter(array, order=3, out=None, dtype=np.float64, output=None):
         The input array.
     order : int, optional
         The order of the spline, default is 3.
-        axis.
     out : ndarray, optional
         The array in which to place the output
     dtype : dtype, optional
@@ -189,8 +188,9 @@ def zoom(array, zoom, out=None, order=3, mode='constant', cval=0.0, prefilter=Tr
         The order has to be in the range 0-5.
     mode : str, optional
         Points outside the boundaries of the input are filled according
-        to the given mode ('constant', 'nearest', 'reflect' or 'wrap').
-        Default is 'constant'.
+        to the given mode: one of ``'constant'``, ``'nearest'``,
+        ``'reflect'``, ``'mirror'``, ``'wrap'``, ``'ignore'``.
+        Default is ``'constant'``.
     cval : scalar, optional
         Value used for points outside the boundaries of the input if
         ``mode='constant'``. Default is 0.0
@@ -268,8 +268,9 @@ def shift(array, shift, out=None, order=3, mode='constant', cval=0.0,
         The order has to be in the range 0-5.
     mode : str, optional
         Points outside the boundaries of the input are filled according
-        to the given mode ('constant', 'nearest', 'reflect' or 'wrap').
-        Default is 'constant'.
+        to the given mode: one of ``'constant'``, ``'nearest'``,
+        ``'reflect'``, ``'mirror'``, ``'wrap'``, ``'ignore'``.
+        Default is ``'constant'``.
     cval : scalar, optional
         Value used for points outside the boundaries of the input if
         ``mode='constant'``. Default is 0.0

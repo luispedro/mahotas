@@ -118,11 +118,11 @@ def haralick(f,
     Returns
     -------
     feats : ndarray of np.double
-        A 4x13 or 4x14 feature vector (one row per direction) if `f` is 2D,
-        13x13 or 13x14 if it is 3D. The exact number of features depends on the
-        value of ``compute_14th_feature`` Also, if either ``return_mean`` or
-        ``return_mean_ptp`` is set, then a single dimensional array is
-        returned.
+        Shape ``(n_directions, n_features)``: ``(4, 13)`` or ``(4, 14)`` if
+        `f` is 2D, ``(13, 13)`` or ``(13, 14)`` if it is 3D. ``n_features``
+        is 13 by default, or 14 when ``compute_14th_feature`` is set. If
+        either ``return_mean`` or ``return_mean_ptp`` is set, a 1-D array
+        of length ``n_features`` (or ``2 * n_features``) is returned.
     '''
     _verify_is_integer_type(f, 'mahotas.haralick')
 
@@ -165,7 +165,7 @@ def haralick_features(cmats,
                     use_x_minus_y_variance=False,
                     )
 
-    Computers Haralick features for the given cooccurrence matrices.
+    Computes Haralick features for the given cooccurrence matrices.
 
     This function is not usually necessary, as you can call ``haralick`` with
     an image to obtain features for that image. Use only if you know what you
@@ -229,11 +229,11 @@ def haralick_features(cmats,
     Returns
     -------
     feats : ndarray of np.double
-        A 4x13 or 4x14 feature vector (one row per direction) if `f` is 2D,
-        13x13 or 13x14 if it is 3D. The exact number of features depends on the
-        value of ``compute_14th_feature`` Also, if either ``return_mean`` or
-        ``return_mean_ptp`` is set, then a single dimensional array is
-        returned.
+        Shape ``(n_directions, n_features)``: ``(4, 13)`` or ``(4, 14)`` if
+        `f` is 2D, ``(13, 13)`` or ``(13, 14)`` if it is 3D. ``n_features``
+        is 13 by default, or 14 when ``compute_14th_feature`` is set. If
+        either ``return_mean`` or ``return_mean_ptp`` is set, a 1-D array
+        of length ``n_features`` (or ``2 * n_features``) is returned.
 
     See Also
     --------

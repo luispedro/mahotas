@@ -26,7 +26,7 @@ pixel, so we need to use interpolation to find a value for the green points.
 API Documentation
 -----------------
 
-The ``mahotas.features.lb`` module contains the ``lbp`` function which
+The ``mahotas.features.lbp`` module contains the ``lbp`` function which
 implements LBPs.
 
 .. automodule:: mahotas.features.lbp

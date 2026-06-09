@@ -33,16 +33,20 @@ __all__ = [
 def stretch_rgb(img, arg0=None, arg1=None, dtype=np.uint8):
     '''Variation of stretch() function that works per-channel on an RGB image
 
+    The optional positional arguments mirror ``stretch``: ``stretch_rgb(img)``,
+    ``stretch_rgb(img, max)``, or ``stretch_rgb(img, min, max)``.
+
     Parameters
     ----------
     img : ndarray
         input image. It is *not modified* by this function
-    min : integer, optional
-        minimum value for output [default: 0]
-    max : integer, optional
-        maximum value for output [default: 255]
-    dtype : dtype of output,optional
-         [default: np.uint8]
+    arg0 : integer, optional
+        Either ``max`` (when ``arg1`` is omitted) or ``min`` (when ``arg1`` is
+        given). [default: 0/255 — see ``stretch``]
+    arg1 : integer, optional
+        ``max`` value for output [default: 255]
+    dtype : dtype of output, optional
+        [default: np.uint8]
 
     Returns
     -------
@@ -77,12 +81,14 @@ def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
     ----------
     img : ndarray
         input image. It is *not modified* by this function
-    min : integer, optional
-        minimum value for output [default: 0]
-    max : integer, optional
-        maximum value for output [default: 255]
-    dtype : dtype of output,optional
-         [default: np.uint8]
+    arg0 : integer, optional
+        Either ``max`` (when ``arg1`` is omitted) or ``min`` (when ``arg1`` is
+        given) for the output range.
+    arg1 : integer, optional
+        ``max`` value for the output range when both positional arguments are
+        provided.
+    dtype : dtype of output, optional
+        [default: np.uint8]
 
     Returns
     -------
@@ -91,7 +97,9 @@ def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
 
     Notes
     -----
-    If max > 255, then it truncates the values if dtype is not specified.
+    The result is cast to ``dtype`` (default ``np.uint8``); if the requested
+    ``max`` is larger than what ``dtype`` can hold, the cast will wrap or
+    saturate per NumPy's rules. Pass a wider ``dtype`` to preserve range.
     '''
     if arg0 is None:
         min = 0

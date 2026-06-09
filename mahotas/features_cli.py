@@ -90,7 +90,7 @@ def main():
                             help='Compute Haralick features')
     parser.add_argument(
                     '--lbp', default=False, action='store_true',
-                            help='Compute LBP (linear binary patterns) features')
+                            help='Compute LBP (local binary patterns) features')
     parser.add_argument(
                     '--lbp-radius', default=8, action='store', type=int,
                             help='Radius to use for LBP features')

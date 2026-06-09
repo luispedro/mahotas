@@ -14,14 +14,14 @@ __all__ = [
 
 def lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=True):
     '''
-    transformed = lbp(image, radius, points, ignore_zeros=False, preserve_shape=True)
+    transformed = lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=True)
 
-    Compute Linear Binary Pattern Transform
+    Compute Local Binary Pattern Transform
 
-    The return value are the transformed pixel values  **histogram** of feature counts, where position ``i``
-    corresponds to the number of pixels that had code ``i``. The codes are
-    compressed so that impossible codes are not used. Therefore, this is the
-    ``i``th feature, not just the feature with binary code ``i``.
+    The return value is an array of compressed LBP codes (one code per input
+    pixel). The codes are compressed so that impossible codes are skipped,
+    so a value ``i`` does not literally encode the binary code ``i`` but
+    rather the ``i``-th valid LBP code.
 
     Parameters
     ----------
@@ -40,9 +40,10 @@ def lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=True
 
     Returns
     -------
-    features : 1-D numpy ndarray
-        histogram of features. See above for a caveat on the interpretation of
-        these.
+    transformed : ndarray of np.uint32
+        Per-pixel compressed LBP codes. Shape matches ``image`` if
+        ``preserve_shape`` is True (the default); otherwise it is a 1-D
+        array. See above for a caveat on the interpretation of the codes.
 
     References
     ----------
@@ -117,7 +118,7 @@ def lbp(image, radius, points, ignore_zeros=False):
     '''
     features = lbp(image, radius, points, ignore_zeros=False)
 
-    Compute Linear Binary Patterns
+    Compute Local Binary Patterns
 
     The return value is a **histogram** of feature counts, where position ``i``
     corresponds to the number of pixels that had code ``i``. The codes are
