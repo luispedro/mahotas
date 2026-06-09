@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2025, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2026, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -425,11 +425,11 @@ def cooccurence(f, direction, output=None, symmetric=True, distance=1):
     '''
     _verify_is_integer_type(f, 'mahotas.cooccurence')
     if len(f.shape) == 2 and not (0 <= direction < 4):
-        raise ValueError('mahotas.texture.cooccurence: `direction` {0} is not in range(4).'.format(direction))
+        raise ValueError(f'mahotas.texture.cooccurence: `direction` {direction} is not in range(4).')
     elif len(f.shape) == 3 and not (0 <= direction < 13):
-        raise ValueError('mahotas.texture.cooccurence: `direction` {0} is not in range(13).'.format(direction))
+        raise ValueError(f'mahotas.texture.cooccurence: `direction` {direction} is not in range(13).')
     elif len(f.shape) not in (2,3):
-        raise ValueError('mahotas.texture.cooccurence: cannot handle images of %s dimensions.' % len(f.shape))
+        raise ValueError(f'mahotas.texture.cooccurence: cannot handle images of {len(f.shape)} dimensions.')
 
     if output is None:
         mf = f.max()

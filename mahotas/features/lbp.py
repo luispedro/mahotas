@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2008-2009 Robert Webb and Luis Pedro Coelho <luis@luispedro.org>
-# Copyright (C) 2011-2013 Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2011-2026 Luis Pedro Coelho <luis@luispedro.org>
 #
 # License: MIT (see COPYING file)
 
@@ -185,5 +185,5 @@ def lbp_names(radius, points):
     codes = _lbp.map(codes.astype(np.uint32), points)
     pivots = (codes == iters)
     npivots = np.sum(pivots)
-    return ['lbp_r{}_p{}_{}'.format(radius, points, i) for i in range(npivots)]
+    return [f'lbp_r{radius}_p{points}_{i}' for i in range(npivots)]
 

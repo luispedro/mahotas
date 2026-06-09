@@ -49,7 +49,7 @@ def limits(f):
     if code == int32: return -2147483647,2147483647
     if code == int64: return -2**63,2**63-1
 
-    raise ValueError('pymorph.limits: does not accept this typecode: %s' % code)
+    raise ValueError(f'pymorph.limits: does not accept this typecode: {code}')
 
 def neg(f):
     y = limits(f)[0] + limits(f)[1] - f

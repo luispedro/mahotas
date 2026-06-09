@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2019, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2026, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
@@ -428,7 +428,7 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out=None, ou
 def _wavelet_array(f, inline, func):
     f = _as_floating_point_array(f)
     if f.ndim != 2:
-        raise ValueError('mahotas.convolve.%s: Only works for 2D images' % func)
+        raise ValueError(f'mahotas.convolve.{func}: Only works for 2D images')
     if not inline:
         return f.copy()
     return f
@@ -543,12 +543,12 @@ def haar(f, preserve_energy=True, inline=False):
         f /= 2.0
     return f
 
-_daubechies_codes = [('D%s' % ci) for ci in range(2,21,2)]
+_daubechies_codes = [f'D{ci}' for ci in range(2,21,2)]
 def _daubechies_code(c):
     try:
         return _daubechies_codes.index(c)
     except:
-        raise ValueError('mahotas.convolve: Known daubechies codes are {0}. You passed in {1}.'.format(_daubechies_codes, c))
+        raise ValueError(f'mahotas.convolve: Known daubechies codes are {_daubechies_codes}. You passed in {c}.')
 
 def daubechies(f, code, inline=False):
     '''

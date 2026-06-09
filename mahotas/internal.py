@@ -80,7 +80,7 @@ def _get_axis(array, axis, fname):
     if axis < 0:
         axis += len(array.shape)
     if not (0 <= axis < len(array.shape)):
-        raise ValueError('mahotas.%s: `axis` is out of bounds (maximum was %s, got %s)' % (fname, array.ndim, axis))
+        raise ValueError(f'mahotas.{fname}: `axis` is out of bounds (maximum was {array.ndim}, got {axis})')
     return axis
 
 def _normalize_sequence(array, value, fname):
@@ -107,7 +107,7 @@ def _normalize_sequence(array, value, fname):
     except TypeError:
         return [value for s in array.shape]
     if len(value) != array.ndim:
-        raise ValueError('mahotas.%s: argument is sequence, but has wrong size (%s for an array of %s dimensions)' % (fname, len(value), array.ndim))
+        raise ValueError(f'mahotas.{fname}: argument is sequence, but has wrong size ({len(value)} for an array of {array.ndim} dimensions)')
     return value
 
 def _verify_is_floatingpoint_type(A, function_name):
@@ -124,7 +124,7 @@ def _verify_is_floatingpoint_type(A, function_name):
         Used for error messages
     '''
     if not np.issubdtype(A.dtype, np.floating):
-        raise TypeError('mahotas.{}: This function only accepts floating-point types (passed array of type {})'.format(function_name, A.dtype))
+        raise TypeError(f'mahotas.{function_name}: This function only accepts floating-point types (passed array of type {A.dtype})')
 
 def _verify_is_integer_type(A, function_name):
     '''
@@ -141,7 +141,7 @@ def _verify_is_integer_type(A, function_name):
     '''
     k = A.dtype.kind
     if k not in "iub": # integer, unsigned integer, boolean
-        raise TypeError('mahotas.%s: This function only accepts integer types (passed array of type %s)' % (function_name, A.dtype))
+        raise TypeError(f'mahotas.{function_name}: This function only accepts integer types (passed array of type {A.dtype})')
 
 def _verify_is_nonnegative_integer_type(A, function_name):
     '''
@@ -158,7 +158,7 @@ def _verify_is_nonnegative_integer_type(A, function_name):
     '''
     _verify_is_integer_type(A, function_name)
     if A.dtype.kind == 'i' and not np.all(A >= 0):
-        raise ValueError('mahotas.{0}: This function only accepts positive integer types (passed array of type {1})'.format(function_name, A.dtype))
+        raise ValueError(f'mahotas.{function_name}: This function only accepts positive integer types (passed array of type {A.dtype})')
 
 def _make_binary(array):
     '''
@@ -185,8 +185,8 @@ def _as_floating_point_array(array):
 
 def _check_3(arr, funcname):
     if arr.ndim != 3 or arr.shape[2] != 3:
-        raise ValueError('mahotas.%s: this function expects an array of shape (h, w, 3), received an array of shape %s.' % (funcname, arr.shape))
+        raise ValueError(f'mahotas.{funcname}: this function expects an array of shape (h, w, 3), received an array of shape {arr.shape}.')
 
 def _check_2(arr, funcname):
     if arr.ndim != 2:
-        raise ValueError('mahotas.%s: this function can only handle 2D arrays (passed array with shape %s).' % (funcname, arr.shape))
+        raise ValueError(f'mahotas.{funcname}: this function can only handle 2D arrays (passed array with shape {arr.shape}).')

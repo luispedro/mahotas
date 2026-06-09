@@ -1,6 +1,6 @@
 # This module was adapted from scipy.ndimage and retains its license
 # Copyright (C) 2003-2005 Peter J. Verveer
-# Copyright (C) 2011-2019 Luis Pedro Coelho
+# Copyright (C) 2011-2026 Luis Pedro Coelho
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -43,11 +43,11 @@ from ._filters import mode2int, modes, _check_mode
 
 def _check_interpolate(array, order, funcname):
     if not (0 <= order <= 5):
-        raise ValueError('mahotas.interpolate.%s: spline order not supported' % funcname)
+        raise ValueError(f'mahotas.interpolate.{funcname}: spline order not supported')
 
     array = np.asarray(array)
     if np.iscomplexobj(array):
-        raise TypeError('mahotas.interpolate.%s: Complex type not supported' % funcname)
+        raise TypeError(f'mahotas.interpolate.{funcname}: Complex type not supported')
     return array
 
 def spline_filter1d(array, order=3, axis=-1, out=None, dtype=np.float64, output=None):

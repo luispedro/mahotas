@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2012, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2026, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # Carnegie Mellon University
 #
@@ -28,7 +28,7 @@ def _tas(img, thresh, margin):
         bins = _bins3
         saved = 27
     else:
-        raise ValueError('mahotas.tas: Cannot compute TAS for image of %s dimensions' % len(img.shape))
+        raise ValueError(f'mahotas.tas: Cannot compute TAS for image of {len(img.shape)} dimensions')
 
     def _ctas(img):
         V = convolve(img.astype(np.uint8), M)

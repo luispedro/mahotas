@@ -19,7 +19,7 @@ plt.imshow(f)
 
 plt.subplot(3,2,3)
 labeled, n_nucleus  = mahotas.label(f)
-plt.title('Found {} nuclei.'.format(n_nucleus))
+plt.title(f'Found {n_nucleus} nuclei.')
 plt.imshow(labeled)
 
 
@@ -39,7 +39,7 @@ plt.imshow(labeled)
 
 plt.subplot(3,2,6)
 relabeled, n_left = mahotas.labeled.relabel(labeled)
-plt.title('After filtering and relabeling, there are {} nuclei left.'.format(n_left))
+plt.title(f'After filtering and relabeling, there are {n_left} nuclei left.')
 plt.imshow(relabeled)
 
 

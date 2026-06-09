@@ -373,10 +373,10 @@ def _as_labeled(array, labeled, funcname, inplace='unused'):
     elif not inplace:
         labeled = np.array(labeled, dtype=np.intc)
     elif labeled.dtype != np.intc or not labeled.flags.carray:
-        raise ValueError('mahotas.labeled.%s: labeled must be a C-array of type int' % funcname)
+        raise ValueError(f'mahotas.labeled.{funcname}: labeled must be a C-array of type int')
 
     if array.shape != labeled.shape:
-        raise ValueError('mahotas.labeled.%s: `array` is not the same size as `labeled`' % funcname)
+        raise ValueError(f'mahotas.labeled.{funcname}: `array` is not the same size as `labeled`')
     return labeled
 
 

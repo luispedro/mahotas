@@ -17,6 +17,8 @@ Version 1.4.19+
 	  and interpolate.shift().
 	* Drop `from __future__ import division`/`print_function` imports
 	  now that the minimum supported Python is 3.10.
+	* Convert all `%`- and `.format()`-style string formatting to
+	  f-strings.
 
 Version 1.4.18 2024-07-18 by luispedro
 	* Fix bug in Haralick features and NumPy 2 (thanks to @Czaki, see #150)

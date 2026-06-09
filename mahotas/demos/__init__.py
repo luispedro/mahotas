@@ -46,7 +46,7 @@ def load(image_name, as_grey=None):
         'nuclear' : 'nuclear.png',
     }
     if image_name.lower() not in _demo_images:
-        raise KeyError('mahotas.demos.load: Unknown demo image "{}", known images are {}'.format(image_name, list(_demo_images.keys())))
+        raise KeyError(f'mahotas.demos.load: Unknown demo image "{image_name}", known images are {list(_demo_images.keys())}')
 
     image_name = image_path(_demo_images[image_name.lower()])
     return mh.imread(image_name, as_grey=as_grey)

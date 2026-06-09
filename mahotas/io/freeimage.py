@@ -221,7 +221,7 @@ else:
 
 @_functype(None, ctypes.c_int, ctypes.c_char_p)
 def _error_handler(fif, message):
-    raise RuntimeError('mahotas.freeimage: FreeImage error: %s' % message)
+    raise RuntimeError(f'mahotas.freeimage: FreeImage error: {message}')
 
 _FI.FreeImage_SetOutputMessage(_error_handler)
 
@@ -308,7 +308,7 @@ class FI_TYPES(object):
                 extra_dims = [4]
             else:
                 raise ValueError(
-                    'mahotas.freeimage: cannot convert %d BPP bitmap' % bpp)
+                    f'mahotas.freeimage: cannot convert {bpp} BPP bitmap')
         else:
             extra_dims = cls.extra_dims[fi_type]
         return np.dtype(dtype), extra_dims + [w, h]
@@ -487,11 +487,11 @@ def _read_bitmap(filename, flags):
     ftype = _FI.FreeImage_GetFileType(_bytestr(filename), 0)
     if ftype == -1:
         raise ValueError(
-            'mahotas.freeimage: cannot determine type of file %s' % filename)
+            f'mahotas.freeimage: cannot determine type of file {filename}')
     bitmap = _FI.FreeImage_Load(ftype, _bytestr(filename), flags)
     if not bitmap:
         raise ValueError(
-            'mahotas.freeimage: could not load file %s' % filename)
+            f'mahotas.freeimage: could not load file {filename}')
     return bitmap
 
 
@@ -554,7 +554,7 @@ def _array_from_bitmap(bitmap):
         else:
             raise ValueError(
                 'mahotas.freeimage: cannot handle images of'
-                ' this shape (%s)' % shape)
+                f' this shape ({shape})')
 
     # We need to copy because array does *not* own its memory
     # after bitmap is freed.
@@ -582,7 +582,7 @@ def write(array, filename, flags=0):
     ftype = _FI.FreeImage_GetFIFFromFilename(filename)
     if ftype == -1:
         raise ValueError(
-            'mahotas.freeimage: cannot determine type for %s' % filename)
+            f'mahotas.freeimage: cannot determine type for {filename}')
     bitmap, fi_type = _array_to_bitmap(array)
     try:
         if fi_type == FI_TYPES.FIT_BITMAP:
@@ -592,8 +592,8 @@ def write(array, filename, flags=0):
             can_write = _FI.FreeImage_FIFSupportsExportType(ftype, fi_type)
         if not can_write:
             raise TypeError(
-                'mahotas.freeimage: cannot save image of this type (%s) '
-                'to this file type' % array.dtype)
+                f'mahotas.freeimage: cannot save image of this type ({array.dtype}) '
+                'to this file type')
         res = _FI.FreeImage_Save(ftype, bitmap, filename, flags)
         if not res:
             raise RuntimeError(
@@ -611,7 +611,7 @@ def write_multipage(arrays, filename, flags=0, keep_cache_in_memory=True):
     ftype = _FI.FreeImage_GetFIFFromFilename(_bytestr(filename))
     if ftype == -1:
         raise ValueError(
-            'mahotas.freeimage: cannot determine type of file %s' % filename)
+            f'mahotas.freeimage: cannot determine type of file {filename}')
     create_new = True
     read_only = False
     multibitmap = _FI.FreeImage_OpenMultiBitmap(

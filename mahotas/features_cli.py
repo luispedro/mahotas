@@ -25,9 +25,9 @@ def print_error(text, color=True):
         Whether to print in colour.
     '''
     if color and sys.stderr.isatty():
-        sys.stderr.write("{}ERROR: {}{}\n".format(RED, text, END))
+        sys.stderr.write(f"{RED}ERROR: {text}{END}\n")
     else:
-        sys.stderr.write("ERROR: {}\n".format(text))
+        sys.stderr.write(f"ERROR: {text}\n")
 
 
 def read_bw(fname, options):
@@ -52,7 +52,7 @@ def read_bw(fname, options):
             return im.max(2)
         if options.convert_to_bw == 'yes':
             return mh.colors.rgb2grey(im, dtype=np.uint8)
-    print_error("{} is not a greyscale image (and --convert-to-bw was not specified)".format(fname), not options.no_color)
+    print_error(f"{fname} is not a greyscale image (and --convert-to-bw was not specified)", not options.no_color)
     sys.exit(1)
 
 def _write_row(output, items, header=None):
@@ -106,15 +106,15 @@ For example, use --haralick switch to compute Haralick features\n''')
         sys.exit(1)
 
     if not args.clobber and path.exists(args.output):
-        print_error('Output file ({}) already exists. Refusing to overwrite results without --clobber argument.'.format(args.output))
+        print_error(f'Output file ({args.output}) already exists. Refusing to overwrite results without --clobber argument.')
         sys.exit(2)
 
     output = open(args.output, 'w')
     colnames = []
     if args.haralick:
         hlabels = mh.features.texture.haralick_labels[:-1]
-        colnames.extend(["mean:{}".format(ell) for ell in hlabels])
-        colnames.extend(["ptp:{}".format(ell) for ell in hlabels])
+        colnames.extend([f"mean:{ell}" for ell in hlabels])
+        colnames.extend([f"ptp:{ell}" for ell in hlabels])
     if args.lbp:
         from mahotas.features.lbp import lbp_names
         colnames.extend(lbp_names(args.lbp_radius, args.lbp_points))

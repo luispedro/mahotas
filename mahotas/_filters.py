@@ -16,7 +16,7 @@ modes = frozenset(mode2int.keys())
 
 def _checked_mode2int(mode, cval, fname):
     if mode not in modes:
-        raise ValueError('mahotas.%s: `mode` not in %s' % (fname, modes))
+        raise ValueError(f'mahotas.{fname}: `mode` not in {modes}')
     if mode == 'constant' and cval != 0.:
         raise NotImplementedError('Please email mahotas developers to get this implemented.')
     return mode2int[mode]
