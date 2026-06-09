@@ -156,33 +156,3 @@ def dog(img, sigma1 = 2, multiplier = 1.001, just_filter = False):
         e[rz_orig[mask],cz_orig[mask]] = 1
 
     return e
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
