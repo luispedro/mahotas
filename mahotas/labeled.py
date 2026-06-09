@@ -414,31 +414,7 @@ def labeled_sum(array, labeled, minlength=None):
 
 def labeled_max(array, labeled):
     '''
-    mins = labeled_max(array, labeled, minlength=None)
-
-    Labeled minimum. ``mins`` will be an array of size ``labeled.max() + 1``, where
-    ``mins[i]`` is equal to ``np.min(array[labeled == i])``.
-
-    Parameters
-    ----------
-    array : ndarray of any type
-    labeled : int ndarray
-        Label map. This is the same type as returned from ``mahotas.label()``
-
-    Returns
-    -------
-    mins : 1-d ndarray of ``array.dtype``
-    '''
-    labeled = _as_labeled(array, labeled, 'labeled_max')
-    maxv = labeled.max() + 1
-    output = np.empty(maxv, dtype=array.dtype)
-    _labeled.labeled_max_min(array, labeled, output, True)
-    return output
-
-
-def labeled_min(array, labeled):
-    '''
-    maxs = labeled_min(array, labeled)
+    maxs = labeled_max(array, labeled)
 
     Labeled maximum. ``maxs`` will be an array of size ``labeled.max() + 1``, where
     ``maxs[i]`` is equal to ``np.max(array[labeled == i])``.
@@ -452,6 +428,30 @@ def labeled_min(array, labeled):
     Returns
     -------
     maxs : 1-d ndarray of ``array.dtype``
+    '''
+    labeled = _as_labeled(array, labeled, 'labeled_max')
+    maxv = labeled.max() + 1
+    output = np.empty(maxv, dtype=array.dtype)
+    _labeled.labeled_max_min(array, labeled, output, True)
+    return output
+
+
+def labeled_min(array, labeled):
+    '''
+    mins = labeled_min(array, labeled)
+
+    Labeled minimum. ``mins`` will be an array of size ``labeled.max() + 1``, where
+    ``mins[i]`` is equal to ``np.min(array[labeled == i])``.
+
+    Parameters
+    ----------
+    array : ndarray of any type
+    labeled : int ndarray
+        Label map. This is the same type as returned from ``mahotas.label()``
+
+    Returns
+    -------
+    mins : 1-d ndarray of ``array.dtype``
     '''
     labeled = _as_labeled(array, labeled, 'labeled_min')
     maxv = labeled.max() + 1

@@ -1,4 +1,6 @@
 Version 1.4.19+
+	* Fix swapped docstrings of labeled_max and labeled_min in
+	  mahotas.labeled (no behavior change; documentation only).
 	* Fix inverted np.choose in color conversions (rgb2xyz, xyz2rgb, xyz2lab):
 	  all three had the choice arrays swapped, producing incorrect values.
 	  Additionally, xyz2lab used (6/29)^2 instead of the correct (6/29)^3
