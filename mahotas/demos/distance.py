@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import pylab as p
 import numpy as np
 import mahotas

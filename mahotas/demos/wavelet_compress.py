@@ -1,4 +1,3 @@
-from __future__ import print_function
 import numpy as np
 import mahotas
 from mahotas.thresholding import soft_threshold

@@ -1,4 +1,3 @@
-from __future__ import print_function
 import mahotas as mh
 from pylab import gray, imshow, show
 

@@ -1,9 +1,7 @@
-# Copyright (C) 2010, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2010-2026, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # 
 # License: MIT (see COPYING file)
-
-from __future__ import division
 
 mode2int = {
     'nearest' : 0,

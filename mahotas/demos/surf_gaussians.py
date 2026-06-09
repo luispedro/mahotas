@@ -1,4 +1,3 @@
-from __future__ import print_function
 from pylab import imshow, show
 import numpy as np
 from mahotas.features import surf

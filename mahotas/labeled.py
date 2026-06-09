@@ -1,9 +1,8 @@
-# Copyright (C) 2008-2023, Luis Pedro Coelho <luis@luispedro.org>
+# Copyright (C) 2008-2026, Luis Pedro Coelho <luis@luispedro.org>
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # LICENSE: MIT
 
-from __future__ import division
 import numpy as np
 from .morph import get_structuring_elem
 from . import _labeled
