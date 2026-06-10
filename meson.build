@@ -81,16 +81,12 @@ python_sources = files(
     'mahotas/io/freeimage.py',
     'mahotas/io/pil.py',
     'mahotas/labeled.py',
-    'mahotas/lbp.py',
     'mahotas/mahotas_version.py',
-    'mahotas/moments.py',
     'mahotas/morph.py',
     'mahotas/polygon.py',
     'mahotas/resize.py',
     'mahotas/segmentation.py',
     'mahotas/stretch.py',
-    'mahotas/surf.py',
-    'mahotas/tas.py',
     'mahotas/tests/__init__.py',
     'mahotas/tests/pymorph_copy.py',
     'mahotas/tests/test_bbox.py',
@@ -138,10 +134,8 @@ python_sources = files(
     'mahotas/tests/test_watershed.py',
     'mahotas/tests/test_zernike.py',
     'mahotas/tests/utils.py',
-    'mahotas/texture.py',
     'mahotas/thin.py',
     'mahotas/thresholding.py',
-    'mahotas/zernike.py',
 )
 
 package_data = files(

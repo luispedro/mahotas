@@ -1,4 +1,9 @@
 Version 1.4.19+
+	* Remove long-deprecated import shims `mahotas.lbp`,
+	  `mahotas.surf`, `mahotas.texture`, `mahotas.tas`,
+	  `mahotas.zernike`, and `mahotas.moments`. These had been
+	  emitting a DeprecationWarning at import for years; use the
+	  corresponding `mahotas.features.*` modules instead.
 	* Documentation sweep: fix swapped docstrings of labeled_max and
 	  labeled_min, parameter-name mistakes in relabel/remove_regions,
 	  bad `lbp_transform` signature/description, "linear binary
