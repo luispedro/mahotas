@@ -1,4 +1,6 @@
 Version 1.4.19+
+	* Simplify `mahotas.citation()`: replace the Python-2-era
+	  `sys.stdout.write` workaround with `print(text, end='')`.
 	* Remove long-deprecated import shims `mahotas.lbp`,
 	  `mahotas.surf`, `mahotas.texture`, `mahotas.tas`,
 	  `mahotas.zernike`, and `mahotas.moments`. These had been

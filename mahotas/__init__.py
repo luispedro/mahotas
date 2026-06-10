@@ -111,9 +111,7 @@ short_citation_text = \
 def citation(print_out=True, short=False):
     text = (short_citation_text if short else citation_text)
     if print_out:
-        # Use a Python2/3 compatible form of printing:
-        from sys import stdout
-        stdout.write(text)
+        print(text, end='')
     return text
 
 __all__ = [
