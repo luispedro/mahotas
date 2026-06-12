@@ -271,8 +271,8 @@ def haralick_features(cmats,
 
         p = cmat / float(T)
         pravel = p.ravel()
-        px = p.sum(0)
-        py = p.sum(1)
+        px = p.sum(1)
+        py = p.sum(0)
 
         ux = np.dot(px, k)
         uy = np.dot(py, k)
