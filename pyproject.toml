@@ -35,7 +35,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
 ]
 dependencies = [
-    "numpy",
+    "numpy>=2.0",
 ]
 
 [project.urls]
