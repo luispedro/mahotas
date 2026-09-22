@@ -165,7 +165,8 @@ def _maybe_filter(array, order, func, prefilter, dtype):
     if prefilter and order > 1:
         return spline_filter(array, order, dtype=dtype)
     else:
-        return array.astype(dtype, copy=False)
+        # _interpolate.zoom_shift requires a C-contiguous array
+        return np.ascontiguousarray(array, dtype=dtype)
 
 def zoom(array, zoom, out=None, order=3, mode='constant', cval=0.0, prefilter=True, output=None):
     """

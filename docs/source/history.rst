@@ -2,6 +2,13 @@
 History
 =======
 
+Version 1.4.19 (unreleased)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Fix ``interpolate.shift``/``interpolate.zoom`` (order 0 or 1) and
+  ``features.lbp`` on non-contiguous input (see `#124
+  <https://github.com/luispedro/mahotas/issues/124>`__)
+
 Version 1.4.18 (Jul 18 2024)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

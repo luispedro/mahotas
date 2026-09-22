@@ -80,3 +80,18 @@ def test_zoom_order0():
     # Nearest-neighbor: center block should be preserved
     assert out[12, 12] == 200
     assert out[0, 0] == 0
+
+@pytest.mark.parametrize('order', [0, 1, 3])
+def test_shift_non_contiguous(order):
+    # https://github.com/luispedro/mahotas/issues/124
+    im = np.arange(64*64, dtype=np.float64).reshape((64,64))
+    for view in (im[:, ::2], np.asfortranarray(im), im.T):
+        expected = interpolate.shift(np.ascontiguousarray(view), [1.5, 2], order=order)
+        assert np.allclose(interpolate.shift(view, [1.5, 2], order=order), expected)
+
+@pytest.mark.parametrize('order', [0, 1, 3])
+def test_zoom_non_contiguous(order):
+    im = np.arange(64*64, dtype=np.float64).reshape((64,64))
+    for view in (im[:, ::2], np.asfortranarray(im), im.T):
+        expected = interpolate.zoom(np.ascontiguousarray(view), 0.5, order=order)
+        assert np.allclose(interpolate.zoom(view, 0.5, order=order), expected)

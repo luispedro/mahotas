@@ -1,4 +1,8 @@
 Version 1.4.19+
+	* Fix interpolate.shift() and interpolate.zoom() with order 0 or 1
+	  raising "input data has unexpected types" on non-C-contiguous input
+	  (e.g., slices or Fortran-ordered arrays). This also affected
+	  features.lbp() (issue #124).
 	* Simplify `mahotas.citation()`: replace the Python-2-era
 	  `sys.stdout.write` workaround with `print(text, end='')`.
 	* Remove long-deprecated import shims `mahotas.lbp`,

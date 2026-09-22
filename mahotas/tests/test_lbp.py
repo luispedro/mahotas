@@ -89,3 +89,10 @@ def test_lbp_names():
     for radius,points in [(8,6),
             (8,8),(6,6),(8,4),(12,6)]:
         assert len(lbp(f, radius, points)) == len(lbp_names(radius, points))
+
+def test_lbp_non_contiguous():
+    # https://github.com/luispedro/mahotas/issues/124
+    im = luispedro_jpg(as_grey=True)[:128, :256]
+    view = im[:, ::2]
+    assert not view.flags.c_contiguous
+    assert np.all(lbp(view, 3, 16) == lbp(np.ascontiguousarray(view), 3, 16))
