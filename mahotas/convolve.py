@@ -7,7 +7,7 @@
 import numpy as np
 from . import _convolve
 from . import morph
-from .internal import _get_output, _normalize_sequence, _verify_is_floatingpoint_type, _as_floating_point_array
+from .internal import _get_output, _get_axis, _normalize_sequence, _verify_is_floatingpoint_type, _as_floating_point_array
 from ._filters import mode2int, modes, _check_mode
 
 __all__ = [
@@ -90,12 +90,8 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None):
     cval : double, optional
         If `mode` is constant, which constant to use (default: 0.0)
     out : ndarray, optional
-        Output array. Must be of the same dtype as `f` and C-contiguous. In
-        the slow path (non-contiguous `f` or `len(weights) >= f.shape[axis]`)
-        it must have the same shape as `f`; in the contiguous fast path the
-        input is internally transposed/reshaped so a user-supplied `out`
-        must match that reshaped layout. Pass ``out=None`` to let the
-        function allocate the appropriate buffer.
+        Output array. Must have same shape and dtype as `f` as well as be
+        C-contiguous.
 
     Returns
     -------
@@ -111,20 +107,27 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None):
     if weights.ndim != 1:
         raise ValueError('mahotas.convolve1d: only 1-D sequences allowed')
     _check_mode(mode, cval, 'convolve1d')
+    axis = _get_axis(f, axis, 'convolve1d')
     if f.flags.contiguous and len(weights) < f.shape[axis]:
         weights = weights.astype(np.double, copy=False)
+        if out is not None:
+            out = _get_output(f, out, 'convolve1d')
+        if axis == f.ndim - 1:
+            if out is None:
+                out = np.empty_like(f)
+            _convolve.convolve1d(f.reshape((-1, f.shape[-1])), weights, out.reshape((-1, f.shape[-1])), mode2int[mode])
+            return out
         indices = [a for a in range(f.ndim) if a != axis] + [axis]
         rindices = [indices.index(a) for a in range(f.ndim)]
-        oshape = f.shape
-        f = f.transpose(indices)
-        tshape = f.shape
-        f = f.reshape((-1, f.shape[-1]))
-
-        out = _get_output(f, out, 'convolve1d')
-        _convolve.convolve1d(f, weights, out, mode2int[mode])
-        out = out.reshape(tshape)
-        out = out.transpose(rindices)
-        out = out.reshape(oshape)
+        ft = f.transpose(indices)
+        tshape = ft.shape
+        ft = ft.reshape((-1, ft.shape[-1]))
+        r = np.empty(ft.shape, f.dtype)
+        _convolve.convolve1d(ft, weights, r, mode2int[mode])
+        r = r.reshape(tshape).transpose(rindices)
+        if out is None:
+            return r
+        out[...] = r
         return out
     else:
         index = [None] * f.ndim
@@ -420,14 +423,17 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out=None, ou
     output = _get_output(array, out, 'gaussian_filter', output=output)
     orders = _normalize_sequence(array, order, 'gaussian_filter')
     sigmas = _normalize_sequence(array, sigma, 'gaussian_filter')
+    result = output
     output[...] = array[...]
-    noutput = None
+    noutput = np.empty_like(output)
     for axis in range(array.ndim):
         sigma = sigmas[axis]
         order = orders[axis]
-        noutput = gaussian_filter1d(output, sigma, axis, order, mode, cval, noutput)
+        gaussian_filter1d(output, sigma, axis, order, mode, cval, out=noutput)
         output,noutput = noutput,output
-    return output
+    if output is not result:
+        result[...] = output
+    return result
 
 def _wavelet_array(f, inline, func):
     f = _as_floating_point_array(f)

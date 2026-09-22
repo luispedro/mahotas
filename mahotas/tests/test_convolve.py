@@ -302,3 +302,50 @@ def test_gaussian_filter1d_out():
     with pytest.raises(ValueError):
         mh.gaussian_filter1d(a, 1., axis=0, out=np.empty_like(a, dtype=np.float32))
 
+
+def test_gaussian_filter1d_out_all_axes():
+    np.random.seed(0)
+    a = np.random.random((12, 17, 9))
+    for axis in (0, 1, 2, -1, -3):
+        expected = mh.gaussian_filter1d(a, 1.5, axis=axis)
+        out = np.zeros_like(a)
+        r = mh.gaussian_filter1d(a, 1.5, axis=axis, out=out)
+        assert r is out
+        assert np.allclose(out, expected)
+
+
+def test_convolve1d_negative_axis():
+    np.random.seed(0)
+    a = np.random.random((12, 17))
+    w = np.array([.25, .5, .25])
+    assert np.allclose(mh.convolve1d(a, w, axis=-1), mh.convolve1d(a, w, axis=1))
+    assert np.allclose(mh.convolve1d(a, w, axis=-2), mh.convolve1d(a, w, axis=0))
+    assert np.allclose(mh.gaussian_filter1d(a, 1.), mh.gaussian_filter1d(a, 1., axis=1))
+
+
+def test_convolve1d_out():
+    np.random.seed(0)
+    a = np.random.random((12, 17))
+    w = np.array([.25, .5, .25])
+    for axis in (0, 1):
+        expected = mh.convolve1d(a, w, axis=axis)
+        out = np.zeros_like(a)
+        r = mh.convolve1d(a, w, axis=axis, out=out)
+        assert r is out
+        assert np.allclose(out, expected)
+        assert np.allclose(expected, mh.convolve(a, w.reshape((3, 1) if axis == 0 else (1, 3))))
+
+
+def test_gaussian_filter_3d_cube():
+    np.random.seed(0)
+    for shape in [(16, 16, 16), (8, 9, 10)]:
+        a = np.random.random(shape)
+        r = mh.gaussian_filter(a, 1.5)
+        expected = a
+        for axis in range(3):
+            expected = mh.gaussian_filter1d(expected, 1.5, axis=axis)
+        assert np.allclose(r, expected)
+        out = np.zeros_like(a)
+        assert mh.gaussian_filter(a, 1.5, out=out) is out
+        assert np.allclose(out, expected)
+
