@@ -8,7 +8,7 @@ typedef unsigned short ushort;
     case NPY_BOOL: HANDLE(bool); break; \
     \
     case NPY_UBYTE: HANDLE(unsigned char); break; \
-    case NPY_BYTE: HANDLE(char); break; \
+    case NPY_BYTE: HANDLE(signed char); break; \
     \
     case NPY_SHORT: HANDLE(short); break; \
     case NPY_USHORT: HANDLE(unsigned short); break; \

@@ -1,3 +1,9 @@
+Version 1.4.19+
+	* Fix hard crash (segfault/heap corruption) in several C++ extensions on
+	  platforms where `char` is unsigned by default (e.g., aarch64/ARM),
+	  which caused int8 arrays with negative values to be mishandled,
+	  including bypassing the safety check in features.haralick().
+
 Version 1.4.19 2026-09-22 by luispedro
 	* Require Python 3.10 or later; support Python 3.14 and NumPy 2.x
 	  (tested up to NumPy 2.5).
