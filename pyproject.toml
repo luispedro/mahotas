@@ -61,8 +61,18 @@ tests = [
 mahotas-features = "mahotas.features_cli:main"
 
 [tool.cibuildwheel]
-test-command = "pytest --import-mode=importlib {project}/mahotas/tests"
+# Run the tests against the installed wheel: pointing pytest at
+# {project}/mahotas/tests makes it import the (uncompiled) source tree.
+test-command = "pytest --pyargs mahotas.tests"
 test-extras = ["tests"]
-test-skip = ["pp*", "cp31*-win32"]  # there are no scipy wheels for this version
-skip = ["pp37*", "pp310*", "*musllinux*", "*manylinux*i686"]  # there are no numpy wheels for this version
+# Match the versions in the classifiers: no free-threaded (cp31xt) builds and no
+# Python 3.15 until it is released and declared supported
+build = ["cp310-*", "cp311-*", "cp312-*", "cp313-*", "cp314-*"]
+skip = ["*musllinux*"]
 environment = {PIP_PREFER_BINARY = "1"}
+
+[tool.cibuildwheel.windows]
+# No 32-bit numpy/scipy wheels for the supported Python versions
+archs = ["AMD64"]
+# Force MSVC: otherwise meson picks up the MinGW gcc on the runner's PATH
+config-settings = {setup-args = "--vsenv"}
