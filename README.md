@@ -250,6 +250,17 @@ questions.
 
 ## Recent Changes
 
+### Version 1.4.19 (Sep 22 2026)
+
+- Require Python 3.10+; support Python 3.14 and NumPy 2.x
+- Build with meson-python (`setup.py` removed)
+- Fix incorrect results in colour conversions (`rgb2xyz`, `xyz2rgb`, `xyz2lab`), `gbernsen`, `dog`, and `find`
+- Fix `gaussian_filter1d` ignoring `out` and failing with default `axis=-1`; fix `gaussian_filter` on some 3-D inputs
+- `center_of_mass` returns NaN for zero-sum labels
+- Allow spline order 0 in `interpolate.zoom`/`interpolate.shift`
+- Fix `interpolate.shift`/`interpolate.zoom` (order 0 or 1) and `features.lbp` on non-contiguous input (see [#124](https://github.com/luispedro/mahotas/issues/124))
+- Remove long-deprecated modules `mahotas.lbp`, `mahotas.surf`, `mahotas.texture`, `mahotas.tas`, `mahotas.zernike`, and `mahotas.moments` (use `mahotas.features.*`)
+
 ### Version 1.4.18 (Jul 18 2024)
 
 - Fix bug in Haralick features and NumPy 2 (thanks to @Czaki, see [#150](https://github.com/luispedro/mahotas/pull/150))

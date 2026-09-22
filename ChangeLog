@@ -1,4 +1,14 @@
-Version 1.4.19+
+Version 1.4.19 2026-09-22 by luispedro
+	* Require Python 3.10 or later; support Python 3.14 and NumPy 2.x
+	  (tested up to NumPy 2.5).
+	* Build system: replace setup.py with meson-python (packaging
+	  metadata is now in pyproject.toml).
+	* Import failures inside mahotas are now propagated instead of
+	  being replaced by a generic message.
+	* Fix `out` handling in convolve1d() and gaussian_filter1d() on
+	  non-last axes, accept negative axes in convolve1d() (so
+	  gaussian_filter1d() with the default axis=-1 works), and fix
+	  gaussian_filter() failing on some 3-D inputs.
 	* Fix interpolate.shift() and interpolate.zoom() with order 0 or 1
 	  raising "input data has unexpected types" on non-C-contiguous input
 	  (e.g., slices or Fortran-ordered arrays). This also affected
