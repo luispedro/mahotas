@@ -24,6 +24,7 @@ jobs:
           - '2.2'
           - '2.3'
           - '2.4'
+          - '2.5'
         exclude:
 
             # NumPy >2.3+ are too new for Python 3.10
@@ -31,6 +32,12 @@ jobs:
               numpy-version: '2.3'
             - python-version: '3.10'
               numpy-version: '2.4'
+            - python-version: '3.10'
+              numpy-version: '2.5'
+
+            # NumPy >2.5+ are too new for Python 3.11
+            - python-version: '3.11'
+              numpy-version: '2.5'
 
 
             # NumPy 2.0 is too old for Python 3.13
