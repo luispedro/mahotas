@@ -19,6 +19,20 @@ watershed
 imread/imsave
     read/write image
 
+Supported versions
+------------------
+
+Python 3.10 through 3.14 are supported and tested in CI (against numpy 2.x).
+Packaging only sets a lower bound (``requires-python = ">=3.10"``), so newer
+Python versions will install, but have not been tested.
+
+Star imports
+------------
+
+``from mahotas import *`` exports ``open`` (morphological opening), which
+*shadows the Python builtin* ``open``. The recommended usage is ``import
+mahotas as mh`` followed by ``mh.open(...)``.
+
 Documentation: https://mahotas.readthedocs.io/
 
 Citation:

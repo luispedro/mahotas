@@ -338,7 +338,11 @@ def bwperim(bw, n=4, mode="constant"):
     bw : ndarray
         A black-and-white image (any other image will be converted to black & white)
     n : int, optional
-        Connectivity. Must be 4 or 8 (default: 4)
+        Connectivity, given as the number of neighbours: 4 or 8 for 2-D
+        images (default: 4), 6 for 3-D images. This value is passed as the
+        ``Bc`` argument to ``borders`` and interpreted by
+        ``get_structuring_elem``, so a structuring element array is also
+        accepted.
     mode : {'reflect', 'nearest', 'wrap', 'mirror', 'constant' [default], 'ignore'}
         How to handle borders
 
@@ -353,6 +357,9 @@ def bwperim(bw, n=4, mode="constant"):
         This is a more generic function
     '''
     bw = (bw != 0)
+    # `n` is a neighbour *count* (4/8 in 2-D, 6 in 3-D), which
+    # get_structuring_elem (called by borders) translates into the
+    # corresponding connectivity structuring element.
     return bw&borders(bw, n, mode=mode)
 
 def _as_labeled(array, labeled, funcname, inplace='unused'):

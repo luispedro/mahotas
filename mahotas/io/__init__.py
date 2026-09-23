@@ -1,53 +1,63 @@
+'''
+Image input/output
+
+This module provides ``imread`` and ``imsave``, which are also re-exported as
+``mahotas.imread`` and ``mahotas.imsave``. The actual work is delegated to one
+of the following backends (the first one available is used):
+
+1. the `imread <https://imread.readthedocs.io/>`__ package
+2. `Pillow <https://python-pillow.org/>`__ (``mahotas.io.pil``)
+3. FreeImage, through ctypes (``mahotas.io.freeimage``; deprecated)
+
+None of these is a hard dependency: ``import mahotas`` works without any of
+them. If none is available, ``imread`` and ``imsave`` are replaced by
+functions which raise ``ImportError`` with installation instructions.
+'''
 
 _error_message = '''
 mahotas.%%s depends on one of (in order of preference):
 
 1. imread
-2. freeimage
-3. pillow (PIL)
+2. pillow (PIL)
+3. freeimage (deprecated)
 
 None of which could be found!
 
 Everything else will work, though, so this error is only triggered when you
 attempt to use these optional functions.
 
-To install imread:
+The easiest solution is to install either imread or pillow, e.g.::
 
-On **Ubuntu**, run the following commands::
+    pip install imread
 
-    sudo apt-get install libpng12-dev libtiff4-dev libwebp-dev python-pip python-dev g++
-    sudo pip install imread
+or::
 
-On **Mac OS**, if using ``port``, run the following commands::
+    pip install pillow
 
-    sudo port install libpng tiff webp
-    sudo pip install imread
+Both are also available from conda-forge::
 
-On **Windows**, use Christoph Gohlke's packages. See:
-
-https://www.lfd.uci.edu/~gohlke/pythonlibs/#imread
-
-
-
-
-To install FreeImage:
-
-You need to have the freeimage installed for imread/imsave (everything else
-will work, though, so this error is only triggered when you attempt to use
-these optional functions). Freeimage is not a Python package, but a regular
-package.
-
-Under Linux, look for a package called `freeimage` in your distribution (it is
-actually called `libfreeimage3` in debian/ubuntu, for example).
-
-Under Windows, consider using the third-party mahotas packages at
-https://www.lfd.uci.edu/~gohlke/pythonlibs/ (kindly maintained by Christoph
-Gohlke), which already package freeimage.
+    conda install -c conda-forge imread
 
 Full error was: %s'''
 def error_imread(*args, **kwargs):
+    '''
+    Placeholder for ``imread`` when no I/O backend is available
+
+    Raises
+    ------
+    ImportError
+        Always, with a message explaining how to install a backend
+    '''
     raise ImportError(_error_message % 'imread')
 def error_imsave(*args, **kwargs):
+    '''
+    Placeholder for ``imsave`` when no I/O backend is available
+
+    Raises
+    ------
+    ImportError
+        Always, with a message explaining how to install a backend
+    '''
     raise ImportError(_error_message % 'imsave')
 
 __all__ = [

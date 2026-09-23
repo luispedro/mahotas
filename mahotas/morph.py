@@ -246,16 +246,37 @@ def cdilate(f, g, Bc=None, n=1):
     structuring element `Bc` conditionally to the image `g`. This
     operator may be applied recursively `n` times.
 
+    At each iteration, `f` is dilated by `Bc` and then clipped from above by
+    `g` (i.e., ``y = minimum(dilate(y, Bc), g)``). Iteration stops early if
+    the image stops changing, so passing a large `n` computes the
+    morphological reconstruction by dilation (with `f` as the marker and `g`
+    as the mask).
+
     Parameters
     ----------
-    f : Gray-scale (uint8 or uint16) or binary image.
-    g : Conditioning image. (Gray-scale or binary).
-    Bc : Structuring element (default: 3x3 cross)
-    n : Number of iterations (default: 1)
+    f : ndarray
+        Gray-scale (integer type) or binary image (the marker).
+    g : ndarray
+        Conditioning image (gray-scale or binary), of the same shape as `f`.
+    Bc : ndarray, optional
+        Structuring element (default: 3x3 cross; see
+        ``get_structuring_elem`` for details on the default).
+    n : int, optional
+        Maximum number of iterations (default: 1)
 
     Returns
     -------
-    y : Image
+    y : ndarray
+        Conditionally dilated image, of the same shape as `f`. Every pixel
+        satisfies ``y <= g``. A new array is always allocated (this function
+        does not support an ``out`` argument).
+
+    See Also
+    --------
+    dilate : function
+        Unconditional version of this function
+    cerode : function
+        Conditional erosion
     """
     _verify_is_integer_type(f, 'cdilate')
     Bc = get_structuring_elem(f, Bc)
@@ -403,6 +424,16 @@ def open(f, Bc=None, out=None, output=None):
     gray-scale case, there is a similar interpretation taking the functions
     umbra.
 
+    .. note::
+
+        This function shares its name with the Python builtin ``open``, and
+        ``open`` is listed in ``mahotas.__all__``. Therefore, ``from mahotas
+        import *`` will *shadow the builtin* ``open`` (so that, e.g.,
+        ``open('file.txt')`` will no longer open a file). Prefer ``import
+        mahotas as mh`` and call ``mh.open`` (or ``mh.morph.open``). If you
+        need the builtin after a star-import, it is still available as
+        ``builtins.open``.
+
     Parameters
     ----------
     f : ndarray
@@ -420,7 +451,8 @@ def open(f, Bc=None, out=None, output=None):
 
     See Also
     --------
-    open : function
+    close : function
+        Morphological closing
     """
     _verify_is_integer_type(f, 'open')
     Bc = get_structuring_elem(f, Bc)

@@ -19,7 +19,10 @@ Notable algorithms:
 - [watershed](https://mahotas.readthedocs.io/en/latest/distance.html)
 - [convex points calculations](https://mahotas.readthedocs.io/en/latest/polygon.html).
 - hit & miss, thinning.
-- Zernike & Haralick, LBP, and TAS features.
+- Zernike & Haralick, [local binary patterns
+  (LBP)](https://mahotas.readthedocs.io/en/latest/lbp.html), and TAS features.
+- [morphological
+  processing](https://mahotas.readthedocs.io/en/latest/morphology.html).
 - [Speeded-Up Robust Features
   (SURF)](https://mahotas.readthedocs.io/en/latest/surf.html), a form of local
   features.

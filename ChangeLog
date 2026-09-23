@@ -3,6 +3,14 @@ Version 1.4.19+
 	  platforms where `char` is unsigned by default (e.g., aarch64/ARM),
 	  which caused int8 arrays with negative values to be mishandled,
 	  including bypassing the safety check in features.haralick().
+	* Documentation: document that `from mahotas import *` shadows the
+	  builtin `open`, the tested Python version range, the
+	  thresholding module layout (which functions return a threshold
+	  vs. an image), the bernsen/gbernsen `gthresh` default difference,
+	  the `n` argument of bwperim (including 3-D), and cdilate's
+	  semantics; document the I/O backends and fix the backend order
+	  and stale install instructions in the io error message; align the
+	  README and docs index feature lists.
 
 Version 1.4.19 2026-09-22 by luispedro
 	* Require Python 3.10 or later; support Python 3.14 and NumPy 2.x

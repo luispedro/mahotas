@@ -17,7 +17,7 @@ Mahotas currently has over 100 functions for image processing and computer
 vision and it keeps growing. Some examples of mahotas functionality:
 
  - `watershed <https://mahotas.readthedocs.io/en/latest/api.html#mahotas.cwatershed>`__
- - convex points calculations.
+ - `convex points calculations <https://mahotas.readthedocs.io/en/latest/polygon.html>`__.
  - `hit & miss. thinning <https://mahotas.readthedocs.io/en/latest/api.html#mahotas.hitmiss>`__
  - Zernike & Haralick, `local binary patterns
    <https://mahotas.readthedocs.io/en/latest/lbp.html>`__, and TAS features.
@@ -26,6 +26,8 @@ vision and it keeps growing. Some examples of mahotas functionality:
  - `thresholding <https://mahotas.readthedocs.io/en/latest/thresholding.html>`__
  - convolution.
  - Sobel edge detection.
+ - spline interpolation.
+ - SLIC super pixels.
 
 The release schedule is roughly one release every few months and each release
 brings new functionality and improved performance. The interface is very

@@ -26,8 +26,9 @@ Thresholding Module
 
 Thresholding functions.
 
-These functions return **the numeric threshold**. In order to obtain a
-*thresholded image*, you can do the following::
+The global thresholding functions (``otsu`` and ``rc``) return **the numeric
+threshold**. In order to obtain a *thresholded image*, you can do the
+following::
 
     T_otsu = mh.otsu(image)
     binarized_image = (image > T_otsu)
@@ -35,10 +36,26 @@ These functions return **the numeric threshold**. In order to obtain a
 Functions which have an ``ignore_zeros`` parameters will only consider non-zero
 pixels when computing the thresholding.
 
-:otsu(): Otsu method
-:rc(): Riddler-Calvard's method
-:bernsen: Bernsen thresholding
-:gbernsen: Generalized Bernsen thresholding
+The local thresholding functions (``bernsen`` and ``gbernsen``) compute a
+different threshold for each pixel and return the *thresholded (binary)
+image* directly. ``soft_threshold`` returns a transformed (non-binary) image.
+
+Global thresholding (return a threshold value):
+
+- ``otsu()``: Otsu method
+- ``rc()``: Riddler-Calvard method
+
+Local thresholding (return a binary image):
+
+- ``bernsen()``: Bernsen thresholding (circular neighbourhood)
+- ``gbernsen()``: Generalized Bernsen thresholding (arbitrary neighbourhood)
+
+Other:
+
+- ``soft_threshold()``: soft thresholding (shrinkage towards zero)
+
+Only ``otsu`` and ``rc`` are re-exported at the top-level ``mahotas``
+namespace; the others must be accessed as ``mahotas.thresholding.<name>``.
 '''
 
 import numpy as np
@@ -208,7 +225,8 @@ def bernsen(f, radius, contrast_threshold, gthresh=None):
     contrast_threshold : integer
         contrast threshold
     gthresh : numeric, optional
-        global threshold to fall back in low contrast regions
+        global threshold to fall back in low contrast regions (default: 128).
+        Note that, unlike here, this argument is *required* in ``gbernsen``.
 
     Returns
     -------
@@ -217,7 +235,8 @@ def bernsen(f, radius, contrast_threshold, gthresh=None):
     See Also
     --------
     gbernsen : function
-        Generalised Bernsen thresholding
+        Generalised Bernsen thresholding. ``bernsen(f, r, c, g)`` is
+        equivalent to ``gbernsen(f, mahotas.morph.circle_se(r), c, g)``.
     '''
     from mahotas.morph import circle_se
     if gthresh is None:
@@ -239,7 +258,8 @@ def gbernsen(f, se, contrast_threshold, gthresh):
     contrast_threshold : integer
         contrast threshold
     gthresh : numeric
-        global threshold to fall back in low contrast regions
+        global threshold to fall back in low contrast regions. Unlike in
+        ``bernsen`` (where it defaults to 128), this argument is required.
 
     Returns
     -------
