@@ -89,6 +89,5 @@ def slic(array, spacer=16, m=1.0, max_iters=128):
     array = np.ascontiguousarray(array, dtype=np.float32)
     _check_3(array, 'slic')
     labels = np.zeros((array.shape[0], array.shape[1]), dtype=np.intc)
-    labels = labels.copy()
     n = _labeled.slic(array, labels, int(spacer), float(m), int(max_iters))
     return labels, n
