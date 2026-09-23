@@ -27,6 +27,24 @@ def test_get_structuring_elem():
         get_structuring_elem(A, Bc)
 
 
+def test_get_structuring_elem_nd():
+    A3 = np.zeros((4,4,4), np.uint8)
+    Bc = get_structuring_elem(A3, 1)
+    assert Bc.shape == (3,3,3)
+    assert Bc.dtype == np.uint8
+    assert Bc.flags['C_CONTIGUOUS']
+    assert Bc.sum() == 7
+    assert Bc[1,1,1] == 1
+    assert Bc[0,0,0] == 0
+    assert np.all(get_structuring_elem(A3, 6) == get_structuring_elem(A3, 1))
+    assert get_structuring_elem(A3, 2).sum() == 19
+    assert np.all(get_structuring_elem(A3, 3) == 1)
+
+    A1 = np.zeros(8, np.float64)
+    assert np.all(get_structuring_elem(A1, 1) == [1., 1., 1.])
+    assert np.all(get_structuring_elem(A1, 0) == [0., 1., 0.])
+
+
 def test_open():
     from mahotas.morph import open
     np.random.seed(123)

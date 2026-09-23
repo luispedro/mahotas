@@ -85,16 +85,9 @@ def get_structuring_elem(A,Bc):
                 [0,1,0],
                 [1,1,1],
                 [0,1,0]], dtype=A.dtype)
-    max1 = Bc
-    Bc = np.zeros((3,)*len(A.shape), dtype=A.dtype)
-    centre = np.ones(len(A.shape))
-    # This is pretty slow, but this should be a tiny array, so who cares
-    for i in range(Bc.size):
-        pos = np.unravel_index(i, Bc.shape)
-        pos -= centre
-        if np.sum(np.abs(pos)) <= max1:
-            Bc.flat[i] = 1
-    return Bc
+    # L1 distance from the centre of a 3x3x...x3 array
+    dist = np.abs(np.indices((3,)*len(A.shape)) - 1).sum(0)
+    return (dist <= Bc).astype(A.dtype)
 
 def disk(radius, dim=2):
     '''
