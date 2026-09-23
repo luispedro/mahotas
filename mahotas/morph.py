@@ -106,7 +106,6 @@ def disk(radius, dim=2):
     -------
     D : boolean ndarray
     '''
-    import numpy as np
     if dim <= 0:
         raise ValueError('mahotas.morph.disk: dimension must be positive')
     shape = [(radius*2+1) for _ in range(dim)]
