@@ -6,3 +6,4 @@ mahotas.egg-info/
 *.pyc
 *.so
 *.pyd
+.pytest_cache/
