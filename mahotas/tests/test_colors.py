@@ -1,5 +1,6 @@
 import mahotas
 import numpy as np
+import pytest
 from mahotas.tests.utils import luispedro_jpg
 from mahotas.colors import rgb2xyz, rgb2lab, xyz2rgb, rgb2grey, rgb2sepia
 
@@ -74,3 +75,18 @@ def test_rgb2lab_white():
         err_msg='a* for achromatic white should be ~0')
     np.testing.assert_allclose(lab[0, 0, 2], 0., atol=1.0,
         err_msg='b* for achromatic white should be ~0')
+
+
+@pytest.mark.parametrize("dtype", [np.uint8, np.uint16, np.float32, np.float64])
+def test_xyz2rgb_requested_dtype_is_final_output_dtype(dtype):
+    xyz = np.array([[[0.3, 0.3, 0.3], [0.001, 0.001, 0.001]]])
+    # The first pixel uses gamma encoding and the second the linear branch.
+    # Apply the published XYZ-to-linear-sRGB matrix before either transfer.
+    expected_linear = np.array([[[0.36144, 0.28452, 0.27261],
+                                 [0.0012048, 0.0009484, 0.0009087]]])
+    expected = np.where(expected_linear <= 0.0031308,
+                        12.92 * expected_linear,
+                        1.055 * expected_linear ** (1.0 / 2.4) - 0.055) * 255
+    actual = xyz2rgb(xyz, dtype=dtype)
+    assert actual.dtype == np.dtype(dtype)
+    np.testing.assert_allclose(actual, expected.astype(dtype), rtol=1e-6)
