@@ -115,13 +115,15 @@ def xyz2rgb(xyz, dtype=None):
                 [-0.9689,  1.8758,  0.0415],
                 [ 0.0557, -0.2040,  1.0570],
                 ])
-    rgb_linear = _convert(xyz, transformation, dtype, 'xyz2rgb')
+    rgb_linear = _convert(xyz, transformation, None, 'xyz2rgb')
     a = 0.055
     srgb_high = (1 + a)*np.power(rgb_linear, 1./2.4)
     srgb_high -= a
     srgb_low = 12.92 * rgb_linear
     srgb = np.choose(rgb_linear <= 0.0031308, [srgb_high, srgb_low])
     srgb *= 255.
+    if dtype is not None:
+        srgb = srgb.astype(dtype, copy=False)
     return srgb
 
 def xyz2lab(xyz, dtype=None):
