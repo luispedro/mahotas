@@ -269,12 +269,9 @@ def zoom(
     elif out.ndim != array.ndim:
         raise ValueError('mahotas.interpolation.zoom: out should have the same number of dimensions as array')
     zoom_div = np.array(out.shape, float) - 1
-    zoom = (np.array(array.shape) - 1) / zoom_div
+    zoom = np.divide(np.array(array.shape) - 1, zoom_div,
+                     out=np.ones_like(zoom_div), where=zoom_div != 0)
     zoom = np.ascontiguousarray(zoom)
-
-    # Zooming to infinity is unpredictable, so just choose
-    # zoom factor 1 instead
-    zoom[np.isinf(zoom)] = 1
 
     _check_mode(mode, cval, 'interpolation.zoom')
 

@@ -3,6 +3,50 @@ import numpy as np
 import pytest
 from pytest import raises
 
+@pytest.mark.parametrize('order', range(6))
+@pytest.mark.parametrize('mode', ['constant', 'nearest', 'mirror', 'reflect', 'wrap'])
+def test_zero_shift_identity(order, mode):
+    f = np.arange(12., dtype=np.float64).reshape((3, 4))
+    shifted = interpolate.shift(f, [0, 0], order=order, mode=mode)
+    np.testing.assert_allclose(shifted, f, atol=1e-12)
+
+def test_linear_zoom_coordinates():
+    # Endpoints are aligned, so five samples span coordinates 0 through 3.
+    f = np.array([2., 5., 8., 11.])
+    out = np.empty(5)
+    interpolate.zoom(f, 1, out=out, order=1)
+    np.testing.assert_allclose(out, [2., 4.25, 6.5, 8.75, 11.])
+
+def test_bilinear_zoom_coordinates():
+    y, x = np.mgrid[:4, :5]
+    f = 2. + 3.*y + 5.*x
+    out = np.empty((7, 9))
+    interpolate.zoom(f, 1, out=out, order=1)
+    yy = np.arange(7)[:, None] / 2.
+    xx = np.arange(9)[None, :] / 2.
+    np.testing.assert_allclose(out, 2. + 3.*yy + 5.*xx)
+
+def test_fractional_constant_shift():
+    f = np.array([2., 5., 8., 11.])
+    shifted = interpolate.shift(f, .25, order=1)
+    np.testing.assert_allclose(shifted, [0., 4.25, 7.25, 10.25])
+
+@pytest.mark.parametrize('order', range(6))
+def test_zoom_last_endpoint(order):
+    f = np.full((49, 55), 7.)
+    out = np.empty((32, 48))
+    # Constant spline coefficients isolate sampling from prefilter precision.
+    interpolate.zoom(f, 1, out=out, order=order, prefilter=False)
+    np.testing.assert_allclose(out, 7., atol=1e-12)
+
+@pytest.mark.parametrize('order', range(6))
+@pytest.mark.parametrize('shape', [(1, 1), (1, 7), (9, 1)])
+def test_zoom_singleton_axis(order, shape):
+    f = np.full(shape, 7.)
+    out = np.empty((1, 5))
+    interpolate.zoom(f, 1, out=out, order=order)
+    np.testing.assert_allclose(out, 7., atol=1e-12)
+
 def test_spline_filter1d_smoke():
     f  = (np.arange(64*64, dtype=np.intc) % 64).reshape((64,64)).astype(np.float64)
     f2 =interpolate.spline_filter1d(f,2,0)

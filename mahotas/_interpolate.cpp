@@ -138,7 +138,7 @@ void spline_filter1d(numpy::aligned_array<FT> array, const int order, const int 
 template <typename FT>
 void spline_coefficients(FT x, const int order, std::vector<FT>& result)
 {
-    const FT start = floor(x + 0.5*(order & 1)) - order / 2;
+    const FT start = floor(x + 0.5*!(order & 1)) - order / 2;
 
     for(int hh = 0; hh <= order; hh++)  {
         FT y = fabs(start - x + hh);
@@ -253,9 +253,19 @@ void zoom_shift(const numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
             FT cc = kk;
             if (shifts) cc += shifts[r];
             if (zooms) cc *= zooms[r];
-            cc = fix_offset(ExtendMode(mode), npy_intp(std_like_round(cc + 0.5)), array.dim(r));
+            // Public zoom aligns the endpoints; do not let product rounding
+            // move the last sample outside a constant-mode boundary.
+            if (zooms && !shifts && output.dim(r) > 1 && kk == output.dim(r) - 1)
+                cc = array.dim(r) - 1;
+            if (cc < 0 || cc > array.dim(r) - 1) {
+                if (mode == ExtendConstant) {
+                    cc = border_flag_value;
+                } else {
+                    cc = fix_offset(ExtendMode(mode), npy_intp(std_like_round(cc + 0.5)), array.dim(r));
+                }
+            }
             if (cc != border_flag_value) {
-                const int start = int(floor(cc + 0.5*(order & 1)) - order / 2);
+                const int start = int(floor(cc + 0.5*!(order & 1)) - order / 2);
                 offsets[r][kk] = array.stride(r) * start;
                 if (start < 0 || start + order >= array.dim(r)) {
                     edge_offsets[r][kk].resize(order + 1);
@@ -448,4 +458,3 @@ PyMethodDef methods[] = {
 } // namespace
 
 DECLARE_MODULE(_interpolate)
-
