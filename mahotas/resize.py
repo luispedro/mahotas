@@ -94,8 +94,11 @@ def imresize(img, nsize, order=3):
     scipy.misc.pilutil.imresize : Similar function
     '''
     from .interpolate import zoom
+    out = None
     if isinstance(nsize, (tuple, list)):
         if isinstance(nsize[0], int):
+            # Preserve the requested shape without a float round trip.
+            out = np.empty(nsize, dtype=np.float64)
             nsize = np.array(nsize, dtype=float)
             nsize /= img.shape
-    return zoom(img, nsize, order=order)
+    return zoom(img, nsize, order=order, out=out)
