@@ -1,6 +1,7 @@
 import mahotas as mh
 from mahotas import imresize
 import numpy as np
+import pytest
 def test_imresize():
     img = np.repeat(np.arange(100), 10).reshape((100,10))
     assert imresize(img, (1024,104)).shape == (1024,104)
@@ -31,3 +32,19 @@ def test_resize_edge_cases():
     start = np.zeros((65,31))
     for t0 in range(7,29):
         assert mh.resize_to(start, (t0, 17)).shape == (t0, 17)
+
+
+@pytest.mark.parametrize('shape, target', [
+    ((49, 55), (64, 224)),
+    ((47, 71), (96, 224)),
+    ((97, 94), (224, 384)),
+])
+@pytest.mark.parametrize('container', [tuple, list])
+@pytest.mark.parametrize('dtype', [np.uint8, np.float32])
+def test_imresize_integer_size_is_exact(shape, target, container, dtype):
+    image = (np.arange(shape[0])[:, None] + np.arange(shape[1])).astype(dtype)
+    result = imresize(image, container(target), order=1)
+    assert result.shape == target
+    assert result.dtype == np.float64
+    other = imresize(np.zeros((32, 32), dtype=dtype), container(target), order=1)
+    assert np.stack([result, other]).shape == (2,) + target
