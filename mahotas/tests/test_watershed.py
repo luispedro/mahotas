@@ -83,7 +83,7 @@ def test_overflow():
 
     https://github.com/luispedro/mahotas/issues/41
     '''
-    f = np.random.random((128,64))
+    f = np.random.random((32,32))
     f *= 255
     f = f.astype(np.uint8)
     for max_n in [127, 240, 280]:

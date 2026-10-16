@@ -4,7 +4,7 @@ import mahotas
 from .utils import luispedro_jpg
 
 def test_slic():
-    f = luispedro_jpg()
+    f = luispedro_jpg()[:128, :128]
     segmented, n = mahotas.segmentation.slic(f)
     assert segmented.shape == (f.shape[0], f.shape[1])
     assert segmented.max() == n

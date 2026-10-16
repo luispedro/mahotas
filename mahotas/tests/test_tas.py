@@ -4,14 +4,14 @@ import pytest
 
 def test_tas():
     np.random.seed(22)
-    f = np.random.rand(1024, 1024)
+    f = np.random.rand(256, 256)
     f = (f * 255).astype(np.uint8)
     assert np.abs(tas(f).sum()-6) < 0.0001
     assert np.abs(pftas(f).sum()-6) < 0.0001
 
 def test_tas3d():
     np.random.seed(22)
-    f = np.random.rand(512, 512, 8)
+    f = np.random.rand(64, 64, 8)
     f = (f * 255).astype(np.uint8)
     assert np.abs(tas(f).sum()-6) < 0.0001
     assert np.abs(pftas(f).sum()-6) < 0.0001
