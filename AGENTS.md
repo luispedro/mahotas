@@ -40,7 +40,7 @@ make tests   # make debug, then pytest -v
 
 Build docs with `make docs` or `cd docs && make html`.
 
-CI (`.github/workflows/`) tests Python 3.10–3.14 against a matrix of numpy 2.x versions. Wheels are built with cibuildwheel (config in `pyproject.toml`).
+CI (`.github/workflows/`) tests Python 3.11–3.14 against a matrix of numpy 2.x versions. Wheels are built with cibuildwheel (config in `pyproject.toml`).
 
 ## Coding Style & Naming Conventions
 

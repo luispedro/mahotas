@@ -1,4 +1,5 @@
 Version 1.4.19+
+	* Require Python 3.11 or later (Python 3.10 is past end-of-life).
 	* Fix hard crash (segfault/heap corruption) in several C++ extensions on
 	  platforms where `char` is unsigned by default (e.g., aarch64/ARM),
 	  which caused int8 arrays with negative values to be mishandled,
