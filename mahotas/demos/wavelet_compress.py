@@ -2,15 +2,9 @@ import numpy as np
 import mahotas
 from mahotas.thresholding import soft_threshold
 from matplotlib import pyplot as plt
-from os import path
 
 # Let us load the data first:
-luispedro_image = path.join(
-                    path.dirname(path.abspath(__file__)),
-                    'data',
-                    'luispedro.jpg')
-
-f = mahotas.imread(luispedro_image, as_grey=True)
+f = mahotas.demos.load('luispedro', as_grey=True)
 f = f[:256,:256]
 plt.gray()
 # Show the data:

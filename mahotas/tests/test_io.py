@@ -52,11 +52,6 @@ def test_pil():
     except ImportError:
         pytest.skip("Missing PIL. Skipping PIL-dependent tests")
     lena = mh.demos.load('lena')
-    filename = path.join(
-            path.dirname(__file__),
-            '..',
-            'demos',
-            'data',
-            'lena.jpg')
+    filename = mh.demos.image_path('lena.jpg')
     assert np.all( pil.imread(filename) == lena )
     assert pil.imread(filename, as_grey=1).ndim == 2

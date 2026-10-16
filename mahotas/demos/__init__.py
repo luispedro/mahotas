@@ -11,6 +11,20 @@ luispedro
 nuclear
     A fluorescent microscopy image of cell nuclei
 '''
+from importlib import resources
+
+_demo_images  = {
+    'wally' : 'DepartmentStore.jpg',
+    'departmentstore' : 'DepartmentStore.jpg',
+    'lenna' : 'lena.jpg',
+    'lena' : 'lena.jpg',
+    'luispedro' : 'luispedro.jpg',
+    'nuclear' : 'nuclear.png',
+}
+
+def _data_file(name):
+    return resources.files(__name__) / 'data' / name
+
 def image_path(name):
     '''
     Return the full path to a demo image file
@@ -23,18 +37,16 @@ def image_path(name):
     Returns
     -------
     path : str
-        Absolute path to the file in the demo data directory
+        Absolute path to the file in the demo data directory. This assumes
+        mahotas is installed as regular files (the normal case); use
+        :func:`load` to read an image regardless of how it is installed.
 
     See Also
     --------
     load : function
         Load a demo image by name
     '''
-    from os import path
-    import mahotas as mh
-    return path.join(path.abspath(path.dirname(__file__)),
-                'data',
-                name)
+    return str(_data_file(name))
 
 
 def load(image_name, as_grey=None):
@@ -53,21 +65,13 @@ def load(image_name, as_grey=None):
     im : ndarray
         Image
     '''
-    from os import path
     import mahotas as mh
-    _demo_images  = {
-        'wally' : 'DepartmentStore.jpg',
-        'departmentstore' : 'DepartmentStore.jpg',
-        'lenna' : 'lena.jpg',
-        'lena' : 'lena.jpg',
-        'luispedro' : 'luispedro.jpg',
-        'nuclear' : 'nuclear.png',
-    }
     if image_name.lower() not in _demo_images:
         raise KeyError(f'mahotas.demos.load: Unknown demo image "{image_name}", known images are {list(_demo_images.keys())}')
 
-    image_name = image_path(_demo_images[image_name.lower()])
-    return mh.imread(image_name, as_grey=as_grey)
+    # The I/O backends need a real file name, which as_file guarantees
+    with resources.as_file(_data_file(_demo_images[image_name.lower()])) as fname:
+        return mh.imread(str(fname), as_grey=as_grey)
 
 def nuclear_image():
     '''

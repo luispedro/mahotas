@@ -1,14 +1,8 @@
 import mahotas
 import numpy as np
 from pylab import imshow, gray, show, subplot
-from os import path
 
-luispedro_image = path.join(
-                    path.dirname(path.abspath(__file__)),
-                    'data',
-                    'luispedro.jpg')
-
-photo = mahotas.imread(luispedro_image, as_grey=True)
+photo = mahotas.demos.load('luispedro', as_grey=True)
 photo = photo.astype(np.uint8)
 
 gray()

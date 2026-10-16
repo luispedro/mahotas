@@ -5,6 +5,17 @@ def test_image_path():
     assert path.exists(mahotas.demos.image_path('luispedro.jpg'))
     assert not path.exists(mahotas.demos.image_path('something-that-does-not-exist'))
 
+def test_load_all():
+    import pytest
+    from mahotas.io import error_imread
+    if mahotas.imread is error_imread:
+        pytest.skip("Missing I/O backend")
+    for name in mahotas.demos._demo_images:
+        im = mahotas.demos.load(name)
+        assert im.ndim in (2, 3)
+        assert mahotas.demos.load(name, as_grey=True).ndim == 2
+
+
 def test_demo_scripts_independent_of_cwd(tmp_path, monkeypatch):
     # superpixels.py used to open a path relative to the working directory
     import runpy
