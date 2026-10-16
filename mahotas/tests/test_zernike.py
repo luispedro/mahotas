@@ -90,3 +90,19 @@ def test_not_nan():
     (cx, cy), r = (6., 8.), 9.212599754333496 # cv2.minEnclosingCircle(points)
     zms = mh.features.zernike_moments(im, r, 8, cm=(cx, cy))
     assert not np.any(np.isnan(zms))
+
+def test_zernike_cm_is_row_col():
+    # Regression test for #109: cm is (row, column), not (x, y)
+    shape = np.zeros((7, 11))
+    shape[1:6, 3] = 1
+    shape[3, 3:9] = 1
+    im = np.zeros((40, 80))
+    im[2:9, 50:61] = shape
+    ref = np.zeros((40, 40))
+    ref[15:22, 15:26] = shape
+
+    expected = zernike_moments(ref, 10., cm=(18, 20))
+    assert np.allclose(zernike_moments(im, 10., cm=(5, 55)), expected)
+    assert np.allclose(zernike_moments(im, 10., cm=center_of_mass(im)),
+                        zernike_moments(im, 10.))
+    assert not np.allclose(zernike_moments(im, 10., cm=(55, 5)), expected)

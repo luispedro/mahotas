@@ -36,12 +36,15 @@ def zernike_moments(im, radius, degree=8, cm=None):
         input image
     radius : integer
         the maximum radius for the Zernike polynomials, in pixels. Note that
-        the area outside the circle (centered on center of mass) defined by
-        this radius is ignored.
+        the area outside the circle (centered on ``cm``) defined by this
+        radius is ignored.
     degree : integer, optional
         Maximum degree to use (default: 8)
     cm : pair of floats, optional
-        the centre of mass to use. By default, uses the image's centre of mass.
+        the centre of the circle, as ``(row, column)`` (i.e., ``(y, x)``, the
+        same order as numpy indexing and ``center_of_mass``). Note that OpenCV
+        functions such as ``cv2.minEnclosingCircle`` return ``(x, y)``, which
+        must be swapped. By default, uses the image's centre of mass.
 
     Returns
     -------
