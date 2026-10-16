@@ -29,6 +29,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Programming Language :: C++",
     "Operating System :: OS Independent",
     "License :: OSI Approved :: MIT License",
@@ -64,9 +65,8 @@ mahotas-features = "mahotas.features_cli:main"
 # {project}/mahotas/tests makes it import the (uncompiled) source tree.
 test-command = "pytest --pyargs mahotas.tests"
 test-extras = ["tests"]
-# Match the versions in the classifiers: no free-threaded (cp31xt) builds and no
-# Python 3.15 until it is released and declared supported
-build = ["cp311-*", "cp312-*", "cp313-*", "cp314-*"]
+# Match the versions in the classifiers: no free-threaded (cp31xt) builds
+build = ["cp311-*", "cp312-*", "cp313-*", "cp314-*", "cp315-*"]
 skip = ["*musllinux*"]
 # Test dependencies (matplotlib, scipy) may lack Windows ARM64 wheels
 test-skip = "*-win_arm64"

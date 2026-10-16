@@ -21,6 +21,7 @@ jobs:
           - '3.12'
           - '3.13'
           - '3.14'
+          - '3.15'
         numpy-version:
           - '2.0'
           - '2.1'
@@ -49,6 +50,18 @@ jobs:
             - python-version: '3.14'
               numpy-version: '2.3'
 
+            # NumPy <=2.4 are too old for Python 3.15
+            - python-version: '3.15'
+              numpy-version: '2.0'
+            - python-version: '3.15'
+              numpy-version: '2.1'
+            - python-version: '3.15'
+              numpy-version: '2.2'
+            - python-version: '3.15'
+              numpy-version: '2.3'
+            - python-version: '3.15'
+              numpy-version: '2.4'
+
         # aarch64: plain `char` is unsigned there, unlike x86_64 (see #143).
         # Oldest and newest supported Python/NumPy only, to keep the matrix
         # small. imread has no linux-aarch64 conda package, so it is skipped
@@ -57,7 +70,7 @@ jobs:
               python-version: '3.11'
               numpy-version: '2.0'
             - os: ubuntu-24.04-arm
-              python-version: '3.14'
+              python-version: '3.15'
               numpy-version: '2.5'
 
     steps:

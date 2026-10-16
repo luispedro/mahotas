@@ -22,7 +22,7 @@ imread/imsave
 Supported versions
 ------------------
 
-Python 3.11 through 3.14 are supported and tested in CI (against numpy 2.x).
+Python 3.11 through 3.15 are supported and tested in CI (against numpy 2.x).
 Packaging only sets a lower bound (``requires-python = ">=3.11"``), so newer
 Python versions will install, but have not been tested.
 
