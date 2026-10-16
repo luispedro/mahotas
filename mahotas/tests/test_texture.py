@@ -213,8 +213,11 @@ def test_x_minus_y():
 
 def test_negative_values_haralick():
     # https://github.com/luispedro/mahotas/issues/72
-    f = 255*np.random.random((16,16))
-    f = f.astype(np.int8)
+    # Build int8 values directly: casting out-of-range floats is undefined
+    # and saturates (no negatives) on some platforms, e.g. aarch64
+    f = np.random.randint(-128, 128, size=(16,16)).astype(np.int8)
+    f[0,0] = -1
+    f[0,1] = 127
     with pytest.raises(ValueError):
         mh.features.haralick(f)
 
