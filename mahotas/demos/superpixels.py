@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 
 import mahotas
 
-f = mahotas.imread('mahotas/demos/data/luispedro.jpg')
+f = mahotas.demos.load('luispedro')
 colors = [plt.cm.jet(c) for c in  range(256)]
 random.seed(23)
 random.shuffle(colors)
