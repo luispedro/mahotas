@@ -78,7 +78,7 @@ void init_poles(FT pole[2], int& npoles, FT& weight, const int order) {
 
 /* one-dimensional spline filter: */
 template<typename FT>
-void spline_filter1d(numpy::aligned_array<FT> array, const int order, const int axis) {
+void spline_filter1d(numpy::aligned_array<FT> array, const int order, const int axis, const int mode) {
     gil_release nogil;
     const FT log_tolerance = -16.;
     if (axis >= array.ndims()) {
@@ -104,7 +104,17 @@ void spline_filter1d(numpy::aligned_array<FT> array, const int order, const int 
         for(int pi = 0; pi < npoles; ++pi) {
             FT p = pole[pi];
             int max = (int)std::ceil(log_tolerance / log(fabs(p)));
-            if (max < len) {
+            if (mode == ExtendReflect) {
+                // Half-sample symmetric initialization (as in scipy.ndimage).
+                const FT zn = pow(p, FT(len));
+                FT power = p;
+                FT sum = line[0] + zn * line[stride*(len - 1)];
+                for (int ll = 1; ll < len; ++ll) {
+                    sum += power * (line[stride*ll] + zn * line[stride*(len - 1 - ll)]);
+                    power *= p;
+                }
+                line[0] += sum * p / (1.0 - zn * zn);
+            } else if (max < len) {
                 FT zn = p;
                 FT sum = line[0];
                 for(int ll = 1; ll < max; ll++) {
@@ -127,7 +137,10 @@ void spline_filter1d(numpy::aligned_array<FT> array, const int order, const int 
             }
             for(int ll = 1; ll < len; ll++)
                 line[stride*ll] += p * line[stride*(ll - 1)];
-            line[stride*(len-1)] = (p / (p * p - 1.0)) * (line[stride*(len-1)] + p * line[stride*(len-2)]);
+            if (mode == ExtendReflect)
+                line[stride*(len-1)] *= p / (p - 1.0);
+            else
+                line[stride*(len-1)] = (p / (p * p - 1.0)) * (line[stride*(len-1)] + p * line[stride*(len-2)]);
             for(int ll = len - 2; ll >= 0; ll--)
                 line[stride*ll] = p * (line[stride*(ll + 1)] - line[stride*ll]);
         }
@@ -207,18 +220,33 @@ int int_pow(const int x, const int p) {
     return r;
 }
 
-// Sometimes std::round() is available, sometimes it is not
-// (It is a C99 & C11 function). Therefore, I add a version here:
+// Map continuous coordinates before finding the integer spline footprint.
 template <typename FT>
-FT std_like_round(FT v) {
-    return (v > 0.0) ? std::floor(v + 0.5) : std::ceil(v - 0.5);
+FT map_coordinate(FT cc, const npy_intp len, const int mode, const int order) {
+    if (mode == ExtendNearest) {
+        // Preserve fractions near the edge, and bound the spline footprint
+        // before converting even very large finite coordinates to integers.
+        return std::max(FT(-order - 1), std::min(cc, FT(len + order + 1)));
+    }
+    if (cc >= 0 && cc <= len - 1) return cc;
+    if (mode == ExtendConstant || mode == ExtendIgnore) return border_flag_value;
+    if (len <= 1) return 0;
+    if (mode == ExtendWrap) {
+        const FT period = len - 1;
+        return cc < 0 ? std::fmod(cc, period) + period : std::fmod(cc, period);
+    }
+    const FT period = mode == ExtendMirror ? FT(2) * (len - 1) : FT(2) * len;
+    cc = std::fmod(cc, period);
+    if (cc < 0) cc += period;
+    if (mode == ExtendMirror) return cc > len - 1 ? period - cc : cc;
+    return cc >= len ? period - cc - 1 : cc;
 }
 
 
 template <typename FT>
 void zoom_shift(const numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
                                  PyArrayObject* shift_ar, numpy::aligned_array<FT> output,
-                                 const int order, const int mode, const FT cval) {
+                                 const int order, const int mode, const FT cval, const int npad) {
     gil_release nogil;
     using numpy::ndarray_cast;
     const FT *zooms = zoom_ar ? ndarray_cast<const FT*>(zoom_ar) : NULL;
@@ -229,7 +257,7 @@ void zoom_shift(const numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
 
     std::vector< std::vector<bool> > zeros;
     /* if the mode is 'constant' we need some temps later: */
-    if (mode == ExtendConstant) {
+    if (mode == ExtendConstant || mode == ExtendIgnore) {
         for(int r = 0; r < rank; r++) {
             zeros.push_back( std::vector<bool>(output.dim(r)) );
         }
@@ -253,38 +281,24 @@ void zoom_shift(const numpy::aligned_array<FT> array, PyArrayObject* zoom_ar,
             FT cc = kk;
             if (shifts) cc += shifts[r];
             if (zooms) cc *= zooms[r];
-            // Public zoom aligns the endpoints; do not let product rounding
-            // move the last sample outside a constant-mode boundary.
-            if (zooms && !shifts && output.dim(r) > 1 && kk == output.dim(r) - 1)
-                cc = array.dim(r) - 1;
-            if (cc < 0 || cc > array.dim(r) - 1) {
-                if (mode == ExtendConstant) {
-                    cc = border_flag_value;
-                } else {
-                    cc = fix_offset(ExtendMode(mode), npy_intp(std_like_round(cc + 0.5)), array.dim(r));
-                }
-            }
+            const FT last = array.dim(r) - 2*npad - 1;
+            // Only correct product rounding, without imposing a zoom convention
+            // on other callers of this shared kernel.
+            if (zooms && !shifts && std::abs(cc - last) <=
+                    4 * std::numeric_limits<FT>::epsilon() * std::max(FT(1), last))
+                cc = last;
+            cc = map_coordinate(cc + npad, array.dim(r), mode, order);
             if (cc != border_flag_value) {
                 const int start = int(floor(cc + 0.5*!(order & 1)) - order / 2);
                 offsets[r][kk] = array.stride(r) * start;
                 if (start < 0 || start + order >= array.dim(r)) {
                     edge_offsets[r][kk].resize(order + 1);
                     for(int hh = 0; hh <= order; hh++) {
-                        int idx = start + hh;
-                        const int len = array.dim(r);
-                        if (len <= 1) {
-                            idx = 0;
-                        } else {
-                            int s2 = 2 * len - 2;
-                            if (idx < 0) {
-                                idx = s2 * (int)(-idx / s2) + idx;
-                                idx = idx <= 1 - len ? idx + s2 : -idx;
-                            } else if (idx >= len) {
-                                idx -= s2 * (int)(idx / s2);
-                                if (idx >= len)
-                                    idx = s2 - idx;
-                            }
-                        }
+                        // Constant and legacy wrap use mirror coefficients,
+                        // matching their spline prefilter and scipy.ndimage.
+                        const ExtendMode spline_mode = (mode == ExtendNearest || mode == ExtendReflect)
+                            ? ExtendMode(mode) : ExtendMirror;
+                        const npy_intp idx = fix_offset(spline_mode, start + hh, array.dim(r));
                         edge_offsets[r][kk][hh] = array.stride(r) * (idx - start);
                     }
                 }
@@ -380,14 +394,15 @@ PyObject* py_spline_filter1d(PyObject* self, PyObject* args) {
     PyArrayObject* array;
     int order;
     int axis;
-    if (!PyArg_ParseTuple(args,"Oii", &array, &order, &axis)) return NULL;
+    int mode = ExtendMirror;
+    if (!PyArg_ParseTuple(args,"Oii|i", &array, &order, &axis, &mode)) return NULL;
     if (!PyArray_Check(array) || !PyArray_ISCARRAY(array)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
     holdref array_hr(array);
 #define HANDLE(type) \
-    spline_filter1d<type>(numpy::aligned_array<type>(array), order, axis);
+    spline_filter1d<type>(numpy::aligned_array<type>(array), order, axis, mode);
     SAFE_SWITCH_ON_FLOAT_TYPES_OF(array);
 #undef HANDLE
 
@@ -403,8 +418,9 @@ PyObject* py_zoom_shift(PyObject* self, PyObject* args) {
     PyArrayObject* output;
     int order;
     int mode;
+    int npad = 0;
     double cval;
-    if (!PyArg_ParseTuple(args,"OOOOiid", &array, &zooms, &shifts, &output, &order, &mode, &cval)) return NULL;
+    if (!PyArg_ParseTuple(args,"OOOOiid|i", &array, &zooms, &shifts, &output, &order, &mode, &cval, &npad)) return NULL;
     if (!numpy::are_arrays(array, output) ||
         !PyArray_ISCARRAY(array) || !PyArray_ISCARRAY(output) ||
         !numpy::equiv_typenums(array, output)) {
@@ -442,7 +458,7 @@ PyObject* py_zoom_shift(PyObject* self, PyObject* args) {
     holdref shifts_hr(shifts);
     holdref output_hr(output);
 #define HANDLE(type) \
-    zoom_shift<type>(numpy::aligned_array<type>(array), zooms, shifts, numpy::aligned_array<type>(output), order, mode, type(cval));
+    zoom_shift<type>(numpy::aligned_array<type>(array), zooms, shifts, numpy::aligned_array<type>(output), order, mode, type(cval), npad);
     SAFE_SWITCH_ON_FLOAT_TYPES_OF(array);
 #undef HANDLE
 

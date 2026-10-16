@@ -172,15 +172,28 @@ def spline_filter(
 
 
 
-def _maybe_filter(array: ArrayLike, order: int, func: str, prefilter: bool, dtype: DTypeLike) -> Array:
+def _maybe_filter(array: ArrayLike, order: int, func: str, prefilter: bool, dtype: DTypeLike, mode: BorderMode = 'mirror') -> tuple[Array, int]:
     array = _check_interpolate(array, order, func)
     if array.ndim < 1:
         raise ValueError(func+': array rank must be > 0')
+    if 0 in array.shape:
+        raise ValueError(func+': input axes must not be empty')
+    npad = 0
     if prefilter and order > 1:
-        return spline_filter(array, order, dtype=dtype)
+        if mode == 'nearest':
+            # As in scipy.ndimage, prepad edge samples before filtering so
+            # the spline can approach the constant extension smoothly.
+            npad = 12
+            array = np.pad(array, npad, mode='edge')
+        if mode in ('nearest', 'reflect'):
+            array = np.array(array, dtype=dtype, order='C', copy=True)
+            for axis in range(array.ndim):
+                _interpolate.spline_filter1d(array, order, axis, mode2int['reflect'])
+            return array, npad
+        return spline_filter(array, order, dtype=dtype), npad
     else:
         # _interpolate.zoom_shift requires a C-contiguous array
-        return np.ascontiguousarray(array, dtype=dtype)
+        return np.ascontiguousarray(array, dtype=dtype), npad
 
 @overload
 def zoom(
@@ -249,7 +262,9 @@ def zoom(
         The zoomed input. If `out` is not given, this is a new ``np.float64``
         array of shape ``int(array.shape[i] * zoom[i])``.
     """
-    array = _maybe_filter(array, order, 'interpolate.zoom', prefilter, dtype=np.float64)
+    _check_mode(mode, cval, 'interpolation.zoom')
+    array, npad = _maybe_filter(array, order, 'interpolate.zoom', prefilter, dtype=np.float64, mode=mode)
+    input_shape = tuple(s - 2*npad for s in array.shape)
     zoom = np.array(zoom)
     if zoom.ndim == 0:
         zoom = np.array([zoom]*array.ndim)
@@ -264,16 +279,14 @@ def zoom(
         out = output
 
     if out is None:
-        output_shape = tuple([int(s * z) for s,z in zip(array.shape, zoom)])
+        output_shape = tuple([int(s * z) for s,z in zip(input_shape, zoom)])
         out = np.empty(output_shape, dtype=array.dtype)
     elif out.ndim != array.ndim:
         raise ValueError('mahotas.interpolation.zoom: out should have the same number of dimensions as array')
     zoom_div = np.array(out.shape, float) - 1
-    zoom = np.divide(np.array(array.shape) - 1, zoom_div,
+    zoom = np.divide(np.array(input_shape) - 1, zoom_div,
                      out=np.ones_like(zoom_div), where=zoom_div != 0)
     zoom = np.ascontiguousarray(zoom)
-
-    _check_mode(mode, cval, 'interpolation.zoom')
 
     # zooming is always done in floats, but the user may want the output in
     # another type, so handle this case here:
@@ -281,7 +294,7 @@ def zoom(
     if out.dtype != array.dtype:
         o_out = out
         out = np.empty(out.shape, array.dtype)
-    _interpolate.zoom_shift(array, zoom, None, out, order, mode2int[mode], cval)
+    _interpolate.zoom_shift(array, zoom, None, out, order, mode2int[mode], cval, npad)
     if o_out is not None:
         o_out[:] = out[:]
         out = o_out
@@ -340,12 +353,13 @@ def shift(
         If any shift value is not finite.
 
     """
-    array = _maybe_filter(array, order, 'interpolate.shift', prefilter, dtype=np.float64)
     _check_mode(mode, cval, 'interpolation.shift')
-    output = internal._get_output(array, out, 'interpolate.shift', dtype=np.float64, output=output)
+    array, npad = _maybe_filter(array, order, 'interpolate.shift', prefilter, dtype=np.float64, mode=mode)
+    unpadded = array[(slice(npad, -npad),)*array.ndim] if npad else array
+    output = internal._get_output(unpadded, out, 'interpolate.shift', dtype=np.float64, output=output)
     shift = np.ascontiguousarray(shift, dtype=np.float64)
     if not np.all(np.isfinite(shift)):
         raise ValueError('mahotas.interpolate.shift: shift values must be finite')
     shift = -shift
-    _interpolate.zoom_shift(array, None, shift, output, order, mode2int[mode], cval)
+    _interpolate.zoom_shift(array, None, shift, output, order, mode2int[mode], cval, npad)
     return output

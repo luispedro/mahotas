@@ -4,7 +4,7 @@ import pytest
 from pytest import raises
 
 @pytest.mark.parametrize('order', range(6))
-@pytest.mark.parametrize('mode', ['constant', 'nearest', 'mirror', 'reflect', 'wrap'])
+@pytest.mark.parametrize('mode', ['constant', 'nearest', 'mirror', 'reflect', 'wrap', 'ignore'])
 def test_zero_shift_identity(order, mode):
     f = np.arange(12., dtype=np.float64).reshape((3, 4))
     shifted = interpolate.shift(f, [0, 0], order=order, mode=mode)
@@ -69,6 +69,59 @@ def test_zoom_singleton_axis(order, shape):
     out = np.empty((1, 5))
     interpolate.zoom(f, 1, out=out, order=order)
     np.testing.assert_allclose(out, 7., atol=1e-12)
+
+@pytest.mark.parametrize('mode', ['constant', 'ignore', 'nearest', 'mirror', 'reflect', 'wrap'])
+@pytest.mark.parametrize('order', range(6))
+@pytest.mark.parametrize('prefilter', [False, True])
+def test_shift_boundary_coordinates(mode, order, prefilter):
+    ndimage = pytest.importorskip('scipy.ndimage')
+    f = np.array([2., 5., 8., 11.])
+    for shift in [-8.4, -.4, .25, 7.25]:
+        expected = ndimage.shift(f, shift, mode='constant' if mode == 'ignore' else mode,
+                                 order=order, prefilter=prefilter)
+        actual = interpolate.shift(f, shift, mode=mode, order=order, prefilter=prefilter)
+        np.testing.assert_allclose(actual, expected, atol=2e-6)
+
+@pytest.mark.parametrize('mode', ['constant', 'ignore', 'nearest', 'mirror', 'reflect', 'wrap'])
+@pytest.mark.parametrize('shift', [3e9, -3e9, 1e300, -1e300])
+def test_large_finite_shift(mode, shift):
+    f = np.array([5., 6., 7., 8.])
+    if mode in ('constant', 'ignore'):
+        expected = np.zeros_like(f)
+    elif mode == 'nearest':
+        expected = np.full_like(f, f[0] if shift > 0 else f[-1])
+    else:
+        # Reduce the periodic shift before calling an independent interpolator.
+        ndimage = pytest.importorskip('scipy.ndimage')
+        period = {'mirror': 6., 'reflect': 8., 'wrap': 3.}[mode]
+        coordinates = np.fmod(np.arange(4.) - shift, period)
+        if mode == 'wrap':
+            coordinates = np.where(coordinates <= 0, coordinates + period, coordinates) if shift > 0 else coordinates
+        expected = ndimage.map_coordinates(f, [coordinates], mode=mode, order=1)
+    actual = interpolate.shift(f, shift, mode=mode, order=1)
+    np.testing.assert_allclose(actual, expected)
+
+@pytest.mark.parametrize('mode', ['constant', 'ignore', 'nearest', 'mirror', 'reflect', 'wrap'])
+@pytest.mark.parametrize('order', [1, 3])
+def test_zoom_rejects_empty_input(mode, order):
+    with pytest.raises(ValueError, match='empty'):
+        interpolate.zoom(np.empty((0, 4)), 1, out=np.empty((3, 4)), mode=mode, order=order)
+
+def test_ignore_shift_outside():
+    f = np.arange(2000.)
+    actual = interpolate.shift(f, 500.5, order=1, mode='ignore')
+    np.testing.assert_array_equal(actual[:501], 0.)
+    np.testing.assert_allclose(actual[501:], np.arange(1499.) + .5)
+
+def test_near_integer_constant_boundary():
+    actual = interpolate.shift([2., 5., 8., 11.], -1e-12, order=1)
+    np.testing.assert_allclose(actual, [2., 5., 8., 0.], atol=4e-12)
+
+def test_native_zoom_retains_requested_coordinates():
+    f = np.array([2., 5., 8., 11.])
+    out = np.empty(3)
+    interpolate._interpolate.zoom_shift(f, np.array([.25]), None, out, 1, 4, 0.)
+    np.testing.assert_allclose(out, [2., 2.75, 3.5])
 
 def test_spline_filter1d_smoke():
     f  = (np.arange(64*64, dtype=np.intc) % 64).reshape((64,64)).astype(np.float64)
