@@ -31,6 +31,19 @@ def test_convex3():
         [False, False, False, False]], dtype=bool)
     assert np.all(fill_convexhull(f) == f)
 
+def test_convex_non_bool():
+    # Regression test: for non-boolean input, the input was used as an
+    # integer index (filling whole rows) instead of as a mask
+    f = np.zeros((6, 6), np.uint8)
+    f[1, 1] = 1
+    f[4, 1] = 1
+    f[2, 4] = 1
+    hull = fill_convexhull(f)
+    expected = fill_convexhull(f.astype(bool))
+    assert hull.dtype == np.uint8
+    assert np.all((hull == 255) == expected)
+    assert not np.any(hull[0])
+
 def test_fill3():
     canvas = np.zeros((4,4), bool)
     # This polygon also has a horizontal and a vertical edge

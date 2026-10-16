@@ -158,17 +158,20 @@ def fill_convexhull(bwimg):
 
     Parameters
     ----------
-    bwimage : input image (interpreted as boolean)
+    bwimg : ndarray
+        input image (interpreted as boolean). Only 2D arrays are supported.
 
     Returns
     -------
-    hull : image of same size and dtype as `bwimg` with the hull filled in.
+    hull : ndarray
+        Image of same shape and dtype as `bwimg` with the hull filled in.
+        For boolean input, the hull is ``True``; otherwise, it has value 255.
     '''
 
     points = convexhull(bwimg)
     canvas = np.zeros_like(bwimg)
     black = (1 if bwimg.dtype == np.bool_ else 255)
     fill_polygon(points, canvas, black)
-    canvas[bwimg] = black
+    canvas[bwimg != 0] = black
     return canvas
 
