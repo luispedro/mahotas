@@ -249,8 +249,16 @@ def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None, output=None):
     See Also
     --------
     median_filter : A special case of rank_filter
+
+    Raises
+    ------
+    ValueError
+        If `rank` is out of range.
     '''
     Bc = morph.get_structuring_elem(f, Bc)
+    size = np.count_nonzero(Bc)
+    if not (0 <= rank < size):
+        raise ValueError(f'mahotas.rank_filter: rank must be in range({size}) (the number of elements in the neighbourhood), received {rank}')
     output = _get_output(f, out, 'rank_filter', output=output)
     _check_mode(mode, cval, 'rank_filter')
     return _convolve.rank_filter(f, Bc, output, rank, mode2int[mode])

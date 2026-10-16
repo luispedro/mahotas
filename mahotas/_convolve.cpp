@@ -500,7 +500,7 @@ void rank_filter(numpy::aligned_array<T> res, const numpy::aligned_array<T> arra
     filter_iterator<T> fiter(array.raw_array(), Bc.raw_array(), ExtendMode(mode), true);
     const npy_intp N2 = fiter.size();
     if (rank < 0 || rank >= N2) {
-        return;
+        throw PythonException(PyExc_ValueError, "mahotas.rank_filter: rank must be non-negative and smaller than the number of elements in the neighbourhood");
     }
     std::vector<T> n_data;
     n_data.resize(N2);

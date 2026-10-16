@@ -349,3 +349,14 @@ def test_gaussian_filter_3d_cube():
         assert mh.gaussian_filter(a, 1.5, out=out) is out
         assert np.allclose(out, expected)
 
+
+
+def test_rank_filter_out_of_range():
+    # Regression test: an out-of-range rank used to return uninitialised
+    # memory instead of raising an error
+    f = np.arange(25, dtype=np.uint8).reshape((5,5))
+    Bc = np.ones((3,3), np.uint8)
+    for rank in (-1, 9, 100):
+        with pytest.raises(ValueError):
+            mh.rank_filter(f, Bc, rank)
+    assert mh.rank_filter(f, Bc, 8)[2,2] == 18
