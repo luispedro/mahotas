@@ -89,4 +89,36 @@ def test_xyz2rgb_requested_dtype_is_final_output_dtype(dtype):
                         1.055 * expected_linear ** (1.0 / 2.4) - 0.055) * 255
     actual = xyz2rgb(xyz, dtype=dtype)
     assert actual.dtype == np.dtype(dtype)
+    if np.issubdtype(dtype, np.integer):
+        expected = np.round(expected)
     np.testing.assert_allclose(actual, expected.astype(dtype), rtol=1e-6)
+
+
+def test_xyz2rgb_integer_clips_out_of_gamut():
+    import warnings
+    # Float outputs are approximately [-821, 39, 192], [248, 255, 268], and
+    # [287, -360, -43]: integer output must saturate, not wrap around
+    xyz = np.array([[[0., 0., .5], [.95, 1., 1.199], [.5, .2, 0.]]])
+    with warnings.catch_warnings():
+        warnings.simplefilter('error')
+        rgb = xyz2rgb(xyz)
+        rgb8 = xyz2rgb(xyz, dtype=np.uint8)
+    assert not np.any(np.isnan(rgb))
+    assert rgb.min() < 0
+    assert rgb.max() > 255
+    np.testing.assert_array_equal(rgb8, np.clip(np.round(rgb), 0, 255))
+
+
+def test_xyz2rgb_uint8_roundtrip():
+    rgb = np.random.RandomState(4).randint(0, 256, size=(64, 64, 3)).astype(np.uint8)
+    np.testing.assert_array_equal(xyz2rgb(rgb2xyz(rgb), dtype=np.uint8), rgb)
+
+
+def test_integer_dtype_rounds_and_clips():
+    rgb = np.random.RandomState(5).randint(0, 256, size=(32, 32, 3)).astype(np.uint8)
+    lab = rgb2lab(rgb)
+    lab8 = rgb2lab(rgb, dtype=np.int8)
+    np.testing.assert_array_equal(lab8, np.clip(np.round(lab), -128, 127))
+    np.testing.assert_array_equal(rgb2lab(rgb, dtype=np.uint8), np.clip(np.round(lab), 0, 255))
+    np.testing.assert_array_equal(rgb2grey(rgb, dtype=np.uint8), np.round(rgb2grey(rgb)))
+

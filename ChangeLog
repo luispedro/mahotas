@@ -3,6 +3,14 @@ Version 1.4.19+
 	  platforms where `char` is unsigned by default (e.g., aarch64/ARM),
 	  which caused int8 arrays with negative values to be mishandled,
 	  including bypassing the safety check in features.haralick().
+	* Fix xyz2rgb() with an integer `dtype` casting before gamma
+	  encoding, which discarded fractional values (PR #155 by
+	  @antonsoo).
+	* Colour conversions (rgb2grey, rgb2xyz, xyz2rgb, xyz2lab, rgb2lab)
+	  with an integer `dtype` now round (instead of truncating) and clip
+	  to the output range (instead of wrapping around); xyz2rgb clips
+	  integer output to [0, 255]. xyz2rgb no longer emits NaN warnings
+	  for out-of-gamut colours.
 	* Documentation: document that `from mahotas import *` shadows the
 	  builtin `open`, the tested Python version range, the
 	  thresholding module layout (which functions return a threshold

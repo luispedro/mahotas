@@ -6,6 +6,16 @@
 import numpy as np
 from .internal import _check_3
 
+def _cast(array, dtype):
+    '''Cast ``array`` to ``dtype``, rounding and clipping for integer types'''
+    if dtype is None:
+        return array
+    dtype = np.dtype(dtype)
+    if np.issubdtype(dtype, np.integer):
+        info = np.iinfo(dtype)
+        array = np.clip(np.round(array), info.min, info.max)
+    return array.astype(dtype, copy=False)
+
 def rgb2grey(array, dtype=float):
     '''
     grey = rgb2grey(rgb_image, dtype=float)
@@ -23,7 +33,7 @@ def rgb2grey(array, dtype=float):
     ----------
     array : ndarray of shape (a,b,3)
     dtype : dtype, optional
-        dtype of return
+        dtype of return. Integer types are rounded and clipped to their range
 
     Returns
     -------
@@ -32,7 +42,7 @@ def rgb2grey(array, dtype=float):
     _check_3(array, 'rgb2grey')
     transform = np.array([0.30, 0.59, 0.11])
     transformed = np.dot(array, transform)
-    return transformed.astype(dtype, copy=False)
+    return _cast(transformed, dtype)
 
 rgb2gray = rgb2grey
 
@@ -44,9 +54,7 @@ def _convert(array, matrix, dtype, funcname):
     array = np.dot(matrix, array)
     array = array.reshape((3,h,w))
     array = array.transpose((1,2,0))
-    if dtype is not None:
-        array = array.astype(dtype, copy=False)
-    return array
+    return _cast(array, dtype)
 
 def rgb2xyz(rgb, dtype=None):
     '''
@@ -62,7 +70,8 @@ def rgb2xyz(rgb, dtype=None):
     ----------
     rgb : ndarray
     dtype : dtype, optional
-        What dtype to return
+        What dtype to return. Integer types are rounded and clipped to their
+        range
 
     Returns
     -------
@@ -98,8 +107,11 @@ def xyz2rgb(xyz, dtype=None):
     Parameters
     ----------
     xyz : ndarray
-    dtype : dtype, optional 
-        What dtype to return. Default will be floats
+    dtype : dtype, optional
+        What dtype to return. Default will be floats. Values are on a 0-255
+        scale and are not clipped for floating point output; out-of-gamut
+        colours fall outside this range. For integer types, values are rounded
+        and clipped to [0, 255].
 
     Returns
     -------
@@ -117,14 +129,15 @@ def xyz2rgb(xyz, dtype=None):
                 ])
     rgb_linear = _convert(xyz, transformation, None, 'xyz2rgb')
     a = 0.055
-    srgb_high = (1 + a)*np.power(rgb_linear, 1./2.4)
+    # Clamp negatives (which use the linear branch anyway) to avoid NaNs
+    srgb_high = (1 + a)*np.power(np.maximum(rgb_linear, 0.), 1./2.4)
     srgb_high -= a
     srgb_low = 12.92 * rgb_linear
     srgb = np.choose(rgb_linear <= 0.0031308, [srgb_high, srgb_low])
     srgb *= 255.
-    if dtype is not None:
-        srgb = srgb.astype(dtype, copy=False)
-    return srgb
+    if dtype is not None and np.issubdtype(dtype, np.integer):
+        srgb = np.clip(srgb, 0., 255.)
+    return _cast(srgb, dtype)
 
 def xyz2lab(xyz, dtype=None):
     '''
@@ -137,8 +150,9 @@ def xyz2lab(xyz, dtype=None):
     Parameters
     ----------
     xyz : ndarray
-    dtype : dtype, optional 
-        What dtype to return. Default will be floats
+    dtype : dtype, optional
+        What dtype to return. Default will be floats. Integer types are
+        rounded and clipped to their range
 
     Returns
     -------
@@ -158,9 +172,7 @@ def xyz2lab(xyz, dtype=None):
     a = 500 * (fx - fy)
     b = 200 * (fy - fz)
     Lab = np.dstack( [L,a,b] )
-    if dtype is not None:
-        Lab = Lab.astype(dtype, copy=False)
-    return Lab
+    return _cast(Lab, dtype)
 
 def rgb2lab(rgb, dtype=None):
     '''
@@ -174,8 +186,9 @@ def rgb2lab(rgb, dtype=None):
     ----------
     rgb : ndarray
         Must be of shape (h,w,3)
-    dtype : dtype, optional 
-        What dtype to return. Default will be floats
+    dtype : dtype, optional
+        What dtype to return. Default will be floats. Integer types are
+        rounded and clipped to their range
 
     Returns
     -------
