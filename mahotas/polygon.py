@@ -106,9 +106,8 @@ def fill_polygon(polygon, canvas, color=1):
     min_y = min(y for y,x in polygon)
     max_y = max(y for y,x in polygon)
     polygon = [(float(y),float(x)) for y,x in polygon]
-    if max_y < canvas.shape[0]:
-        max_y += 1
-    for y in range(min_y, max_y):
+    # Clip to the canvas: negative indices would otherwise wrap around
+    for y in range(max(min_y, 0), min(max_y + 1, canvas.shape[0])):
         nodes = []
         j = -1
         for i,p in enumerate(polygon):
@@ -122,8 +121,10 @@ def fill_polygon(polygon, canvas, color=1):
             j = i
         nodes.sort()
         for n,nn in zip(nodes[::2],nodes[1::2]):
-            nn += 1
-            canvas[y, int(n):int(nn)] = color
+            start = max(int(np.floor(n)), 0)
+            stop = int(np.floor(nn)) + 1
+            if stop > start:
+                canvas[y, start:stop] = color
 
 def convexhull(bwimg):
     '''

@@ -90,3 +90,20 @@ def test_fill_polygon_top_row_convention():
     canvas = np.zeros((5, 5))
     fill_polygon([(-1, 4), (4, 4), (4, 0), (-1, 0)], canvas)
     assert canvas.all()
+
+@pytest.mark.parametrize('polygon', [
+    [(-3, 0), (-3, 2), (2, 2), (2, 0)],     # above the canvas
+    [(2, 0), (2, 3), (10, 3), (10, 0)],     # below the canvas
+    [(1, -3), (1, 1), (3, 1), (3, -3)],     # left of the canvas
+    [(1, -5), (1, -2), (3, -2), (3, -5)],   # entirely left of the canvas
+    [(1, 4), (1, 9), (3, 9), (3, 4)],       # right of the canvas
+    [(-2, 2), (3, -4), (8, 2), (3, 8)],     # around the canvas
+])
+def test_fill_polygon_outside_canvas(polygon):
+    # Parts outside the canvas must be clipped, not wrapped around
+    canvas = np.zeros((6, 6), int)
+    fill_polygon(polygon, canvas)
+
+    big = np.zeros((26, 26), int)
+    fill_polygon([(y + 10, x + 10) for y, x in polygon], big)
+    assert np.all(canvas == big[10:16, 10:16])
