@@ -10,10 +10,12 @@ concurrency:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os:
+          - ubuntu-latest
         python-version:
           - '3.11'
           - '3.12'
@@ -47,21 +49,47 @@ jobs:
             - python-version: '3.14'
               numpy-version: '2.3'
 
+        # aarch64: plain `char` is unsigned there, unlike x86_64 (see #143).
+        # Oldest and newest supported Python/NumPy only, to keep the matrix
+        # small. imread has no linux-aarch64 conda package, so it is skipped
+        include:
+            - os: ubuntu-24.04-arm
+              python-version: '3.11'
+              numpy-version: '2.0'
+            - os: ubuntu-24.04-arm
+              python-version: '3.14'
+              numpy-version: '2.5'
+
     steps:
     - uses: actions/checkout@v7
+
+    # Refresh the cached environment monthly so dependencies do not go stale
+    - name: Get cache period
+      id: period
+      run: echo "month=$(date +%Y-%m)" >> "$GITHUB_OUTPUT"
+
+    # All dependencies are installed when the environment is created so that
+    # they are part of the cached environment (packages installed in a later
+    # step are not cached and get downloaded again on every run)
     - uses: mamba-org/setup-micromamba@v3
       with:
         cache-environment: true
+        cache-environment-key: env-${{ steps.period.outputs.month }}-${{ hashFiles('tests-requirements.txt') }}-
         cache-downloads: false
         environment-name: mahotas_test_env
-        create-args: python=${{ matrix.python-version }} numpy=${{ matrix.numpy-version }}
+        create-args: >-
+          python=${{ matrix.python-version }}
+          numpy=${{ matrix.numpy-version }}
+          --file tests-requirements.txt
+          freeimage
+          ${{ runner.arch != 'ARM64' && 'imread' || '' }}
 
-    - name: Install dependencies
-      shell: bash -l {0}
-      run: |
-        micromamba install --file tests-requirements.txt --name mahotas_test_env
-        micromamba install --name mahotas_test_env freeimage imread
-        python -m pip install "meson-python>=0.17.1,<0.18" "meson>=1.2.3" ninja
+    # meson picks up ccache automatically when it is on the PATH
+    - uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: ccache-${{ matrix.os }}-py${{ matrix.python-version }}-np${{ matrix.numpy-version }}
+        max-size: 200M
+
     - name: Build
       shell: bash -l {0}
       run: |
