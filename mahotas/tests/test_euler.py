@@ -40,3 +40,10 @@ def test_euler7():
     with pytest.raises(ValueError):
         euler(f, 7)
 
+
+
+def test_euler_non_binary():
+    f = np.zeros((8, 8), np.uint8)
+    f[2:4, 2:4] = 2
+    with pytest.raises(ValueError):
+        euler(f)

@@ -36,7 +36,7 @@ def euler(f, n=8, mode='constant'):
     Parameters
     ----------
     f : ndarray
-        A 2-D binary image
+        A 2-D binary image. If not boolean, all values must be 0 or 1.
     n : int, optional
         Connectivity, one of (4,8). default: 8
     mode : {'reflect', 'nearest', 'wrap', 'mirror', 'constant' [default]}
@@ -47,6 +47,11 @@ def euler(f, n=8, mode='constant'):
     euler_nr : float
         Euler number. This is always an integer value, but it is returned as
         a floating point number.
+
+    Raises
+    ------
+    ValueError
+        If `n` is not 4 or 8, or if `f` is not binary.
 
     References
     ----------
@@ -63,8 +68,9 @@ def euler(f, n=8, mode='constant'):
         lookup = _euler_lookup4
     else:
         raise ValueError('mahotas.euler: Connectivity must be 4 or 8')
-    if f.dtype is not np.bool_:
-        assert np.all( (f == 0) | (f == 1)), 'mahotas.euler: Non-binary image'
+    if f.dtype != np.bool_:
+        if not np.all( (f == 0) | (f == 1)):
+            raise ValueError('mahotas.euler: Non-binary image (all values must be 0 or 1)')
         f = (f != 0)
     value = convolve(f.astype(_powers.dtype, copy=False), _powers, mode=mode)
     return lookup[value].sum()
