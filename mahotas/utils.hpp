@@ -58,18 +58,7 @@ struct PythonException {
 
 
 
-// DECLARE_MODULE is slightly ugly, but it encapsulates the differences in
-// initializing a module between Python 2.x & Python 3.x
-
-#if PY_MAJOR_VERSION < 3
-#define DECLARE_MODULE(name) \
-extern "C" \
-void init##name () { \
-    import_array(); \
-    (void)Py_InitModule(#name, methods); \
-}
-
-#else
+// DECLARE_MODULE encapsulates the boilerplate for initializing a module
 
 #define DECLARE_MODULE(name) \
 namespace { \
@@ -90,8 +79,5 @@ PyInit_##name () { \
     import_array(); \
     return PyModule_Create(&moduledef); \
 }
-
-
-#endif
 
 
