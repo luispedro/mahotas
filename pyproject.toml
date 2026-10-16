@@ -68,11 +68,15 @@ test-extras = ["tests"]
 # Match the versions in the classifiers: no free-threaded (cp31xt) builds and no
 # Python 3.15 until it is released and declared supported
 build = ["cp310-*", "cp311-*", "cp312-*", "cp313-*", "cp314-*"]
-skip = ["*musllinux*"]
+# No numpy wheels for Windows ARM64 on Python 3.10 (numpy 2.3+ needs 3.11)
+skip = ["*musllinux*", "cp310-win_arm64"]
+# Test dependencies (matplotlib, scipy) may lack Windows ARM64 wheels
+test-skip = "*-win_arm64"
 environment = {PIP_PREFER_BINARY = "1"}
 
 [tool.cibuildwheel.windows]
-# No 32-bit numpy/scipy wheels for the supported Python versions
-archs = ["AMD64"]
+# No 32-bit numpy/scipy wheels for the supported Python versions: AMD64 on
+# x86-64 runners, ARM64 on ARM runners
+archs = ["auto64"]
 # Force MSVC: otherwise meson picks up the MinGW gcc on the runner's PATH
 config-settings = {setup-args = "--vsenv"}

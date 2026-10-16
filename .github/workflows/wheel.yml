@@ -5,10 +5,7 @@ on:
     tags:
       - 'v*'
     branches:
-      - main
-      - master
       - build_wheel
-  pull_request:
 
 concurrency:
   group: wheel-${{ github.ref }}
@@ -38,8 +35,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macos-15-intel is an intel runner, macos-15 is apple silicon
-        os: [ubuntu-latest, windows-latest, macos-15-intel, macos-15]
+        # macos-15-intel is an intel runner, macos-15 is apple silicon;
+        # ubuntu-24.04-arm and windows-11-arm build native aarch64/ARM64 wheels
+        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, windows-11-arm, macos-15-intel, macos-15]
 
     steps:
       - uses: actions/checkout@v7
