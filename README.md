@@ -6,6 +6,7 @@ Mahotas is a library of fast computer vision algorithms (all implemented
 in C++ for speed) operating over numpy arrays.
 
 [![Test mahotas](https://github.com/luispedro/mahotas/actions/workflows/test-python-package-with-conda.yml/badge.svg)](https://github.com/luispedro/mahotas/actions/workflows/test-python-package-with-conda.yml)
+[![Documentation Status](https://readthedocs.org/projects/mahotas/badge/?version=latest)](https://mahotas.readthedocs.io/en/latest/)
 [![Coverage Status](https://coveralls.io/repos/github/luispedro/mahotas/badge.svg?branch=master)](https://coveralls.io/github/luispedro/mahotas?branch=master)
 [![License](https://img.shields.io/badge/License-MIT-blue)](https://opensource.org/licenses/MIT)
 [![Downloads](https://static.pepy.tech/badge/mahotas)](https://pepy.tech/project/mahotas)
