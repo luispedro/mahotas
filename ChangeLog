@@ -28,6 +28,8 @@ Version 1.4.19+
 	  README and docs index feature lists.
 	* Documentation: zernike_moments() `cm` is (row, column), not (x, y)
 	  as returned by OpenCV (issue #109).
+	* Documentation: describe fill_polygon()'s scanline convention (the
+	  top row of the polygon is not filled; issue #73).
 
 Version 1.4.19 2026-09-22 by luispedro
 	* Require Python 3.10 or later; support Python 3.14 and NumPy 2.x

@@ -69,11 +69,36 @@ def fill_polygon(polygon, canvas, color=1):
     Parameters
     ----------
     polygon : list of pairs
-        a list of (y,x) points
+        a list of (y,x) points with integer coordinates. The polygon is
+        closed automatically (the last point connects to the first).
     canvas : ndarray
         where to draw, will be modified in place
     color : integer, optional
         which colour to use (default: 1)
+
+    Notes
+    -----
+    This is a scanline fill. For each row ``y``, the crossings of the polygon
+    edges with that row are computed and the pixels between successive pairs
+    of crossings are filled (even-odd rule).
+
+    Edges are half-open in ``y``: an edge from ``y0`` to ``y1`` (``y0 < y1``)
+    crosses rows ``y0 < y <= y1``. Therefore, the topmost row of the polygon
+    (smallest ``y``) is **not** filled, while the bottom row is. Horizontal
+    edges do not fill anything by themselves. Within a row, both ends are
+    included: pixel ``x`` is filled if ``floor(left) <= x <= floor(right)``,
+    where ``left`` and ``right`` are the crossings.
+
+    For example, the square with corners ``(0,0)`` and ``(4,4)`` fills rows
+    1 to 4 (all of columns 0 to 4), but not row 0::
+
+        canvas = np.zeros((5, 5))
+        fill_polygon([(0, 0), (0, 4), (4, 4), (4, 0)], canvas)
+        # canvas[0] is all zeros; canvas[1:] is all ones
+
+    To include the top row, either start the polygon one row higher (e.g.,
+    ``(-1, 0), (-1, 4), (4, 4), (4, 0)``) or also draw the edges with
+    ``line``.
     '''
 # algorithm adapted from: https://www.alienryderflex.com/polygon_fill/
     if not len(polygon):

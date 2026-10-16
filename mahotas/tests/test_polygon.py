@@ -78,3 +78,15 @@ def test_border():
     polygon = np.array([(0,0),(0,32),(32,0)])
     fill_polygon(polygon, canvas)
     assert not np.all(canvas)
+
+def test_fill_polygon_top_row_convention():
+    # Documented convention (issue #73): the top row is not filled, the
+    # bottom row and both sides are
+    canvas = np.zeros((5, 5))
+    fill_polygon([(0, 4), (4, 4), (4, 0), (0, 0)], canvas)
+    assert not canvas[0].any()
+    assert canvas[1:].all()
+
+    canvas = np.zeros((5, 5))
+    fill_polygon([(-1, 4), (4, 4), (4, 0), (-1, 0)], canvas)
+    assert canvas.all()
