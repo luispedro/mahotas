@@ -24,8 +24,9 @@ MODULES = [
 @pytest.mark.parametrize('module_name', MODULES)
 def test_annotations_resolve(module_name: str) -> None:
     module = importlib.import_module(module_name)
-    for _, function in inspect.getmembers(module, inspect.isfunction):
-        if function.__module__ != module_name:
+    for name, function in inspect.getmembers(module, inspect.isfunction):
+        # Python 3.14+ generates __annotate__ for module-level annotations (PEP 649)
+        if function.__module__ != module_name or name == '__annotate__':
             continue
         for signature in [function, *get_overloads(function)]:
             hints = get_type_hints(signature)
