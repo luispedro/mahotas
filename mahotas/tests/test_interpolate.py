@@ -31,6 +31,29 @@ def test_fractional_constant_shift():
     shifted = interpolate.shift(f, .25, order=1)
     np.testing.assert_allclose(shifted, [0., 4.25, 7.25, 10.25])
 
+@pytest.mark.parametrize('value', [np.nan, np.inf, -np.inf])
+@pytest.mark.parametrize('ndim', [1, 2])
+def test_shift_rejects_nonfinite(value, ndim, monkeypatch):
+    def unexpected_native_call(*args):
+        raise AssertionError('nonfinite shift reached native interpolation')
+
+    monkeypatch.setattr(interpolate._interpolate, 'zoom_shift', unexpected_native_call)
+    f = np.zeros((4,) * ndim)
+    shift = value if ndim == 1 else [0., value]
+    with pytest.raises(ValueError, match='finite'):
+        interpolate.shift(f, shift, order=1)
+
+@pytest.mark.parametrize('readonly', [False, True])
+def test_shift_preserves_coordinate_vector(readonly):
+    f = np.arange(20.).reshape(4, 5)
+    shift = np.array([.25, -.75])
+    original = shift.copy()
+    shift.flags.writeable = not readonly
+    first = interpolate.shift(f, shift, order=1)
+    np.testing.assert_array_equal(shift, original)
+    second = interpolate.shift(f, shift, order=1)
+    np.testing.assert_array_equal(second, first)
+
 @pytest.mark.parametrize('order', range(6))
 def test_zoom_last_endpoint(order):
     f = np.full((49, 55), 7.)

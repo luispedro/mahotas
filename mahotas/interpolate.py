@@ -306,7 +306,8 @@ def shift(
         The input array.
     shift : sequence of float
         The shift along the axes. Must contain one value for each axis (a
-        scalar is only accepted for 1-D arrays).
+        scalar is only accepted for 1-D arrays). Values must be finite and
+        are not modified.
     out : ndarray, optional
         The array in which to place the output. Must be a C-contiguous
         ``np.float64`` array of the same shape as `array`.
@@ -333,11 +334,18 @@ def shift(
     return_value : ndarray of np.float64
         The shifted input.
 
+    Raises
+    ------
+    ValueError
+        If any shift value is not finite.
+
     """
     array = _maybe_filter(array, order, 'interpolate.shift', prefilter, dtype=np.float64)
     _check_mode(mode, cval, 'interpolation.shift')
     output = internal._get_output(array, out, 'interpolate.shift', dtype=np.float64, output=output)
     shift = np.ascontiguousarray(shift, dtype=np.float64)
-    shift *= -1
+    if not np.all(np.isfinite(shift)):
+        raise ValueError('mahotas.interpolate.shift: shift values must be finite')
+    shift = -shift
     _interpolate.zoom_shift(array, None, shift, output, order, mode2int[mode], cval)
     return output
