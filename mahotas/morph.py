@@ -488,7 +488,7 @@ def open(f, Bc=None, out=None, output=None):
     """
     _verify_is_integer_type(f, 'open')
     Bc = get_structuring_elem(f, Bc)
-    eroded = erode(f, Bc, out=out)
+    eroded = erode(f, Bc, out=out, output=output)
     # We need to copy for the simple reason that otherwise, the image will be
     # modified in place, which can mess up the implementation
     return dilate(eroded.copy(), Bc, out=eroded)
@@ -532,7 +532,7 @@ def close(f, Bc=None, out=None, output=None):
     """
     _verify_is_integer_type(f, 'close')
     Bc = get_structuring_elem(f, Bc)
-    dilated = dilate(f, Bc, out=out)
+    dilated = dilate(f, Bc, out=out, output=output)
     # We need to copy for the simple reason that otherwise, the image will be
     # modified in place, which can mess up the implementation
     return erode(dilated.copy(), Bc, out=dilated)

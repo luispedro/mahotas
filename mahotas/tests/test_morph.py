@@ -248,3 +248,16 @@ def test_close_holes_3d():
     f = np.random.rand(100,100,3) > .9
     with pytest.raises(ValueError):
         mh.close_holes(f)
+
+
+@pytest.mark.parametrize('op', [mh.open, mh.close])
+def test_open_close_deprecated_output(op):
+    # Regression test: the deprecated `output` argument used to be silently
+    # ignored by open() & close()
+    f = (np.random.RandomState(3).rand(16, 16) > .5)
+    expected = op(f)
+    output = np.zeros_like(f)
+    with pytest.warns(DeprecationWarning):
+        r = op(f, output=output)
+    assert r is output
+    assert np.all(output == expected)
