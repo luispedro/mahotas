@@ -43,6 +43,21 @@ def distance(bw, metric='euclidean2'):
     ValueError
         If `metric` is not one of the supported values.
 
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import mahotas as mh
+    >>> bw = np.zeros((5, 5), bool)
+    >>> bw[1:4, 1:4] = True
+    >>> mh.distance(bw)
+    array([[0., 0., 0., 0., 0.],
+           [0., 1., 1., 1., 0.],
+           [0., 1., 4., 1., 0.],
+           [0., 1., 1., 1., 0.],
+           [0., 0., 0., 0., 0.]])
+    >>> mh.distance(bw, metric='euclidean')[2]
+    array([0., 1., 2., 1., 0.])
+
     References
     ----------
     For 2-D images, the following algorithm is used:

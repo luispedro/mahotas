@@ -352,6 +352,19 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
     WL : boolean ndarray
         Lines image: True on pixels where different regions meet (only
         returned if ``return_lines`` is True)
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import mahotas as mh
+    >>> surface = np.array([[1, 2, 5, 5, 2, 1],
+    ...                     [1, 2, 5, 5, 2, 1]], np.uint8)
+    >>> markers = np.zeros(surface.shape, int)
+    >>> markers[:, 0] = 1
+    >>> markers[:, 5] = 2
+    >>> mh.cwatershed(surface, markers)
+    array([[1, 1, 1, 2, 2, 2],
+           [1, 1, 1, 2, 2, 2]])
     '''
     _verify_is_integer_type(markers, 'cwatershed')
     if surface.shape != markers.shape:

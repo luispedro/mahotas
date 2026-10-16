@@ -35,6 +35,17 @@ def bbox(img, border=None, as_slice=False):
     s : tuple of slice
         A slice representation of the bounding box (one slice per axis).
         Returned when ``as_slice`` is true.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import mahotas as mh
+    >>> f = np.zeros((6, 6), bool)
+    >>> f[1:3, 2:5] = True
+    >>> mh.bbox(f)
+    array([1, 3, 2, 5])
+    >>> f[mh.bbox(f, as_slice=True)].shape
+    (2, 3)
     """
     if not img.shape:
         return np.array([], dtype=np.intp)

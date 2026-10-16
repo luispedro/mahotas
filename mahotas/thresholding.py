@@ -107,6 +107,18 @@ def otsu(img, ignore_zeros=False):
     -------
     T : integer
         the threshold
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import mahotas as mh
+    >>> im = np.array([[10, 12, 11], [200, 210, 205]], np.uint8)
+    >>> t = mh.otsu(im)
+    >>> t
+    12
+    >>> im > t
+    array([[False, False, False],
+           [ True,  True,  True]])
     """
     _verify_is_integer_type(img, 'otsu')
     hist = fullhistogram(img)

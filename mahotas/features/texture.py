@@ -138,6 +138,16 @@ def haralick(f,
             volume = {3},
             year = {1973}
         }
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import mahotas as mh
+    >>> img = np.random.RandomState(0).randint(0, 8, (16, 16)).astype(np.uint8)
+    >>> mh.features.haralick(img).shape
+    (4, 13)
+    >>> mh.features.haralick(img, return_mean=True).shape
+    (13,)
     '''
     _verify_is_integer_type(f, 'mahotas.haralick')
 

@@ -99,6 +99,7 @@ python_sources = files(
     'mahotas/tests/test_demos.py',
     'mahotas/tests/test_dilate_erode.py',
     'mahotas/tests/test_distance.py',
+    'mahotas/tests/test_docstring_examples.py',
     'mahotas/tests/test_edge.py',
     'mahotas/tests/test_euler.py',
     'mahotas/tests/test_features_shape.py',

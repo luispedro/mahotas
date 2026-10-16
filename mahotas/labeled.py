@@ -55,6 +55,21 @@ def label(array, Bc=None, out=None, output=None):
         Labeled result
     nr_objects : int
         Number of objects
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import mahotas as mh
+    >>> f = np.array([[1, 1, 0, 0],
+    ...               [1, 0, 0, 1],
+    ...               [0, 0, 1, 1]], dtype=bool)
+    >>> labeled, nr_objects = mh.label(f)
+    >>> nr_objects
+    2
+    >>> labeled
+    array([[1, 1, 0, 0],
+           [1, 0, 0, 2],
+           [0, 0, 2, 2]], dtype=int32)
     '''
     output = _get_output(array, out, 'labeled.label', np.int32, output=output)
     output[:] = (array != 0)
