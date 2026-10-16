@@ -30,7 +30,8 @@ def bbox(img, border=None, as_slice=False):
         Interleaved ``(min_0, max_0, min_1, max_1, ...)`` such that
         ``img[min_0:max_0, min_1:max_1, ...]`` contains all non-zero pixels.
         Returned when ``as_slice`` is false (the default). For 2-D images this
-        reduces to ``(min1, max1, min2, max2)``.
+        reduces to ``(min1, max1, min2, max2)``. If `img` has no non-zero
+        pixels, all values are 0.
     s : tuple of slice
         A slice representation of the bounding box (one slice per axis).
         Returned when ``as_slice`` is true.
@@ -58,7 +59,7 @@ def croptobbox(img, border=None):
     img : ndarray
         Integer image array
     border : int, optional
-        whether to add a border (default no border)
+        Number of pixels to add around the bounding box (default: 0)
 
     Returns
     -------

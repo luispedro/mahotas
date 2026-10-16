@@ -19,6 +19,7 @@ __all__ = [
     'label',
     'labeled_sum',
     'labeled_max',
+    'labeled_min',
     'labeled_size',
     'relabel',
     'is_same_labeling',
@@ -84,11 +85,13 @@ def relabel(labeled, inplace=False):
         A labeled array
     inplace : boolean, optional
         Whether to perform relabeling inplace, erasing the values in
-        ``labeled`` (default: False)
+        ``labeled`` (default: False). If true, ``labeled`` must be a
+        C-contiguous array of type ``np.intc``.
 
     Returns
     -------
-    relabeled: ndarray
+    relabeled : ndarray of np.intc
+        Relabeled array (``labeled`` itself if ``inplace``)
     nr_objs : int
         Number of objects
 
@@ -108,9 +111,9 @@ def is_same_labeling(labeled0, labeled1):
     (i.e., whether they are the same except for a possible change of label
     values).
 
-    Note that the background (value 0) is treated differently. Namely
+    Note that the background (value 0) is treated differently. Namely::
 
-    is_same_labeling(a, b) implies np.all( (a == 0) == (b == 0) )
+        is_same_labeling(a, b) implies np.all( (a == 0) == (b == 0) )
 
     Parameters
     ----------
@@ -290,8 +293,12 @@ def border(labeled, i, j, Bc=None, out=None, always_return=True, output=None):
     labeled : ndarray of integer type
         input labeled array
     i : integer
+        first region
     j : integer
+        second region
     Bc : structure element, optional
+        Defines the neighbourhood (default: 3x3 cross; see
+        ``mahotas.get_structuring_elem``)
     out : ndarray of same shape as `labeled`, dtype=bool, optional
         where to store the output. If ``None``, a new array is allocated
     always_return : bool, optional
@@ -323,6 +330,8 @@ def borders(labeled, Bc=None, out=None, output=None, mode='constant'):
     labeled : ndarray of integer type
         input labeled array
     Bc : structure element, optional
+        Defines the neighbourhood (default: 3x3 cross; see
+        ``mahotas.get_structuring_elem``)
     out : ndarray of same shape as `labeled`, dtype=bool, optional
         where to store the output. If ``None``, a new array is allocated
     mode : {'reflect', 'nearest', 'wrap', 'mirror', 'constant' [default], 'ignore'}
@@ -412,8 +421,12 @@ def labeled_sum(array, labeled, minlength=None):
     '''
     sums = labeled_sum(array, labeled, minlength=None)
 
-    Labeled sum. sum will be an array of size ``labeled.max() + 1``, where
-    ``sum[i]`` is equal to ``np.sum(array[labeled == i])``.
+    Labeled sum. sums will be an array of size ``labeled.max() + 1``, where
+    ``sums[i]`` is equal to ``np.sum(array[labeled == i])``.
+
+    Note that the sums are computed and returned using ``array.dtype``, so
+    they may overflow for small integer types. To avoid this, convert
+    ``array`` to a larger type first (e.g., ``array.astype(np.int64)``).
 
     Parameters
     ----------
@@ -453,6 +466,8 @@ def labeled_max(array, labeled):
     Returns
     -------
     maxs : 1-d ndarray of ``array.dtype``
+        Labels which do not occur in ``labeled`` get the smallest value
+        representable by ``array.dtype`` (e.g., 0 for ``np.uint8``).
     '''
     labeled = _as_labeled(array, labeled, 'labeled_max')
     maxv = labeled.max() + 1
@@ -477,6 +492,8 @@ def labeled_min(array, labeled):
     Returns
     -------
     mins : 1-d ndarray of ``array.dtype``
+        Labels which do not occur in ``labeled`` get the largest value
+        representable by ``array.dtype`` (e.g., 255 for ``np.uint8``).
     '''
     labeled = _as_labeled(array, labeled, 'labeled_min')
     maxv = labeled.max() + 1
@@ -614,7 +631,8 @@ def filter_labeled(labeled, remove_bordering=False, min_size=None, max_size=None
 
     Parameters
     ----------
-    labeled : labeled array
+    labeled : ndarray of int
+        A labeled array
     remove_bordering : bool, optional
         whether to remove regions that touch the border
     min_size : int, optional
@@ -624,7 +642,8 @@ def filter_labeled(labeled, remove_bordering=False, min_size=None, max_size=None
 
     Returns
     -------
-    filtered : labeled array
+    filtered : ndarray of np.intc
+        New (relabeled) labeled array. The input is not modified.
     nr : int
         number of new labels
     '''

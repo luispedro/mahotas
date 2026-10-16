@@ -450,8 +450,8 @@ def read(filename, flags=0):
 
 def read_multipage(filename, flags=0):
     """Read a multipage image to a list of numpy arrays, where each
-    array is of shape (width, height) for greyscale images, or shape
-    (nchannels, width, height) for RGB or RGBA images.
+    array is of shape (height, width) for greyscale images, or shape
+    (height, width, nchannels) for RGB or RGBA images.
 
     """
     ftype = _FI.FreeImage_GetFileType(_bytestr(filename), 0)
@@ -573,7 +573,7 @@ def string_tag(bitmap, key, model=METADATA_MODELS.FIMD_EXIF_MAIN):
 
 
 def write(array, filename, flags=0):
-    """Write a (width, height) or (width, height, nchannels) array to
+    """Write a (height, width) or (height, width, nchannels) array to
     a greyscale, RGB, or RGBA image, with file type deduced from the
     filename.
 
@@ -603,7 +603,7 @@ def write(array, filename, flags=0):
 
 
 def write_multipage(arrays, filename, flags=0, keep_cache_in_memory=True):
-    """Write a list of (width, height) or (nchannels, width, height)
+    """Write a list of (height, width) or (height, width, nchannels)
     arrays to a multipage greyscale, RGB, or RGBA image, with file type
     deduced from the filename.
 
@@ -686,7 +686,7 @@ def imsavetoblob(img, filetype, flags=0):
     """
     s = imsavetoblob(img, filetype, flags=0)
 
-    Save `img` to a `str` object
+    Save `img` to a `bytes` object
 
     Parameters
     ----------
@@ -725,7 +725,7 @@ def imreadfromblob(blob, ftype=None, as_grey=False):
     """
     arr = imreadfromblob(blob, ftype={auto}, as_grey=False)
 
-    Read an image from a blob (string)
+    Read an image from a blob (bytes)
 
     Parameters
     ----------
@@ -765,12 +765,14 @@ def imread(filename, as_grey=False):
 
     Parameters
     ----------
-      filename : file name
-      as_grey : Whether to convert to grey scale image (default: no)
+    filename : str
+        file name
+    as_grey : boolean, optional
+        Whether to convert to grey scale image (default: no)
 
     Returns
     -------
-      img : ndarray
+    img : ndarray
     """
     img = read(filename)
     if as_grey and len(img.shape) == 3:
@@ -792,8 +794,10 @@ def imsave(filename, img):
 
     Parameters
     ----------
-      filename : file name
-      img : image to be saved as nd array
+    filename : str
+        file name
+    img : ndarray
+        image to be saved
     """
     write(img, filename)
 

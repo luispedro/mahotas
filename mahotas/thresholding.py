@@ -179,7 +179,10 @@ def soft_threshold(f, tval):
     '''
     thresholded = soft_threshold(f, tval)
 
-    Soft threshold function::
+    Soft threshold function (shrinkage towards zero)
+
+    Values with absolute value at most ``tval`` are set to 0, while others are
+    moved ``tval`` closer to 0, i.e., ``sign(f) * max(abs(f) - tval, 0)``::
 
                              ^
                              |           /
@@ -198,11 +201,14 @@ def soft_threshold(f, tval):
     Parameters
     ----------
     f : ndarray
+        input array
     tval : scalar
+        threshold (non-negative)
 
     Returns
     -------
     thresholded : ndarray
+        Array of the same shape as `f`
     '''
 
     f = f * (np.abs(f) > tval)
@@ -225,7 +231,8 @@ def bernsen(f, radius, contrast_threshold, gthresh=None):
     contrast_threshold : integer
         contrast threshold
     gthresh : numeric, optional
-        global threshold to fall back in low contrast regions (default: 128).
+        global threshold to fall back in low contrast regions (default: 128,
+        which assumes an 8-bit image).
         Note that, unlike here, this argument is *required* in ``gbernsen``.
 
     Returns

@@ -19,6 +19,12 @@ def roundness(bw):
 
     Roundness
 
+    This is computed as ``P**2 / (4 * pi * A)``, where ``A`` is the area
+    (number of pixels) and ``P`` is the number of pixels on the perimeter
+    (as computed by ``mahotas.bwperim``). Note that, as ``P`` is a pixel
+    count and not a perimeter length, a digital disk gives a value somewhat
+    below 1 (around 0.8). Less round shapes give larger values.
+
     Parameters
     ----------
     bw : ndarray
@@ -27,6 +33,12 @@ def roundness(bw):
     Returns
     -------
     r : float
+        Roundness (0 if the image is empty)
+
+    See Also
+    --------
+    eccentricity : function
+        Another shape measure
     '''
     bw = _make_binary(bw)
     area = np.sum(bw)
@@ -52,7 +64,9 @@ def ellipse_axes(bwimage):
     Returns
     -------
     semimajor : float
+        Length (in pixels) of the semi-major axis (0 if the image is empty)
     semiminor : float
+        Length (in pixels) of the semi-minor axis (0 if the image is empty)
 
     References
     ----------
@@ -87,6 +101,9 @@ def eccentricity(bwimage):
 
     Compute eccentricity
 
+    This is the eccentricity of the image ellipse (see ``ellipse_axes``),
+    i.e., ``sqrt(semimajor**2 - semiminor**2) / semimajor``.
+
     Parameters
     ----------
     bwimage : ndarray
@@ -94,8 +111,14 @@ def eccentricity(bwimage):
 
     Returns
     -------
-    r : float
-        Eccentricity measure
+    ecc : float
+        Eccentricity measure, in the range [0, 1): 0 for a circle (or an
+        empty image), closer to 1 for more elongated shapes.
+
+    See Also
+    --------
+    ellipse_axes : function
+        Compute the axes of the image ellipse
     """
     semimajor, semiminor = ellipse_axes(bwimage)
     if semimajor == 0.:

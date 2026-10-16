@@ -540,14 +540,18 @@ def close(f, Bc=None, out=None, output=None):
 
 def close_holes(ref, Bc=None):
     '''
-    closed = close_holes(ref, Bc=None):
+    closed = close_holes(ref, Bc=None)
 
     Close Holes
+
+    A hole is a region of background pixels which is not connected to the
+    border of the image. This function returns a copy of `ref` where all
+    holes are filled in.
 
     Parameters
     ----------
     ref : ndarray
-        Reference image. This should be a binary image.
+        Reference image. This should be a 2-D binary image.
     Bc : structuring element, optional
         Default: 3x3 cross
 
@@ -568,7 +572,7 @@ def majority_filter(img, N=3, out=None, output=None):
 
     Majority filter
 
-    filtered[y,x] is positive if the majority of pixels in the squared of size
+    filtered[y,x] is positive if the majority of pixels in the square of size
     `N` centred on (y,x) are positive.
 
     Parameters
@@ -576,7 +580,8 @@ def majority_filter(img, N=3, out=None, output=None):
     img : ndarray
         input img (currently only 2-D images accepted)
     N : int, optional
-        size of filter (must be odd integer), defaults to 3.
+        size of filter (should be an odd integer; even values are increased
+        by 1, with a warning), defaults to 3.
     out : ndarray, optional
         Used for output. Must be Boolean ndarray of same size as `img`
     output : deprecated
@@ -609,9 +614,14 @@ def locmax(f, Bc=None, out=None, output=None):
 
     Local maxima
 
+    A pixel is a local maximum if its value is greater than or equal to the
+    values of all its neighbours (as defined by ``Bc``). Thus, all pixels in
+    a plateau are local maxima, unless the plateau has a higher neighbour.
+
     Parameters
     ----------
     f : ndarray
+        input image
     Bc : ndarray, optional
         structuring element
     out : ndarray, optional
@@ -627,20 +637,8 @@ def locmax(f, Bc=None, out=None, output=None):
     See Also
     --------
     regmax : function
-        Regional maxima. This is a stricter criterion than the local maxima as
-        it takes the whole object into account and not just the neighbourhood
-        defined by ``Bc``::
-
-            0 0 0 0 0
-            0 0 2 0 0
-            0 0 2 0 0
-            0 0 3 0 0
-            0 0 3 0 0
-            0 0 0 0 0
-
-        The top 2 is a local maximum because it has the maximal value in its
-        neighbourhood, but it is not a regional maximum.
-
+        Regional maxima. This is a stricter criterion than the local maxima
+        (see the documentation of ``regmax`` for an example).
     locmin : function
         Local minima
     '''
@@ -656,9 +654,13 @@ def locmin(f, Bc=None, out=None, output=None):
 
     Local minima
 
+    A pixel is a local minimum if its value is less than or equal to the
+    values of all its neighbours (as defined by ``Bc``).
+
     Parameters
     ----------
     f : ndarray
+        input image
     Bc : ndarray, optional
         structuring element
     out : ndarray, optional

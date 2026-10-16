@@ -29,6 +29,8 @@ def rgb2grey(array, dtype=float):
     you have strict requirements, consider implementing the conversion by
     yourself for fine control.
 
+    The conversion is ``grey = 0.30*R + 0.59*G + 0.11*B``.
+
     Parameters
     ----------
     array : ndarray of shape (a,b,3)
@@ -62,13 +64,15 @@ def rgb2xyz(rgb, dtype=None):
 
     Convert RGB to XYZ coordinates
 
-    The input is interpreted as sRGB. See Wikipedia for more details:
+    The input is interpreted as sRGB, with values on a 0-255 scale. See
+    Wikipedia for more details:
 
     https://en.wikipedia.org/wiki/SRGB
 
     Parameters
     ----------
     rgb : ndarray
+        Must be of shape (h,w,3), with values on a 0-255 scale
     dtype : dtype, optional
         What dtype to return. Integer types are rounded and clipped to their
         range
@@ -76,6 +80,7 @@ def rgb2xyz(rgb, dtype=None):
     Returns
     -------
     xyz : ndarray
+        Array of shape (h,w,3), with ``Y`` (luminance) in the range [0, 1]
 
     See Also
     --------
@@ -107,6 +112,7 @@ def xyz2rgb(xyz, dtype=None):
     Parameters
     ----------
     xyz : ndarray
+        Must be of shape (h,w,3)
     dtype : dtype, optional
         What dtype to return. Default will be floats. Values are on a 0-255
         scale and are not clipped for floating point output; out-of-gamut
@@ -147,9 +153,12 @@ def xyz2lab(xyz, dtype=None):
 
     https://en.wikipedia.org/wiki/CIELAB
 
+    The D65 reference white point is used.
+
     Parameters
     ----------
     xyz : ndarray
+        Must be of shape (h,w,3)
     dtype : dtype, optional
         What dtype to return. Default will be floats. Integer types are
         rounded and clipped to their range
@@ -185,7 +194,7 @@ def rgb2lab(rgb, dtype=None):
     Parameters
     ----------
     rgb : ndarray
-        Must be of shape (h,w,3)
+        Must be of shape (h,w,3), with values on a 0-255 scale
     dtype : dtype, optional
         What dtype to return. Default will be floats. Integer types are
         rounded and clipped to their range
@@ -200,14 +209,16 @@ def rgb2sepia(rgb):
     '''
     sepia = rgb2sepia(rgb)
 
+    Convert an RGB image to a sepia-toned image
+
     Parameters
     ----------
     rgb : ndarray
-        Must be of shape (h,w,3)
+        Must be of shape (h,w,3), with values on a 0-255 scale
 
     Returns
     -------
-    sepia : ndarray
+    sepia : ndarray of np.uint8
         Output is of same shape as ``rgb``
     '''
     rgb2sepia_weights = np.array([

@@ -59,6 +59,62 @@ def haralick(f,
     would trigger an error when ``ignore_zeros=True`` as there are no
     horizontal non-zero pairs!
 
+    Parameters
+    ----------
+    f : ndarray of integer type
+        input image. 2-D and 3-D images are supported.
+    ignore_zeros : bool, optional
+        Whether to ignore zero pixels (default: False).
+    distance : int, optional
+        The distance to consider while computing the cooccurence matrix
+        (default: 1).
+
+    Returns
+    -------
+    feats : ndarray of np.double
+        Shape ``(n_directions, n_features)``: ``(4, 13)`` or ``(4, 14)`` if
+        `f` is 2D, ``(13, 13)`` or ``(13, 14)`` if it is 3D. ``n_features``
+        is 13 by default, or 14 when ``compute_14th_feature`` is set. If
+        either ``return_mean`` or ``return_mean_ptp`` is set, a 1-D array
+        of length ``n_features`` (or ``2 * n_features``) is returned.
+        The names of the features are in
+        ``mahotas.features.texture.haralick_labels``.
+
+    Other Parameters
+    ----------------
+    preserve_haralick_bug : bool, optional
+        whether to replicate Haralick's typo (default: False).
+        You probably want to always set this to ``False`` unless you want to
+        replicate someone else's wrong implementation.
+    compute_14th_feature : bool, optional
+        whether to compute & return the 14-th feature
+    return_mean : bool, optional
+        When set, the function returns the mean across all the directions
+        (default: False).
+    return_mean_ptp : bool, optional
+        When set, the function returns the mean and ptp (point-to-point, i.e.,
+        difference between max() and min()) across all the directions (default:
+        False).
+    use_x_minus_y_variance : bool, optional
+        Feature 10 (index 9) has two interpretations, as the variance of
+        ``|x-y|`` or as the variance of ``P(|x-y|)``. In order to achieve
+        compatibility with other software and previous versions of mahotas,
+        mahotas defaults to using ``VAR[P(|x-y|)]``; if this argument is
+        True, then it uses ``VAR[|x-y|]`` (default: False)
+
+    Raises
+    ------
+    ValueError
+        If `f` is not 2-D or 3-D, or if there are no (non-zero, if
+        `ignore_zeros`) pixel pairs in one of the directions.
+
+    See Also
+    --------
+    cooccurence : function
+        Compute the cooccurence matrices on which the features are based
+    haralick_features : function
+        Compute the features from precomputed cooccurence matrices
+
     Notes
     -----
     Haralick's paper has a typo in one of the equations. This function
@@ -82,48 +138,6 @@ def haralick(f,
             volume = {3},
             year = {1973}
         }
-
-    Parameters
-    ----------
-    f : ndarray of integer type
-        input image. 2-D and 3-D images are supported.
-    distance : int, optional
-        The distance to consider while computing the cooccurence matrix
-        (default: 1).
-    ignore_zeros : bool, optional
-        Whether to ignore zero pixels (default: False).
-
-    Other Parameters
-    ----------------
-    preserve_haralick_bug : bool, optional
-        whether to replicate Haralick's typo (default: False).
-        You probably want to always set this to ``False`` unless you want to
-        replicate someone else's wrong implementation.
-    compute_14th_feature : bool, optional
-        whether to compute & return the 14-th feature
-    return_mean : bool, optional
-        When set, the function returns the mean across all the directions
-        (default: False).
-    return_mean_ptp : bool, optional
-        When set, the function returns the mean and ptp (point-to-point, i.e.,
-        difference between max() and min()) across all the directions (default:
-        False).
-    use_x_minus_y_variance : bool, optional
-        Feature 10 (index 9) has two interpretations, as the variance of |x-y|
-        or as the variance of P(|x-y|). In order to achieve compatibility with
-        other software and previous versions of mahotas, mahotas defaults to
-        using ``VAR[P(|x-y|)]``; if this argument is True, then it uses
-        ``VAR[|x-y|]`` (default: False)
-
-
-    Returns
-    -------
-    feats : ndarray of np.double
-        Shape ``(n_directions, n_features)``: ``(4, 13)`` or ``(4, 14)`` if
-        `f` is 2D, ``(13, 13)`` or ``(13, 14)`` if it is 3D. ``n_features``
-        is 13 by default, or 14 when ``compute_14th_feature`` is set. If
-        either ``return_mean`` or ``return_mean_ptp`` is set, a 1-D array
-        of length ``n_features`` (or ``2 * n_features``) is returned.
     '''
     _verify_is_integer_type(f, 'mahotas.haralick')
 
@@ -172,6 +186,51 @@ def haralick_features(cmats,
     an image to obtain features for that image. Use only if you know what you
     are doing.
 
+    Parameters
+    ----------
+    cmats : sequence of ndarrays
+        This should be a sequence of ndarrays, all square and all of the same
+        shape.
+    ignore_zeros : bool, optional
+        Whether to ignore zero pixels (default: False). Note that, if set,
+        the first row and column of each matrix in ``cmats`` are set to zero
+        *in place*.
+
+    Returns
+    -------
+    feats : ndarray of np.double
+        Shape ``(len(cmats), n_features)``. ``n_features`` is 13 by default,
+        or 14 when ``compute_14th_feature`` is set. If either
+        ``return_mean`` or ``return_mean_ptp`` is set, a 1-D array of length
+        ``n_features`` (or ``2 * n_features``) is returned.
+
+    Other Parameters
+    ----------------
+    preserve_haralick_bug : bool, optional
+        whether to replicate Haralick's typo (default: False).
+        You probably want to always set this to ``False`` unless you want to
+        replicate someone else's wrong implementation.
+    compute_14th_feature : bool, optional
+        whether to compute & return the 14-th feature
+    return_mean : bool, optional
+        When set, the function returns the mean across all the directions
+        (default: False).
+    return_mean_ptp : bool, optional
+        When set, the function returns the mean and ptp (point-to-point, i.e.,
+        difference between max() and min()) across all the directions (default:
+        False).
+    use_x_minus_y_variance : bool, optional
+        Feature 10 (index 9) has two interpretations, as the variance of
+        ``|x-y|`` or as the variance of ``P(|x-y|)``. In order to achieve
+        compatibility with other software and previous versions of mahotas,
+        mahotas defaults to using ``VAR[P(|x-y|)]``; if this argument is
+        True, then it uses ``VAR[|x-y|]`` (default: False)
+
+    See Also
+    --------
+    haralick : function
+        compute Haralick features for an image
+
     Notes
     -----
     Haralick's paper has a typo in one of the equations. This function
@@ -195,52 +254,6 @@ def haralick_features(cmats,
             volume = {3},
             year = {1973}
         }
-
-
-    Parameters
-    ----------
-    cmats : sequence of ndarrays
-        This should be a sequence of ndarrays, all square and all of the same
-        shape.
-    ignore_zeros : bool, optional
-        Whether to ignore zero pixels (default: False). Note that, if set,
-        the first row and column of each matrix in ``cmats`` are set to zero
-        *in place*.
-
-    Other Parameters
-    ----------------
-    preserve_haralick_bug : bool, optional
-        whether to replicate Haralick's typo (default: False).
-        You probably want to always set this to ``False`` unless you want to
-        replicate someone else's wrong implementation.
-    compute_14th_feature : bool, optional
-        whether to compute & return the 14-th feature
-    return_mean : bool, optional
-        When set, the function returns the mean across all the directions
-        (default: False).
-    return_mean_ptp : bool, optional
-        When set, the function returns the mean and ptp (point-to-point, i.e.,
-        difference between max() and min()) across all the directions (default:
-        False).
-    use_x_minus_y_variance : bool, optional
-        Feature 10 (index 9) has two interpretations, as the variance of |x-y|
-        or as the variance of P(|x-y|). In order to achieve compatibility with
-        other software and previous versions of mahotas, mahotas defaults to
-        using ``VAR[P(|x-y|)]``; if this argument is True, then it uses
-        ``VAR[|x-y|]`` (default: False)
-
-    Returns
-    -------
-    feats : ndarray of np.double
-        Shape ``(len(cmats), n_features)``. ``n_features`` is 13 by default,
-        or 14 when ``compute_14th_feature`` is set. If either
-        ``return_mean`` or ``return_mean_ptp`` is set, a 1-D array of length
-        ``n_features`` (or ``2 * n_features``) is returned.
-
-    See Also
-    --------
-    haralick : function
-        compute Haralick features for an image
     '''
     if return_mean and return_mean_ptp:
         raise ValueError("mahotas.haralick_features: Cannot set both `return_mean` and `return_mean_ptp`")

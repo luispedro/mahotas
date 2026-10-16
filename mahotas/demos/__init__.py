@@ -12,6 +12,24 @@ nuclear
     A fluorescent microscopy image of cell nuclei
 '''
 def image_path(name):
+    '''
+    Return the full path to a demo image file
+
+    Parameters
+    ----------
+    name : str
+        File name of the image (e.g., ``'nuclear.png'``)
+
+    Returns
+    -------
+    path : str
+        Absolute path to the file in the demo data directory
+
+    See Also
+    --------
+    load : function
+        Load a demo image by name
+    '''
     from os import path
     import mahotas as mh
     return path.join(path.abspath(path.dirname(__file__)),

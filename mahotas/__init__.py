@@ -13,9 +13,8 @@ features
 convolve
     Convolution and wavelets
 morph
-    Morphological features. Most are available at the mahotas level, include erode(), dilate()...
-watershed
-    Seeded watershed implementation
+    Morphological features. Most are available at the mahotas level, include erode(), dilate(),
+    and cwatershed() (seeded watershed)
 imread/imsave
     read/write image
 
@@ -123,6 +122,22 @@ short_citation_text = \
 '''
 
 def citation(print_out=True, short=False):
+    '''
+    Return (and, by default, print) the reference to cite mahotas
+
+    Parameters
+    ----------
+    print_out : bool, optional
+        Whether to print the citation (default: True)
+    short : bool, optional
+        Whether to return a short version (default: False). The long version
+        also includes a BibTeX entry.
+
+    Returns
+    -------
+    text : str
+        The citation text
+    '''
     text = (short_citation_text if short else citation_text)
     if print_out:
         print(text, end='')

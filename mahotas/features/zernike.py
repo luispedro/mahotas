@@ -14,6 +14,12 @@ __all__ = ['zernike', 'zernike_moments']
 def zernike(im, degree, radius, cm=None): # pragma: no cover
     """
     zvalues = zernike(im, degree, radius, cm={center_of_mass(im)})
+
+    Zernike moments (deprecated interface)
+
+    .. deprecated:: 1.1.1
+        Use ``zernike_moments(im, radius, degree, cm)`` instead (note the
+        different order of the `degree` and `radius` arguments).
     """
     import warnings
     warnings.warn('mahotas.zernike.zernike: This interface is deprecated. Switch the order of your arguments and use ``zernike_moments``', DeprecationWarning)
@@ -29,6 +35,10 @@ def zernike_moments(im, radius, degree=8, cm=None):
 
     Returns a vector of absolute Zernike moments through ``degree`` for the
     image ``im``.
+
+    Only pixels with a positive value inside the circle are used, weighted by
+    their value (the weights are normalised to sum to 1). As absolute values
+    are returned, the moments are rotation invariant.
 
     Parameters
     ----------
@@ -49,7 +59,9 @@ def zernike_moments(im, radius, degree=8, cm=None):
     Returns
     -------
     zvalues : 1-ndarray of floats
-        Zernike moments
+        Zernike moments ``|Z_nl|`` for ``n = 0..degree`` and ``l = 0..n``
+        with ``n - l`` even, in this order (e.g., 25 values for
+        ``degree=8``).
 
     References
     ----------

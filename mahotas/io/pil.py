@@ -15,8 +15,8 @@ def imread(filename, as_grey=False):
 
     Parameters
     ----------
-    filename : str
-        filename
+    filename : str or file-like
+        file to read (anything accepted by ``PIL.Image.open``)
     as_grey : boolean, optional
         Whether to convert to grey scale image (default: no)
 
@@ -47,6 +47,10 @@ def imsave(filename, array):
         Image data. It must be of a type/shape which Pillow's
         ``Image.fromarray`` can handle. The file format is inferred from
         the extension of `filename`.
+
+    Returns
+    -------
+    None
     '''
     im = Image.fromarray(array)
     im.save(filename)

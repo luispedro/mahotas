@@ -35,7 +35,8 @@ def sobel(img, just_filter=False):
 
     Parameters
     ----------
-    img : Any 2D-ndarray
+    img : ndarray
+        Any 2-D array
     just_filter : boolean, optional
         If true, then return the result of filtering the image with the sobel
         filters, but do not threshold (default is False).
@@ -44,7 +45,8 @@ def sobel(img, just_filter=False):
     -------
     edges : ndarray
         Binary image of edges, unless `just_filter`, in which case it will be
-        an array of floating point values.
+        an array of floating point values. If `img` is constant, an all-zero
+        floating point array is returned.
     '''
     # This is based on Octave's implementation,
     # but with some reverse engineering to match Matlab exactly

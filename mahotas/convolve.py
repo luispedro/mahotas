@@ -345,7 +345,8 @@ def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., o
         input array of a floating-point type
 
     sigma : float
-        standard deviation for Gaussian kernel (in pixel units)
+        standard deviation for Gaussian kernel (in pixel units). Must be at
+        least 0.125.
     axis : int, optional
         axis to operate on
     order : {0, 1, 2, 3}, optional
@@ -411,7 +412,7 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out=None, ou
         standard deviation for Gaussian kernel. The standard
         deviations of the Gaussian filter are given for each axis as a
         sequence, or as a single number, in which case it is equal for
-        all axes.
+        all axes. Each value must be at least 0.125.
     order : {0, 1, 2, 3} or sequence from same set, optional
         The order of the filter along each axis is given as a sequence
         of integers, or as a single number.  An order of 0 corresponds
@@ -649,8 +650,8 @@ def idaubechies(f, code, inline=False):
 
     See Also
     --------
-    haar : function
-        Haar transform (equivalent to D2)
+    daubechies : function
+        Forward Daubechies transform
     '''
     f = _wavelet_array(f, inline, 'idaubechies')
     code = _daubechies_code(code)
@@ -684,6 +685,7 @@ def ihaar(f, preserve_energy=True, inline=False):
     Returns
     -------
     f : ndarray
+        Inverse Haar-transformed image (floating point)
 
     See Also
     --------

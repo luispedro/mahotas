@@ -50,7 +50,7 @@ def stretch_rgb(img, arg0=None, arg1=None, dtype=np.uint8):
 
     Returns
     -------
-    img': ndarray
+    img' : ndarray
         resulting image. ndarray of same shape as `img` and type `dtype`.
 
     See Also
@@ -94,7 +94,7 @@ def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
 
     Returns
     -------
-    img': ndarray
+    img' : ndarray
         resulting image. ndarray of same shape as `img` and type `dtype`.
 
     Notes
@@ -135,6 +135,18 @@ def as_rgb(r, g, b):
     be achieved by passing ``0`` as that channels value. In fact, passing a
     number as a channel value will set the whole channel to that value.
 
+    Parameters
+    ----------
+    r,g,b : array-like or int, optional
+        The channels can be of any type or None.
+        At least one must be not None and all must have the same shape.
+        Scalar values are used as-is (they are not stretched).
+
+    Returns
+    -------
+    rgb : ndarray of np.uint8
+        RGB ndarray of shape ``(h, w, 3)``
+
     Examples
     --------
 
@@ -151,18 +163,6 @@ def as_rgb(r, g, b):
     Notice that the scaling on the ``blue`` channel is so different from the
     other channels (roughly 0..10, compared with ranges within -1..1 for the
     others), but ``as_rgb`` stretches each channel independently.
-
-    Parameters
-    ----------
-    r,g,b : array-like or int, optional
-        The channels can be of any type or None.
-        At least one must be not None and all must have the same shape.
-        Scalar values are used as-is (they are not stretched).
-
-    Returns
-    -------
-    rgb : ndarray of np.uint8
-        RGB ndarray of shape ``(h, w, 3)``
     '''
     for c in (r,g,b):
         if c is not None:
@@ -192,21 +192,20 @@ def overlay(gray, red=None, green=None, blue=None, if_gray_dtype_not_uint8='stre
 
     Parameters
     ----------
-    gray: ndarray of type np.uint8
-        Should be a greyscale image of type np.uint8
-
+    gray : ndarray of type np.uint8
+        Should be a 2-D greyscale image of type np.uint8
     red,green,blue : ndarray, optional
-        boolean arrays
-
+        boolean arrays (of the same shape as `gray`). Pixels which are True
+        are set to 255 in the corresponding channel.
     if_gray_dtype_not_uint8 : str, optional
-        What to do if ``gray`` is not of type ``np.uint8``, must be one of
-            'stretch' (default): the function ``stretch`` is called.
-            'error' : in this case, an error is raised
+        What to do if ``gray`` is not of type ``np.uint8``. If 'stretch' (the
+        default), the function ``stretch`` is called. Otherwise (e.g.,
+        'error'), a ``ValueError`` is raised.
 
     Returns
     -------
-    overlaid : ndarray
-        Colour image
+    overlaid : ndarray of np.uint8
+        Colour image of shape ``(h, w, 3)``
     '''
     _check_2(gray, 'overlay')
     if gray.dtype != np.uint8:

@@ -71,14 +71,16 @@ def spline_filter1d(array, order=3, axis=-1, out=None, dtype=np.float64, output=
     dtype : dtype, optional
         The dtype to use for computation (default: np.float64)
 
-    For compatibility with scipy.ndimage, you can pass a dtype as the
-    ``output`` argument. This will work as having passed it as a dtype.
-    However, this is deprecated and should not be used in new code.
-
     Returns
     -------
     return_value : ndarray
         The filtered input.
+
+    Notes
+    -----
+    For compatibility with scipy.ndimage, you can pass a dtype as the
+    ``output`` argument. This will work as having passed it as a dtype.
+    However, this is deprecated and should not be used in new code.
     """
     array = _check_interpolate(array, order, 'spline_filter1d')
     if order < 2:
@@ -115,10 +117,6 @@ def spline_filter(array, order=3, out=None, dtype=np.float64, output=None):
     dtype : dtype, optional
         The dtype to use for computation (default: np.float64)
 
-    For compatibility with scipy.ndimage, you can pass a dtype as the
-    ``out`` argument. This will work as having passed it as a dtype.  However,
-    this is deprecated and should not be used in new code.
-
     Returns
     -------
     return_value : ndarray
@@ -130,6 +128,10 @@ def spline_filter(array, order=3, out=None, dtype=np.float64, output=None):
 
     Notes
     -----
+    For compatibility with scipy.ndimage, you can pass a dtype as the
+    ``out`` argument. This will work as having passed it as a dtype.  However,
+    this is deprecated and should not be used in new code.
+
     The multi-dimensional filter is implemented as a sequence of
     one-dimensional spline filters. The intermediate arrays are stored
     in the same data type as the output. Therefore, for output types

@@ -39,14 +39,10 @@ def fullhistogram(img):
     """
     hist = fullhistogram(img)
 
-    Return a histogram with bins *0, 1, ..., ``img.max()``*.
+    Return a histogram with bins ``0, 1, ..., img.max()``.
 
     After calling this function, it will be true that
     ``hist[i] == (img == i).sum()``, for all ``i``.
-
-    Notes
-    -----
-    Only handles unsigned integer arrays.
 
     Parameters
     ----------
@@ -55,8 +51,12 @@ def fullhistogram(img):
 
     Returns
     -------
-    hist : an dnarray of type np.uint32
+    hist : ndarray of type np.uint32
         This will be of size ``img.max() + 1``.
+
+    Notes
+    -----
+    Only handles unsigned integer (and boolean) arrays.
     """
     _verify_is_integer_type(img, 'fullhistogram')
     img = np.ascontiguousarray(img)

@@ -14,7 +14,7 @@ __all__ = [
 
 def integral(f, in_place=False, dtype=np.double):
     '''
-    fi = integral(f, in_place=False, dtype=np.double):
+    fi = integral(f, in_place=False, dtype=np.double)
 
     Compute integral image
 
@@ -23,7 +23,9 @@ def integral(f, in_place=False, dtype=np.double):
     f : ndarray
         input image. Only 2-D images are supported.
     in_place : bool, optional
-        Whether to overwrite `f` (default: False).
+        Whether to overwrite `f` (default: False). If true, the computation
+        is performed in ``f.dtype`` (which may overflow for small integer
+        types) and `dtype` is ignored.
     dtype : dtype, optional
         dtype to use (default: double)
 
@@ -43,24 +45,17 @@ def integral(f, in_place=False, dtype=np.double):
 
 def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points=1024, descriptor_only=False):
     '''
-    points = surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points=1024, descriptor_only=False):
+    points = surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points=1024, descriptor_only=False)
 
     Run SURF detection and descriptor computations
 
     Speeded-Up Robust Features (SURF) are fast local features computed at
     automatically determined keypoints.
 
-    References
-    ----------
-
-    Herbert Bay, Andreas Ess, Tinne Tuytelaars, Luc Van Gool "SURF: Speeded Up
-    Robust Features", Computer Vision and Image Understanding (CVIU), Vol. 110,
-    No. 3, pp. 346--359, 2008
-
     Parameters
     ----------
     f : ndarray
-        input image
+        input image (2-D)
     nr_octaves : integer, optional
         Nr of octaves (default: 4)
     nr_scales : integer, optional
@@ -89,6 +84,12 @@ def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_p
 
         If ``descriptor_only``, then only the *D_i* values are returned and the
         array has shape (N, 64)!
+
+    References
+    ----------
+    Herbert Bay, Andreas Ess, Tinne Tuytelaars, Luc Van Gool "SURF: Speeded Up
+    Robust Features", Computer Vision and Image Understanding (CVIU), Vol. 110,
+    No. 3, pp. 346--359, 2008
     '''
     surfs = _surf.surf(integral(f), nr_octaves, nr_scales, initial_step_size, threshold, max_points)
     if descriptor_only:
@@ -183,6 +184,8 @@ def dense(f, spacing, scale=None, is_integral=False, include_interest_point=Fals
     '''
     desc_array = dense(f, spacing, scale={np.sqrt(spacing)}, is_integral=False, include_interest_point=False)
 
+    Compute SURF descriptors on a dense grid of points
+
     Parameters
     ----------
     f : image
@@ -223,7 +226,9 @@ def dense(f, spacing, scale=None, is_integral=False, include_interest_point=Fals
 
 def show_surf(f, spoints, values=None, colors=None):
     '''
-    f2 = show_surf(f, spoints, values=None, colors={[(255,0,0)]}):
+    f2 = show_surf(f, spoints, values=None, colors={[(255,0,0)]})
+
+    Draw SURF interest points on an image
 
     Note that this function does not actually display anything, it just builds
     a colour image for you. In order to visualise the image, you will need to
@@ -240,7 +245,7 @@ def show_surf(f, spoints, values=None, colors=None):
         You can pass classes for each point here. If it is not used, then all
         the points are displayed the same way (or, equivalently,
         ``values=np.zeros(len(spoints))``).
-    colors : ndarray, length must be same as ``values.max()``, optional
+    colors : ndarray, length must be at least ``values.max() + 1``, optional
         points with values ``vi`` will have colour ``colors[vi]``.
 
     Returns

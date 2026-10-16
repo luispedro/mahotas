@@ -18,20 +18,21 @@ def line(p0, p1, canvas, color=1):
     '''
     line((y0,x0), (y1,x1), canvas, color=1)
 
-    Draw a line
+    Draw a line (in place) on `canvas`
 
     Parameters
     ----------
     p0 : pair of integers
-        first point
+        first point, as ``(y, x)``
     p1 : pair of integers
-        second point
+        second point, as ``(y, x)``. Both points must lie inside `canvas` (no
+        clipping is performed).
     canvas : ndarray
         where to draw, will be modified in place
     color : integer, optional
         which value to store on the pixels (default: 1)
 
-    notes
+    Notes
     -----
     `Implementation Reference <https://en.wikipedia.org/wiki/Bresenham's_line_algorithm>`__
     '''
@@ -143,7 +144,8 @@ def convexhull(bwimg):
     Returns
     -------
     hull : ndarray
-        Set of (y,x) coordinates of hull corners
+        Integer array of shape ``(N, 2)`` with the (y,x) coordinates of the
+        hull corners
     '''
     bwimg = np.ascontiguousarray(bwimg, dtype=np.bool_)
     if bwimg.ndim != 2:

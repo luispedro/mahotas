@@ -10,21 +10,26 @@ __all__ = ['thin']
 
 def thin(binimg, max_iter=-1):
     """
-    skel = thin(binimg)
+    skel = thin(binimg, max_iter=-1)
 
     Skeletonisation by thinning
+
+    The image is iteratively thinned with a sequence of hit-or-miss
+    structuring elements until it no longer changes (or `max_iter` iterations
+    have been performed).
 
     Parameters
     ----------
     binimg : ndarray
-        Binary input image
+        Binary 2-D input image
     max_iter : int, optional
         Maximum number of iterations (set to a negative number, the default, to
         run full skeletonization)
 
     Returns
     -------
-    skel : Skeletonised version of `binimg`
+    skel : ndarray
+        Skeletonised version of `binimg` (of the same shape and dtype)
     """
     from .bbox import bbox
     from ._thin import thin as _thin

@@ -13,8 +13,12 @@ def center_of_mass(img, labels=None):
 
     Returns the center of mass of img.
 
-    If `labels` is given, then it returns `L` centers of mass, one for each
-    region identified by `labels` (including region 0).
+    Each pixel is weighted by its value in `img` (so that, for a binary image,
+    this is the centroid of the foreground pixels). Coordinates are in the
+    same order as the axes of `img` (i.e., ``(row, column)`` for 2-D images).
+
+    If `labels` is given, then it returns ``labels.max() + 1`` centers of
+    mass, one for each region identified by `labels` (including region 0).
 
     Parameters
     ----------
@@ -31,7 +35,8 @@ def center_of_mass(img, labels=None):
         argument was used. If ``labels is None``, then the return value is a
         1-ndarray of coordinates (``size = len(img.shape)``); otherwise, the
         return value is a 2-ndarray of coordinates (``shape = (labels.max()+1,
-        len(img.shape)``).  '''
+        len(img.shape))``).
+    '''
     if labels is not None:
         if labels.dtype != np.int32 or \
             not labels.flags['C_CONTIGUOUS']:

@@ -60,12 +60,13 @@ def tas(img):
     Compute Threshold Adjacency Statistics
 
     TAS were presented by Hamilton et al.  in "Fast automated cell phenotype
-    image classification" (https://www.biomedcentral.com/1471-2105/8/110)
+    image classification" (https://doi.org/10.1186/1471-2105-8-110)
+
+    This uses the parameters of the original publication (a threshold of 30
+    and a margin of 30), which assume an 8-bit image.
 
     Also returns a version computed on the negative of the binarisation defined
     by Hamilton et al.
-
-    See also pftas() for a variation without any hardcoded parameters.
 
     Parameters
     ----------
@@ -75,7 +76,8 @@ def tas(img):
     Returns
     -------
     values : ndarray
-        A 1-D ndarray of feature values
+        A 1-D ndarray of feature values (54 values for a 2-D image, 162 for a
+        3-D image)
 
     See Also
     --------
@@ -90,7 +92,7 @@ def pftas(img, T=None):
     Compute parameter free Threshold Adjacency Statistics
 
     TAS were presented by Hamilton et al.  in "Fast automated cell phenotype
-    image classification" (https://www.biomedcentral.com/1471-2105/8/110)
+    image classification" (https://doi.org/10.1186/1471-2105-8-110)
 
     The current version is an adapted version which is free of parameters. The
     thresholding is done by using Otsu's algorithm (or can be pre-computed and
@@ -108,14 +110,20 @@ def pftas(img, T=None):
     Parameters
     ----------
     img : ndarray, 2D or 3D
-        input image
+        input image. If `T` is not given, this must be of an unsigned integer
+        type (as required by ``otsu``).
     T : integer, optional
         Threshold to use (default: compute with otsu)
 
     Returns
     -------
     values : ndarray
-        A 1-D ndarray of feature values
+        A 1-D ndarray of feature values (54 values for a 2-D image, 162 for a
+        3-D image)
+
+    See Also
+    --------
+    tas : Original TAS (with hardcoded parameters)
     '''
     if T is None:
         T = otsu(img)
