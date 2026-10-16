@@ -18,10 +18,13 @@ def lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=True
 
     Compute Local Binary Pattern Transform
 
-    The return value is an array of compressed LBP codes (one code per input
-    pixel). The codes are compressed so that impossible codes are skipped,
-    so a value ``i`` does not literally encode the binary code ``i`` but
-    rather the ``i``-th valid LBP code.
+    The return value is an array of rotation-invariant LBP codes (one code
+    per input pixel). Each pixel is compared with ``points`` neighbours on a
+    circle of the given ``radius`` to obtain a ``points``-bit binary code.
+    The code is then mapped to the smallest value among all its bitwise
+    rotations, so that codes which differ only by a rotation are identified.
+    Thus, the values are (canonical) binary codes, not consecutive indices
+    (unlike the histogram positions returned by ``lbp``).
 
     Parameters
     ----------
@@ -41,9 +44,9 @@ def lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=True
     Returns
     -------
     transformed : ndarray of np.uint32
-        Per-pixel compressed LBP codes. Shape matches ``image`` if
+        Per-pixel rotation-invariant LBP codes. Shape matches ``image`` if
         ``preserve_shape`` is True (the default); otherwise it is a 1-D
-        array. See above for a caveat on the interpretation of the codes.
+        array.
 
     References
     ----------
@@ -121,9 +124,10 @@ def lbp(image, radius, points, ignore_zeros=False):
     Compute Local Binary Patterns
 
     The return value is a **histogram** of feature counts, where position ``i``
-    corresponds to the number of pixels that had code ``i``. The codes are
-    compressed so that impossible codes are not used. Therefore, this is the
-    ``i``th feature, not just the feature with binary code ``i``.
+    corresponds to the number of pixels that had the ``i``-th possible
+    rotation-invariant code (see ``lbp_transform``). As only the canonical
+    codes are counted, position ``i`` does *not* correspond to the binary
+    code ``i``.
 
     Parameters
     ----------
@@ -139,8 +143,10 @@ def lbp(image, radius, points, ignore_zeros=False):
     Returns
     -------
     features : 1-D numpy ndarray
-        histogram of features. See above for a caveat on the interpretation of
-        these.
+        histogram of features. Its length is the number of rotation-invariant
+        codes for ``points`` (e.g., 36 for 8 points), the same as
+        ``len(lbp_names(radius, points))``. See above for a caveat on the
+        interpretation of these.
 
     References
     ----------

@@ -699,7 +699,7 @@ def imsavetoblob(img, filetype, flags=0):
 
     Returns
     -------
-    s : str
+    s : bytes
         byte representation of `img` in format `filetype`
     """
     if type(filetype) == str:
@@ -729,9 +729,9 @@ def imreadfromblob(blob, ftype=None, as_grey=False):
 
     Parameters
     ----------
-    blob : str
+    blob : bytes
         Input
-    filetype : integer, optional
+    ftype : integer, optional
         input type. By default, infer from image.
     as_grey : boolean, optional
         whether to convert colour images to grey scale

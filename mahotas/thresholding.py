@@ -97,9 +97,9 @@ def otsu(img, ignore_zeros=False):
 
     Parameters
     ----------
-    img : an image as a numpy array.
-        This should be of an unsigned integer type.
-    ignore_zeros : Boolean
+    img : ndarray
+        Image of an unsigned integer type.
+    ignore_zeros : boolean, optional
         whether to ignore zero-valued pixels
         (default: False)
 
@@ -140,7 +140,7 @@ def rc(img, ignore_zeros=False):
     Parameters
     ----------
     img : ndarray
-        Image of any type
+        Image of an unsigned integer type (as for ``otsu``)
     ignore_zeros : boolean, optional
         Whether to ignore zero valued pixels (default: False)
 

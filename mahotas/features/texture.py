@@ -47,9 +47,9 @@ def haralick(f,
     thirteen 3-D directions (depending on the dimensions of `f`).
 
     ``ignore_zeros`` can be used to have the function ignore any zero-valued
-    pixels (as background). If there are no-nonzero neighbour pairs in all
-    directions, an exception is raised. Note that this can happen even with
-    some non-zero pixels, e.g.::
+    pixels (as background). If there are no non-zero neighbour pairs in any
+    of the directions, an exception is raised. Note that this can happen even
+    with some non-zero pixels, e.g.::
 
          0 0 0 0
          0 1 0 0
@@ -87,8 +87,9 @@ def haralick(f,
     ----------
     f : ndarray of integer type
         input image. 2-D and 3-D images are supported.
-    distance: int, optional (default=1)
-        The distance to consider while computing the cooccurence matrix.
+    distance : int, optional
+        The distance to consider while computing the cooccurence matrix
+        (default: 1).
     ignore_zeros : bool, optional
         Whether to ignore zero pixels (default: False).
 
@@ -202,7 +203,9 @@ def haralick_features(cmats,
         This should be a sequence of ndarrays, all square and all of the same
         shape.
     ignore_zeros : bool, optional
-        Whether to ignore zero pixels (default: False).
+        Whether to ignore zero pixels (default: False). Note that, if set,
+        the first row and column of each matrix in ``cmats`` are set to zero
+        *in place*.
 
     Other Parameters
     ----------------
@@ -229,11 +232,10 @@ def haralick_features(cmats,
     Returns
     -------
     feats : ndarray of np.double
-        Shape ``(n_directions, n_features)``: ``(4, 13)`` or ``(4, 14)`` if
-        `f` is 2D, ``(13, 13)`` or ``(13, 14)`` if it is 3D. ``n_features``
-        is 13 by default, or 14 when ``compute_14th_feature`` is set. If
-        either ``return_mean`` or ``return_mean_ptp`` is set, a 1-D array
-        of length ``n_features`` (or ``2 * n_features``) is returned.
+        Shape ``(len(cmats), n_features)``. ``n_features`` is 13 by default,
+        or 14 when ``compute_14th_feature`` is set. If either
+        ``return_mean`` or ``return_mean_ptp`` is set, a 1-D array of length
+        ``n_features`` (or ``2 * n_features``) is returned.
 
     See Also
     --------

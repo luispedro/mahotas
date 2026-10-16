@@ -44,8 +44,9 @@ def euler(f, n=8, mode='constant'):
 
     Returns
     -------
-    euler_nr : int
-        Euler number
+    euler_nr : float
+        Euler number. This is always an integer value, but it is returned as
+        a floating point number.
 
     References
     ----------

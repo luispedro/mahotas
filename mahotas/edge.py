@@ -78,14 +78,18 @@ def dog(img, sigma1 = 2, multiplier = 1.001, just_filter = False):
 
     Parameters
     ----------
-    img : Any 2D-ndarray
-    sigma1 : the sigma value of the first Gaussian filter. The second filter 
-        will have sigma value 1.001*sigma1
-    multiplier : the multiplier to get sigma2. sigma2 = sigma1 * multiplier
+    img : ndarray
+        Any 2-D array
+    sigma1 : float, optional
+        the sigma value of the first Gaussian filter (default: 2)
+    multiplier : float, optional
+        the second Gaussian filter has sigma value ``sigma1 * multiplier``
+        (default: 1.001)
     just_filter : boolean, optional
         If true, then return the result of filtering the image with the DoG
-        filters, no zero-crossing is detected (default is False).
-      
+        filter, ``G(sigma2) - G(sigma1)``, without detecting zero-crossings
+        (default is False).
+
     Returns
     -------
     edges : ndarray

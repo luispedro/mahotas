@@ -77,7 +77,7 @@ def spline_filter1d(array, order=3, axis=-1, out=None, dtype=np.float64, output=
 
     Returns
     -------
-    return_value : ndarray or None
+    return_value : ndarray
         The filtered input.
     """
     array = _check_interpolate(array, order, 'spline_filter1d')
@@ -121,7 +121,7 @@ def spline_filter(array, order=3, out=None, dtype=np.float64, output=None):
 
     Returns
     -------
-    return_value : ndarray or None
+    return_value : ndarray
         The filtered input.
 
     See Also
@@ -178,12 +178,14 @@ def zoom(array, zoom, out=None, order=3, mode='constant', cval=0.0, prefilter=Tr
     ----------
     array : ndarray
         The input array.
-    zoom : float or sequence, optional
+    zoom : float or sequence
         The zoom factor along the axes. If a float, `zoom` is the same for each
         axis. If a sequence, `zoom` should contain one value for each axis.
-    out : ndarray or dtype, optional
-        The array in which to place the output, or the dtype of the returned
-        array.
+    out : ndarray, optional
+        The array in which to place the output. It must have the same number
+        of dimensions as `array`, but may be of any dtype (the result is
+        computed in floating point and then converted). If given, the shape
+        of `out` determines the actual zoom factors.
     order : int, optional
         The order of the spline interpolation, default is 3.
         The order has to be in the range 0-5.
@@ -194,7 +196,8 @@ def zoom(array, zoom, out=None, order=3, mode='constant', cval=0.0, prefilter=Tr
         Default is ``'constant'``.
     cval : scalar, optional
         Value used for points outside the boundaries of the input if
-        ``mode='constant'``. Default is 0.0
+        ``mode='constant'``. Currently, only 0 is supported (other values
+        raise ``NotImplementedError``).
     prefilter : bool, optional
         The parameter prefilter determines if the input is pre-filtered with
         `spline_filter` before interpolation (necessary for spline
@@ -204,6 +207,8 @@ def zoom(array, zoom, out=None, order=3, mode='constant', cval=0.0, prefilter=Tr
     Returns
     -------
     return_value : ndarray
+        The zoomed input. If `out` is not given, this is a new ``np.float64``
+        array of shape ``int(array.shape[i] * zoom[i])``.
     """
     array = _maybe_filter(array, order, 'interpolate.zoom', prefilter, dtype=np.float64)
     zoom = np.array(zoom)
@@ -260,12 +265,12 @@ def shift(array, shift, out=None, order=3, mode='constant', cval=0.0,
     ----------
     array : ndarray
         The input array.
-    shift : float or sequence, optional
-        The shift along the axes. If a float, `shift` is the same for each
-        axis. If a sequence, `shift` should contain one value for each axis.
-    out : ndarray or dtype, optional
-        The array in which to place the output, or the dtype of the returned
-        array.
+    shift : sequence of float
+        The shift along the axes. Must contain one value for each axis (a
+        scalar is only accepted for 1-D arrays).
+    out : ndarray, optional
+        The array in which to place the output. Must be a C-contiguous
+        ``np.float64`` array of the same shape as `array`.
     order : int, optional
         The order of the spline interpolation, default is 3.
         The order has to be in the range 0-5.
@@ -276,7 +281,8 @@ def shift(array, shift, out=None, order=3, mode='constant', cval=0.0,
         Default is ``'constant'``.
     cval : scalar, optional
         Value used for points outside the boundaries of the input if
-        ``mode='constant'``. Default is 0.0
+        ``mode='constant'``. Currently, only 0 is supported (other values
+        raise ``NotImplementedError``).
     prefilter : bool, optional
         The parameter prefilter determines if the input is pre-filtered with
         `spline_filter` before interpolation (necessary for spline
@@ -285,7 +291,7 @@ def shift(array, shift, out=None, order=3, mode='constant', cval=0.0,
 
     Returns
     -------
-    return_value : ndarray
+    return_value : ndarray of np.float64
         The shifted input.
 
     """

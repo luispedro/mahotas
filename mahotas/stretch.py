@@ -71,11 +71,13 @@ def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
     img' = stretch(img, max, [dtype=np.uint8])
     img' = stretch(img, min, max, [dtype=np.uint8])
 
-    Contrast stretch the image to the range [0, max] (first form) or [min, max]
-    (second form). The method is simple linear stretching according to the
-    formula::
+    Contrast stretch the image to the range [0, 255] (first form), [0, max]
+    (second form), or [min, max] (third form). The method is simple linear
+    stretching according to the formula::
 
-        p' = max * (p - img.min())/np.ptp(img) + min
+        p' = (max - min) * (p - img.min())/np.ptp(img) + min
+
+    If the image is constant, all output values are ``min``.
 
     Parameters
     ----------
@@ -147,19 +149,20 @@ def as_rgb(r, g, b):
         plt.imshow(mahotas.as_rgb(red, green, blue))
 
     Notice that the scaling on the ``blue`` channel is so different from the
-    other channels (from 0..2500 compared with 0..1), but ``as_rgb`` stretches
-    each channel independently.
+    other channels (roughly 0..10, compared with ranges within -1..1 for the
+    others), but ``as_rgb`` stretches each channel independently.
 
     Parameters
     ----------
     r,g,b : array-like or int, optional
         The channels can be of any type or None.
         At least one must be not None and all must have the same shape.
+        Scalar values are used as-is (they are not stretched).
 
     Returns
     -------
-    rgb : ndarray
-        RGB ndarray
+    rgb : ndarray of np.uint8
+        RGB ndarray of shape ``(h, w, 3)``
     '''
     for c in (r,g,b):
         if c is not None:

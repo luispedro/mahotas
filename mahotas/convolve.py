@@ -51,7 +51,8 @@ def convolve(f, weights, mode='reflect', cval=0.0, out=None, output=None):
     mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
         How to handle borders
     cval : double, optional
-        If `mode` is constant, which constant to use (default: 0.0)
+        Value for points outside the image if `mode` is 'constant'. Currently,
+        only 0 is supported (other values raise ``NotImplementedError``).
     out : ndarray, optional
         Output array. Must have same shape and dtype as `f` as well as be
         C-contiguous.
@@ -88,7 +89,8 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None):
     mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
         How to handle borders
     cval : double, optional
-        If `mode` is constant, which constant to use (default: 0.0)
+        Value for points outside the image if `mode` is 'constant'. Currently,
+        only 0 is supported (other values raise ``NotImplementedError``).
     out : ndarray, optional
         Output array. Must have same shape and dtype as `f` as well as be
         C-contiguous.
@@ -138,7 +140,7 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None):
 
 def median_filter(f, Bc=None, mode='reflect', cval=0.0, out=None, output=None):
     '''
-    median = median_filter(f, Bc={square}, mode='reflect', cval=0.0, out={np.empty(f.shape, f.dtype})
+    median = median_filter(f, Bc={square}, mode='reflect', cval=0.0, out={np.empty(f.shape, f.dtype)})
 
     Median filter
 
@@ -146,12 +148,15 @@ def median_filter(f, Bc=None, mode='reflect', cval=0.0, out=None, output=None):
     ----------
     f : ndarray
         input. Any dimension is supported
-    Bc : ndarray or int, optional
-        Defines the neighbourhood, default is a square of side 3.
+    Bc : ndarray, optional
+        Binary array defining the neighbourhood (non-zero elements are part
+        of it). Must have the same number of dimensions as `f`. Default is a
+        square (or cube, ...) of side 3.
     mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
         How to handle borders
     cval : double, optional
-        If `mode` is constant, which constant to use (default: 0.0)
+        Value for points outside the image if `mode` is 'constant'. Currently,
+        only 0 is supported (other values raise ``NotImplementedError``).
     out : ndarray, optional
         Output array. Must have same shape and dtype as `f` as well as be
         C-contiguous.
@@ -188,7 +193,8 @@ def mean_filter(f, Bc, mode='ignore', cval=0.0, out=None):
         How to handle borders. The default is to ignore points beyond the
         border, so that the means computed near the border include fewer elements.
     cval : double, optional
-        If `mode` is constant, which constant to use (default: 0.0)
+        Value for points outside the image if `mode` is 'constant'. Currently,
+        only 0 is supported (other values raise ``NotImplementedError``).
     out : ndarray, optional
         Output array. Must be a double array with the same shape as `f` as well
         as be C-contiguous.
@@ -211,8 +217,10 @@ def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None, output=None):
     '''
     ranked = rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None)
 
-    Rank filter. The value at ``ranked[i,j]`` will be the ``rank``\th largest in
-    the neighbourhood defined by ``Bc``.
+    Rank filter. The value at ``ranked[i,j]`` will be the ``rank``-th smallest
+    value (counting from 0) in the neighbourhood defined by ``Bc``. Thus,
+    ``rank=0`` is a minimum filter and ``rank=Bc.sum()-1`` (for a binary
+    ``Bc``) is a maximum filter.
 
     Parameters
     ----------
@@ -221,10 +229,13 @@ def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None, output=None):
     Bc : ndarray
         Defines the neighbourhood. Must be explicitly passed, no default.
     rank : integer
+        Which order statistic to compute (0-based, in increasing order). Must
+        be smaller than the number of elements in the neighbourhood.
     mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
         How to handle borders
     cval : double, optional
-        If `mode` is constant, which constant to use (default: 0.0)
+        Value for points outside the image if `mode` is 'constant'. Currently,
+        only 0 is supported (other values raise ``NotImplementedError``).
     out : ndarray, optional
         Output array. Must have same shape and dtype as `f` as well as be
         C-contiguous.
@@ -232,7 +243,8 @@ def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None, output=None):
     Returns
     -------
     ranked : ndarray of same type and shape as ``f``
-        ranked[i,j] is the ``rank``\th value of the points in f close to (i,j)
+        ranked[i,j] is the ``rank``-th smallest value of the points in f
+        close to (i,j)
 
     See Also
     --------
@@ -254,7 +266,7 @@ def template_match(f, template, mode='reflect', cval=0., out=None, output=None):
     point.
 
     Note that the computation is performed using the same dtype as ``f``. Thus
-    is may overflow if the template is large.
+    it may overflow if the template is large.
 
     Parameters
     ----------
@@ -265,7 +277,8 @@ def template_match(f, template, mode='reflect', cval=0., out=None, output=None):
     mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
         How to handle borders
     cval : double, optional
-        If `mode` is constant, which constant to use (default: 0.0)
+        Value for points outside the image if `mode` is 'constant'. Currently,
+        only 0 is supported (other values raise ``NotImplementedError``).
     out : ndarray, optional
         Output array. Must have same shape and dtype as `f` as well as be
         C-contiguous.
@@ -285,9 +298,10 @@ def template_match(f, template, mode='reflect', cval=0., out=None, output=None):
 def find(f, template):
     '''Match template to image exactly
 
-    coordinates = find(f, template)
+    matches = find(f, template)
 
-    The output is in the same format as the ``np.where`` function.
+    Finds all positions where `template` occurs exactly in `f`. Use
+    ``np.where(matches)`` to obtain the coordinates of the matches.
 
     Parameters
     ----------
@@ -298,11 +312,11 @@ def find(f, template):
 
     Returns
     -------
-    match : np.array
-    coordinates : np.array
-        These are the coordinates of the match. The format is similar to the
-        output of ``np.where``, but in an ndarray.
-
+    matches : boolean ndarray
+        Array of the same shape as `f`. ``matches[y,x]`` is True if
+        ``f[y:y+template.shape[0], x:x+template.shape[1]] == template``
+        (i.e., matches are marked at the top-left corner of the matching
+        window).
     '''
     if f.ndim != 2:
         raise ValueError('mahotas.find: Cannot handle multi-dimensional images')
@@ -334,7 +348,8 @@ def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., o
     mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
         How to handle borders
     cval : double, optional
-        If `mode` is constant, which constant to use (default: 0.0)
+        Value for points outside the image if `mode` is 'constant'. Currently,
+        only 0 is supported (other values raise ``NotImplementedError``).
     out : ndarray, optional
         Output array. Must have same shape and dtype as `array` as well as be
         C-contiguous.
@@ -399,7 +414,8 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out=None, ou
     mode : {'reflect' [default], 'nearest', 'wrap', 'mirror', 'constant', 'ignore'}
         How to handle borders
     cval : double, optional
-        If `mode` is constant, which constant to use (default: 0.0)
+        Value for points outside the image if `mode` is 'constant'. Currently,
+        only 0 is supported (other values raise ``NotImplementedError``).
     out : ndarray, optional
         Output array. Must have same shape as `array` as well as be
         C-contiguous. If `array` is an integer array, this must be a double
@@ -682,16 +698,17 @@ def laplacian_2D(array, alpha = 0.2):
     Parameters
     ----------
     array : ndarray
-        input 2D array. If the array is an integer array, it will be converted 
-        to a double array.
-    alpha : scalar or sequence of scalars
-        controls the shape of Laplacian operator. Must be 0-1. A larger values
-        makes the operator emphasize the diagonal direction.
+        input 2D array. It is always converted to (a copy of type) double.
+    alpha : float, optional
+        controls the shape of Laplacian operator. Values outside [0, 1] are
+        clipped to that range. Larger values make the operator emphasize the
+        diagonal direction (default: 0.2).
 
     Returns
     -------
-    filtered : ndarray
-        Filtered version of `array`
+    filtered : ndarray of double
+        Filtered version of `array`. Borders are handled with
+        ``mode='nearest'``.
     """
     array = np.array(array, dtype=float)
     if array.ndim != 2:

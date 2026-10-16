@@ -40,7 +40,7 @@ def get_structuring_elem(A,Bc):
     ----------
     A : ndarray
         array which will be operated on
-    Bc : None, int, or array-like
+    Bc : None, int, or ndarray
         :None: Then Bc is taken to be 1
         :An integer: There are two associated semantics:
             connectivity
@@ -48,10 +48,15 @@ def get_structuring_elem(A,Bc):
             count
               ``Bc.sum() == Bc_i``
               This is the more traditional meaning (when one writes that
-              "4-connected", this is what one has in mind).
+              "4-connected", this is what one has in mind). Only the
+              following counts are recognised: 4 and 8 (for 2-D arrays) and
+              6 (for 3-D arrays). Any other value is interpreted using the
+              connectivity semantics (so that, e.g., 18 or 26 for a 3-D
+              array result in the full 3x3x3 cube).
 
           Fortunately, the value itself allows one to distinguish between the
           two semantics and, if used correctly, no ambiguity should ever occur.
+          The value must be a Python ``int`` (not a NumPy integer scalar).
         :An array: This should be of the same nr. of dimensions as A and will
             be passed through if of the right type. Otherwise, it will be cast.
 
@@ -121,14 +126,25 @@ def dilate(A, Bc=None, out=None, output=None):
     Morphological dilation.
 
     The type of operation depends on the ``dtype`` of ``A``! If boolean, then
-    the dilation is binary, else it is greyscale dilation. In the case of
-    greyscale dilation, the smallest value in the domain of ``Bc`` is
-    interpreted as +Inf.
+    the dilation is binary, else it is greyscale dilation.
+
+    Greyscale dilation uses a *non-flat* structuring element: the values of
+    ``Bc`` (which is cast to ``A.dtype``) are added to the image (with
+    saturation)::
+
+        dilated[p] = max_q { A[p - q] + Bc[q] }
+
+    where ``q`` ranges over the offsets (relative to the centre of ``Bc``)
+    for which ``Bc[q]`` is not the smallest value of the dtype (such
+    positions are not part of the structuring element). Note that this means
+    that the default structuring element (and any boolean ``Bc``, which is
+    cast to 0s and 1s) adds 1 to the result. Pixels outside the image are
+    handled as if they had the value of the nearest border pixel.
 
     Parameters
     ----------
-    A : ndarray of bools
-        input array
+    A : ndarray
+        input array of boolean or integer type
     Bc : ndarray, optional
         Structuring element. By default, use a cross (see
         ``get_structuring_elem`` for details on the default).
@@ -154,19 +170,30 @@ def dilate(A, Bc=None, out=None, output=None):
 
 def erode(A, Bc=None, out=None, output=None):
     '''
-    eroded = erode(A, Bc={3x3 cross}, out={np.empty_as(A)})
+    eroded = erode(A, Bc={3x3 cross}, out={np.empty_like(A)})
 
     Morphological erosion.
 
     The type of operation depends on the ``dtype`` of ``A``! If boolean, then
-    the erosion is binary, else it is greyscale erosion. In the case of
-    greyscale erosion, the smallest value in the domain of ``Bc`` is
-    interpreted as -Inf.
+    the erosion is binary, else it is greyscale erosion.
+
+    Greyscale erosion uses a *non-flat* structuring element: the values of
+    ``Bc`` (which is cast to ``A.dtype``) are subtracted from the image (with
+    saturation)::
+
+        eroded[p] = min_q { A[p + q] - Bc[q] }
+
+    where ``q`` ranges over the offsets (relative to the centre of ``Bc``)
+    for which ``Bc[q]`` is not the smallest value of the dtype (such
+    positions are not part of the structuring element). Note that this means
+    that the default structuring element (and any boolean ``Bc``, which is
+    cast to 0s and 1s) subtracts 1 from the result. Pixels outside the image
+    are handled as if they had the value of the nearest border pixel.
 
     Parameters
     ----------
     A : ndarray
-        input image
+        input array of boolean or integer type
     Bc : ndarray, optional
         Structuring element. By default, use a cross (see
         ``get_structuring_elem`` for details on the default).
@@ -191,14 +218,17 @@ def erode(A, Bc=None, out=None, output=None):
 
 def cerode(f, g, Bc=None, out=None, output=None):
     '''
-    conditionally_eroded = cerode(f, g, Bc={3x3 cross}, out={np.empty_as(A)})
+    conditionally_eroded = cerode(f, g, Bc={3x3 cross}, out={np.empty_like(f)})
 
     Conditional morphological erosion.
 
-    The type of operation depends on the ``dtype`` of ``A``! If boolean, then
-    the erosion is binary, else it is greyscale erosion. In the case of
-    greyscale erosion, the smallest value in the domain of ``Bc`` is
-    interpreted as -Inf.
+    Computes ``maximum(erode(maximum(f, g), Bc), g)``, i.e., `f` is eroded
+    by `Bc` and then clipped from below by `g`. Unlike ``cdilate``, only a
+    single step is performed.
+
+    The type of operation depends on the ``dtype`` of ``f``! If boolean, then
+    the erosion is binary, else it is greyscale erosion (see ``erode`` for
+    how the values of ``Bc`` are used in that case).
 
     Parameters
     ----------
@@ -209,6 +239,9 @@ def cerode(f, g, Bc=None, out=None, output=None):
     Bc : ndarray, optional
         Structuring element. By default, use a cross (see
         ``get_structuring_elem`` for details on the default).
+    out : ndarray, optional
+        output array. If used, this must be a C-array of the same ``dtype``
+        and shape as ``f``. Otherwise, a new array is allocated.
 
     Returns
     -------
@@ -297,14 +330,16 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
 
         minima = mh.regmin(f)
         markers,nr_markers = mh.label(minima)
-        W = cwatershed(f, minima)
+        W = cwatershed(f, markers)
 
     Parameters
     ----------
-    surface : image
-    markers : image
-        initial markers (must be a labeled image, i.e., one where 0 represents
-        the background and higher integers represent different regions)
+    surface : ndarray
+        The surface (e.g., a greyscale image or a distance map) to flood.
+    markers : ndarray
+        initial markers (must be a labeled image of the same shape as
+        `surface`, i.e., one where 0 represents the background and higher
+        integers represent different regions)
     Bc : ndarray, optional
         structuring element (default: 3x3 cross)
     return_lines : boolean, optional
@@ -314,7 +349,9 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
     -------
     W : integer ndarray (int64 ints)
         Regions image (i.e., W[i,j] == region for pixel (i,j))
-    WL : Lines image (`if return_lines==True`)
+    WL : boolean ndarray
+        Lines image: True on pixels where different regions meet (only
+        returned if ``return_lines`` is True)
     '''
     _verify_is_integer_type(markers, 'cwatershed')
     if surface.shape != markers.shape:
@@ -334,9 +371,26 @@ def hitmiss(input, Bc, out=None, output=None):
     with ``1``, while the ``0`` line up with ``0`` (``2`` correspond to
     *don't care*).
 
+    Parameters
+    ----------
+    input : ndarray
+        This is interpreted as a binary array.
+    Bc : ndarray
+        hit & miss template, values must be one of (0, 1, 2)
+    out : ndarray, optional
+        Used for output. Must have the same shape and dtype as ``input`` (a
+        boolean array is also accepted if ``input`` is boolean or uint8).
+    output : deprecated
+        Do not use
+
+    Returns
+    -------
+    filtered : ndarray
+        Array of the same shape and dtype as ``input``, with value 1 where the
+        template matches and 0 elsewhere.
+
     Examples
     --------
-
     ::
 
         print(hitmiss(np.array([
@@ -348,28 +402,11 @@ def hitmiss(input, Bc, out=None, output=None):
                     [2,1,1],
                     [2,1,1]])))
 
-        prints::
+    prints::
 
-            [[0 0 0 0 0]
-             [0 0 1 1 0]
-             [0 0 0 0 0]]
-
-
-
-    Parameters
-    ----------
-    input : input ndarray
-        This is interpreted as a binary array.
-    Bc : ndarray
-        hit & miss template, values must be one of (0, 1, 2)
-    out : ndarray, optional
-        Used for output. Must be Boolean ndarray of same size as ``input``
-    output : deprecated
-        Do not use
-
-    Returns
-    -------
-    filtered : ndarray
+        [[0 0 0 0 0]
+         [0 0 1 1 0]
+         [0 0 0 0 0]]
     '''
     _verify_is_integer_type(input, 'hitmiss')
     _verify_is_integer_type(Bc, 'hitmiss')
@@ -412,9 +449,12 @@ def open(f, Bc=None, out=None, output=None):
     image `f` by the structuring element `Bc`.
 
     In the binary case, the opening by the structuring element `Bc` may be
-    interpreted as the union of translations of `b` included in `f`. In the
-    gray-scale case, there is a similar interpretation taking the functions
+    interpreted as the union of translations of `Bc` included in `f`. In the
+    gray-scale case, there is a similar interpretation taking the function's
     umbra.
+
+    This is computed as ``dilate(erode(f, Bc), Bc)``. See ``erode`` for how
+    the values of ``Bc`` are used for gray-scale images.
 
     .. note::
 
@@ -429,7 +469,7 @@ def open(f, Bc=None, out=None, output=None):
     Parameters
     ----------
     f : ndarray
-        Gray-scale (uint8 or uint16) or binary image.
+        Gray-scale (integer type) or binary image.
     Bc : ndarray, optional
         Structuring element (default: 3x3 elementary cross).
     out : ndarray, optional
@@ -465,13 +505,16 @@ def close(f, Bc=None, out=None, output=None):
     closing by a structuring element `Bc` may be interpreted as the
     intersection of all the binary images that contain the image `f`
     and have a hole equal to a translation of `Bc`. In the gray-scale
-    case, there is a similar interpretation taking the functions
+    case, there is a similar interpretation taking the function's
     umbra.
+
+    This is computed as ``erode(dilate(f, Bc), Bc)``. See ``dilate`` for how
+    the values of ``Bc`` are used for gray-scale images.
 
     Parameters
     ----------
     f : ndarray
-        Gray-scale (uint8 or uint16) or binary image.
+        Gray-scale (integer type) or binary image.
     Bc : ndarray, optional
         Structuring element. (Default: 3x3 elementary cross).
     out : ndarray, optional
@@ -631,7 +674,7 @@ def locmin(f, Bc=None, out=None, output=None):
     See Also
     --------
     locmax : function
-        Regional maxima
+        Local maxima
     '''
     Bc = get_structuring_elem(f, Bc)
     Bc = _remove_centre(Bc.copy())
@@ -721,15 +764,25 @@ def subm(a, b, out=None):
 
     Subtract (with saturation).
 
-    This is similar to:
+    This is similar to ``c = a - b``, but with saturation instead of
+    underflow.
 
-    c = a - b
+    Parameters
+    ----------
+    a : ndarray
+    b : ndarray
+        Must have the same dtype as ``a`` (otherwise, ``ValueError`` is
+        raised).
+    out : ndarray, optional
+        Pass ``a`` as output to subtract in-place.
 
-    but with saturation instead of underflow.
+    Returns
+    -------
+    c : ndarray
+        Result of subtraction
 
     Examples
     --------
-
     ::
 
         a = np.array([10, 10, 10], np.uint8)
@@ -739,19 +792,7 @@ def subm(a, b, out=None):
 
     Prints out::
 
-        [5, 0, 0]
-
-    Parameters
-    ----------
-    a : ndarray
-    b : ndarray
-    out : ndarray, optional
-        Pass ``a`` as output to subtract in-place.
-
-    Returns
-    -------
-    c : ndarray
-        Result of subtraction
+        [5 0 0]
     '''
     if a.dtype != b.dtype:
         raise ValueError('mahotas.subm: This is only well-defined if both arguments are of the same type')

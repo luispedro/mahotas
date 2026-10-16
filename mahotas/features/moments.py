@@ -8,7 +8,7 @@ import numpy as np
 __all__ = ['moments']
 def moments(img, p0, p1, cm=None, convert_to_float=True, normalize=False, normalise=False):
     '''
-    m = moments(img, p0, p1, cm=(0, 0), convert_to_float=True)
+    m = moments(img, p0, p1, cm=(0, 0), convert_to_float=True, normalize=False)
 
     Returns the p0-p1 moment of image `img`
 
@@ -22,27 +22,31 @@ def moments(img, p0, p1, cm=None, convert_to_float=True, normalize=False, normal
     np.float64, unless `convert_to_float` is False. The reason is that,
     otherwise, overflow is likely except for small images. Since this
     conversion takes longer than the computation, you can turn it off in case
-    you are sure that your images are small enough for overflow to be an issue.
+    you are sure that your images are small enough for overflow not to be an
+    issue.
     Note that no conversion is made if `img` is of any floating point type.
 
     Parameters
     ----------
     img : 2-ndarray
-        An 2-d ndarray
+        A 2-d ndarray
     p0 : float
         Power for first dimension
     p1 : float
         Power for second dimension
-    cm : (int,int), optional
-        center of mass (default: 0,0)
+    cm : pair of floats, optional
+        center of mass, as ``(row, column)``, e.g., as returned by
+        ``mahotas.center_of_mass`` (default: 0,0)
     convert_to_float : boolean, optional
         whether to convert to floating point (default: True)
     normalize : boolean, optional
-        whether to normalize to size of image (default: False)
+        whether to normalize the coordinate weights (i.e., the vectors
+        ``(i - c0)**p0`` and ``(j - c1)**p1``) so that each sums to 1
+        (default: False). ``normalise`` is accepted as an alias.
 
     Returns
     -------
-    moment: float
+    moment : float
         floating point number
 
     Notes

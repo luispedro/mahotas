@@ -57,11 +57,12 @@ def slic(array, spacer=16, m=1.0, max_iters=128):
         lab = mh.colors.rgb2lab(rgb)
         superseg,nr = mh.segmentation.slic(lab)
 
-    See the mahotas.color module for color space transformations
+    See the ``mahotas.colors`` module for color space transformations
 
     Parameters
     ----------
     array : ndarray
+        Input image of shape ``(h, w, 3)``
     spacer : int, optional
         x/y spacing between initial seeds. Initial seeds will be placed at
         ``array[spacer/2::spacer, spacer/2::spacer]``

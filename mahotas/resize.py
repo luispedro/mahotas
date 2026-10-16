@@ -87,11 +87,14 @@ def imresize(img, nsize, order=3):
     Returns
     -------
     img' : ndarray
+        Resized image. Note that if ``nsize`` is a tuple of integers, the
+        result is always of type ``np.float64`` (unlike ``resize_to``, which
+        preserves the input dtype).
 
     See Also
     --------
-    zoom : Similar function
-    scipy.misc.pilutil.imresize : Similar function
+    mahotas.interpolate.zoom : Similar function
+    resize_to : Resize to a given shape, preserving the dtype
     '''
     from .interpolate import zoom
     out = None

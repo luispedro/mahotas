@@ -30,7 +30,7 @@ __all__ = [
 
 def label(array, Bc=None, out=None, output=None):
     '''
-    labeled, nr_objects = label(array, Bc={3x3 cross}, output={new array})
+    labeled, nr_objects = label(array, Bc={3x3 cross}, out={new array})
 
     Label the array, which is interpreted as a binary array
 
@@ -50,7 +50,7 @@ def label(array, Bc=None, out=None, output=None):
 
     Returns
     -------
-    labeled : ndarray
+    labeled : ndarray of np.int32
         Labeled result
     nr_objects : int
         Number of objects
@@ -136,7 +136,7 @@ def is_same_labeling(labeled0, labeled1):
 
 def remove_regions(labeled, regions, inplace=False):
     '''
-    removed = remove_regions(labeled, regions, inplace=False):
+    removed = remove_regions(labeled, regions, inplace=False)
 
     Removes the regions in ``regions``. If an elementwise ``in`` operator
     existed, this would be equivalent to the following::
@@ -146,11 +146,11 @@ def remove_regions(labeled, regions, inplace=False):
     This function **does not** relabel its arguments. You can use the
     ``relabel`` function for that::
 
-        removed = relabel(remove_regions(labeled, regions))
+        removed, nr_objs = relabel(remove_regions(labeled, regions))
 
     Or, saving one image allocation::
 
-        removed = relabel(remove_regions(labeled, regions), inplace=True)
+        removed, nr_objs = relabel(remove_regions(labeled, regions), inplace=True)
 
     This is the same, but reuses the memory in the relabeling operation.
 
@@ -189,14 +189,29 @@ def remove_regions_where(labeled, conditions, inplace=False):
     This function **does not** relabel its arguments. You can use the
     ``relabel`` function for that::
 
-        removed = relabel(remove_regions_where(labeled, conditions))
+        removed, nr_objs = relabel(remove_regions_where(labeled, conditions))
 
     Or, saving one image allocation::
 
-        removed = relabel(remove_regions_where(labeled, conditions), inplace=True)
+        removed, nr_objs = relabel(remove_regions_where(labeled, conditions), inplace=True)
 
     This is the same, but reuses the memory in the relabeling operation.
 
+    Parameters
+    ----------
+    labeled : ndarray of int
+        A labeled array
+    conditions : array-like of bool
+        ``conditions[i]`` states whether region ``i`` should be removed.
+        Typically, this has length ``labeled.max() + 1``. The value of
+        ``conditions[0]`` (the background) has no effect.
+    inplace : boolean, optional
+        Whether to perform removal inplace, erasing the values in
+        ``labeled`` (default: False)
+
+    Returns
+    -------
+    removed : ndarray
 
     See Also
     --------
@@ -209,7 +224,7 @@ def remove_regions_where(labeled, conditions, inplace=False):
 
 def remove_bordering(labeled, rsize=1, out=None, output=None):
     '''
-    slabeled = remove_bordering(labeled, rsize=1, out={np.empty_like(im)})
+    slabeled = remove_bordering(labeled, rsize=1, out={np.empty_like(labeled)})
 
     Remove objects that are touching the border.
 
@@ -220,10 +235,13 @@ def remove_bordering(labeled, rsize=1, out=None, output=None):
     labeled : ndarray
         Labeled array
     rsize : int or tuple, optional
-        Minimum distance to the border (in Manhattan distance) to allow an
-        object to survive. May be int or tuple with len == labeled.ndim.
+        Width (in pixels) of the border region: any object which has a pixel
+        in the first or last ``rsize`` positions along any axis is removed.
+        May be int or tuple with len == labeled.ndim (to specify a different
+        width for each axis). Default is 1, i.e., remove objects which touch
+        the edge.
     out : ndarray, optional
-        If ``im`` is passed as ``out``, then it operates inline.
+        If ``labeled`` is passed as ``out``, then it operates inline.
 
     Returns
     -------
@@ -569,11 +587,16 @@ def bbox(f, as_slice=False):
 
     Returns
     -------
-    bboxes : ndarray
+    bboxes : ndarray or list
+        If ``as_slice`` is false (the default), an integer array of shape
+        ``(f.max() + 1, 2 * f.ndim)``, where each row is in the same format as
+        returned by ``mahotas.bbox``, i.e., ``(min_0, max_0, min_1, max_1,
+        ...)`` with exclusive maxima. Labels which do not occur in ``f`` get a
+        row of zeros. If ``as_slice`` is true, a list of tuples of slices.
 
     See Also
     --------
-    mh.bbox : the binary version of this function
+    mahotas.bbox : the binary version of this function
     '''
     import mahotas._bbox
     n = f.max()

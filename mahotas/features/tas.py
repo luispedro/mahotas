@@ -85,7 +85,7 @@ def tas(img):
 
 def pftas(img, T=None):
     '''
-    values = pftas(img, T={mahotas.threshold.otsu(img)})
+    values = pftas(img, T={mahotas.thresholding.otsu(img)})
 
     Compute parameter free Threshold Adjacency Statistics
 
