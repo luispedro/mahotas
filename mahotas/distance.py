@@ -3,15 +3,20 @@
 # 
 # License: MIT (see COPYING file)
 
+from typing import Literal
+
 from . import _distance
 from . import _morph
 import numpy as np
+from numpy.typing import NDArray
+
+from ._typing import Array
 
 __all__ = [
     'distance',
     ]
 
-def distance(bw, metric='euclidean2'):
+def distance(bw: Array, metric: Literal['euclidean2', 'euclidean'] = 'euclidean2') -> NDArray[np.float64]:
     '''
     dmap = distance(bw, metric='euclidean2')
 
@@ -85,5 +90,3 @@ def distance(bw, metric='euclidean2'):
     if metric == 'euclidean':
         np.sqrt(f,f)
     return f
-
-

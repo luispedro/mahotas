@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 
+from collections.abc import Iterable
+from typing import TextIO
 import sys
 from os import path
 import numpy as np
 import mahotas as mh
 import argparse
+from ._typing import Array, Path
 from itertools import chain
 
 RED = '\033[91m'
@@ -14,7 +17,7 @@ LIGHT_PURPLE = '\033[94m'
 PURPLE = '\033[95m'
 END = '\033[0m'
 
-def print_error(text, color=True):
+def print_error(text: str, color: bool = True) -> None:
     '''Prints error message
 
     Arguments
@@ -30,7 +33,7 @@ def print_error(text, color=True):
         sys.stderr.write(f"ERROR: {text}\n")
 
 
-def read_bw(fname, options):
+def read_bw(fname: Path, options: argparse.Namespace) -> Array:
     '''Read image `fname` as greyscale
 
     Parameters
@@ -55,7 +58,7 @@ def read_bw(fname, options):
     print_error(f"{fname} is not a greyscale image (and --convert-to-bw was not specified)", not options.no_color)
     sys.exit(1)
 
-def _write_row(output, items, header=None):
+def _write_row(output: TextIO, items: Iterable[object], header: str | None = None) -> None:
     if header:
         output.write(header)
     for it in items:
@@ -63,7 +66,7 @@ def _write_row(output, items, header=None):
         output.write(str(it))
     output.write('\n')
 
-def main():
+def main() -> None:
     sys.stderr.write(mh.citation(print_out=False, short=True))
     sys.stderr.write('\n\n')
     parser = argparse.ArgumentParser(

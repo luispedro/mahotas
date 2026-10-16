@@ -3,9 +3,13 @@
 #
 # License: MIT (see COPYING file)
 
+from collections.abc import Sequence
 import itertools
 
 import numpy as np
+from numpy.typing import ArrayLike, DTypeLike, NDArray
+
+from .._typing import Array
 from . import _surf
 
 __all__ = [
@@ -14,7 +18,7 @@ __all__ = [
         'surf',
         ]
 
-def integral(f, in_place=False, dtype=np.double):
+def integral(f: Array, in_place: bool = False, dtype: DTypeLike = np.double) -> Array:
     '''
     fi = integral(f, in_place=False, dtype=np.double)
 
@@ -45,7 +49,10 @@ def integral(f, in_place=False, dtype=np.double):
             f = f.copy()
     return _surf.integral(f)
 
-def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points=1024, descriptor_only=False):
+def surf(
+    f: Array, nr_octaves: int = 4, nr_scales: int = 6, initial_step_size: int = 1,
+    threshold: float = 0.1, max_points: int = 1024, descriptor_only: bool = False,
+) -> NDArray[np.float64]:
     '''
     points = surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points=1024, descriptor_only=False)
 
@@ -99,7 +106,10 @@ def surf(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_p
     return surfs
 
 
-def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points=None, is_integral=False):
+def interest_points(
+    f: Array, nr_octaves: int = 4, nr_scales: int = 6, initial_step_size: int = 1,
+    threshold: float = 0.1, max_points: int | None = None, is_integral: bool = False,
+) -> NDArray[np.float64]:
     '''
     desc_array = interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold=0.1, max_points={all}, is_integral=False)
 
@@ -145,7 +155,9 @@ def interest_points(f, nr_octaves=4, nr_scales=6, initial_step_size=1, threshold
     return _surf.interest_points(f, nr_octaves, nr_scales, initial_step_size, threshold, max_points)
 
 
-def descriptors(f, interest_points, is_integral=False, descriptor_only=False):
+def descriptors(
+    f: Array, interest_points: ArrayLike, is_integral: bool = False, descriptor_only: bool = False,
+) -> NDArray[np.float64]:
     '''
     desc_array = descriptors(f, interest_points, is_integral=False, descriptor_only=False)
 
@@ -182,7 +194,10 @@ def descriptors(f, interest_points, is_integral=False, descriptor_only=False):
         surfs = surfs[:,6:]
     return surfs
 
-def dense(f, spacing, scale=None, is_integral=False, include_interest_point=False):
+def dense(
+    f: Array, spacing: int, scale: float | None = None,
+    is_integral: bool = False, include_interest_point: bool = False,
+) -> NDArray[np.float64]:
     '''
     desc_array = dense(f, spacing, scale={np.sqrt(spacing)}, is_integral=False, include_interest_point=False)
 
@@ -226,7 +241,10 @@ def dense(f, spacing, scale=None, is_integral=False, include_interest_point=Fals
     return descriptors(f, ips.T, is_integral=is_integral, descriptor_only=(not include_interest_point))
 
 
-def show_surf(f, spoints, values=None, colors=None):
+def show_surf(
+    f: Array, spoints: Array, values: Sequence[int] | Array | None = None,
+    colors: Sequence[Sequence[int]] | Array | None = None,
+) -> NDArray[np.uint8]:
     '''
     f2 = show_surf(f, spoints, values=None, colors={[(255,0,0)]})
 
@@ -262,7 +280,7 @@ def show_surf(f, spoints, values=None, colors=None):
             colors = [(255,0,0)]
     if colors is None:
         raise NotImplementedError('mahotas.surf.show_surf: colors is None, but values is not')
-    def rotate(y,x, a):
+    def rotate(y: float, x: float, a: float) -> tuple[np.float64, np.float64]:
         sa = np.sin(a)
         ca = np.cos(a)
         return (ca*x-sa*y, sa*x+ca*y)
@@ -279,7 +297,7 @@ def show_surf(f, spoints, values=None, colors=None):
         x0 = int(x) - size//2
         x1 = x + size
         y1 = y + size
-        def rotate_around(p, c, a):
+        def rotate_around(p: Sequence[float], c: Sequence[float], a: float) -> tuple[int, int]:
             p0,p1 = p
             c0,c1 = c
             d0 = p0-c0

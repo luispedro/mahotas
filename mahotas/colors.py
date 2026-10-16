@@ -4,9 +4,12 @@
 # License: MIT (see COPYING file)
 
 import numpy as np
+from numpy.typing import DTypeLike, NDArray
+
+from ._typing import Array
 from .internal import _check_3
 
-def _cast(array, dtype):
+def _cast(array: Array, dtype: DTypeLike) -> Array:
     '''Cast ``array`` to ``dtype``, rounding and clipping for integer types'''
     if dtype is None:
         return array
@@ -16,7 +19,7 @@ def _cast(array, dtype):
         array = np.clip(np.round(array), info.min, info.max)
     return array.astype(dtype, copy=False)
 
-def rgb2grey(array, dtype=float):
+def rgb2grey(array: Array, dtype: DTypeLike = float) -> Array:
     '''
     grey = rgb2grey(rgb_image, dtype=float)
 
@@ -48,7 +51,7 @@ def rgb2grey(array, dtype=float):
 
 rgb2gray = rgb2grey
 
-def _convert(array, matrix, dtype, funcname):
+def _convert(array: Array, matrix: Array, dtype: DTypeLike, funcname: str) -> Array:
     _check_3(array, funcname)
     h,w,d = array.shape
     array = array.transpose((2,0,1))
@@ -58,7 +61,7 @@ def _convert(array, matrix, dtype, funcname):
     array = array.transpose((1,2,0))
     return _cast(array, dtype)
 
-def rgb2xyz(rgb, dtype=None):
+def rgb2xyz(rgb: Array, dtype: DTypeLike = None) -> Array:
     '''
     xyz = rgb2xyz(rgb, dtype={float})
 
@@ -99,7 +102,7 @@ def rgb2xyz(rgb, dtype=None):
     rgb_linear = np.choose(rgb <= 0.04045, [rgb_linear_high, rgb_linear_low])
     return _convert(rgb_linear, transformation, dtype, 'rgb2xyz')
 
-def xyz2rgb(xyz, dtype=None):
+def xyz2rgb(xyz: Array, dtype: DTypeLike = None) -> Array:
     '''
     rgb = xyz2rgb(xyz, dtype={float})
 
@@ -145,7 +148,7 @@ def xyz2rgb(xyz, dtype=None):
         srgb = np.clip(srgb, 0., 255.)
     return _cast(srgb, dtype)
 
-def xyz2lab(xyz, dtype=None):
+def xyz2lab(xyz: Array, dtype: DTypeLike = None) -> Array:
     '''
     lab = xyz2lab(xyz, dtype={float})
 
@@ -169,7 +172,7 @@ def xyz2lab(xyz, dtype=None):
     '''
     _check_3(xyz, 'xyz2lab')
     x,y,z = xyz.transpose((2,0,1))
-    def f(t):
+    def f(t: Array) -> Array:
         branch_large = t**(1./3)
         branch_small = ((1/3.)*(29./6)*(29./6))*t + 4/29.
         return np.choose(t <= (6./29)**3, [branch_large, branch_small])
@@ -183,7 +186,7 @@ def xyz2lab(xyz, dtype=None):
     Lab = np.dstack( [L,a,b] )
     return _cast(Lab, dtype)
 
-def rgb2lab(rgb, dtype=None):
+def rgb2lab(rgb: Array, dtype: DTypeLike = None) -> Array:
     '''
     lab = rgb2lab(rgb, dtype={float})
 
@@ -205,7 +208,7 @@ def rgb2lab(rgb, dtype=None):
     '''
     return xyz2lab(rgb2xyz(rgb), dtype=dtype)
 
-def rgb2sepia(rgb):
+def rgb2sepia(rgb: Array) -> NDArray[np.uint8]:
     '''
     sepia = rgb2sepia(rgb)
 
@@ -229,4 +232,3 @@ def rgb2sepia(rgb):
     sepia = np.minimum(sepia,255)
     sepia = np.maximum(sepia,0)
     return sepia.astype(np.uint8)
-

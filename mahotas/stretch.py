@@ -21,6 +21,9 @@
 #  THE SOFTWARE.
 
 import numpy as np
+from numpy.typing import ArrayLike, DTypeLike, NDArray
+
+from ._typing import Array
 from .internal import _check_2
 
 __all__ = [
@@ -30,7 +33,9 @@ __all__ = [
         'stretch_rgb',
         ]
 
-def stretch_rgb(img, arg0=None, arg1=None, dtype=np.uint8):
+def stretch_rgb(
+    img: Array, arg0: float | None = None, arg1: float | None = None, dtype: DTypeLike = np.uint8,
+) -> Array:
     '''Variation of stretch() function that works per-channel on an RGB image
 
     The optional positional arguments mirror ``stretch``: ``stretch_rgb(img)``,
@@ -65,7 +70,9 @@ def stretch_rgb(img, arg0=None, arg1=None, dtype=np.uint8):
         raise ValueError('mahotas.stretch_rgb: Only works for RGB images')
 
 
-def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
+def stretch(
+    img: Array, arg0: float | None = None, arg1: float | None = None, dtype: DTypeLike = np.uint8,
+) -> Array:
     '''
     img' = stretch(img, [dtype=np.uint8])
     img' = stretch(img, max, [dtype=np.uint8])
@@ -124,7 +131,7 @@ def stretch(img, arg0=None, arg1=None, dtype=np.uint8):
     if min: img += min
     return img.astype(dtype, copy=False)
 
-def as_rgb(r, g, b):
+def as_rgb(r: ArrayLike | None, g: ArrayLike | None, b: ArrayLike | None) -> NDArray[np.uint8]:
     '''
     rgb = as_rgb(r, g, b)
 
@@ -172,7 +179,7 @@ def as_rgb(r, g, b):
                 break
     else:
         raise ValueError('mahotas.as_rgb: Not all arguments can be None')
-    def s(c):
+    def s(c: ArrayLike | None) -> NDArray[np.uint8]:
         if c is None:
             return np.zeros(shape, np.uint8)
         c = np.asanyarray(c)
@@ -186,7 +193,10 @@ def as_rgb(r, g, b):
     return np.dstack([s(r), s(g), s(b)])
 
 
-def overlay(gray, red=None, green=None, blue=None, if_gray_dtype_not_uint8='stretch'):
+def overlay(
+    gray: Array, red: Array | None = None, green: Array | None = None, blue: Array | None = None,
+    if_gray_dtype_not_uint8: str = 'stretch',
+) -> NDArray[np.uint8]:
     '''
     Create an image which is greyscale, but with possible boolean overlays.
 
@@ -213,7 +223,7 @@ def overlay(gray, red=None, green=None, blue=None, if_gray_dtype_not_uint8='stre
             gray = stretch(gray)
         else:
             raise ValueError('mahotas.overlay: first argument should be of dtype np.uint8')
-    def _v(ch):
+    def _v(ch: Array | None) -> Array:
         if ch is None:
             return gray
         ch = ch.astype(bool, copy=False)

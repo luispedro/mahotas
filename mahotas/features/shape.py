@@ -3,6 +3,7 @@
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 import numpy as np
+from numpy.typing import ArrayLike
 import mahotas as mh
 from ..labeled import bwperim
 from ..internal import _make_binary
@@ -13,7 +14,7 @@ __all__ = [
     'ellipse_axes',
     ]
 
-def roundness(bw):
+def roundness(bw: ArrayLike) -> float | np.float64:
     '''
     r = roundness(bw)
 
@@ -48,7 +49,7 @@ def roundness(bw):
     return float(perim)*perim/4./np.pi/area
 
 
-def ellipse_axes(bwimage):
+def ellipse_axes(bwimage: ArrayLike) -> tuple[float | np.float64, float | np.float64]:
     ''' Parameters of the 'image ellipse'
 
     semimajor,semiminor = ellipse_axes(bwimage)
@@ -95,7 +96,7 @@ def ellipse_axes(bwimage):
                     4 * hull_mu11**2)))/hull_mu00)
     return semimajor, semiminor
 
-def eccentricity(bwimage):
+def eccentricity(bwimage: ArrayLike) -> float | np.float64:
     """
     ecc = eccentricity(bwimage)
 
@@ -124,4 +125,3 @@ def eccentricity(bwimage):
     if semimajor == 0.:
         return 0.
     return  np.sqrt(semimajor**2 - semiminor**2) / semimajor
-

@@ -1,9 +1,13 @@
+from collections.abc import Callable, Iterable, Mapping, Sequence
+from typing import Any, Literal, NoReturn
 import sys
 import os
 import ctypes
 import ctypes.util
 
 import numpy as np
+
+from .._typing import Array, Path
 
 
 _API = {
@@ -124,7 +128,7 @@ class _ctypes_wrapper:
 
 
 # Albert's ctypes pattern
-def _register_api(lib, api):
+def _register_api(lib: Any, api: Mapping[str, tuple[Any, list[Any]]]) -> _ctypes_wrapper:
     nlib = _ctypes_wrapper()
     for f, (restype, argtypes) in api.items():
         try:
@@ -134,7 +138,7 @@ def _register_api(lib, api):
             setattr(nlib, f, func)
         except Exception:
 
-            def error_raise(*args):
+            def error_raise(*args: Any) -> NoReturn:
                 raise RuntimeError(
                     'mahotas.freeimage: Function `%s` not found in your'
                     ' version of FreeImage. It might be an older version' % f)
@@ -143,7 +147,9 @@ def _register_api(lib, api):
 
 if sys.platform == 'win32':
 
-    def _load_library(dllname, loadfunction, dllpaths=('', )):
+    def _load_library(
+        dllname: str, loadfunction: Callable[[str], Any], dllpaths: tuple[str, ...] = ('',),
+    ) -> Any:
         """Load a DLL via ctypes load function. Return None on failure.
 
         Try loading the DLL from the current package directory first,
@@ -220,7 +226,7 @@ else:
 
 
 @_functype(None, ctypes.c_int, ctypes.c_char_p)
-def _error_handler(fif, message):
+def _error_handler(fif: int, message: bytes) -> NoReturn:
     raise RuntimeError(f'mahotas.freeimage: FreeImage error: {message}')
 
 _FI.FreeImage_SetOutputMessage(_error_handler)
@@ -285,7 +291,7 @@ class FI_TYPES:
         FIT_RGBAF: [4]}
 
     @classmethod
-    def get_type_and_shape(cls, bitmap):
+    def get_type_and_shape(cls, bitmap: int) -> tuple[np.dtype[Any], list[int]] | tuple[Literal['bit'], None]:
         w = _FI.FreeImage_GetWidth(bitmap)
         h = _FI.FreeImage_GetHeight(bitmap)
         fi_type = _FI.FreeImage_GetImageType(bitmap)
@@ -435,7 +441,7 @@ class FI_FORMAT:
     FIF_RAW = 34
 
 
-def read(filename, flags=0):
+def read(filename: Path, flags: int = 0) -> Array:
     """Read an image to a numpy array of shape (height, width) for
     greyscale images, or shape (height, width, nchannels) for RGB or
     RGBA images.
@@ -448,7 +454,7 @@ def read(filename, flags=0):
         _FI.FreeImage_Unload(bitmap)
 
 
-def read_multipage(filename, flags=0):
+def read_multipage(filename: Path, flags: int = 0) -> list[Array]:
     """Read a multipage image to a list of numpy arrays, where each
     array is of shape (height, width) for greyscale images, or shape
     (height, width, nchannels) for RGB or RGBA images.
@@ -482,7 +488,7 @@ def read_multipage(filename, flags=0):
         _FI.FreeImage_CloseMultiBitmap(multibitmap, 0)
 
 
-def _read_bitmap(filename, flags):
+def _read_bitmap(filename: Path, flags: int) -> int:
     """Load a file to a FreeImage bitmap pointer"""
     ftype = _FI.FreeImage_GetFileType(_bytestr(filename), 0)
     if ftype == -1:
@@ -495,7 +501,7 @@ def _read_bitmap(filename, flags):
     return bitmap
 
 
-def _wrap_bitmap_bits_in_array(bitmap, shape, dtype):
+def _wrap_bitmap_bits_in_array(bitmap: int, shape: Sequence[int], dtype: np.dtype[Any]) -> Array:
     """Return an ndarray view on the data in a FreeImage bitmap. Only
     valid for as long as the bitmap is loaded (if single page) / locked
     in memory (if multipage).
@@ -522,7 +528,7 @@ def _wrap_bitmap_bits_in_array(bitmap, shape, dtype):
     return np.array(DummyArray(), copy=False)
 
 
-def _array_from_bitmap(bitmap):
+def _array_from_bitmap(bitmap: int) -> Array:
     """Convert a FreeImage bitmap pointer to a numpy array
 
     """
@@ -538,7 +544,7 @@ def _array_from_bitmap(bitmap):
     # swizzle the color components and flip the scanlines to go from
     # FreeImage's BGR[A] and upside-down internal memory format to something
     # more normal
-    def n(arr):
+    def n(arr: Array) -> Array:
         return arr[..., ::-1].T
 
     if (len(shape) == 3 and _FI.FreeImage_IsLittleEndian() and
@@ -561,7 +567,7 @@ def _array_from_bitmap(bitmap):
     return n(array).copy()
 
 
-def string_tag(bitmap, key, model=METADATA_MODELS.FIMD_EXIF_MAIN):
+def string_tag(bitmap: int, key: str, model: int = METADATA_MODELS.FIMD_EXIF_MAIN) -> bytes | None:
     """Retrieve the value of a metadata tag with the given string key as a
     string."""
     tag = ctypes.c_int()
@@ -572,7 +578,7 @@ def string_tag(bitmap, key, model=METADATA_MODELS.FIMD_EXIF_MAIN):
     return char_ptr.from_address(_FI.FreeImage_GetTagValue(tag)).raw()
 
 
-def write(array, filename, flags=0):
+def write(array: Array, filename: Path, flags: int = 0) -> None:
     """Write a (height, width) or (height, width, nchannels) array to
     a greyscale, RGB, or RGBA image, with file type deduced from the
     filename.
@@ -602,7 +608,9 @@ def write(array, filename, flags=0):
         _FI.FreeImage_Unload(bitmap)
 
 
-def write_multipage(arrays, filename, flags=0, keep_cache_in_memory=True):
+def write_multipage(
+    arrays: Iterable[Array], filename: Path, flags: int = 0, keep_cache_in_memory: bool = True,
+) -> None:
     """Write a list of (height, width) or (height, width, nchannels)
     arrays to a multipage greyscale, RGB, or RGBA image, with file type
     deduced from the filename.
@@ -630,7 +638,7 @@ def write_multipage(arrays, filename, flags=0, keep_cache_in_memory=True):
         _FI.FreeImage_CloseMultiBitmap(multibitmap, flags)
 
 
-def _array_to_bitmap(array):
+def _array_to_bitmap(array: Array) -> tuple[int, int]:
     """Allocate a FreeImage bitmap and copy a numpy array into it.
 
     """
@@ -660,7 +668,7 @@ def _array_to_bitmap(array):
             'mahotas.freeimage: could not allocate image for storage')
     try:
 
-        def n(arr):  # normalise to freeimage's in-memory format
+        def n(arr: Array) -> Array:  # normalise to freeimage's in-memory format
             return arr.T[:, ::-1]
 
         wrapped_array = _wrap_bitmap_bits_in_array(bitmap, w_shape, dtype)
@@ -682,7 +690,7 @@ def _array_to_bitmap(array):
         raise
 
 
-def imsavetoblob(img, filetype, flags=0):
+def imsavetoblob(img: Array, filetype: str | int, flags: int = 0) -> bytes:
     """
     s = imsavetoblob(img, filetype, flags=0)
 
@@ -721,7 +729,7 @@ def imsavetoblob(img, filetype, flags=0):
         _FI.FreeImage_CloseMemory(mem)
 
 
-def imreadfromblob(blob, ftype=None, as_grey=False):
+def imreadfromblob(blob: bytes, ftype: int | None = None, as_grey: bool | None = False) -> Array:
     """
     arr = imreadfromblob(blob, ftype={auto}, as_grey=False)
 
@@ -755,7 +763,7 @@ def imreadfromblob(blob, ftype=None, as_grey=False):
         _FI.FreeImage_CloseMemory(mem)
 
 
-def imread(filename, as_grey=False):
+def imread(filename: Path, as_grey: bool | None = False) -> Array:
     """
     img = imread(filename, as_grey=False)
 
@@ -782,7 +790,7 @@ def imread(filename, as_grey=False):
     return img
 
 
-def imsave(filename, img):
+def imsave(filename: Path, img: Array) -> None:
     """
     imsave(filename, img)
 
@@ -805,5 +813,5 @@ def imsave(filename, img):
 import locale
 _encoding = locale.getpreferredencoding(False) or 'UTF-8'
 
-def _bytestr(x):
+def _bytestr(x: object) -> bytes:
     return str(x).encode(_encoding)

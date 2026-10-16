@@ -3,7 +3,12 @@
 #
 # License: MIT
 
+from typing import Literal, overload
+
 import numpy as np
+from numpy.typing import ArrayLike, NDArray
+
+from ._typing import Array, ScalarT, StructuringElement
 
 from .internal import _get_output, _verify_is_integer_type, _check_2
 from . import _morph
@@ -30,7 +35,7 @@ __all__ = [
         'subm',
         ]
 
-def get_structuring_elem(A,Bc):
+def get_structuring_elem(A: NDArray[ScalarT], Bc: StructuringElement) -> NDArray[ScalarT]:
     '''
     Bc_out = get_structuring_elem(A, Bc)
 
@@ -94,7 +99,7 @@ def get_structuring_elem(A,Bc):
     dist = np.abs(np.indices((3,)*len(A.shape)) - 1).sum(0)
     return (dist <= Bc).astype(A.dtype)
 
-def disk(radius, dim=2):
+def disk(radius: int, dim: int = 2) -> NDArray[np.bool_]:
     '''
     D = disk(radius, dim=2)
 
@@ -121,7 +126,10 @@ def disk(radius, dim=2):
     indices **= 2
     return (indices.sum(0) < (radius**2))
 
-def dilate(A, Bc=None, out=None, output=None):
+def dilate(
+    A: NDArray[ScalarT], Bc: StructuringElement = None,
+    out: NDArray[ScalarT] | None = None, output: NDArray[ScalarT] | None = None,
+) -> NDArray[ScalarT]:
     '''
     Morphological dilation.
 
@@ -168,7 +176,10 @@ def dilate(A, Bc=None, out=None, output=None):
     output = _get_output(A, out, 'dilate', output=output)
     return _morph.dilate(A, Bc, output)
 
-def erode(A, Bc=None, out=None, output=None):
+def erode(
+    A: NDArray[ScalarT], Bc: StructuringElement = None,
+    out: NDArray[ScalarT] | None = None, output: NDArray[ScalarT] | None = None,
+) -> NDArray[ScalarT]:
     '''
     eroded = erode(A, Bc={3x3 cross}, out={np.empty_like(A)})
 
@@ -216,7 +227,10 @@ def erode(A, Bc=None, out=None, output=None):
     return _morph.erode(A, Bc, output)
 
 
-def cerode(f, g, Bc=None, out=None, output=None):
+def cerode(
+    f: Array, g: Array, Bc: StructuringElement = None,
+    out: Array | None = None, output: Array | None = None,
+) -> Array:
     '''
     conditionally_eroded = cerode(f, g, Bc={3x3 cross}, out={np.empty_like(f)})
 
@@ -261,7 +275,7 @@ def cerode(f, g, Bc=None, out=None, output=None):
     f = _morph.erode(f, Bc, out)
     return np.maximum(f, g, out=f)
 
-def cdilate(f, g, Bc=None, n=1):
+def cdilate(f: Array, g: Array, Bc: StructuringElement = None, n: int = 1) -> Array:
     """
     y = cdilate(f, g, Bc={3x3 cross}, n=1)
 
@@ -315,7 +329,34 @@ def cdilate(f, g, Bc=None, n=1):
     return f
 
 
-def cwatershed(surface, markers, Bc=None, return_lines=False):
+@overload
+def cwatershed(
+    surface: Array, markers: Array, Bc: StructuringElement = None,
+    return_lines: Literal[False] = False,
+) -> NDArray[np.int64]: ...
+
+@overload
+def cwatershed(
+    surface: Array, markers: Array, Bc: StructuringElement = None,
+    *, return_lines: Literal[True],
+) -> tuple[NDArray[np.int64], NDArray[np.bool_]]: ...
+
+@overload
+def cwatershed(
+    surface: Array, markers: Array, Bc: StructuringElement,
+    return_lines: Literal[True],
+) -> tuple[NDArray[np.int64], NDArray[np.bool_]]: ...
+
+@overload
+def cwatershed(
+    surface: Array, markers: Array, Bc: StructuringElement = None,
+    return_lines: bool = False,
+) -> NDArray[np.int64] | tuple[NDArray[np.int64], NDArray[np.bool_]]: ...
+
+def cwatershed(
+    surface: Array, markers: Array, Bc: StructuringElement = None,
+    return_lines: bool = False,
+) -> NDArray[np.int64] | tuple[NDArray[np.int64], NDArray[np.bool_]]:
     '''
     W = cwatershed(surface, markers, Bc=None, return_lines=False)
     W,WL = cwatershed(surface, markers, Bc=None, return_lines=True)
@@ -373,7 +414,7 @@ def cwatershed(surface, markers, Bc=None, return_lines=False):
     Bc = get_structuring_elem(surface, Bc)
     return _morph.cwatershed(surface, markers, Bc, bool(return_lines))
 
-def hitmiss(input, Bc, out=None, output=None):
+def hitmiss(input: Array, Bc: Array, out: Array | None = None, output: Array | None = None) -> Array:
     '''
     filtered = hitmiss(input, Bc, out=np.zeros_like(input))
 
@@ -452,7 +493,10 @@ def hitmiss(input, Bc, out=None, output=None):
     return _morph.hitmiss(input, Bc, out)
 
 
-def open(f, Bc=None, out=None, output=None):
+def open(
+    f: NDArray[ScalarT], Bc: StructuringElement = None,
+    out: NDArray[ScalarT] | None = None, output: NDArray[ScalarT] | None = None,
+) -> NDArray[ScalarT]:
     """
     y = open(f, Bc={3x3 cross}, out={np.empty_like(f)})
 
@@ -507,7 +551,10 @@ def open(f, Bc=None, out=None, output=None):
     return dilate(eroded.copy(), Bc, out=eroded)
 
 
-def close(f, Bc=None, out=None, output=None):
+def close(
+    f: NDArray[ScalarT], Bc: StructuringElement = None,
+    out: NDArray[ScalarT] | None = None, output: NDArray[ScalarT] | None = None,
+) -> NDArray[ScalarT]:
     """
     y = close(f, Bc={3x3 cross}, out={np.empty_like(f)})
 
@@ -551,7 +598,7 @@ def close(f, Bc=None, out=None, output=None):
     return erode(dilated.copy(), Bc, out=dilated)
 
 
-def close_holes(ref, Bc=None):
+def close_holes(ref: Array, Bc: StructuringElement = None) -> NDArray[np.bool_]:
     '''
     closed = close_holes(ref, Bc=None)
 
@@ -579,7 +626,10 @@ def close_holes(ref, Bc=None):
     return _morph.close_holes(ref, Bc)
 
 
-def majority_filter(img, N=3, out=None, output=None):
+def majority_filter(
+    img: ArrayLike, N: int = 3,
+    out: NDArray[np.bool_] | None = None, output: NDArray[np.bool_] | None = None,
+) -> NDArray[np.bool_]:
     '''
     filtered = majority_filter(img, N=3, out={np.empty(img.shape, bool)})
 
@@ -616,12 +666,15 @@ def majority_filter(img, N=3, out=None, output=None):
     return _morph.majority_filter(img, N, output)
 
 
-def _remove_centre(Bc):
+def _remove_centre(Bc: NDArray[ScalarT]) -> NDArray[ScalarT]:
     index = [s//2 for s in Bc.shape]
     Bc[tuple(index)] = False
     return Bc
 
-def locmax(f, Bc=None, out=None, output=None):
+def locmax(
+    f: Array, Bc: StructuringElement = None,
+    out: NDArray[np.bool_] | None = None, output: NDArray[np.bool_] | None = None,
+) -> NDArray[np.bool_]:
     '''
     filtered = locmax(f, Bc={3x3 cross}, out={np.empty(f.shape, bool)})
 
@@ -661,7 +714,10 @@ def locmax(f, Bc=None, out=None, output=None):
     return _morph.locmin_max(f, Bc, output, False)
 
 
-def locmin(f, Bc=None, out=None, output=None):
+def locmin(
+    f: Array, Bc: StructuringElement = None,
+    out: NDArray[np.bool_] | None = None, output: NDArray[np.bool_] | None = None,
+) -> NDArray[np.bool_]:
     '''
     filtered = locmin(f, Bc={3x3 cross}, out={np.empty(f.shape, bool)})
 
@@ -697,7 +753,10 @@ def locmin(f, Bc=None, out=None, output=None):
     return _morph.locmin_max(f, Bc, output, True)
 
 
-def regmin(f, Bc=None, out=None, output=None):
+def regmin(
+    f: Array, Bc: StructuringElement = None,
+    out: NDArray[np.bool_] | None = None, output: NDArray[np.bool_] | None = None,
+) -> NDArray[np.bool_]:
     '''
     filtered = regmin(f, Bc={3x3 cross}, out={np.empty(f.shape, bool)})
 
@@ -729,7 +788,10 @@ def regmin(f, Bc=None, out=None, output=None):
     return _morph.regmin_max(f, Bc, output, True)
 
 
-def regmax(f, Bc=None, out=None, output=None):
+def regmax(
+    f: Array, Bc: StructuringElement = None,
+    out: NDArray[np.bool_] | None = None, output: NDArray[np.bool_] | None = None,
+) -> NDArray[np.bool_]:
     '''
     filtered = regmax(f, Bc={3x3 cross}, out={np.empty(f.shape, bool)})
 
@@ -773,7 +835,9 @@ def regmax(f, Bc=None, out=None, output=None):
     output = _get_output(f, out, 'regmax', np.bool_, output=output)
     return _morph.regmin_max(f, Bc, output, False)
 
-def subm(a, b, out=None):
+def subm(
+    a: NDArray[ScalarT], b: NDArray[ScalarT], out: NDArray[ScalarT] | None = None,
+) -> NDArray[ScalarT]:
     '''
     c = subm(a, b, out={None})
 
@@ -817,7 +881,9 @@ def subm(a, b, out=None):
     return _morph.subm(out, b)
 
 
-def tophat_close(f, Bc=None, out=None):
+def tophat_close(
+    f: NDArray[ScalarT], Bc: StructuringElement = None, out: NDArray[ScalarT] | None = None,
+) -> NDArray[ScalarT]:
     '''
     fclosed = tophat_close(f, Bc={3x3 cross}, out={new array})
 
@@ -851,7 +917,9 @@ def tophat_close(f, Bc=None, out=None):
     fc = close(f, Bc)
     return subm(fc, f, out=out)
 
-def tophat_open(f, Bc=None, out=None):
+def tophat_open(
+    f: NDArray[ScalarT], Bc: StructuringElement = None, out: NDArray[ScalarT] | None = None,
+) -> NDArray[ScalarT]:
     '''
     fopen = tophat_open(f, Bc={3x3 cross}, out={new array})
 
@@ -886,7 +954,7 @@ def tophat_open(f, Bc=None, out=None):
     return subm(f, fo, out=out)
 
 
-def circle_se(radius):
+def circle_se(radius: int) -> NDArray[np.bool_]:
     '''
     circle = circle_se(radius)
 

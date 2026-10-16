@@ -5,10 +5,12 @@ This backend is used by ``mahotas.io`` when the ``imread`` package is not
 installed, but Pillow (or PIL) is.
 '''
 import numpy as np
+
+from .._typing import Array, Path
 import mahotas as mh
 from PIL import Image
 
-def imread(filename, as_grey=False):
+def imread(filename: Path, as_grey: bool | None = False) -> Array:
     '''Read an image into a ndarray from a file.
 
     This function depends on PIL (or Pillow) being installed.
@@ -33,7 +35,7 @@ def imread(filename, as_grey=False):
         array = mh.colors.rgb2grey(array)
     return array
 
-def imsave(filename, array):
+def imsave(filename: Path, array: Array) -> None:
     '''
     Writes `array` into file `filename`
 
@@ -54,4 +56,3 @@ def imsave(filename, array):
     '''
     im = Image.fromarray(array)
     im.save(filename)
-

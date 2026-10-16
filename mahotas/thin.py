@@ -5,10 +5,13 @@
 # License: MIT (see COPYING file)
 
 import numpy as np
+from numpy.typing import NDArray
+
+from ._typing import ScalarT
 
 __all__ = ['thin']
 
-def thin(binimg, max_iter=-1):
+def thin(binimg: NDArray[ScalarT], max_iter: int = -1) -> NDArray[ScalarT]:
     """
     skel = thin(binimg, max_iter=-1)
 
@@ -45,4 +48,3 @@ def thin(binimg, max_iter=-1):
     _thin(image_exp, imagebuf, int(max_iter))
     res[min0:max0,min1:max1] = image_exp[1:r+1, 1:c+1]
     return res
-

@@ -4,7 +4,12 @@
 # License: MIT (see COPYING file)
 
 
+from collections.abc import Iterable, Iterator
+
 import numpy as np
+from numpy.typing import NDArray
+
+from .._typing import Array
 from . import _texture
 from ..internal import _verify_is_integer_type
 
@@ -14,22 +19,22 @@ __all__ = [
     'cooccurence',
     ]
 
-def _entropy(p):
+def _entropy(p: Array) -> np.float64:
     p = p.ravel()
     p1 = p.copy()
     p1 += (p==0)
     return -np.dot(np.log2(p1), p)
 
 
-def haralick(f,
-            ignore_zeros=False,
-            preserve_haralick_bug=False,
-            compute_14th_feature=False,
-            return_mean=False,
-            return_mean_ptp=False,
-            use_x_minus_y_variance=False,
-            distance=1
-            ):
+def haralick(f: Array,
+            ignore_zeros: bool = False,
+            preserve_haralick_bug: bool = False,
+            compute_14th_feature: bool = False,
+            return_mean: bool = False,
+            return_mean_ptp: bool = False,
+            use_x_minus_y_variance: bool = False,
+            distance: int = 1
+            ) -> NDArray[np.float64]:
     '''
     feats = haralick(f,
             ignore_zeros=False,
@@ -159,7 +164,7 @@ def haralick(f,
         raise ValueError('mahotas.texture.haralick: Can only handle 2D and 3D images.')
     fm1 = int(f.max()) + 1
     cmat = np.empty((fm1, fm1), np.int32)
-    def all_cmatrices():
+    def all_cmatrices() -> Iterator[NDArray[np.int32]]:
         for dir in range(nr_dirs):
             cooccurence(f, dir, cmat, symmetric=True, distance=distance)
             yield cmat
@@ -172,14 +177,14 @@ def haralick(f,
                         use_x_minus_y_variance=use_x_minus_y_variance,
                         )
 
-def haralick_features(cmats,
-                    ignore_zeros=False,
-                    preserve_haralick_bug=False,
-                    compute_14th_feature=False,
-                    return_mean=False,
-                    return_mean_ptp=False,
-                    use_x_minus_y_variance=False,
-                    ):
+def haralick_features(cmats: Iterable[Array],
+                    ignore_zeros: bool = False,
+                    preserve_haralick_bug: bool = False,
+                    compute_14th_feature: bool = False,
+                    return_mean: bool = False,
+                    return_mean_ptp: bool = False,
+                    use_x_minus_y_variance: bool = False,
+                    ) -> NDArray[np.float64]:
     '''
     features = haralick_features(cmats,
                     ignore_zeros=False,
@@ -420,7 +425,10 @@ _3d_deltas = [
     (1, 1,-1),
     (1,-1,-1) ]
 
-def cooccurence(f, direction, output=None, symmetric=True, distance=1):
+def cooccurence(
+    f: Array, direction: int, output: NDArray[np.int32] | None = None,
+    symmetric: bool = True, distance: int = 1,
+) -> NDArray[np.int32]:
     '''
     cooccurence_matrix = cooccurence(f,
                             direction,
@@ -494,4 +502,3 @@ def cooccurence(f, direction, output=None, symmetric=True, distance=1):
         Bc[y + distance, x + distance, z + distance] = 1
     _texture.cooccurence(f, output, Bc, symmetric)
     return output
-

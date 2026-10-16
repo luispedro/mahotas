@@ -4,7 +4,10 @@
 #
 # License: MIT (see COPYING file)
 
+from typing import Literal, overload
+
 import numpy as np
+from numpy.typing import ArrayLike, NDArray
 import mahotas as mh
 from . import convolve, gaussian_filter
 
@@ -23,7 +26,13 @@ __all__ = [
     'dog',
     ]
 
-def sobel(img, just_filter=False):
+@overload
+def sobel(img: ArrayLike, just_filter: Literal[True]) -> NDArray[np.float64]: ...
+
+@overload
+def sobel(img: ArrayLike, just_filter: bool = False) -> NDArray[np.bool_] | NDArray[np.float64]: ...
+
+def sobel(img: ArrayLike, just_filter: bool = False) -> NDArray[np.bool_] | NDArray[np.float64]:
     '''
     edges = sobel(img, just_filter=False)
 
@@ -70,7 +79,31 @@ def sobel(img, just_filter=False):
     thresh = 2*np.sqrt(filtered.mean())
     return mh.regmax(filtered) * (np.sqrt(filtered) > thresh)
 
-def dog(img, sigma1 = 2, multiplier = 1.001, just_filter = False):
+@overload
+def dog(
+    img: ArrayLike, sigma1: float = 2, multiplier: float = 1.001,
+    just_filter: Literal[False] = False,
+) -> NDArray[np.bool_]: ...
+
+@overload
+def dog(
+    img: ArrayLike, sigma1: float = 2, multiplier: float = 1.001,
+    *, just_filter: Literal[True],
+) -> NDArray[np.float64]: ...
+
+@overload
+def dog(
+    img: ArrayLike, sigma1: float, multiplier: float, just_filter: Literal[True],
+) -> NDArray[np.float64]: ...
+
+@overload
+def dog(
+    img: ArrayLike, sigma1: float = 2, multiplier: float = 1.001, just_filter: bool = False,
+) -> NDArray[np.bool_] | NDArray[np.float64]: ...
+
+def dog(
+    img: ArrayLike, sigma1: float = 2, multiplier: float = 1.001, just_filter: bool = False,
+) -> NDArray[np.bool_] | NDArray[np.float64]:
     '''
     edges = dog(img, sigma1=2, multiplier=1.001, just_filter=False)
 

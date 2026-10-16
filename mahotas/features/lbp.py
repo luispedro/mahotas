@@ -5,6 +5,9 @@
 # License: MIT (see COPYING file)
 
 import numpy as np
+from numpy.typing import ArrayLike, NDArray
+
+from .._typing import Array
 from ..histogram import fullhistogram
 
 __all__ = [
@@ -12,7 +15,10 @@ __all__ = [
     'lbp_transform',
     ]
 
-def lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=True):
+def lbp_transform(
+    image: ArrayLike, radius: float, points: int,
+    ignore_zeros: bool = False, preserve_shape: bool = True,
+) -> NDArray[np.uint32]:
     '''
     transformed = lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=True)
 
@@ -66,7 +72,7 @@ def lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=True
 
     if ignore_zeros:
         Y,X = np.nonzero(image)
-        def select(im):
+        def select(im: Array) -> Array:
             return im[Y,X].ravel()
     else:
         select = np.ravel
@@ -86,7 +92,7 @@ def lbp_transform(image, radius, points, ignore_zeros=False, preserve_shape=True
         codes = codes.reshape(image.shape)
     return codes
 
-def count_binary1s(array):
+def count_binary1s(array: ArrayLike) -> Array:
     '''
     one_count = count_binary1s(array)
 
@@ -117,7 +123,7 @@ def count_binary1s(array):
     return counts
 
 
-def lbp(image, radius, points, ignore_zeros=False):
+def lbp(image: ArrayLike, radius: float, points: int, ignore_zeros: bool = False) -> NDArray[np.float64]:
     '''
     features = lbp(image, radius, points, ignore_zeros=False)
 
@@ -167,7 +173,7 @@ def lbp(image, radius, points, ignore_zeros=False):
     compressed = np.append(compressed, np.zeros(npivots - len(compressed)))
     return compressed
 
-def lbp_names(radius, points):
+def lbp_names(radius: float, points: int) -> list[str]:
     '''Return list of names (string) for LBP features
 
     Parameters
@@ -193,4 +199,3 @@ def lbp_names(radius, points):
     pivots = (codes == iters)
     npivots = np.sum(pivots)
     return [f'lbp_r{radius}_p{points}_{i}' for i in range(npivots)]
-

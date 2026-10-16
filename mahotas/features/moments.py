@@ -3,10 +3,18 @@
 # 
 # License: MIT (see COPYING file)
 
+from collections.abc import Sequence
+from typing import Any
+
 import numpy as np
 
+from .._typing import Array
+
 __all__ = ['moments']
-def moments(img, p0, p1, cm=None, convert_to_float=True, normalize=False, normalise=False):
+def moments(
+    img: Array, p0: float, p1: float, cm: Sequence[float] | Array | None = None,
+    convert_to_float: bool = True, normalize: bool = False, normalise: bool = False,
+) -> np.floating[Any] | np.complexfloating[Any, Any]:
     '''
     m = moments(img, p0, p1, cm=(0, 0), convert_to_float=True, normalize=False)
 
@@ -72,4 +80,3 @@ def moments(img, p0, p1, cm=None, convert_to_float=True, normalize=False, normal
     if normalize:
         p /= p.sum()
     return np.dot(inter, p)
-

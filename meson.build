@@ -44,6 +44,7 @@ endif
 python_sources = files(
     'mahotas/__init__.py',
     'mahotas/_filters.py',
+    'mahotas/_typing.py',
     'mahotas/bbox.py',
     'mahotas/bwperim.py',
     'mahotas/center_of_mass.py',
@@ -132,14 +133,18 @@ python_sources = files(
     'mahotas/tests/test_texture.py',
     'mahotas/tests/test_thin.py',
     'mahotas/tests/test_thresholding.py',
+    'mahotas/tests/test_typing.py',
     'mahotas/tests/test_watershed.py',
     'mahotas/tests/test_zernike.py',
     'mahotas/tests/utils.py',
+    'mahotas/tests/typing_api.py',
     'mahotas/thin.py',
     'mahotas/thresholding.py',
 )
 
 package_data = files(
+    'mahotas/py.typed',
+    'mahotas/io/__init__.pyi',
     'mahotas/demos/data/DepartmentStore.jpg',
     'mahotas/demos/data/lena.jpg',
     'mahotas/demos/data/luispedro.jpg',

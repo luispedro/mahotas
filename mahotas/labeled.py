@@ -3,7 +3,12 @@
 #
 # LICENSE: MIT
 
+from typing import Literal, overload
+
 import numpy as np
+from numpy.typing import ArrayLike, NDArray
+
+from ._typing import Array, BorderMode, ScalarT, StructuringElement
 from .morph import get_structuring_elem
 from . import _labeled
 from .internal import _get_output
@@ -29,7 +34,10 @@ __all__ = [
     'remove_regions_where',
     ]
 
-def label(array, Bc=None, out=None, output=None):
+def label(
+    array: Array, Bc: StructuringElement = None,
+    out: NDArray[np.int32] | None = None, output: NDArray[np.int32] | None = None,
+) -> tuple[NDArray[np.int32], int]:
     '''
     labeled, nr_objects = label(array, Bc={3x3 cross}, out={new array})
 
@@ -77,7 +85,7 @@ def label(array, Bc=None, out=None, output=None):
     nr_objects = _labeled.label(output, Bc)
     return output, nr_objects
 
-def relabel(labeled, inplace=False):
+def relabel(labeled: Array, inplace: bool = False) -> tuple[NDArray[np.intc], int]:
     '''
     relabeled, nr_objs = relabel(labeled, inplace=False)
 
@@ -118,7 +126,7 @@ def relabel(labeled, inplace=False):
     n = _labeled.relabel(labeled)
     return labeled, n
 
-def is_same_labeling(labeled0, labeled1):
+def is_same_labeling(labeled0: ArrayLike, labeled1: ArrayLike) -> bool:
     '''
     same = is_same_labeling(labeled0, labeled1)
 
@@ -152,7 +160,7 @@ def is_same_labeling(labeled0, labeled1):
     return _labeled.is_same_labeling(labeled0, labeled1)
 
 
-def remove_regions(labeled, regions, inplace=False):
+def remove_regions(labeled: Array, regions: ArrayLike, inplace: bool = False) -> NDArray[np.intc]:
     '''
     removed = remove_regions(labeled, regions, inplace=False)
 
@@ -199,7 +207,7 @@ def remove_regions(labeled, regions, inplace=False):
     return labeled
 
 
-def remove_regions_where(labeled, conditions, inplace=False):
+def remove_regions_where(labeled: Array, conditions: ArrayLike, inplace: bool = False) -> NDArray[np.intc]:
     '''Remove regions based on a boolean array
 
     A region is removed if ``conditions[region-id]`` evaluates true.
@@ -240,7 +248,10 @@ def remove_regions_where(labeled, conditions, inplace=False):
     return remove_regions(labeled, regions, inplace=inplace)
 
 
-def remove_bordering(labeled, rsize=1, out=None, output=None):
+def remove_bordering(
+    labeled: NDArray[ScalarT], rsize: int | tuple[int, ...] = 1,
+    out: NDArray[ScalarT] | None = None, output: NDArray[ScalarT] | None = None,
+) -> NDArray[ScalarT]:
     '''
     slabeled = remove_bordering(labeled, rsize=1, out={np.empty_like(labeled)})
 
@@ -294,7 +305,25 @@ def remove_bordering(labeled, rsize=1, out=None, output=None):
     return out
 
 
-def border(labeled, i, j, Bc=None, out=None, always_return=True, output=None):
+@overload
+def border(
+    labeled: Array, i: int, j: int, Bc: StructuringElement = None,
+    out: NDArray[np.bool_] | None = None, always_return: Literal[True] = True,
+    output: NDArray[np.bool_] | None = None,
+) -> NDArray[np.bool_]: ...
+
+@overload
+def border(
+    labeled: Array, i: int, j: int, Bc: StructuringElement = None,
+    out: NDArray[np.bool_] | None = None, always_return: bool = True,
+    output: NDArray[np.bool_] | None = None,
+) -> NDArray[np.bool_] | None: ...
+
+def border(
+    labeled: Array, i: int, j: int, Bc: StructuringElement = None,
+    out: NDArray[np.bool_] | None = None, always_return: bool = True,
+    output: NDArray[np.bool_] | None = None,
+) -> NDArray[np.bool_] | None:
     '''
     border_img = border(labeled, i, j, Bc={3x3 cross}, out={np.zeros(labeled.shape, bool)}, always_return=True)
 
@@ -331,7 +360,11 @@ def border(labeled, i, j, Bc=None, out=None, always_return=True, output=None):
     output.fill(False)
     return _labeled.border(labeled, Bc, output, i, j, bool(always_return))
 
-def borders(labeled, Bc=None, out=None, output=None, mode='constant'):
+def borders(
+    labeled: Array, Bc: StructuringElement = None,
+    out: NDArray[np.bool_] | None = None, output: NDArray[np.bool_] | None = None,
+    mode: BorderMode = 'constant',
+) -> NDArray[np.bool_]:
     '''
     border_img = borders(labeled, Bc={3x3 cross}, out={np.zeros(labeled.shape, bool)})
 
@@ -363,7 +396,7 @@ def borders(labeled, Bc=None, out=None, output=None, mode='constant'):
     return _labeled.borders(labeled, Bc, output, _checked_mode2int(mode, 0.0, 'borders'))
 
 
-def bwperim(bw, n=4, mode="constant"):
+def bwperim(bw: Array, n: StructuringElement = 4, mode: BorderMode = 'constant') -> NDArray[np.bool_]:
     '''
     perim = bwperim(bw, n=4)
 
@@ -404,7 +437,9 @@ def bwperim(bw, n=4, mode="constant"):
     # corresponding connectivity structuring element.
     return bw&borders(bw, n, mode=mode)
 
-def _as_labeled(array, labeled, funcname, inplace='unused'):
+def _as_labeled(
+    array: Array, labeled: Array, funcname: str, inplace: bool | Literal['unused'] = 'unused',
+) -> NDArray[np.intc]:
     '''
 
     labeled = _as_labeled(array, labeled, funcname, inplace='unused')
@@ -429,10 +464,10 @@ def _as_labeled(array, labeled, funcname, inplace='unused'):
     return labeled
 
 
-def _convert_labeled(labeled):
+def _convert_labeled(labeled: ArrayLike) -> NDArray[np.intc]:
     return np.require(labeled, dtype=np.intc, requirements="CW")
 
-def labeled_sum(array, labeled, minlength=None):
+def labeled_sum(array: NDArray[ScalarT], labeled: Array, minlength: int | None = None) -> NDArray[ScalarT]:
     '''
     sums = labeled_sum(array, labeled, minlength=None)
 
@@ -465,7 +500,7 @@ def labeled_sum(array, labeled, minlength=None):
     return output
 
 
-def labeled_max(array, labeled):
+def labeled_max(array: NDArray[ScalarT], labeled: Array) -> NDArray[ScalarT]:
     '''
     maxs = labeled_max(array, labeled)
 
@@ -491,7 +526,7 @@ def labeled_max(array, labeled):
     return output
 
 
-def labeled_min(array, labeled):
+def labeled_min(array: NDArray[ScalarT], labeled: Array) -> NDArray[ScalarT]:
     '''
     mins = labeled_min(array, labeled)
 
@@ -516,7 +551,7 @@ def labeled_min(array, labeled):
     _labeled.labeled_max_min(array, labeled, output, False)
     return output
 
-def labeled_size(labeled):
+def labeled_size(labeled: Array) -> NDArray[np.uintc]:
     '''
     sizes = labeled_size(labeled)
 
@@ -552,7 +587,7 @@ _perimeter_magic = np.array([
 _perimeter_values = None
 
 # This implementation was adapted from scikit-image's implementation
-def perimeter(bwimage, n=4, mode="constant"):
+def perimeter(bwimage: Array, n: StructuringElement = 4, mode: BorderMode = 'constant') -> np.float64:
     """
     p = perimeter(bwimage, n=4, mode="constant")
 
@@ -600,7 +635,16 @@ def perimeter(bwimage, n=4, mode="constant"):
     return np.dot(histogram[:size], _perimeter_values[:size])
 
 
-def bbox(f, as_slice=False):
+@overload
+def bbox(f: Array, as_slice: Literal[False] = False) -> NDArray[np.intp]: ...
+
+@overload
+def bbox(f: Array, as_slice: Literal[True]) -> list[tuple[slice, ...]]: ...
+
+@overload
+def bbox(f: Array, as_slice: bool) -> NDArray[np.intp] | list[tuple[slice, ...]]: ...
+
+def bbox(f: Array, as_slice: bool = False) -> NDArray[np.intp] | list[tuple[slice, ...]]:
     '''
     Bounding boxes of all objects in a labeled array.
 
@@ -639,7 +683,10 @@ def bbox(f, as_slice=False):
         output = [tuple([slice(s,e) for s,e in r.reshape((-1,2))]) for r in output]
     return output
 
-def filter_labeled(labeled, remove_bordering=False, min_size=None, max_size=None):
+def filter_labeled(
+    labeled: Array, remove_bordering: bool = False,
+    min_size: int | None = None, max_size: int | None = None,
+) -> tuple[NDArray[np.intc], int]:
     '''Filter labeled regions based on a series of conditions
 
     .. versionadded :: 1.4.1

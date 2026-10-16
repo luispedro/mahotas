@@ -2,10 +2,17 @@
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 #
 # License: MIT (see COPYING file)
+from typing import Any
 import warnings
 import numpy as np
+from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-def _get_output(array, out, fname, dtype=None, output=None):
+from ._typing import Array
+
+def _get_output(
+    array: Array, out: Array | None, fname: str,
+    dtype: DTypeLike = None, output: Array | None = None,
+) -> Array:
     '''
     out = _get_output(array, out, fname, dtype=None, output=None)
 
@@ -60,7 +67,7 @@ def _get_output(array, out, fname, dtype=None, output=None):
         raise ValueError(f'mahotas.{fname}: `out` is not c-array{detail}')
     return out
 
-def _get_axis(array, axis, fname):
+def _get_axis(array: Array, axis: int, fname: str) -> int:
     '''
     axis = _get_axis(array, axis, fname)
 
@@ -84,7 +91,7 @@ def _get_axis(array, axis, fname):
         raise ValueError(f'mahotas.{fname}: `axis` is out of bounds (maximum was {array.ndim}, got {axis})')
     return axis
 
-def _normalize_sequence(array, value, fname):
+def _normalize_sequence(array: Array, value: Any, fname: str) -> list[Any]:
     '''
     values = _normalize_sequence(array, value, fname)
 
@@ -111,7 +118,7 @@ def _normalize_sequence(array, value, fname):
         raise ValueError(f'mahotas.{fname}: argument is sequence, but has wrong size ({len(value)} for an array of {array.ndim} dimensions)')
     return value
 
-def _verify_is_floatingpoint_type(A, function_name):
+def _verify_is_floatingpoint_type(A: Array, function_name: str) -> None:
     '''
     _verify_is_integer_type(array, "function")
 
@@ -127,7 +134,7 @@ def _verify_is_floatingpoint_type(A, function_name):
     if not np.issubdtype(A.dtype, np.floating):
         raise TypeError(f'mahotas.{function_name}: This function only accepts floating-point types (passed array of type {A.dtype})')
 
-def _verify_is_integer_type(A, function_name):
+def _verify_is_integer_type(A: Array, function_name: str) -> None:
     '''
     _verify_is_integer_type(array, "function")
 
@@ -144,7 +151,7 @@ def _verify_is_integer_type(A, function_name):
     if k not in "iub": # integer, unsigned integer, boolean
         raise TypeError(f'mahotas.{function_name}: This function only accepts integer types (passed array of type {A.dtype})')
 
-def _verify_is_nonnegative_integer_type(A, function_name):
+def _verify_is_nonnegative_integer_type(A: Array, function_name: str) -> None:
     '''
     _verify_is_nonnegative_integer_type(array, "function")
 
@@ -161,7 +168,7 @@ def _verify_is_nonnegative_integer_type(A, function_name):
     if A.dtype.kind == 'i' and not np.all(A >= 0):
         raise ValueError(f'mahotas.{function_name}: This function only accepts positive integer types (passed array of type {A.dtype})')
 
-def _make_binary(array):
+def _make_binary(array: ArrayLike) -> NDArray[np.bool_]:
     '''
     bin = _make_binary(array)
 
@@ -172,7 +179,7 @@ def _make_binary(array):
         return (array != 0)
     return array
 
-def _as_floating_point_array(array):
+def _as_floating_point_array(array: ArrayLike) -> NDArray[np.floating[Any]]:
     '''
     array = _as_floating_point_array(array)
 
@@ -184,10 +191,10 @@ def _as_floating_point_array(array):
     return array
 
 
-def _check_3(arr, funcname):
+def _check_3(arr: Array, funcname: str) -> None:
     if arr.ndim != 3 or arr.shape[2] != 3:
         raise ValueError(f'mahotas.{funcname}: this function expects an array of shape (h, w, 3), received an array of shape {arr.shape}.')
 
-def _check_2(arr, funcname):
+def _check_2(arr: Array, funcname: str) -> None:
     if arr.ndim != 2:
         raise ValueError(f'mahotas.{funcname}: this function can only handle 2D arrays (passed array with shape {arr.shape}).')

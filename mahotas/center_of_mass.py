@@ -4,10 +4,13 @@
 # License: MIT (see COPYING file)
 
 import numpy as np
+from numpy.typing import NDArray
+
+from ._typing import Array
 from . import _center_of_mass
 
 
-def center_of_mass(img, labels=None):
+def center_of_mass(img: Array, labels: Array | None = None) -> NDArray[np.float64]:
     '''
     coords = center_of_mass(img, labels=None)
 
@@ -49,4 +52,3 @@ def center_of_mass(img, labels=None):
     if labels is not None:
         return cm.reshape((-1, img.ndim))
     return cm
-

@@ -3,7 +3,9 @@
 # 
 # License: MIT (see COPYING file)
 
-mode2int = {
+from ._typing import BorderMode
+
+mode2int: dict[BorderMode, int] = {
     'nearest' : 0,
     'wrap' : 1,
     'reflect' : 2,
@@ -14,7 +16,7 @@ mode2int = {
 
 modes = frozenset(mode2int.keys())
 
-def _checked_mode2int(mode, cval, fname):
+def _checked_mode2int(mode: BorderMode, cval: float, fname: str) -> int:
     if mode not in modes:
         raise ValueError(f'mahotas.{fname}: `mode` not in {modes}')
     if mode == 'constant' and cval != 0.:
@@ -22,4 +24,3 @@ def _checked_mode2int(mode, cval, fname):
     return mode2int[mode]
 
 _check_mode = _checked_mode2int
-

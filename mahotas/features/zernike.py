@@ -4,14 +4,21 @@
 #
 # License: MIT (see COPYING file)
 
+from collections.abc import Sequence
+
 import numpy as np
+from numpy.typing import NDArray
+
+from .._typing import Array
 
 from ..center_of_mass import center_of_mass
 from . import _zernike
 
 __all__ = ['zernike', 'zernike_moments']
 
-def zernike(im, degree, radius, cm=None): # pragma: no cover
+def zernike(
+    im: Array, degree: int, radius: float, cm: Sequence[float] | Array | None = None,
+) -> NDArray[np.float64]: # pragma: no cover
     """
     zvalues = zernike(im, degree, radius, cm={center_of_mass(im)})
 
@@ -25,7 +32,9 @@ def zernike(im, degree, radius, cm=None): # pragma: no cover
     warnings.warn('mahotas.zernike.zernike: This interface is deprecated. Switch the order of your arguments and use ``zernike_moments``', DeprecationWarning)
     return zernike_moments(im, radius, degree, cm)
 
-def zernike_moments(im, radius, degree=8, cm=None):
+def zernike_moments(
+    im: Array, radius: float, degree: int = 8, cm: Sequence[float] | Array | None = None,
+) -> NDArray[np.float64]:
     """
     zvalues = zernike_moments(im, radius, degree=8, cm={center_of_mass(im)})
 
@@ -77,7 +86,7 @@ def zernike_moments(im, radius, degree=8, cm=None):
     Y,X = np.mgrid[:im.shape[0],:im.shape[1]]
     P = im.ravel()
 
-    def rescale(C, centre):
+    def rescale(C: Array, centre: float) -> NDArray[np.float64]:
         Cn = C.astype(np.double)
         Cn -= centre
         Cn /= radius
@@ -111,4 +120,3 @@ def zernike_moments(im, radius, degree=8, cm=None):
                 z = _zernike.znl(Dn, Ans[l], frac_center, n, l)
                 zvalues.append(abs(z))
     return np.array(zvalues)
-

@@ -116,3 +116,22 @@ initialised to zero).
 
 Most of the functions follow this architecture.
 
+Type hints
+----------
+
+The Python API has inline type hints using Python 3.11 syntax and
+``numpy.typing``. Array inputs are annotated as ``NDArray`` when an actual
+NumPy array is required, and as ``ArrayLike`` when the wrapper converts its
+input. Functions that preserve the input dtype use a type variable; fixed
+output dtypes are specified explicitly. Shape, contiguity, and value
+constraints are still checked at runtime.
+
+Shared aliases live in ``mahotas/_typing.py``. The ``py.typed`` marker makes
+the annotations available to type checkers in installed packages. The
+optional I/O backend is described by ``mahotas/io/__init__.pyi`` so that the
+common API remains typed regardless of which backend is installed.
+
+``mahotas/tests/test_typing.py`` checks annotation coverage and resolution.
+The static API smoke tests can be run with::
+
+    mypy --follow-imports=silent mahotas/tests/typing_api.py

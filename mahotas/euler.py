@@ -2,7 +2,11 @@
 # vim: set ts=4 sts=4 sw=4 expandtab smartindent:
 # License: MIT
 
+from typing import Literal
+
 import numpy as np
+
+from ._typing import Array, BorderMode
 from .convolve import convolve
 
 _euler_lookup4 = np.array([
@@ -24,7 +28,7 @@ _powers = np.array([
 
 __all__ = ['euler']
 
-def euler(f, n=8, mode='constant'):
+def euler(f: Array, n: Literal[4, 8] = 8, mode: BorderMode = 'constant') -> np.float64:
     '''
     euler_nr = euler(f, n=8)
 
@@ -74,4 +78,3 @@ def euler(f, n=8, mode='constant'):
         f = (f != 0)
     value = convolve(f.astype(_powers.dtype, copy=False), _powers, mode=mode)
     return lookup[value].sum()
-

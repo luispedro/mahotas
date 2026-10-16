@@ -36,12 +36,17 @@ Interpolation
 This module was adapted from scipy.ndimage
 '''
 
+from typing import Any, overload
+
 import numpy as np
+from numpy.typing import ArrayLike, DTypeLike, NDArray
+
+from ._typing import Array, BorderMode, ScalarT
 from . import internal
 from . import _interpolate
 from ._filters import mode2int, modes, _check_mode
 
-def _check_interpolate(array, order, funcname):
+def _check_interpolate(array: ArrayLike, order: int, funcname: str) -> Array:
     if not (0 <= order <= 5):
         raise ValueError(f'mahotas.interpolate.{funcname}: spline order not supported')
 
@@ -50,7 +55,11 @@ def _check_interpolate(array, order, funcname):
         raise TypeError(f'mahotas.interpolate.{funcname}: Complex type not supported')
     return array
 
-def spline_filter1d(array, order=3, axis=-1, out=None, dtype=np.float64, output=None):
+def spline_filter1d(
+    array: ArrayLike, order: int = 3, axis: int = -1,
+    out: Array | type[Any] | None = None, dtype: DTypeLike = np.float64,
+    output: Array | type[Any] | None = None,
+) -> Array:
     """
     Calculates a one-dimensional spline filter along the given axis.
 
@@ -102,7 +111,10 @@ def spline_filter1d(array, order=3, axis=-1, out=None, dtype=np.float64, output=
     return output
 
 
-def spline_filter(array, order=3, out=None, dtype=np.float64, output=None):
+def spline_filter(
+    array: ArrayLike, order: int = 3, out: Array | type[Any] | None = None,
+    dtype: DTypeLike = np.float64, output: Array | type[Any] | None = None,
+) -> Array:
     """
     Multi-dimensional spline filter.
 
@@ -160,7 +172,7 @@ def spline_filter(array, order=3, out=None, dtype=np.float64, output=None):
 
 
 
-def _maybe_filter(array, order, func, prefilter, dtype):
+def _maybe_filter(array: ArrayLike, order: int, func: str, prefilter: bool, dtype: DTypeLike) -> Array:
     array = _check_interpolate(array, order, func)
     if array.ndim < 1:
         raise ValueError(func+': array rank must be > 0')
@@ -170,7 +182,32 @@ def _maybe_filter(array, order, func, prefilter, dtype):
         # _interpolate.zoom_shift requires a C-contiguous array
         return np.ascontiguousarray(array, dtype=dtype)
 
-def zoom(array, zoom, out=None, order=3, mode='constant', cval=0.0, prefilter=True, output=None):
+@overload
+def zoom(
+    array: ArrayLike, zoom: ArrayLike, out: NDArray[ScalarT], order: int = 3,
+    mode: BorderMode = 'constant', cval: float = 0.0, prefilter: bool = True,
+    output: Array | None = None,
+) -> NDArray[ScalarT]: ...
+
+@overload
+def zoom(
+    array: ArrayLike, zoom: ArrayLike, out: None = None, order: int = 3,
+    mode: BorderMode = 'constant', cval: float = 0.0, prefilter: bool = True,
+    output: None = None,
+) -> NDArray[np.float64]: ...
+
+@overload
+def zoom(
+    array: ArrayLike, zoom: ArrayLike, out: Array | None = None, order: int = 3,
+    mode: BorderMode = 'constant', cval: float = 0.0, prefilter: bool = True,
+    output: Array | None = None,
+) -> Array: ...
+
+def zoom(
+    array: ArrayLike, zoom: ArrayLike, out: Array | None = None, order: int = 3,
+    mode: BorderMode = 'constant', cval: float = 0.0, prefilter: bool = True,
+    output: Array | None = None,
+) -> Array:
     """
     Zoom an array.
 
@@ -254,8 +291,11 @@ def zoom(array, zoom, out=None, order=3, mode='constant', cval=0.0, prefilter=Tr
     return out
 
 
-def shift(array, shift, out=None, order=3, mode='constant', cval=0.0,
-          prefilter=True, output=None):
+def shift(
+    array: ArrayLike, shift: ArrayLike, out: NDArray[np.float64] | None = None,
+    order: int = 3, mode: BorderMode = 'constant', cval: float = 0.0,
+    prefilter: bool = True, output: NDArray[np.float64] | None = None,
+) -> NDArray[np.float64]:
     """
     Shift an array.
 
@@ -304,5 +344,3 @@ def shift(array, shift, out=None, order=3, mode='constant', cval=0.0,
     shift *= -1
     _interpolate.zoom_shift(array, None, shift, output, order, mode2int[mode], cval)
     return output
-
-

@@ -12,6 +12,9 @@ nuclear
     A fluorescent microscopy image of cell nuclei
 '''
 from importlib import resources
+from importlib.resources.abc import Traversable
+
+from .._typing import Array
 
 _demo_images  = {
     'wally' : 'DepartmentStore.jpg',
@@ -22,10 +25,10 @@ _demo_images  = {
     'nuclear' : 'nuclear.png',
 }
 
-def _data_file(name):
+def _data_file(name: str) -> Traversable:
     return resources.files(__name__) / 'data' / name
 
-def image_path(name):
+def image_path(name: str) -> str:
     '''
     Return the full path to a demo image file
 
@@ -49,7 +52,7 @@ def image_path(name):
     return str(_data_file(name))
 
 
-def load(image_name, as_grey=None):
+def load(image_name: str, as_grey: bool | None = None) -> Array:
     '''
     Loads a demo image
 
@@ -73,7 +76,7 @@ def load(image_name, as_grey=None):
     with resources.as_file(_data_file(_demo_images[image_name.lower()])) as fname:
         return mh.imread(str(fname), as_grey=as_grey)
 
-def nuclear_image():
+def nuclear_image() -> Array:
     '''
     Loads the nuclear example image
 

@@ -1,4 +1,4 @@
-def run(verbose=False):
+def run(verbose: bool = False) -> int:
     '''
     Run the mahotas test suite (this requires ``pytest``)
 

@@ -59,6 +59,9 @@ namespace; the others must be accessed as ``mahotas.thresholding.<name>``.
 '''
 
 import numpy as np
+from numpy.typing import NDArray
+
+from ._typing import Array
 from .histogram import fullhistogram
 from . import _histogram
 from .internal import _verify_is_integer_type
@@ -71,7 +74,7 @@ __all__ = [
     ]
 
 
-def otsu(img, ignore_zeros=False):
+def otsu(img: Array, ignore_zeros: bool = False) -> int:
     """
     T = otsu(img, ignore_zeros=False)
 
@@ -128,7 +131,7 @@ def otsu(img, ignore_zeros=False):
     return _histogram.otsu(hist)
 
 
-def rc(img, ignore_zeros=False):
+def rc(img: Array, ignore_zeros: bool = False) -> int | np.float64:
     """
     T = rc(img, ignore_zeros=False)
 
@@ -187,7 +190,7 @@ def rc(img, ignore_zeros=False):
         t += 1
     return res
 
-def soft_threshold(f, tval):
+def soft_threshold(f: Array, tval: float) -> Array:
     '''
     thresholded = soft_threshold(f, tval)
 
@@ -228,7 +231,9 @@ def soft_threshold(f, tval):
     f += tval * (f < -tval)
     return f
 
-def bernsen(f, radius, contrast_threshold, gthresh=None):
+def bernsen(
+    f: Array, radius: int, contrast_threshold: float, gthresh: float | None = None,
+) -> NDArray[np.bool_]:
     '''
     thresholded = bernsen(f, radius, contrast_threshold, gthresh={128})
 
@@ -262,7 +267,7 @@ def bernsen(f, radius, contrast_threshold, gthresh=None):
         gthresh = 128
     return gbernsen(f, circle_se(radius), contrast_threshold, gthresh)
 
-def gbernsen(f, se, contrast_threshold, gthresh):
+def gbernsen(f: Array, se: Array, contrast_threshold: float, gthresh: float) -> NDArray[np.bool_]:
     '''
     thresholded = gbernsen(f, se, contrast_threshold, gthresh)
 
@@ -295,4 +300,3 @@ def gbernsen(f, se, contrast_threshold, gthresh):
     fptp = fmax - fmin
     fmean = fmax/2. + fmin/2. # Do not use (fmax + fmin) as that may overflow
     return np.choose(fptp < contrast_threshold, (f > fmean, f > gthresh))
-

@@ -3,7 +3,12 @@
 #
 # License: MIT (see COPYING file)
 
+from collections.abc import Sequence
+
 import numpy as np
+from numpy.typing import ArrayLike, NDArray
+
+from ._typing import Array, ScalarT
 
 __all__ = [
     'imresize',
@@ -11,7 +16,7 @@ __all__ = [
     'resize_rgb_to',
     ]
 
-def resize_to(im, nsize, order=3):
+def resize_to(im: NDArray[ScalarT], nsize: Sequence[int] | Array, order: int = 3) -> NDArray[ScalarT]:
     '''Resize image to a specified new size
 
     Parameters
@@ -41,7 +46,7 @@ def resize_to(im, nsize, order=3):
     return zoom(im, nsize, order=order, out=out)
 
 
-def resize_rgb_to(im, nsize, order=3):
+def resize_rgb_to(im: NDArray[ScalarT], nsize: Sequence[int] | Array, order: int = 3) -> NDArray[ScalarT]:
     '''Resize an RGB image to size ``nsize``
 
     Parameters
@@ -66,7 +71,7 @@ def resize_rgb_to(im, nsize, order=3):
     _check_3(im, 'resize_rgb_to')
     return np.dstack([resize_to(ch, nsize, order) for ch in im.transpose((2,0,1))])
 
-def imresize(img, nsize, order=3):
+def imresize(img: Array, nsize: ArrayLike, order: int = 3) -> NDArray[np.float64]:
     '''Resizes image
 
     This function works in two ways: if ``nsize`` is a tuple or list of

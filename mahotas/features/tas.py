@@ -5,6 +5,9 @@
 # License: MIT (see COPYING file)
 
 import numpy as np
+from numpy.typing import NDArray
+
+from .._typing import Array
 from ..convolve import convolve
 from ..thresholding import otsu
 
@@ -18,7 +21,7 @@ _M3 = np.ones((3, 3, 3))
 _M3[1,1,1] = _M3.sum() + 1
 _bins3 = np.arange(28)
 
-def _tas(img, thresh, margin):
+def _tas(img: Array, thresh: float, margin: float) -> Array:
     if len(img.shape) == 2:
         M = _M2
         bins = _bins2
@@ -30,7 +33,7 @@ def _tas(img, thresh, margin):
     else:
         raise ValueError(f'mahotas.tas: Cannot compute TAS for image of {len(img.shape)} dimensions')
 
-    def _ctas(img):
+    def _ctas(img: Array) -> Array:
         V = convolve(img.astype(np.uint8), M)
         values,_ = np.histogram(V, bins=bins)
         values = values[:saved]
@@ -39,7 +42,7 @@ def _tas(img, thresh, margin):
             return values/float(s)
         return values
 
-    def _compute(bimg):
+    def _compute(bimg: NDArray[np.bool_]) -> None:
         alltas.append(_ctas(bimg))
         allntas.append(_ctas(~bimg))
 
@@ -53,7 +56,7 @@ def _tas(img, thresh, margin):
 
     return np.concatenate(alltas + allntas)
 
-def tas(img):
+def tas(img: Array) -> Array:
     '''
     values = tas(img)
 
@@ -85,7 +88,7 @@ def tas(img):
     '''
     return _tas(img, 30, 30)
 
-def pftas(img, T=None):
+def pftas(img: Array, T: float | None = None) -> Array:
     '''
     values = pftas(img, T={mahotas.thresholding.otsu(img)})
 
@@ -133,4 +136,3 @@ def pftas(img, T=None):
     else:
         std = pixels.std()
     return _tas(img, T, std)
-

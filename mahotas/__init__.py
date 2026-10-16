@@ -121,7 +121,7 @@ short_citation_text = \
     Coelho, LP (2013). https://dx.doi.org/10.5334/jors.ac
 '''
 
-def citation(print_out=True, short=False):
+def citation(print_out: bool = True, short: bool = False) -> str:
     '''
     Return (and, by default, print) the reference to cite mahotas
 

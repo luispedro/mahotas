@@ -3,7 +3,12 @@
 # 
 # License: MIT (see COPYING file)
 
+from collections.abc import Sequence
+
 import numpy as np
+from numpy.typing import ArrayLike, NDArray
+
+from ._typing import Array, ScalarT
 from . import _convex
 
 __all__ = [
@@ -14,7 +19,9 @@ __all__ = [
     ]
 
 
-def line(p0, p1, canvas, color=1):
+def line(
+    p0: Sequence[int] | Array, p1: Sequence[int] | Array, canvas: Array, color: ArrayLike = 1,
+) -> None:
     '''
     line((y0,x0), (y1,x1), canvas, color=1)
 
@@ -61,7 +68,7 @@ def line(p0, p1, canvas, color=1):
             error += dx
 
 
-def fill_polygon(polygon, canvas, color=1):
+def fill_polygon(polygon: Sequence[Sequence[int]] | Array, canvas: Array, color: ArrayLike = 1) -> None:
     '''
     fill_polygon([(y0,x0), (y1,x1),...], canvas, color=1)
 
@@ -127,7 +134,7 @@ def fill_polygon(polygon, canvas, color=1):
             if stop > start:
                 canvas[y, start:stop] = color
 
-def convexhull(bwimg):
+def convexhull(bwimg: ArrayLike) -> NDArray[np.intp]:
     '''
     hull = convexhull(bwimg)
 
@@ -152,7 +159,7 @@ def convexhull(bwimg):
         raise ValueError('mahotas.polygon.convexhull: Only two-dimensional images supported')
     return _convex.convexhull(bwimg)
 
-def fill_convexhull(bwimg):
+def fill_convexhull(bwimg: NDArray[ScalarT]) -> NDArray[ScalarT]:
     '''
     hull = fill_convexhull(bwimg)
 
@@ -176,4 +183,3 @@ def fill_convexhull(bwimg):
     fill_polygon(points, canvas, black)
     canvas[bwimg != 0] = black
     return canvas
-

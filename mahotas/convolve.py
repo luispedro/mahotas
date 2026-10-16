@@ -4,7 +4,12 @@
 # License: MIT (see COPYING file)
 
 
+from collections.abc import Sequence
+
 import numpy as np
+from numpy.typing import ArrayLike, DTypeLike, NDArray
+
+from ._typing import Array, BorderMode, ScalarT, StructuringElement
 from . import _convolve
 from . import morph
 from .internal import _get_output, _get_axis, _normalize_sequence, _verify_is_floatingpoint_type, _as_floating_point_array
@@ -28,7 +33,10 @@ __all__ = [
     'laplacian_2D'
     ]
 
-def convolve(f, weights, mode='reflect', cval=0.0, out=None, output=None):
+def convolve(
+    f: NDArray[ScalarT], weights: Array, mode: BorderMode = 'reflect', cval: float = 0.0,
+    out: NDArray[ScalarT] | None = None, output: NDArray[ScalarT] | None = None,
+) -> NDArray[ScalarT]:
     '''
     convolved = convolve(f, weights, mode='reflect', cval=0.0, out={new array})
 
@@ -69,7 +77,10 @@ def convolve(f, weights, mode='reflect', cval=0.0, out=None, output=None):
     return _convolve.convolve(f, weights, output, mode2int[mode])
 
 
-def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None):
+def convolve1d(
+    f: NDArray[ScalarT], weights: ArrayLike, axis: int,
+    mode: BorderMode = 'reflect', cval: float = 0., out: NDArray[ScalarT] | None = None,
+) -> NDArray[ScalarT]:
     '''
     convolved = convolve1d(f, weights, axis, mode='reflect', cval=0.0, out={new array})
 
@@ -138,7 +149,10 @@ def convolve1d(f, weights, axis, mode='reflect', cval=0., out=None):
         return convolve(f, weights, mode=mode, cval=cval, out=out)
 
 
-def median_filter(f, Bc=None, mode='reflect', cval=0.0, out=None, output=None):
+def median_filter(
+    f: NDArray[ScalarT], Bc: Array | None = None, mode: BorderMode = 'reflect', cval: float = 0.0,
+    out: NDArray[ScalarT] | None = None, output: NDArray[ScalarT] | None = None,
+) -> NDArray[ScalarT]:
     '''
     median = median_filter(f, Bc={square}, mode='reflect', cval=0.0, out={np.empty(f.shape, f.dtype)})
 
@@ -177,7 +191,10 @@ def median_filter(f, Bc=None, mode='reflect', cval=0.0, out=None, output=None):
     _check_mode(mode, cval, 'median_filter')
     return _convolve.rank_filter(f, Bc, output, int(rank), mode2int[mode])
 
-def mean_filter(f, Bc, mode='ignore', cval=0.0, out=None):
+def mean_filter(
+    f: Array, Bc: StructuringElement, mode: BorderMode = 'ignore', cval: float = 0.0,
+    out: NDArray[np.float64] | None = None,
+) -> NDArray[np.float64]:
     '''mean = mean_filter(f, Bc, mode='ignore', cval=0.0, out=None)
 
     Mean filter. The value at ``mean[i,j]`` will be the mean of the values in
@@ -213,7 +230,11 @@ def mean_filter(f, Bc, mode='ignore', cval=0.0, out=None):
     return _convolve.mean_filter(f, Bc, out, mode2int[mode], cval)
 
 
-def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None, output=None):
+def rank_filter(
+    f: NDArray[ScalarT], Bc: StructuringElement, rank: int,
+    mode: BorderMode = 'reflect', cval: float = 0.0,
+    out: NDArray[ScalarT] | None = None, output: NDArray[ScalarT] | None = None,
+) -> NDArray[ScalarT]:
     '''
     ranked = rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None)
 
@@ -264,7 +285,10 @@ def rank_filter(f, Bc, rank, mode='reflect', cval=0.0, out=None, output=None):
     return _convolve.rank_filter(f, Bc, output, rank, mode2int[mode])
 
 
-def template_match(f, template, mode='reflect', cval=0., out=None, output=None):
+def template_match(
+    f: NDArray[ScalarT], template: Array, mode: BorderMode = 'reflect', cval: float = 0.,
+    out: NDArray[ScalarT] | None = None, output: NDArray[ScalarT] | None = None,
+) -> NDArray[ScalarT]:
     '''Match template to image
 
     match = template_match(f, template, mode='reflect', cval=0., out={np.empty_like(f)})
@@ -303,7 +327,7 @@ def template_match(f, template, mode='reflect', cval=0., out=None, output=None):
     _check_mode(mode, cval, 'template_match')
     return _convolve.template_match(f, template, output, mode2int[mode], 0)
 
-def find(f, template):
+def find(f: Array, template: Array) -> NDArray[np.bool_]:
     '''Match template to image exactly
 
     matches = find(f, template)
@@ -333,7 +357,11 @@ def find(f, template):
     return _convolve.find2d(f, template, out)
 
 
-def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., out=None, output=None):
+def gaussian_filter1d(
+    array: NDArray[ScalarT], sigma: float, axis: int = -1, order: int = 0,
+    mode: BorderMode = 'reflect', cval: float = 0.,
+    out: NDArray[ScalarT] | None = None, output: NDArray[ScalarT] | None = None,
+) -> NDArray[ScalarT]:
     """
     filtered = gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., out={np.empty_like(array)})
 
@@ -397,7 +425,11 @@ def gaussian_filter1d(array, sigma, axis=-1, order=0, mode='reflect', cval=0., o
     return convolve1d(array, weights, axis, mode, cval, out=out)
 
 
-def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out=None, output=None):
+def gaussian_filter(
+    array: ArrayLike, sigma: float | Sequence[float] | Array,
+    order: int | Sequence[int] | Array = 0, mode: BorderMode = 'reflect', cval: float = 0.,
+    out: Array | None = None, output: Array | None = None,
+) -> Array:
     """
     filtered = gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out={np.empty_like(array)})
 
@@ -460,7 +492,7 @@ def gaussian_filter(array, sigma, order=0, mode='reflect', cval=0., out=None, ou
         result[...] = output
     return result
 
-def _wavelet_array(f, inline, func):
+def _wavelet_array(f: ArrayLike, inline: bool, func: str) -> Array:
     f = _as_floating_point_array(f)
     if f.ndim != 2:
         raise ValueError(f'mahotas.convolve.{func}: Only works for 2D images')
@@ -470,7 +502,9 @@ def _wavelet_array(f, inline, func):
 
 
 
-def _wavelet_center_compute(oshape, border=0, dtype=None, cval=0.0):
+def _wavelet_center_compute(
+    oshape: Sequence[int] | Array, border: int = 0, dtype: DTypeLike = None, cval: float = 0.0,
+) -> tuple[NDArray[np.int_], list[slice]] | None:
     for c in range(1, 16+border):
         nshape = 2**(np.floor(np.log2(oshape))+c)
         nshape = nshape.astype(int, copy=False)
@@ -483,7 +517,7 @@ def _wavelet_center_compute(oshape, border=0, dtype=None, cval=0.0):
             position.append( slice(d, d + e) )
         return nshape, position
 
-def wavelet_center(f, border=0, dtype=float, cval=0.0):
+def wavelet_center(f: Array, border: int = 0, dtype: DTypeLike = float, cval: float = 0.0) -> Array:
     '''
     fc = wavelet_center(f, border=0, dtype=float, cval=0.0)
 
@@ -517,7 +551,9 @@ def wavelet_center(f, border=0, dtype=float, cval=0.0):
     return nimage
 
 
-def wavelet_decenter(w, oshape, border=0):
+def wavelet_decenter(
+    w: NDArray[ScalarT], oshape: Sequence[int] | Array, border: int = 0,
+) -> NDArray[ScalarT]:
     '''
     f = wavelet_decenter(w, oshape, border=0)
 
@@ -548,7 +584,7 @@ def wavelet_decenter(w, oshape, border=0):
 
 
 
-def haar(f, preserve_energy=True, inline=False):
+def haar(f: ArrayLike, preserve_energy: bool = True, inline: bool = False) -> Array:
     '''
     t = haar(f, preserve_energy=True, inline=False)
 
@@ -584,13 +620,13 @@ def haar(f, preserve_energy=True, inline=False):
     return f
 
 _daubechies_codes = [f'D{ci}' for ci in range(2,21,2)]
-def _daubechies_code(c):
+def _daubechies_code(c: str) -> int:
     try:
         return _daubechies_codes.index(c)
     except:
         raise ValueError(f'mahotas.convolve: Known daubechies codes are {_daubechies_codes}. You passed in {c}.')
 
-def daubechies(f, code, inline=False):
+def daubechies(f: ArrayLike, code: str, inline: bool = False) -> Array:
     '''
     filtered = daubechies(f, code, inline=False)
 
@@ -626,7 +662,7 @@ def daubechies(f, code, inline=False):
     return f
 
 
-def idaubechies(f, code, inline=False):
+def idaubechies(f: ArrayLike, code: str, inline: bool = False) -> Array:
     '''
     rfiltered = idaubechies(f, code, inline=False)
 
@@ -660,7 +696,7 @@ def idaubechies(f, code, inline=False):
     return f
 
 
-def ihaar(f, preserve_energy=True, inline=False):
+def ihaar(f: ArrayLike, preserve_energy: bool = True, inline: bool = False) -> Array:
     '''
     t = ihaar(f, preserve_energy=True, inline=False)
 
@@ -699,7 +735,7 @@ def ihaar(f, preserve_energy=True, inline=False):
         f *= 2.0
     return f
 
-def laplacian_2D(array, alpha = 0.2):
+def laplacian_2D(array: ArrayLike, alpha: float = 0.2) -> NDArray[np.float64]:
     """
     filtered = laplacian_2D(array, alpha = 0.2)
 

@@ -6,6 +6,9 @@
 # License: MIT (see COPYING file)
 
 import numpy as np
+from numpy.typing import ArrayLike, NDArray
+
+from ._typing import ScalarT
 
 from .internal import _check_3
 from . import _distance
@@ -16,7 +19,7 @@ __all__ = [
     'slic'
     ]
 
-def gvoronoi(labeled):
+def gvoronoi(labeled: NDArray[ScalarT]) -> NDArray[ScalarT]:
     '''
     segmented = gvoronoi(labeled)
 
@@ -47,7 +50,7 @@ def gvoronoi(labeled):
     return labeled.flat[orig]
 
 
-def slic(array, spacer=16, m=1.0, max_iters=128):
+def slic(array: ArrayLike, spacer: int = 16, m: float = 1.0, max_iters: int = 128) -> tuple[NDArray[np.intc], int]:
     '''Compute SLIC superpixel oversegmentation
 
     Note: This function operates on the array values. In the original

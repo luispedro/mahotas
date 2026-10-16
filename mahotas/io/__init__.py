@@ -14,6 +14,8 @@ them. If none is available, ``imread`` and ``imsave`` are replaced by
 functions which raise ``ImportError`` with installation instructions.
 '''
 
+from typing import Any, NoReturn
+
 _error_message = '''
 mahotas.%%s depends on one of (in order of preference):
 
@@ -39,7 +41,7 @@ Both are also available from conda-forge::
     conda install -c conda-forge imread
 
 Full error was: %s'''
-def error_imread(*args, **kwargs):
+def error_imread(*args: Any, **kwargs: Any) -> NoReturn:
     '''
     Placeholder for ``imread`` when no I/O backend is available
 
@@ -49,7 +51,7 @@ def error_imread(*args, **kwargs):
         Always, with a message explaining how to install a backend
     '''
     raise ImportError(_error_message % 'imread')
-def error_imsave(*args, **kwargs):
+def error_imsave(*args: Any, **kwargs: Any) -> NoReturn:
     '''
     Placeholder for ``imsave`` when no I/O backend is available
 
@@ -84,4 +86,3 @@ except (OSError, ImportError): # pragma: no cover
     _error_message %= e
     imread = error_imread
     imsave = error_imsave
-

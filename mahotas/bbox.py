@@ -3,10 +3,25 @@
 # 
 # License: MIT (see COPYING file)
 
+from typing import Literal, overload
+
 from . import _bbox
 import numpy as np
+from numpy.typing import NDArray
 
-def bbox(img, border=None, as_slice=False):
+from ._typing import Array, ScalarT
+
+@overload
+def bbox(img: Array, border: int | None = None, as_slice: Literal[False] = False) -> NDArray[np.intp]: ...
+
+@overload
+def bbox(
+    img: Array, border: int | None = None, as_slice: bool = False,
+) -> NDArray[np.intp] | tuple[slice, ...]: ...
+
+def bbox(
+    img: Array, border: int | None = None, as_slice: bool = False,
+) -> NDArray[np.intp] | tuple[slice, ...]:
     """
     min1,max1,min2,max2 = bbox(img, border={0}, as_slice={False})
 
@@ -59,7 +74,7 @@ def bbox(img, border=None, as_slice=False):
         r = tuple([slice(s,e) for s,e in r.reshape((-1,2))])
     return r
 
-def croptobbox(img, border=None):
+def croptobbox(img: NDArray[ScalarT], border: int | None = None) -> NDArray[ScalarT]:
     """
     nimg = croptobbox(img, border=0)
 
@@ -87,4 +102,3 @@ def croptobbox(img, border=None):
     """
     sl = bbox(img, border=border, as_slice=True)
     return img[sl]
-
