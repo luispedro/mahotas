@@ -401,6 +401,10 @@ PyObject* py_zoom_shift(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_RuntimeError, "mahotas.zoom_shift: input data has unexpected types. This may be a bug in mahotas.");
         return NULL;
     }
+    if (PyArray_NDIM(output) != PyArray_NDIM(array)) {
+        PyErr_SetString(PyExc_ValueError, "mahotas.zoom_shift: output must have the same number of dimensions as input");
+        return NULL;
+    }
     if (!PyArray_Check(zooms)) {
         zooms = 0;
     } else if (!PyArray_ISCARRAY(zooms)) {

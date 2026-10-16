@@ -95,3 +95,17 @@ def test_zoom_non_contiguous(order):
     for view in (im[:, ::2], np.asfortranarray(im), im.T):
         expected = interpolate.zoom(np.ascontiguousarray(view), 0.5, order=order)
         assert np.allclose(interpolate.zoom(view, 0.5, order=order), expected)
+
+def test_zoom_out_ndim_mismatch():
+    im = np.zeros((49, 55))
+    with raises(ValueError):
+        interpolate.zoom(im, [1., 1.], out=np.empty((64,)))
+    with raises(ValueError):
+        interpolate.zoom(im, [1., 1.], out=np.empty((64, 64, 3)))
+
+def test_zoom_shift_out_ndim_mismatch():
+    from mahotas import _interpolate
+    im = np.zeros((49, 55))
+    zoom = np.ones(2)
+    with raises(ValueError):
+        _interpolate.zoom_shift(im, zoom, None, np.empty((64,)), 1, interpolate.mode2int['nearest'], 0.)

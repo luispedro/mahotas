@@ -222,6 +222,8 @@ def zoom(array, zoom, out=None, order=3, mode='constant', cval=0.0, prefilter=Tr
     if out is None:
         output_shape = tuple([int(s * z) for s,z in zip(array.shape, zoom)])
         out = np.empty(output_shape, dtype=array.dtype)
+    elif out.ndim != array.ndim:
+        raise ValueError('mahotas.interpolation.zoom: out should have the same number of dimensions as array')
     zoom_div = np.array(out.shape, float) - 1
     zoom = (np.array(array.shape) - 1) / zoom_div
     zoom = np.ascontiguousarray(zoom)

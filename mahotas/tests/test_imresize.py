@@ -48,3 +48,10 @@ def test_imresize_integer_size_is_exact(shape, target, container, dtype):
     assert result.dtype == np.float64
     other = imresize(np.zeros((32, 32), dtype=dtype), container(target), order=1)
     assert np.stack([result, other]).shape == (2,) + target
+
+
+def test_imresize_numpy_integer_size():
+    image = np.zeros((49, 55))
+    target = tuple(np.array([64, 224]))
+    assert isinstance(target[0], np.integer)
+    assert imresize(image, target, order=1).shape == (64, 224)

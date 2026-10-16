@@ -6,6 +6,12 @@ Version 1.4.19+
 	* Fix xyz2rgb() with an integer `dtype` casting before gamma
 	  encoding, which discarded fractional values (PR #155 by
 	  @antonsoo).
+	* Fix imresize() with integer sizes sometimes returning an image
+	  one pixel smaller than requested (PR #156 by @antonsoo).
+	* imresize() now treats NumPy integer sizes (e.g., np.int64) as
+	  output sizes rather than as zoom factors.
+	* Fix hard crash in interpolate.zoom() when `out` has a different
+	  number of dimensions than the input (now raises ValueError).
 	* Colour conversions (rgb2grey, rgb2xyz, xyz2rgb, xyz2lab, rgb2lab)
 	  with an integer `dtype` now round (instead of truncating) and clip
 	  to the output range (instead of wrapping around); xyz2rgb clips
