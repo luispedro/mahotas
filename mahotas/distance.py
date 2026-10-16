@@ -35,8 +35,13 @@ def distance(bw, metric='euclidean2'):
 
     Returns
     -------
-    dmap : ndarray
+    dmap : ndarray of np.float64
         distance map
+
+    Raises
+    ------
+    ValueError
+        If `metric` is not one of the supported values.
 
     References
     ----------
@@ -50,6 +55,8 @@ def distance(bw, metric='euclidean2'):
 
     For n-D images (with n > 2), a slower hand-craft method is used.
     '''
+    if metric not in ('euclidean2', 'euclidean'):
+        raise ValueError(f"mahotas.distance: metric must be one of 'euclidean2' or 'euclidean' (received {metric!r})")
     if bw.dtype != np.bool_:
         bw = (bw != 0)
     f = np.zeros(bw.shape, np.double)

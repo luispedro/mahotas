@@ -1,5 +1,6 @@
 from mahotas import distance
 import numpy as np
+import pytest
 def _slow_dist(bw, metric):
     sd = np.empty(bw.shape, np.double)
     sd.fill(np.inf)
@@ -54,3 +55,11 @@ def test_4d():
         assert dist.shape == binim.shape
         assert np.all(dist[~binim] == 0)
         assert np.all(dist == _slow_dist4d(binim, 'euclidean2'))
+
+
+def test_distance_bad_metric():
+    # Regression test: unknown metrics were silently treated as 'euclidean2'
+    bw = np.ones((4, 4), bool)
+    bw[0, 0] = False
+    with pytest.raises(ValueError):
+        distance(bw, metric="manhattan")
