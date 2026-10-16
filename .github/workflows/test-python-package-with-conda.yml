@@ -1,6 +1,8 @@
 name: Test mahotas
 
-on: [push]
+on:
+  push:
+  pull_request:
 
 concurrency:
   group: test-${{ github.ref }}
