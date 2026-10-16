@@ -2,6 +2,14 @@
 History
 =======
 
+Unreleased
+~~~~~~~~~~
+
+- Fix spline coordinates and boundary handling in ``interpolate.shift`` and
+  ``interpolate.zoom``, including fractional and large finite shifts, empty
+  input axes, and ``ignore`` mode. Constant mode now fills every coordinate
+  outside ``[0, size - 1]``, including tiny excursions from an integer shift.
+
 Version 1.4.19 (Sep 22 2026)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
