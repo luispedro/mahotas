@@ -76,11 +76,28 @@ def test_zoom_singleton_axis(order, shape):
 def test_shift_boundary_coordinates(mode, order, prefilter):
     ndimage = pytest.importorskip('scipy.ndimage')
     f = np.array([2., 5., 8., 11.])
+    if mode == 'reflect' and prefilter:
+        # Older SciPy versions have an inaccurate reflect prefilter on short lines.
+        f = np.tile(f, 4)
     for shift in [-8.4, -.4, .25, 7.25]:
         expected = ndimage.shift(f, shift, mode='constant' if mode == 'ignore' else mode,
                                  order=order, prefilter=prefilter)
         actual = interpolate.shift(f, shift, mode=mode, order=order, prefilter=prefilter)
         np.testing.assert_allclose(actual, expected, atol=2e-6)
+
+@pytest.mark.parametrize('order', range(2, 6))
+def test_short_reflect_shift_identity(order):
+    f = np.array([2., 5., 8., 11.])
+    actual = interpolate.shift(f, 0., mode='reflect', order=order)
+    np.testing.assert_allclose(actual, f, atol=1e-12, rtol=0)
+
+def test_short_cubic_reflect_shift():
+    f = np.array([2., 5., 8., 11.])
+    # Exact half-sample symmetric coefficients are [19, 73, 109, 163] / 14.
+    # Evaluating the cubic spline at i + 2/5 gives these rational values.
+    expected = np.array([2647., 5434., 8167., 10030.]) / 875
+    actual = interpolate.shift(f, -.4, mode='reflect', order=3)
+    np.testing.assert_allclose(actual, expected, atol=1e-12, rtol=0)
 
 @pytest.mark.parametrize('mode', ['constant', 'ignore', 'nearest', 'mirror', 'reflect', 'wrap'])
 @pytest.mark.parametrize('shift', [3e9, -3e9, 1e300, -1e300])
