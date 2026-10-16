@@ -3,6 +3,8 @@
 #
 # License: MIT (see COPYING file)
 
+import itertools
+
 import numpy as np
 from . import _surf
 
@@ -267,7 +269,7 @@ def show_surf(f, spoints, values=None, colors=None):
 
     f2 = np.dstack([f,f,f])
 
-    for p,vi in zip(spoints, values):
+    for p,vi in zip(spoints, values, strict=True):
         y = p[0]
         x = p[1]
         scale = p[2]
@@ -286,6 +288,6 @@ def show_surf(f, spoints, values=None, colors=None):
             return int(c0+d0), int(c1+d1)
         polygon = [(y0,x0), (y0,x1), (y1,x1), (y1,x0), (y0,x0)]
         polygon = [rotate_around(p, (y,x), angle) for p in polygon]
-        for p0,p1 in zip(polygon[:-1], polygon[1:]):
+        for p0,p1 in itertools.pairwise(polygon):
             mahotas.polygon.line(p0,p1, f2, color=colors[vi])
     return f2.astype(np.uint8)

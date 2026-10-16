@@ -121,7 +121,7 @@ def fill_polygon(polygon, canvas, color=1):
                     nodes.append(p[1])
             j = i
         nodes.sort()
-        for n,nn in zip(nodes[::2],nodes[1::2]):
+        for n,nn in zip(nodes[::2],nodes[1::2], strict=True):
             start = max(int(np.floor(n)), 0)
             stop = int(np.floor(nn)) + 1
             if stop > start:

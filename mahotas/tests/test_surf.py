@@ -83,6 +83,17 @@ def test_show_surf():
     assert f2.shape == (f.shape + (3,))
 
 
+def test_show_surf_values_length_mismatch():
+    np.random.seed(22)
+    f = np.random.rand(256,256)*230
+    f = f.astype(np.uint8)
+    spoints = surf.surf(f, 6, 24, 1)
+    assert len(spoints) > 1
+    values = np.zeros(len(spoints) - 1, int)
+    with pytest.raises(ValueError):
+        surf.show_surf(f, spoints, values, colors=[(255,0,0)])
+
+
 def test_interest_points_descriptor_only():
     np.random.seed(22)
     f = np.random.rand(256,256)*230
