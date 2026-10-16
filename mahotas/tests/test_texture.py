@@ -59,6 +59,41 @@ def test_cooccurence_errors():
         texture.cooccurence(f4, 1, distance=1)
 
 
+def test_cooccurence_output_too_small():
+    # Regression test: an output exactly f.max() in size (one too small) used
+    # to pass the check and then crash the interpreter
+    f = np.array([[0, 1], [2, 3]], np.uint8)
+    with pytest.raises(ValueError):
+        texture.cooccurence(f, 0, np.zeros((3, 3), np.int32))
+    with pytest.raises(ValueError):
+        texture.cooccurence(f, 0, np.zeros((4, 4), np.int64))
+    with pytest.raises(ValueError):
+        texture.cooccurence(f, 0, np.zeros((4, 5), np.int32))
+    res = texture.cooccurence(f, 0, np.zeros((4, 4), np.int32))
+    assert res.sum() == 4
+
+
+def test_cooccurence_uint8_255():
+    # Regression test: for uint8 images, ``f.max() + 1`` overflowed to 0,
+    # which crashed the interpreter
+    f = np.array([[0, 255], [255, 3]], np.uint8)
+    res = texture.cooccurence(f, 0, symmetric=False)
+    assert res.shape == (256, 256)
+    assert res[0, 255] == 1
+    assert res[255, 3] == 1
+    assert res.sum() == 2
+
+
+def test__cooccurence_checks_bounds():
+    # Calling the C++ function directly with a too-small result matrix must
+    # raise, not write out of bounds
+    f = np.array([[0, 1], [2, 3]], np.uint8)
+    Bc = np.zeros((3, 3), f.dtype)
+    Bc[1, 2] = 1
+    with pytest.raises(ValueError):
+        mahotas.features._texture.cooccurence(f, np.zeros((3, 3), np.int32), Bc, 0)
+
+
 
 def brute_force(f, dy, dx):
     res = np.zeros((f.max()+1, f.max() + 1), np.double)

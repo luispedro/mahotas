@@ -408,20 +408,32 @@ def cooccurence(f, direction, output=None, symmetric=True, distance=1):
     Parameters
     ----------
     f : ndarray of integer type
-        The input image
+        The input image (2-D or 3-D). Values must be non-negative.
     direction : integer
-        Direction as index into (horizontal [default], diagonal
-        [nw-se], vertical, diagonal [ne-sw])
-    output : np.long 2 ndarray, optional
-        preallocated result.
+        For 2-D images, an index into (horizontal, diagonal [nw-se],
+        vertical, diagonal [ne-sw]), i.e., in ``range(4)``. For 3-D images,
+        one of the 13 directions in ``range(13)``.
+    output : 2-D ndarray of np.int32, optional
+        Preallocated result. Both dimensions must be at least
+        ``f.max() + 1`` (and it must be square if `symmetric`).
     symmetric : boolean, optional
         whether return a symmetric matrix (default: True)
-    distance : integer, optional (default=1)
-        Distance to the central pixel to consider.
+    distance : integer, optional
+        Distance to the central pixel to consider (default: 1).
 
     Returns
     -------
-      cooccurence_matrix : cooccurence matrix
+    cooccurence_matrix : 2-D ndarray of np.int32
+        ``cooccurence_matrix[i, j]`` is the number of times that a pixel with
+        value ``i`` has a neighbour (at the given `direction` and `distance`)
+        with value ``j``. If `symmetric`, the counts for ``(i, j)`` and
+        ``(j, i)`` are added together.
+
+    Raises
+    ------
+    ValueError
+        If `direction` is out of range, `f` is not 2-D or 3-D, or `output`
+        has the wrong shape or type.
     '''
     _verify_is_integer_type(f, 'mahotas.cooccurence')
     if len(f.shape) == 2 and not (0 <= direction < 4):
@@ -431,12 +443,18 @@ def cooccurence(f, direction, output=None, symmetric=True, distance=1):
     elif len(f.shape) not in (2,3):
         raise ValueError(f'mahotas.texture.cooccurence: cannot handle images of {len(f.shape)} dimensions.')
 
+    # Convert to a Python int: for uint8 images with value 255, ``f.max() + 1``
+    # would otherwise wrap around to 0
+    fmax = int(f.max())
     if output is None:
-        mf = f.max()
-        output = np.zeros((mf+1, mf+1), np.int32)
+        output = np.zeros((fmax+1, fmax+1), np.int32)
     else:
-        assert np.min(output.shape) >= f.max(), 'mahotas.texture.cooccurence: output is not large enough'
-        assert output.dtype == np.int32, 'mahotas.texture.cooccurence: output is not of type np.int32'
+        if output.ndim != 2 or min(output.shape) <= fmax:
+            raise ValueError(f'mahotas.texture.cooccurence: output must be a 2-D array of shape at least ({fmax+1}, {fmax+1}) (received shape {output.shape})')
+        if output.dtype != np.int32:
+            raise ValueError(f'mahotas.texture.cooccurence: output must be of type np.int32 (received {output.dtype})')
+        if symmetric and output.shape[0] != output.shape[1]:
+            raise ValueError(f'mahotas.texture.cooccurence: output must be square when symmetric=True (received shape {output.shape})')
         output.fill(0)
 
     if len(f.shape) == 2:

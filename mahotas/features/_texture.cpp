@@ -23,6 +23,8 @@ template<typename T>
 void cooccurence(numpy::aligned_array<npy_int32> res, numpy::aligned_array<T> array, numpy::aligned_array<T> Bc) {
     gil_release nogil;
     const int N = array.size();
+    const npy_intp s0 = res.dim(0);
+    const npy_intp s1 = res.dim(1);
     typename numpy::aligned_array<T>::iterator iter = array.begin();
     filter_iterator<T> filter(array.raw_array(), Bc.raw_array(), ExtendIgnore, true);
 
@@ -33,6 +35,9 @@ void cooccurence(numpy::aligned_array<npy_int32> res, numpy::aligned_array<T> ar
             if (val < 0 || val2 < 0) {
                 // The check is not performed in Python as this can be an expensive check for large arrays
                 throw PythonException(PyExc_ValueError, "cooccurence can only be computed on non-negative arrays");
+            }
+            if (npy_intp(val) >= s0 || npy_intp(val2) >= s1) {
+                throw PythonException(PyExc_ValueError, "mahotas._texture.cooccurence: result matrix is too small for the values in the input");
             }
             ++res.at(npy_intp(val), npy_intp(val2));
         }
@@ -47,6 +52,10 @@ PyObject* py_cooccurent(PyObject* self, PyObject* args) {
     int symmetric;
     if (!PyArg_ParseTuple(args,"OOOi", &array, &result, &Bc, &symmetric)) return NULL;
     if (!PyArray_Check(array) || !PyArray_Check(result) || !PyArray_Check(Bc)) {
+        PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
+        return NULL;
+    }
+    if (PyArray_NDIM(result) != 2 || PyArray_NDIM(Bc) != PyArray_NDIM(array)) {
         PyErr_SetString(PyExc_RuntimeError, TypeErrorMsg);
         return NULL;
     }
