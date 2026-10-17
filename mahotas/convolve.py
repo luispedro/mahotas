@@ -116,7 +116,8 @@ def convolve1d(
         generic convolution
     '''
     weights = np.asanyarray(weights)
-    weights = weights.squeeze()
+    if weights.ndim > 1:
+        weights = weights.squeeze()
     if weights.ndim != 1:
         raise ValueError('mahotas.convolve1d: only 1-D sequences allowed')
     _check_mode(mode, cval, 'convolve1d')
