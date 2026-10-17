@@ -2,6 +2,11 @@
 History
 =======
 
+Unreleased
+~~~~~~~~~~
+
+- Preserve convolution input values when the output buffer overlaps the input.
+
 Version 1.4.19 (Sep 22 2026)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
