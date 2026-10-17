@@ -132,6 +132,8 @@ def convolve1d(
                 out = np.empty_like(f)
             elif np.may_share_memory(f, out):
                 f = f.copy()
+            if np.may_share_memory(weights, out):
+                weights = weights.copy()
             _convolve.convolve1d(f.reshape((-1, f.shape[-1])), weights, out.reshape((-1, f.shape[-1])), mode2int[mode])
             return out
         indices = [a for a in range(f.ndim) if a != axis] + [axis]

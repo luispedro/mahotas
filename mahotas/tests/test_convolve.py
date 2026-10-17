@@ -101,6 +101,27 @@ def test_convolution_overlapping_output(mode, alias, operation):
     np.testing.assert_allclose(actual, expected, rtol=1e-14, atol=1e-14)
 
 
+@pytest.mark.parametrize('dtype', [np.float32, np.float64])
+@pytest.mark.parametrize('operation', ['generic', 'first', 'last'])
+@pytest.mark.parametrize('aliases_source', [False, True])
+@pytest.mark.parametrize('mode', mahotas._filters.modes)
+def test_convolution_weights_overlap_output(dtype, operation, aliases_source, mode):
+    from scipy import ndimage
+    output = np.linspace(0.01, 0.1, 35, dtype=dtype).reshape(5, 7)
+    image = output if aliases_source else np.arange(35, dtype=dtype).reshape(5, 7) / 100
+    weights = output[0, :3]
+    reference_mode = 'constant' if mode == 'ignore' else mode
+    if operation == 'generic':
+        expected = ndimage.correlate(image, weights.copy()[None], mode=reference_mode)
+        actual = mh.convolve(image, weights[None], mode=mode, out=output)
+    else:
+        axis = 0 if operation == 'first' else -1
+        expected = ndimage.correlate1d(image, weights.copy(), axis=axis, mode=reference_mode)
+        actual = mh.convolve1d(image, weights, axis=axis, mode=mode, out=output)
+    assert actual is output
+    np.testing.assert_allclose(actual, expected, rtol=1e-6, atol=1e-8)
+
+
 def test_gaussian_order():
     im = np.arange(64*64).reshape((64,64))
     for order in (1,2,3):
