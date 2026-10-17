@@ -65,6 +65,42 @@ def test_gaussian_filter():
         n = ndimage.gaussian_filter(f, s)
         assert np.max(np.abs(n - g)) < 1.e-5
 
+@pytest.mark.parametrize('mode', mahotas._filters.modes)
+@pytest.mark.parametrize('alias', ['same', 'shifted', 'reversed'])
+@pytest.mark.parametrize('operation', ['convolve', 'convolve1d_first', 'convolve1d_last', 'gaussian1d'])
+def test_convolution_overlapping_output(mode, alias, operation):
+    from scipy import ndimage
+    values = np.arange(35., dtype=float).reshape(5, 7) / 35
+    if alias == 'shifted':
+        storage = np.empty(values.size + 1)
+        image = storage[:-1].reshape(values.shape)
+        output = storage[1:].reshape(values.shape)
+        image[:] = values
+    else:
+        output = values.copy()
+        image = output if alias == 'same' else output[:, ::-1]
+    if operation == 'convolve':
+        kernel = np.ones((3, 3)) / 9
+        def function(data, **kwargs):
+            return mh.convolve(data, kernel, **kwargs)
+        expected = ndimage.correlate(image, kernel, mode='constant' if mode == 'ignore' else mode)
+    elif operation == 'gaussian1d':
+        def function(data, **kwargs):
+            return mh.gaussian_filter1d(data, 0.75, axis=-1, **kwargs)
+        expected = ndimage.gaussian_filter1d(image, 0.75, axis=-1, mode='constant' if mode == 'ignore' else mode)
+    else:
+        axis = 0 if operation == 'convolve1d_first' else -1
+        kernel = np.array([0.25, 0.5, 0.25])
+        def function(data, **kwargs):
+            return mh.convolve1d(data, kernel, axis=axis, **kwargs)
+        expected = ndimage.correlate1d(image, kernel, axis=axis, mode='constant' if mode == 'ignore' else mode)
+    independent = function(image, mode=mode)
+    actual = function(image, mode=mode, out=output)
+    assert actual is output
+    np.testing.assert_array_equal(actual, independent)
+    np.testing.assert_allclose(actual, expected, rtol=1e-14, atol=1e-14)
+
+
 def test_gaussian_order():
     im = np.arange(64*64).reshape((64,64))
     for order in (1,2,3):

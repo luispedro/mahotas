@@ -74,6 +74,8 @@ def convolve(
         raise ValueError('mahotas.convolve: `f` and `weights` must have the same dimensions')
     output = _get_output(f, out, 'convolve', output=output)
     _check_mode(mode, cval, 'convolve')
+    if np.may_share_memory(f, output):
+        f = f.copy()
     return _convolve.convolve(f, weights, output, mode2int[mode])
 
 
@@ -128,6 +130,8 @@ def convolve1d(
         if axis == f.ndim - 1:
             if out is None:
                 out = np.empty_like(f)
+            elif np.may_share_memory(f, out):
+                f = f.copy()
             _convolve.convolve1d(f.reshape((-1, f.shape[-1])), weights, out.reshape((-1, f.shape[-1])), mode2int[mode])
             return out
         indices = [a for a in range(f.ndim) if a != axis] + [axis]
