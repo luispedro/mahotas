@@ -57,6 +57,51 @@ def test_convolve1d_2d():
         convolve1d(f, n, 0)
 
 
+@pytest.mark.parametrize('dtype', [np.uint8, np.float32, np.float64])
+@pytest.mark.parametrize('axis', [0, -1])
+@pytest.mark.parametrize('layout', ['c', 'fortran', 'strided'])
+def test_convolve1d_single_tap(dtype, axis, layout):
+    image = np.arange(35, dtype=dtype).reshape(5, 7)
+    if layout == 'fortran':
+        image = np.asfortranarray(image)
+    elif layout == 'strided':
+        image = image[:, ::2]
+    for mode in mahotas._filters.modes:
+        result = convolve1d(image, [1], axis, mode=mode)
+        np.testing.assert_array_equal(result, image)
+        output = np.empty(image.shape, dtype=dtype)
+        assert convolve1d(image, np.array([2]), axis, mode=mode, out=output) is output
+        np.testing.assert_array_equal(output, image * 2)
+
+
+def test_convolve1d_single_tap_singleton_axis():
+    image = np.arange(5., dtype=float).reshape(1, 5)
+    np.testing.assert_array_equal(convolve1d(image, [0.5], 0), image * 0.5)
+    with pytest.raises(ValueError):
+        convolve1d(image, 1, 0)
+
+
+@pytest.mark.parametrize('dtype', [np.uint8, np.int16, np.float32, np.float64])
+@pytest.mark.parametrize('axis', [0, -1])
+@pytest.mark.parametrize('layout', ['c', 'fortran', 'strided', 'singleton'])
+def test_convolve1d_fractional_single_tap(dtype, axis, layout):
+    image = np.arange(14, dtype=dtype).reshape(2, 7)
+    if layout == 'fortran':
+        image = np.asfortranarray(image)
+    elif layout == 'strided':
+        image = image[:, ::2]
+    elif layout == 'singleton':
+        image = image[:1].copy()
+    # Weights are cast to the input dtype, as documented for convolve1d.
+    gain = np.array([0.5]).astype(dtype)[0]
+    expected = (image.astype(float) * float(gain)).astype(dtype)
+    for mode in mahotas._filters.modes:
+        output = np.empty(image.shape, dtype=dtype)
+        result = convolve1d(image, [0.5], axis=axis, mode=mode, out=output)
+        assert result is output
+        np.testing.assert_array_equal(result, expected)
+
+
 def test_gaussian_filter():
     from scipy import ndimage
     f = luispedro_jpg(1)
