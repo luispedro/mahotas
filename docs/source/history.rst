@@ -2,6 +2,11 @@
 History
 =======
 
+Unreleased
+~~~~~~~~~~
+
+- Accept one-tap kernels in ``convolve1d``.
+
 Version 1.4.19 (Sep 22 2026)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
