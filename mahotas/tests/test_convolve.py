@@ -351,6 +351,34 @@ def test_gaussian_filter_3d_cube():
 
 
 
+@pytest.mark.parametrize('dtype', [np.uint8, np.float32, np.float64])
+@pytest.mark.parametrize('operation', ['median', 0, 4, 8])
+@pytest.mark.parametrize('overlap', ['same', 'shifted', 'reversed', 'separate'])
+def test_rank_filters_overlapping_output(dtype, operation, overlap):
+    image = np.random.RandomState(29).randint(0, 32, (5, 6)).astype(dtype)
+    footprint = np.ones((3, 3), dtype=dtype)
+    for mode in mahotas._filters.modes:
+        if overlap == 'shifted':
+            storage = np.empty(image.size + 1, dtype=dtype)
+            data = storage[:-1].reshape(image.shape)
+            output = storage[1:].reshape(image.shape)
+            data[:] = image
+        elif overlap == 'reversed':
+            output = image.copy()
+            data = output[:, ::-1]
+        else:
+            data = image.copy()
+            output = data if overlap == 'same' else np.empty_like(data)
+        if operation == 'median':
+            expected = mh.median_filter(data.copy(), footprint, mode=mode)
+            actual = mh.median_filter(data, footprint, mode=mode, out=output)
+        else:
+            expected = mh.rank_filter(data.copy(), footprint, operation, mode=mode)
+            actual = mh.rank_filter(data, footprint, operation, mode=mode, out=output)
+        assert actual is output
+        np.testing.assert_array_equal(actual, expected)
+
+
 def test_rank_filter_out_of_range():
     # Regression test: an out-of-range rank used to return uninitialised
     # memory instead of raising an error

@@ -189,6 +189,8 @@ def median_filter(
     rank = Bc.sum()//2
     output = _get_output(f, out, 'median_filter', output=output)
     _check_mode(mode, cval, 'median_filter')
+    if np.may_share_memory(f, output):
+        f = f.copy()
     return _convolve.rank_filter(f, Bc, output, int(rank), mode2int[mode])
 
 def mean_filter(
@@ -282,6 +284,8 @@ def rank_filter(
         raise ValueError(f'mahotas.rank_filter: rank must be in range({size}) (the number of elements in the neighbourhood), received {rank}')
     output = _get_output(f, out, 'rank_filter', output=output)
     _check_mode(mode, cval, 'rank_filter')
+    if np.may_share_memory(f, output):
+        f = f.copy()
     return _convolve.rank_filter(f, Bc, output, rank, mode2int[mode])
 
 

@@ -2,6 +2,12 @@
 History
 =======
 
+Unreleased
+~~~~~~~~~~
+
+- Preserve input samples in ``median_filter`` and ``rank_filter`` when the
+  output buffer overlaps the input.
+
 Version 1.4.19 (Sep 22 2026)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
